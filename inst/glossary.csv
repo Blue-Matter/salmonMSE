@@ -1,0 +1,37 @@
+Variable,Definition,Type
+NOS,Natural origin spawners,Habitat 
+HOS,Hatchery origin spawners,Hatchery
+FPS_{juv},Fish passage survival of juveniles during outward migration,Population dynamics
+FPS_{adult},Fish passage survival of the natural and hatchery escapement,Population dynamics
+Cap_{adult},Carrying capacity of adults (stock-recruit parameter),Habitat 
+Prod_{adult},Maximum rate of recruitment of adults (stock-recruit parameter),Habitat 
+Cap_{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat 
+Prod_{smolt},Maximum rate of recruitment of smolts (stock-recruit parameter),Habitat 
+u,Harvest rate of various fisheries,Harvest
+Fec,Fecundity of broodtake (eggs per female),Population dynamics
+p_{female},Proportion of female spawners in broodtake (vs. male),Population dynamics
+SAR,Survival from smolt to adult life stage,Population dynamics
+HOB,Hatchery origin broodtake,Hatchery
+NOB,Natural origin broodtake,Hatchery
+s_{ocean},Ocean survival,Population dynamics
+s_{egg-smolt},Survival of hatchery eggs to smolt,Hatchery
+s_{egg-subyearling},Survival of hatchery eggs to subyearling,Hatchery
+p_{yearling},Proportion of hatchery releases as yearling (vs. subyearling),Hatchery
+s_{prespawn},Survival of adult broodtake in hatchery,Hatchery
+n_{yearling},Target number of hatchery releases as yearlings,Hatchery
+n_{subyearling},Target number of hatchery releases as subyearlings,Hatchery
+p_{NOB},Target proportion of the total broodtake with natural origin (vs. hatchery origin),Hatchery
+pmax_{NOB},"Maximum proportion of the NOB from the escapement, i.e., ratio of NOB to NOS",Hatchery
+NOR,Natural origin return,Habitat 
+HOR,Hachery origin return,Population dynamics
+p_{hatchery},Proportion of hatchery origin escapement that return to the hatchery (vs. spawning grounds),Population dynamics
+p_{weir},Proportion of hatchery origin escapement captured in weirs,Population dynamics
+gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery
+selection_strength,Selection strength,Fitness
+theta,Optimal phenotypic value for natural and hatchery population,Fitness
+h2,Heritability of fitness traits,Fitness
+sigma2,Phenotypic variation of fitness traits,Fitness
+PNI,Proportionate natural influence,Fitness
+RelLoss_i,"Fitness loss at life stage i (egg, fry, smolt)",Fitness
+pbar,Mean phenotypic value of natural and hatchery population (Ford fitness),Fitness
+m,Mark rate of hatchery fish (affects fishery retention of hatchery fish relative to natural fish),Hatchery
