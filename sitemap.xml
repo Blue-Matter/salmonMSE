@@ -16,7 +16,19 @@
     <loc>https://docs.salmonmse.com/index.html</loc>
   </url>
   <url>
-    <loc>https://docs.salmonmse.com/reference/Enhancement.html</loc>
+    <loc>https://docs.salmonmse.com/reference/Bio-class.html</loc>
+  </url>
+  <url>
+    <loc>https://docs.salmonmse.com/reference/Habitat-class.html</loc>
+  </url>
+  <url>
+    <loc>https://docs.salmonmse.com/reference/Harvest-class.html</loc>
+  </url>
+  <url>
+    <loc>https://docs.salmonmse.com/reference/Hatchery-class.html</loc>
+  </url>
+  <url>
+    <loc>https://docs.salmonmse.com/reference/SOM-class.html</loc>
   </url>
   <url>
     <loc>https://docs.salmonmse.com/reference/index.html</loc>
