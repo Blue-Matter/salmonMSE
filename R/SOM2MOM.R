@@ -1,7 +1,6 @@
 
-#' Run salmonMSE
-#' @param SOM An object of class \linkS4class{SOM}
 #' @export
+#' @rdname salmonMSE
 SOM2MOM <- function(SOM) {
 
   # Check SOM here
