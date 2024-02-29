@@ -1,8 +1,8 @@
 
 
 #' @import MSEtool
-#' @importFrom dplyr %>%
-#' @importFrom methods new slot slotNames
+#' @importFrom dplyr %>% pull filter
+#' @importFrom methods new slot slotNames slot<-
 #' @importFrom stats rlnorm
 #' @importFrom rlang .data .env
 NULL

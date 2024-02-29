@@ -92,7 +92,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 
       # Get pbar from fitness_env
       if (nrow(fitness_env$Ford)) {
-        pbar_prev <- dplyr::filter(fitness_env$Ford, x = .env$x, p = .env$p_r, t = max(.data$t)) %>%
+        pbar_prev <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
           pull(.data$pbar)
         if (!length(pbar_prev)) pbar_prev <- fitness_args$pbar_start
       } else {
@@ -113,7 +113,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 
       # Save pbar and fitness for next generation
       if (nrow(fitness_env$Ford)) {
-        t <- dplyr::filter(fitness_env$Ford, x = .env$x, p = .env$p_r, t = max(.data$t)) %>%
+        t <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
           pull(.data$t) %>% unique()
         if (!length(t)) t <- 1
       } else {
@@ -125,7 +125,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
         fitness_1 = fitness[1],
         fitness_2 = fitness[2],
         fitness_3 = fitness[3],
-        p = p,
+        p_r = p_r,
         t = t + 1
       )
 
@@ -211,7 +211,7 @@ makeRel_smolt <- function(p_r = 1, p_natural = 2, p_hatchery = 4,
   structure(out, class = "RelSmolt")
 }
 
-
+#' @export
 predict.RelSmolt <- function(object, newdata, ...) {
 
   if(missing(newdata)) {
@@ -229,6 +229,7 @@ predict.RelSmolt <- function(object, newdata, ...) {
   object$func(newdata[vars_Rel] %>% as.numeric())
 }
 
+#' @export
 simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
   set.seed(seed)

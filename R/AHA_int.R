@@ -36,39 +36,39 @@ calc_Ford_fitness <- function(pNOB, pHOS, pbar_prev, theta, omega2, fitness_vari
 }
 
 ## INCOMPLETE
-calc_Busack_fitness <- function(pNOS, Zpop_prev, theta) {
-
-  # Zpop1
-  pNOS <- NOS/(NOS + RRS_HOS * HOS_total)
-
-  HOS_seg <- SAR_ratio * strays_total
-  HOS_int <- HOS_total - HOS_seg
-
-  pHOS_seg <- RRS_HOS * HOS_seg/(NOS + RRS_HOS * HOS_total)
-  pHOS_int <- RRS_HOS * HOS_int/(NOS + RRS_HOS * HOS_total)
-
-  Zpop[1, g] <- A * pNOS * (Zpop[1, g-1] - theta[1]) +
-    pHOS_int * (Zpop[2, g-1] - theta[1]) + pHOS_seg * (Zpop[3, g-1] - theta[1]) + theta[1]
-
-  pNOB1 <- brood_NOB/(brood_NOB + brood_HOB + brood_import)
-  pHOBint1 <- brood_HOB/(brood_NOB + brood_HOB + brood_import)
-  pHOBseg1 <- brood_import/(brood_NOB + brood_HOB + brood_import)
-
-  Zpop[2, g] <- A * pNOB1 * (Zpop[1, g-1] - theta[2]) +
-    pHOBint1 * (Zpop[2, g-1] - theta[2]) + pHOBseg1 * (Zpop[3, g-1] - theta[2]) + theta[2]
-
-  pNOB2 <- 0 #BV60/(BV60+BW60+BX60)
-  pHOBint2 <- max(1, export) #export #
-  pHOBseg2 <- 0 #brood_import/(brood_NOB + brood_HOB + brood_import)
-
-  #$I$49*(CE59*(CH59-$F$42)+CF59*(CI59-$F$42)+CG59*(CJ59-$F$42))+$F$42
-  Zpop[3, g] <- A * pNOB2 * (Zpop[1, g-1] - theta[3]) +
-    pHOBint2 * (Zpop[2, g-1] - theta[3]) + pHOBseg2 * (Zpop[3, g-1] - theta[3]) + theta[3]
-
-  fitness <- abs(Zpop[1, g] - mean(theta[-1]))/abs(theta[1] - mean(theta[-1]))
-
-  list(Zpop = Zpop, fitness = fitness)
-}
+#calc_Busack_fitness <- function(pNOS, Zpop_prev, theta) {
+#
+#  # Zpop1
+#  pNOS <- NOS/(NOS + RRS_HOS * HOS_total)
+#
+#  HOS_seg <- SAR_ratio * strays_total
+#  HOS_int <- HOS_total - HOS_seg
+#
+#  pHOS_seg <- RRS_HOS * HOS_seg/(NOS + RRS_HOS * HOS_total)
+#  pHOS_int <- RRS_HOS * HOS_int/(NOS + RRS_HOS * HOS_total)
+#
+#  Zpop[1, g] <- A * pNOS * (Zpop[1, g-1] - theta[1]) +
+#    pHOS_int * (Zpop[2, g-1] - theta[1]) + pHOS_seg * (Zpop[3, g-1] - theta[1]) + theta[1]
+#
+#  pNOB1 <- brood_NOB/(brood_NOB + brood_HOB + brood_import)
+#  pHOBint1 <- brood_HOB/(brood_NOB + brood_HOB + brood_import)
+#  pHOBseg1 <- brood_import/(brood_NOB + brood_HOB + brood_import)
+#
+#  Zpop[2, g] <- A * pNOB1 * (Zpop[1, g-1] - theta[2]) +
+#    pHOBint1 * (Zpop[2, g-1] - theta[2]) + pHOBseg1 * (Zpop[3, g-1] - theta[2]) + theta[2]
+#
+#  pNOB2 <- 0 #BV60/(BV60+BW60+BX60)
+#  pHOBint2 <- max(1, export) #export #
+#  pHOBseg2 <- 0 #brood_import/(brood_NOB + brood_HOB + brood_import)
+#
+#  #$I$49*(CE59*(CH59-$F$42)+CF59*(CI59-$F$42)+CG59*(CJ59-$F$42))+$F$42
+#  Zpop[3, g] <- A * pNOB2 * (Zpop[1, g-1] - theta[3]) +
+#    pHOBint2 * (Zpop[2, g-1] - theta[3]) + pHOBseg2 * (Zpop[3, g-1] - theta[3]) + theta[3]
+#
+#  fitness <- abs(Zpop[1, g] - mean(theta[-1]))/abs(theta[1] - mean(theta[-1]))
+#
+#  list(Zpop = Zpop, fitness = fitness)
+#}
 
 
 catch_fn <- function(return_size, u, surv_passage = c(1, 1, 1, 1), nfishery = 4) {

@@ -15,16 +15,16 @@
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE) {
 
-  if (!silent) message("Converting salmon operating model to MOM")
+  if (!silent) message("Converting salmon operating model to MOM..")
   MOM <- SOM2MOM(SOM)
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u)
 
-  if (!silent) message("Generating historical dynamics")
+  if (!silent) message("Generating historical dynamics..")
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
 
   if (Hist) {
-    if(!silent) message("Returning historical simulations")
+    if(!silent) message("Returning historical simulations..")
     return(H)
   }
 

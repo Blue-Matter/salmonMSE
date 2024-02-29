@@ -9,3 +9,5 @@
 ^\.github$
 ^scratch$
 ^man-roxygen$
+LICENSE
+^tests$

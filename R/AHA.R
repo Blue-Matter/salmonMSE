@@ -256,9 +256,9 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
     fitness <- do_fitness$fitness
 
   } else { # Busack - incomplete
-    do_fitness <- calc_Busack_fitness()
-    Zpop <- do_fitness$Zpop
-    fitness <- do_fitness$fitness
+    #do_fitness <- calc_Busack_fitness()
+    #Zpop <- do_fitness$Zpop
+    #fitness <- do_fitness$fitness
   }
 
   # AQ,AR,AS
