@@ -14,7 +14,7 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Identifying name.}
+\item{\code{Name}}{Character. Identifying name}
 
 \item{\code{nsim}}{Integer. Number of simulations.}
 
@@ -30,9 +30,9 @@ Natural per-capita smolt production as the population approaches zero (density-i
 
 \item{\code{SAR}}{Vector length \code{nsim}. Survival to adult return (density-independent, time-invariant).}
 
-\item{\code{fec}}{Vector length \code{nsim}. Female fecundity of natural origin spawners.}
+\item{\code{fec}}{Numeric. Female fecundity of natural origin spawners.}
 
-\item{\code{p_female}}{Vector length \code{nsim}. The proportion of females in the spawning population.}
+\item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
 }}
 
 \section{Creating Object}{

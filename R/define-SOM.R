@@ -1,6 +1,10 @@
 
 
 #' @import MSEtool
+#' @importFrom dplyr %>%
+#' @importFrom methods new slot slotNames
+#' @importFrom stats rlnorm
+#' @importFrom rlang .data .env
 NULL
 
 
@@ -15,6 +19,7 @@ NULL
 #'
 #' @name Bio-class
 #' @docType class
+#' @slot Name Character. Identifying name
 #' @template Bio_template
 #'
 #' @section Creating Object:
@@ -49,6 +54,7 @@ setClass(
 #'
 #' @name Habitat-class
 #' @docType class
+#' @slot Name Character. Identifying name
 #' @template Habitat_template
 #'
 #' @section Creating Object:
@@ -74,6 +80,7 @@ setClass(
 #'
 #' @name Harvest-class
 #' @docType class
+#' @slot Name Character. Identifying name
 #' @template Harvest_template
 #'
 #' @section Creating Object:
@@ -104,6 +111,7 @@ setClass(
 #'
 #' @name Hatchery-class
 #' @docType class
+#' @slot Name Character. Identifying name
 #' @template Hatchery_template
 #'
 #' @section Creating Object:
@@ -126,11 +134,11 @@ setClass(
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
     premove_HOS = "numeric",
-    theta = "numeric",
-    rel_loss = "numeric",
     fec_brood = "numeric",
     fitness_type = "character",
-    Zpop_start = "numeric",
+    theta = "numeric",
+    rel_loss = "numeric",
+    pbar_start = "numeric",
     fitness_variance = "numeric",
     selection_strength = "numeric",
     heritability = "numeric",
@@ -146,11 +154,11 @@ setClass(
 #' @name SOM-class
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new("SOM", Bio, Habitat, Hatchery, Harvest)}.
-
-#' @slot Name Name of the operating modelx
-#' @slot nyears The number of historical years
-#' @slot proyears The number of projected years
-#' @slot seed A random seed to ensure users can reproduce results exactly
+#'
+#' @slot Name Character. Identifying name
+#' @slot nyears Integer. The number of historical years
+#' @slot proyears Integer. The number of projected years
+#' @slot seed Integer. A random seed to ensure users can reproduce results exactly
 #'
 #' @template Bio_template
 #' @template Habitat_template
@@ -182,10 +190,10 @@ setMethod("initialize", "SOM",
   .Object@proyears <- proyears
   .Object@seed <- seed
 
-  for(i in slotNames(Bio)) slot(.Object, i) <- slot(Bio, i)
-  for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
-  for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
-  for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
+  if (!missing(Bio)) for(i in slotNames(Bio)) slot(.Object, i) <- slot(Bio, i)
+  if (!missing(Habitat)) for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
+  if (!missing(Hatchery)) for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
+  if (!missing(Harvest)) for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
 
   attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
   attr(.Object, "date") <- date()

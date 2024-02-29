@@ -11,15 +11,13 @@ An object containing all the parameters for a salmon operating model (SOM).
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Name of the operating modelx}
+\item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nyears}}{The number of historical years}
+\item{\code{nyears}}{Integer. The number of historical years}
 
-\item{\code{proyears}}{The number of projected years}
+\item{\code{proyears}}{Integer. The number of projected years}
 
-\item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
-
-\item{\code{Name}}{Identifying name.}
+\item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}
 
 \item{\code{nsim}}{Integer. Number of simulations.}
 
@@ -35,11 +33,9 @@ Natural per-capita smolt production as the population approaches zero (density-i
 
 \item{\code{SAR}}{Vector length \code{nsim}. Survival to adult return (density-independent, time-invariant).}
 
-\item{\code{fec}}{Vector length \code{nsim}. Female fecundity of natural origin spawners.}
+\item{\code{fec}}{Numeric. Female fecundity of natural origin spawners.}
 
-\item{\code{p_female}}{Vector length \code{nsim}. The proportion of females in the spawning population.}
-
-\item{\code{Name}}{Character. Identifying name.}
+\item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
 
 \item{\code{capacity_smolt_improve}}{Numeric. The proportional change in the smolt capacity parameter in the projection period.
 For example, 1.1 represents a 10 percent improvement.}
@@ -47,21 +43,22 @@ For example, 1.1 represents a 10 percent improvement.}
 \item{\code{prod_smolt_improve}}{Numeric. The proportional change in the smolt productivity parameter in the projection period.
 For example, 1.1 represents a 10 percent improvement.}
 
-\item{\code{Name}}{Identifying name.}
-
-\item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if \code{n_yearling} and
+\item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if both \code{n_yearling} and
 \code{n_subyearling} are zero.}
 
-\item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if \code{n_yearling} and
+\item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if both \code{n_yearling} and
 \code{n_subyearling} are zero.}
 
-\item{\code{s_prespawn}}{Vector length \code{nsim}. The survival of broodtake prior to egg production. Default is 1.}
+\item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production.
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{s_egg_smolt}}{Vector length \code{nsim}. The survival of eggs to the smolt life stage (for yearling release).}
+\item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the smolt life stage (for yearling release).
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{s_egg_subyearling}}{Vector length \code{nsim}. The survival of eggs to subyearling life stage (for subyearling release).}
+\item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{gamma}}{Vector length \code{nsim}. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
+\item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
 \item{\code{pmax_NOB}}{Numeric. The maximum ratio of natural origin broodtake to the natural origin escapement.}
 
@@ -72,13 +69,13 @@ ensure a high proportion of NOS).}
 
 \item{\code{fec_brood}}{Numeric. The fecundity of broodtake.}
 
-\item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford", "Busack", or "none".}
+\item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".}
 
 \item{\code{theta}}{Vector length 3.}
 
 \item{\code{rel_loss}}{Vector length 3.}
 
-\item{\code{Zpop_start}}{Vector length 3.}
+\item{\code{pbar_start}}{Vector length 2.}
 
 \item{\code{fitness_variance}}{Numeric.}
 
@@ -87,8 +84,6 @@ ensure a high proportion of NOS).}
 \item{\code{heritability}}{Numeric.}
 
 \item{\code{fitness_floor}}{Numeric.}
-
-\item{\code{Name}}{Character. Identifying name.}
 
 \item{\code{u}}{Numeric. The exploitation rate of the return.}
 

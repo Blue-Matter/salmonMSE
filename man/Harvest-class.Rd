@@ -10,7 +10,7 @@ The component of the operating model that controls harvest.
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Character. Identifying name.}
+\item{\code{Name}}{Character. Identifying name}
 
 \item{\code{u}}{Numeric. The exploitation rate of the return.}
 

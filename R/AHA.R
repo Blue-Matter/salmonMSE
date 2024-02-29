@@ -114,8 +114,9 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   }
 
   # Geometric mean BC55
-  surv_adult_return_geo <- log(surv_adult_return_apply[1:ngen]) %>% mean() %>% exp()
-  #surv_adult_return_geo <- log(surv_adult_return_apply[21:100]) %>% mean() %>% exp()
+  geomean <- function(x) exp(mean(log(x)))
+  surv_adult_return_geo <- geomean(surv_adult_return_apply[1:ngen])
+  #surv_adult_return_geo <- geomean(surv_adult_return_apply[21:100])
 
   # G (hatchery survival from release to adulthood)
   surv_release_adult <- surv_adult_return_apply * surv_adult_smolt_rel * surv_passage_juv

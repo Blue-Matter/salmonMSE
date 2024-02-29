@@ -14,21 +14,24 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Identifying name.}
+\item{\code{Name}}{Character. Identifying name}
 
-\item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if \code{n_yearling} and
+\item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if both \code{n_yearling} and
 \code{n_subyearling} are zero.}
 
-\item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if \code{n_yearling} and
+\item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if both \code{n_yearling} and
 \code{n_subyearling} are zero.}
 
-\item{\code{s_prespawn}}{Vector length \code{nsim}. The survival of broodtake prior to egg production. Default is 1.}
+\item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production.
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{s_egg_smolt}}{Vector length \code{nsim}. The survival of eggs to the smolt life stage (for yearling release).}
+\item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the smolt life stage (for yearling release).
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{s_egg_subyearling}}{Vector length \code{nsim}. The survival of eggs to subyearling life stage (for subyearling release).}
+\item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
+Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{gamma}}{Vector length \code{nsim}. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
+\item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
 \item{\code{pmax_NOB}}{Numeric. The maximum ratio of natural origin broodtake to the natural origin escapement.}
 
@@ -39,13 +42,13 @@ ensure a high proportion of NOS).}
 
 \item{\code{fec_brood}}{Numeric. The fecundity of broodtake.}
 
-\item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford", "Busack", or "none".}
+\item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".}
 
 \item{\code{theta}}{Vector length 3.}
 
 \item{\code{rel_loss}}{Vector length 3.}
 
-\item{\code{Zpop_start}}{Vector length 3.}
+\item{\code{pbar_start}}{Vector length 2.}
 
 \item{\code{fitness_variance}}{Numeric.}
 
