@@ -51,7 +51,6 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
                         fitness_args, p_r) {
 
   output <- match.arg(output)
-  fitness_type <- match.arg(fitness_type)
   broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg)
 
   if (output == "hatchery") {
@@ -60,7 +59,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
     return(smolt)
 
   } else if (output == "natural") {
-
+    fitness_type <- match.arg(fitness_type)
     spawners <- structure(N - broodtake, names = c("NOS", "HOS"))
     spawners[2] <- spawners[2] * premove_HOS
 
@@ -121,12 +120,12 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
       }
       Ford <- data.frame(
         x = x,
-        pbar = fitness_calcs$pbar,
-        fitness_1 = fitness[1],
-        fitness_2 = fitness[2],
-        fitness_3 = fitness[3],
         p_r = p_r,
-        t = t + 1
+        t = t + 1,
+        pbar = pbar,
+        fitness = fitness,
+        pNOB = as.numeric(pNOB),
+        pHOS = as.numeric(pHOS)
       )
 
       fitness_env$Ford <- rbind(fitness_env$Ford, Ford)
@@ -226,7 +225,11 @@ predict.RelSmolt <- function(object, newdata, ...) {
     stop(paste("Provide a data frame with column names:", paste(vars_Rel, collapse = ", "), "in newdata."))
   }
 
-  object$func(newdata[vars_Rel] %>% as.numeric())
+  vars_data <- sapply(vars, function(x) strsplit(x, "_")[[1]][1])
+  vars_call <- unique(vars_data)
+  args <- lapply(vars_call, function(x) newdata[vars_data == x] %>% as.numeric()) %>%
+    structure(names = vars_call)
+  do.call(object$func, args)
 }
 
 #' @export
