@@ -52,23 +52,19 @@
     
 
 <dl><dt><code>Name</code></dt>
-<dd><p>Name of the operating modelx</p></dd>
+<dd><p>Character. Identifying name</p></dd>
 
 
 <dt><code>nyears</code></dt>
-<dd><p>The number of historical years</p></dd>
+<dd><p>Integer. The number of historical years</p></dd>
 
 
 <dt><code>proyears</code></dt>
-<dd><p>The number of projected years</p></dd>
+<dd><p>Integer. The number of projected years</p></dd>
 
 
 <dt><code>seed</code></dt>
-<dd><p>A random seed to ensure users can reproduce results exactly</p></dd>
-
-
-<dt><code>Name</code></dt>
-<dd><p>Identifying name.</p></dd>
+<dd><p>Integer. A random seed to ensure users can reproduce results exactly</p></dd>
 
 
 <dt><code>nsim</code></dt>
@@ -98,15 +94,11 @@ Natural per-capita smolt production as the population approaches zero (density-i
 
 
 <dt><code>fec</code></dt>
-<dd><p>Vector length <code>nsim</code>. Female fecundity of natural origin spawners.</p></dd>
+<dd><p>Numeric. Female fecundity of natural origin spawners.</p></dd>
 
 
 <dt><code>p_female</code></dt>
-<dd><p>Vector length <code>nsim</code>. The proportion of females in the spawning population.</p></dd>
-
-
-<dt><code>Name</code></dt>
-<dd><p>Character. Identifying name.</p></dd>
+<dd><p>Numeric. The proportion of females in the spawning population.</p></dd>
 
 
 <dt><code>capacity_smolt_improve</code></dt>
@@ -119,34 +111,33 @@ For example, 1.1 represents a 10 percent improvement.</p></dd>
 For example, 1.1 represents a 10 percent improvement.</p></dd>
 
 
-<dt><code>Name</code></dt>
-<dd><p>Identifying name.</p></dd>
-
-
 <dt><code>n_yearling</code></dt>
-<dd><p>Numeric. The number of yearlings released. No hatchery is modeled if <code>n_yearling</code> and
+<dd><p>Numeric. The number of yearlings released. No hatchery is modeled if both <code>n_yearling</code> and
 <code>n_subyearling</code> are zero.</p></dd>
 
 
 <dt><code>n_subyearling</code></dt>
-<dd><p>Numeric. The number of subyearlings released. No hatchery is modeled if <code>n_yearling</code> and
+<dd><p>Numeric. The number of subyearlings released. No hatchery is modeled if both <code>n_yearling</code> and
 <code>n_subyearling</code> are zero.</p></dd>
 
 
 <dt><code>s_prespawn</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of broodtake prior to egg production. Default is 1.</p></dd>
+<dd><p>Numeric. The survival of broodtake prior to egg production.
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>s_egg_smolt</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of eggs to the smolt life stage (for yearling release).</p></dd>
+<dd><p>Numeric. The survival of eggs to the smolt life stage (for yearling release).
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>s_egg_subyearling</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of eggs to subyearling life stage (for subyearling release).</p></dd>
+<dd><p>Numeric. The survival of eggs to subyearling life stage (for subyearling release).
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>gamma</code></dt>
-<dd><p>Vector length <code>nsim</code>. The relative fecundity of hatchery origin spawners relative to natural origin spawners.</p></dd>
+<dd><p>Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.</p></dd>
 
 
 <dt><code>pmax_NOB</code></dt>
@@ -167,7 +158,7 @@ ensure a high proportion of NOS).</p></dd>
 
 
 <dt><code>fitness_type</code></dt>
-<dd><p>Character. Fitness function for hatchery origin spawners. Either "Ford", "Busack", or "none".</p></dd>
+<dd><p>Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".</p></dd>
 
 
 <dt><code>theta</code></dt>
@@ -178,8 +169,8 @@ ensure a high proportion of NOS).</p></dd>
 <dd><p>Vector length 3.</p></dd>
 
 
-<dt><code>Zpop_start</code></dt>
-<dd><p>Vector length 3.</p></dd>
+<dt><code>pbar_start</code></dt>
+<dd><p>Vector length 2.</p></dd>
 
 
 <dt><code>fitness_variance</code></dt>
@@ -196,10 +187,6 @@ ensure a high proportion of NOS).</p></dd>
 
 <dt><code>fitness_floor</code></dt>
 <dd><p>Numeric.</p></dd>
-
-
-<dt><code>Name</code></dt>
-<dd><p>Character. Identifying name.</p></dd>
 
 
 <dt><code>u</code></dt>

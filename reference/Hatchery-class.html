@@ -57,33 +57,36 @@
     
 
 <dl><dt><code>Name</code></dt>
-<dd><p>Identifying name.</p></dd>
+<dd><p>Character. Identifying name</p></dd>
 
 
 <dt><code>n_yearling</code></dt>
-<dd><p>Numeric. The number of yearlings released. No hatchery is modeled if <code>n_yearling</code> and
+<dd><p>Numeric. The number of yearlings released. No hatchery is modeled if both <code>n_yearling</code> and
 <code>n_subyearling</code> are zero.</p></dd>
 
 
 <dt><code>n_subyearling</code></dt>
-<dd><p>Numeric. The number of subyearlings released. No hatchery is modeled if <code>n_yearling</code> and
+<dd><p>Numeric. The number of subyearlings released. No hatchery is modeled if both <code>n_yearling</code> and
 <code>n_subyearling</code> are zero.</p></dd>
 
 
 <dt><code>s_prespawn</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of broodtake prior to egg production. Default is 1.</p></dd>
+<dd><p>Numeric. The survival of broodtake prior to egg production.
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>s_egg_smolt</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of eggs to the smolt life stage (for yearling release).</p></dd>
+<dd><p>Numeric. The survival of eggs to the smolt life stage (for yearling release).
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>s_egg_subyearling</code></dt>
-<dd><p>Vector length <code>nsim</code>. The survival of eggs to subyearling life stage (for subyearling release).</p></dd>
+<dd><p>Numeric. The survival of eggs to subyearling life stage (for subyearling release).
+Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
 <dt><code>gamma</code></dt>
-<dd><p>Vector length <code>nsim</code>. The relative fecundity of hatchery origin spawners relative to natural origin spawners.</p></dd>
+<dd><p>Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.</p></dd>
 
 
 <dt><code>pmax_NOB</code></dt>
@@ -104,7 +107,7 @@ ensure a high proportion of NOS).</p></dd>
 
 
 <dt><code>fitness_type</code></dt>
-<dd><p>Character. Fitness function for hatchery origin spawners. Either "Ford", "Busack", or "none".</p></dd>
+<dd><p>Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".</p></dd>
 
 
 <dt><code>theta</code></dt>
@@ -115,8 +118,8 @@ ensure a high proportion of NOS).</p></dd>
 <dd><p>Vector length 3.</p></dd>
 
 
-<dt><code>Zpop_start</code></dt>
-<dd><p>Vector length 3.</p></dd>
+<dt><code>pbar_start</code></dt>
+<dd><p>Vector length 2.</p></dd>
 
 
 <dt><code>fitness_variance</code></dt>
@@ -159,11 +162,11 @@ ensure a high proportion of NOS).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:               gamma           pmax_NOB        ptarget_NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_HOS              theta           rel_loss</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_HOS          fec_brood       fitness_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric          character</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type         Zpop_start</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               theta           rel_loss         pbar_start</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:    fitness_variance selection_strength       heritability</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
