@@ -2,6 +2,7 @@
 
 S3method(predict,RelSmolt)
 S3method(simulate,RelSmolt)
+export(MMSE2SMSE)
 export(SOM)
 export(SOM2MOM)
 export(fitness_env)
