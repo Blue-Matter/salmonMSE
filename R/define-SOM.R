@@ -183,23 +183,112 @@ setMethod("initialize", "SOM",
           function(.Object, Bio, Habitat, Hatchery, Harvest,
                    nyears = 2, proyears = 20, seed = 1, ...) {
 
-  dots <- list(...)
+            dots <- list(...)
 
-  if (is.null(dots$Name)) .Object@Name <- "Salmon operating model"
-  .Object@nyears <- nyears
-  .Object@proyears <- proyears
-  .Object@seed <- seed
+            if (is.null(dots$Name)) .Object@Name <- "Salmon operating model"
+            .Object@nyears <- nyears
+            .Object@proyears <- proyears
+            .Object@seed <- seed
 
-  if (!missing(Bio)) for(i in slotNames(Bio)) slot(.Object, i) <- slot(Bio, i)
-  if (!missing(Habitat)) for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
-  if (!missing(Hatchery)) for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
-  if (!missing(Harvest)) for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
+            if (!missing(Bio)) for(i in slotNames(Bio)) slot(.Object, i) <- slot(Bio, i)
+            if (!missing(Habitat)) for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
+            if (!missing(Hatchery)) for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
+            if (!missing(Harvest)) for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
 
-  attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
-  attr(.Object, "date") <- date()
-  attr(.Object, "R.version") <- getRversion()
+            attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
+            attr(.Object, "date") <- date()
+            attr(.Object, "R.version") <- getRversion()
 
-  return(.Object)
-})
+            return(.Object)
+          })
 
+
+# ---- SMSE Class -----
+#' Class \code{"SMSE"}
+#'
+#' Stores the outputs from the simulation of salmon operating models.
+#'
+#' @name SMSE-class
+#' @docType class
+#' @slot Name Character. Identifying name
+#' @slot nyears Integer. The number of historical years
+#' @slot proyears Integer. The number of projected years
+#' @slot nsim Integer. The number of simulations
+#' @slot nstocks Integer. The number of stocks
+#' @slot Snames Character. Stock names
+#' @slot Fry_NOS Array `[nsim, nstocks, proyears]`. Spawning output of natural origin spawners.
+#' @slot Fry_HOS Array `[nsim, nstocks, proyears]`. Spawning output of hatchery origin spawners.
+#' @slot Smolts_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners from the previous generation.
+#' @slot Smolts_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners from the previous generation.
+#' @slot Smolts_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake from the previous generation, i.e., hatchery releases.
+#' @slot Return_NOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be natural origin spawners.
+#' @slot Return_HOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be hatchery origin spawners.
+#' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
+#' @slot Escapement_HOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be hatchery origin spawners.
+#' @slot NOB Array `[nsim, nstocks, nage, proyears]`. The broodtake of fish that would be natural origin spawners.
+#' @slot HOB Array `[nsim, nstocks, nage, proyears]`. The broodtake of fish that would be hatchery origin spawners.
+#' @slot NOS Array `[nsim, nstocks, nage, proyears]`. Natural origin spawners.
+#' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners.
+#' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners discounted by `gamma`.
+#' @slot Catch_NOS Array `[nsim, nstocks, nage, proyears]`. Catch of natural origin spawners.
+#' @slot Catch_HOS Array `[nsim, nstocks, nage, proyears]`. Catch of hatchery origin spawners.
+#' @slot U_NOS Array `[nsim, nstocks, proyears]`. Harvest rate of natural origin spawners.
+#' @slot U_HOS Array `[nsim, nstocks, proyears]`. Harvest rate of hatchery origin spawners.
+#' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness.
+#' @slot SAR_loss Array `[nsim, nstocks, proyears]`. Realized SAR due to fitness loss.
+#' @slot Misc List. Miscellaneous output
+#'
+#' @section Creating Object:
+#' Objects can be created by calls of the form \code{new("SMSE")}
+#'
+#' @export
+#' @keywords classes
+#' @examples
+#' showClass("SMSE")
+setClass(
+  "SMSE",
+  slots = c(
+    Name = "character",
+    nyears = "numeric",
+    proyears = "numeric",
+    nsim = "numeric",
+    nstocks = "numeric",
+    Snames = "character",
+    Smolts_NOS = "array",
+    Smolts_HOS = "array",
+    Smolts_Rel = "array",
+    Return_NOS = "array",
+    Return_HOS = "array",
+    Escapement_NOS = "array",
+    Escapement_HOS = "array",
+    NOB = "array",
+    HOB = "array",
+    NOS = "array",
+    HOS = "array",
+    HOS_effective = "array",
+    Catch_NOS = "array",
+    Catch_HOS = "array",
+    U_NOS = "array",
+    U_HOS = "array",
+    fitness = "array",
+    SAR_loss = "array",
+    Misc = "list"
+  )
+)
+
+
+setMethod("initialize", "SMSE",
+          function(.Object, ...) {
+
+            dots <- list(...)
+            if (length(dots)) {
+              for (i in names(dots)) slot(.Object, i) <- dots[[i]]
+            }
+
+            attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
+            attr(.Object, "date") <- date()
+            attr(.Object, "R.version") <- getRversion()
+
+            return(.Object)
+          })
 
