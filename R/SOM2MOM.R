@@ -1,5 +1,7 @@
 
 #' @export
+#' @return
+#' `SOM2MOM`: \linkS4class{MOM} object
 #' @rdname salmonMSE
 SOM2MOM <- function(SOM) {
 
@@ -133,8 +135,7 @@ SOM2MOM <- function(SOM) {
     fitness_args <- list()
 
     if (do_hatchery && SOM@fitness_type == "Ford") {
-
-      fitness_env$Ford <- data.frame()
+      fitness_env$Ford <- data.frame() # Environment in salmonMSE package
 
       fitness_args <- local({
         omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
@@ -151,9 +152,6 @@ SOM2MOM <- function(SOM) {
           pbar_start = SOM@pbar_start
         )
       })
-
-      # Need an age-specific MICE rel for fitness function during the marine phase
-
     }
 
     # Natural smolt production from NOS and HOS escapement
@@ -167,11 +165,19 @@ SOM2MOM <- function(SOM) {
       fitness_args = fitness_args
     )
 
+    # Marine survival reduced by fitness
+    if (SOM@fitness_type != "none") {
+      Rel[[2]] <- makeRel_SAR(
+        p_r = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
+        age_mat = which(SOM@p_mature == 1)[1]
+      )
+    }
   }
 
   if (do_hatchery) {
+    nRel <- length(Rel)
     # Hatchery smolt releases from NOS and HOS escapement
-    Rel[[2]] <- makeRel_smolt(
+    Rel[[nRel + 1]] <- makeRel_smolt(
       p_r = 3, p_natural = 2, p_hatchery = 4, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,

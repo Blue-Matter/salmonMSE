@@ -3,17 +3,19 @@
 #' Run salmonMSE
 #'
 #' @description
-#' Runs a salmon management strategy evaluation through the following steps:
+#' `salmonMSE ` runs a salmon management strategy evaluation through the following steps:
 #' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via `SOM2MOM`
-#' - Creates a harvest management procedure specifying harvest rate
+#' - Creates a harvest management procedure specifying the harvest control rule
 #' - Generates the historical reconstruction of the state dynamics
-#' - Runs projection (if `Hist = TRUE`)
+#' - Runs projection (if `Hist = FALSE`)
 #' - Converts the openMSE output into a salmon MSE object (SMSE) via `MMSE2SMSE`
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param Hist Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data
 #' @param silent Logical, whether to report progress in console bar
 #' @param trace Logical, whether to report additional messages from openMSE
 #' @param convert Logical, whether to convert the output into a salmon MSE (SMSE) object
+#' @return
+#' `salmonMSE`: if `Hist = TRUE` a multiHist object (list). Otherwise, if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
@@ -33,11 +35,11 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   if (!silent) message("Running forward projections..")
   M <- ProjectMOM(H, MPs = "Harvest_MMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
                   dropHist = TRUE, extended = FALSE)
-  M@Hist <- H
+  M@multiHist <- H
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
-    SMSE <- MMSE2SMSE(M)
+    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP)
   } else {
     return(M)
   }

@@ -6,14 +6,18 @@
 \alias{salmonMSE}
 \title{Run salmonMSE}
 \usage{
-MMSE2SMSE(MMSE)
+MMSE2SMSE(MMSE, SOM, Harvest_MMP)
 
 SOM2MOM(SOM)
 
 salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 }
 \arguments{
+\item{MMSE}{Object of class \linkS4class{MMSE} returned from MSEtool}
+
 \item{SOM}{An object of class \linkS4class{SOM}}
+
+\item{Harvest_MMP}{Optional harvest function created by \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}}}
 
 \item{Hist}{Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data}
 
@@ -23,13 +27,20 @@ salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 
 \item{convert}{Logical, whether to convert the output into a salmon MSE (SMSE) object}
 }
+\value{
+\code{MMSE2SMSE}: \linkS4class{SMSE} object
+
+\code{SOM2MOM}: \linkS4class{MOM} object
+
+\code{salmonMSE}: if \code{Hist = TRUE} a multiHist object (list). Otherwise, if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \linkS4class{MMSE} object.
+}
 \description{
-Runs a salmon management strategy evaluation through the following steps:
+\code{salmonMSE } runs a salmon management strategy evaluation through the following steps:
 \itemize{
 \item Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via \code{SOM2MOM}
-\item Creates a harvest management procedure specifying harvest rate
+\item Creates a harvest management procedure specifying the harvest control rule
 \item Generates the historical reconstruction of the state dynamics
-\item Runs projection (if \code{Hist = TRUE})
+\item Runs projection (if \code{Hist = FALSE})
 \item Converts the openMSE output into a salmon MSE object (SMSE) via \code{MMSE2SMSE}
 }
 }

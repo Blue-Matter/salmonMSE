@@ -2,13 +2,9 @@
 
 # Only used if there is a hatchery
 
-## Internal function to predict either:
-# (a) "survival" from broodtake of escapement to spawning
+## Internal functions to predict either:
 # (b) smolt hatchery production
 # (c) smolt natural production
-# ii = Stock number of adult NOS
-# jj = Stock number of adult HOS
-# ... = Broodtake hatchery parameters
 calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, brood_local,
                            fec_brood, s_egg) {
 
@@ -43,7 +39,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 }
 
 
-.smolt_func <- function(N, x = 1, output = c("natural", "hatchery"),
+.smolt_func <- function(N, x, output = c("natural", "hatchery"),
                         ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, # Spawning (natural production)
                         SRRpars_hist, SRRpars_proj,
@@ -61,7 +57,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
   } else if (output == "natural") {
     fitness_type <- match.arg(fitness_type)
     spawners <- structure(N - broodtake, names = c("NOS", "HOS"))
-    spawners[2] <- spawners[2] * premove_HOS
+    spawners[2] <- spawners[2] * (1 - premove_HOS)
 
     NOS <- spawners[1]
     HOS <- spawners[2]
@@ -74,18 +70,26 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 
     if (!total_fry) return(0)
 
-    alpha_hist <- SRRpars_hist["alpha", x]
-    beta_hist <- SRRpars_hist["beta", x]
+    if (missing(x)) {
+      alpha_hist <- SRRpars_hist["alpha", 1]
+      beta_hist <- SRRpars_hist["beta", 1]
 
-    alpha_proj <- SRRpars_proj["alpha", x]
-    beta_proj <- SRRpars_proj["beta", x]
+      alpha_proj <- SRRpars_proj["alpha", 1]
+      beta_proj <- SRRpars_proj["beta", 1]
+    } else {
+      alpha_hist <- SRRpars_hist["alpha", x]
+      beta_hist <- SRRpars_hist["beta", x]
+
+      alpha_proj <- SRRpars_proj["alpha", x]
+      beta_proj <- SRRpars_proj["beta", x]
+    }
 
     # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production)
     fry_openMSE <- N[1] * p_female * fec
     smolt_NOS_SRR <- .AHA_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
 
     # Predicted smolts from projected SRR parameters and fitness
-    if (fitness_type == "Ford") {
+    if (fitness_type == "Ford" && !missing(x)) {
       pNOB <- broodtake[1]/sum(broodtake)
       pHOS <- HOS_effective/(NOS + HOS_effective)
 
@@ -130,7 +134,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 
       fitness_env$Ford <- rbind(fitness_env$Ford, Ford)
 
-    } else if (fitness_type == "none") {
+    } else { #if (fitness_type == "none") {
       prod_smolt <- alpha_proj
       capacity_smolt <- alpha_proj/beta_proj
     }
@@ -210,6 +214,7 @@ makeRel_smolt <- function(p_r = 1, p_natural = 2, p_hatchery = 4,
   structure(out, class = "RelSmolt")
 }
 
+#' @importFrom stats predict
 #' @export
 predict.RelSmolt <- function(object, newdata, ...) {
 
@@ -232,6 +237,7 @@ predict.RelSmolt <- function(object, newdata, ...) {
   do.call(object$func, args)
 }
 
+#' @importFrom stats simulate
 #' @export
 simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
@@ -244,3 +250,63 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
 }
 
+# Marine survival of natural origin smolts, as reduced by fitness
+# N is a dummy variable
+.SAR_fitness <- function(N, x = 1,
+                         fitness_type = c("Ford", "none"), # Spawning (natural production)
+                         SAR = 0.01, rel_loss = 1, p_r = 1) {
+
+  fitness_type <- match.arg(fitness_type)
+  stopifnot(fitness_type == "Ford")
+
+  if (nrow(fitness_env$Ford)) {
+    fitness <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
+      pull(.data$fitness) %>% unique()
+    if (!length(fitness)) fitness <- 1
+  } else {
+    fitness <- 1
+  }
+
+  fitness_loss <- fitness^rel_loss
+  SAR_loss <- SAR[x] * fitness_loss
+  M_loss <- -log(SAR_loss)
+  return(M_loss)
+}
+
+
+makeRel_SAR <- function(p_r = 1, fitness_type = c("Ford", "none"), SAR, rel_loss, age_mat) {
+
+  fitness_type <- match.arg(fitness_type)
+  stopifnot(fitness_type == "Ford")
+
+  func <- .SAR_fitness
+
+  formals(func)$p_r <- p_r
+  formals(func)$rel_loss <- rel_loss
+  formals(func)$fitness_type <- fitness_type
+  formals(func)$SAR <- SAR
+
+  model <- data.frame(M = -log(SAR[1]), N = seq(0, 10), x = 1)
+
+  response <- paste0("M_", p_r)
+  input <- paste0("N_", p_r)
+  terms <- c(response, input, "x")
+
+  out <- list(
+    func = func,
+    model = structure(model, names = terms),
+    fitted.values = model$M,
+    CV = 0,
+    terms = terms,
+    type = "Natural mortality",
+    Rel = "Marine survival reduced by fitness"
+  )
+  if (!missing(age_mat)) out$age <- age_mat - 2
+  structure(out, class = "SARfitness")
+}
+
+#' @export
+predict.SARfitness <- predict.RelSmolt
+
+#' @export
+simulate.SARfitness <- simulate.RelSmolt
