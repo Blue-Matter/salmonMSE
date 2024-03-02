@@ -135,8 +135,6 @@ SOM2MOM <- function(SOM) {
     fitness_args <- list()
 
     if (do_hatchery && SOM@fitness_type == "Ford") {
-      fitness_env$Ford <- data.frame() # Environment in salmonMSE package
-
       fitness_args <- local({
         omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
         omega2 <- omega * omega

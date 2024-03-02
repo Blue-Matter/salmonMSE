@@ -93,9 +93,9 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
       pNOB <- broodtake[1]/sum(broodtake)
       pHOS <- HOS_effective/(NOS + HOS_effective)
 
-      # Get pbar from fitness_env
-      if (nrow(fitness_env$Ford)) {
-        pbar_prev <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
+      # Get pbar from salmonMSE_env
+      if (nrow(salmonMSE_env$Ford)) {
+        pbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
           pull(.data$pbar)
         if (!length(pbar_prev)) pbar_prev <- fitness_args$pbar_start
       } else {
@@ -115,14 +115,14 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
       capacity_smolt <- alpha_proj/beta_proj * prod(fitness_loss[1:2])
 
       # Save pbar and fitness for next generation
-      if (nrow(fitness_env$Ford)) {
-        t <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
+      if (nrow(salmonMSE_env$Ford)) {
+        t <- filter(salmonMSE_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
           pull(.data$t) %>% unique()
         if (!length(t)) t <- 1
       } else {
         t <- 1
       }
-      Ford <- data.frame(
+      df_Ford <- data.frame(
         x = x,
         p_r = p_r,
         t = t + 1,
@@ -132,7 +132,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
         pHOS = as.numeric(pHOS)
       )
 
-      fitness_env$Ford <- rbind(fitness_env$Ford, Ford)
+      salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
 
     } else { #if (fitness_type == "none") {
       prod_smolt <- alpha_proj
@@ -143,10 +143,34 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
     smolt_HOS_proj <- .AHA_SRR(fry_HOS, total_fry, p = prod_smolt, capacity = capacity_smolt)
     total_smolt <- smolt_NOS_proj + smolt_HOS_proj
 
+    if (!missing(x)) {
+      # Save fry, smolts, and spawners for next generation
+      if (nrow(salmonMSE_env$N)) {
+        t <- filter(salmonMSE_env$N, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
+          pull(.data$t) %>% unique()
+        if (!length(t)) t <- 1
+      } else {
+        t <- 1
+      }
+
+      df_N <- data.frame(
+        x = x,
+        p_r = p_r,
+        t = t + 1,
+        NOS = NOS,
+        HOS = HOS,
+        HOS_effective = HOS_effective,
+        fry_NOS = fry_NOS,
+        fry_HOS = fry_HOS,
+        smolt_NOS = smolt_NOS_proj,
+        smolt_HOS = smolt_HOS_proj
+      )
+      salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
+    }
+
     Perr_y <- total_smolt/smolt_NOS_SRR
     return(Perr_y)
   }
-
 }
 
 makeRel_smolt <- function(p_r = 1, p_natural = 2, p_hatchery = 4,
@@ -259,8 +283,8 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   fitness_type <- match.arg(fitness_type)
   stopifnot(fitness_type == "Ford")
 
-  if (nrow(fitness_env$Ford)) {
-    fitness <- filter(fitness_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
+  if (nrow(salmonMSE_env$Ford)) {
+    fitness <- filter(salmonMSE_env$Ford, x == .env$x, p_r == .env$p_r, t == max(.data$t)) %>%
       pull(.data$fitness) %>% unique()
     if (!length(fitness)) fitness <- 1
   } else {

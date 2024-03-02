@@ -24,6 +24,9 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u)
 
+  if (SOM@fitness_type == "Ford") salmonMSE_env$Ford <- data.frame()
+  if (SOM@n_yearling > 0 || SOM@n_subyearling > 0) salmonMSE_env$N <- data.frame()
+
   if (!silent) message("Generating historical dynamics..")
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
 
