@@ -28,10 +28,10 @@
     <loc>https://docs.salmonmse.com/reference/Hatchery-class.html</loc>
   </url>
   <url>
-    <loc>https://docs.salmonmse.com/reference/SOM-class.html</loc>
+    <loc>https://docs.salmonmse.com/reference/SMSE-class.html</loc>
   </url>
   <url>
-    <loc>https://docs.salmonmse.com/reference/fitness_env.html</loc>
+    <loc>https://docs.salmonmse.com/reference/SOM-class.html</loc>
   </url>
   <url>
     <loc>https://docs.salmonmse.com/reference/index.html</loc>
@@ -41,5 +41,8 @@
   </url>
   <url>
     <loc>https://docs.salmonmse.com/reference/salmonMSE.html</loc>
+  </url>
+  <url>
+    <loc>https://docs.salmonmse.com/reference/salmonMSE_env.html</loc>
   </url>
 </urlset>
