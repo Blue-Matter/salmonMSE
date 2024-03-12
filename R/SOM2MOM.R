@@ -154,7 +154,7 @@ SOM2MOM <- function(SOM) {
 
     # Natural smolt production from NOS and HOS escapement
     Rel[[1]] <- makeRel_smolt(
-      p_r = 1, p_natural = 2, p_hatchery = 4, output = "natural",
+      p_smolt = 1, p_natural = 2, p_hatchery = 4, output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
@@ -163,10 +163,14 @@ SOM2MOM <- function(SOM) {
       fitness_args = fitness_args
     )
 
-    # Marine survival reduced by fitness
+    # Marine survival of natural and hatchery fish reduced by fitness
     if (SOM@fitness_type != "none") {
       Rel[[2]] <- makeRel_SAR(
-        p_r = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
+        p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
+        age_mat = which(SOM@p_mature == 1)[1]
+      )
+      Rel[[3]] <- makeRel_SAR(
+        p_smolt = 3, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
         age_mat = which(SOM@p_mature == 1)[1]
       )
     }
@@ -176,7 +180,7 @@ SOM2MOM <- function(SOM) {
     nRel <- length(Rel)
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
-      p_r = 3, p_natural = 2, p_hatchery = 4, output = "hatchery",
+      p_smolt = 3, p_natural = 2, p_hatchery = 4, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
