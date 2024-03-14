@@ -47,6 +47,8 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
                         fitness_args, p_smolt) {
 
   output <- match.arg(output)
+
+  N[is.na(N)] <- 0
   broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg)
 
   if (output == "hatchery") {
@@ -81,7 +83,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
     smolt_NOS_SRR <- .AHA_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
 
     # Predicted smolts from projected SRR parameters and fitness
-    if (fitness_type == "Ford" && x > 0) {
+    if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
       pNOB <- broodtake[1]/sum(broodtake)
       pHOS <- HOS_effective/(NOS + HOS_effective)
 
@@ -305,10 +307,16 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
   if (nrow(salmonMSE_env$N) && x > 0) {
     fitness_df <- filter(salmonMSE_env$N, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
-    tmax <- max(fitness_df$t)
-    fitness <- filter(fitness_df, t == .env$tmax) %>%
-      pull(.data$fitness) %>% unique()
-    if (!length(fitness)) fitness <- 1
+
+    if (nrow(fitness_df)) {
+      tmax <- ifelse(nrow(fitness_df), max(fitness_df$t), 1)
+      fitness <- filter(fitness_df, t == .env$tmax) %>%
+        pull(.data$fitness) %>% unique()
+      if (!length(fitness)) fitness <- 1
+    } else {
+      fitness <- 1
+    }
+
   } else {
     fitness <- 1
   }
