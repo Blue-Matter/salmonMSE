@@ -1,26 +1,15 @@
 
 
-make_Stock <- function(SOM, NOS = TRUE, mature = TRUE) {
+make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement")) {
+  stage <- match.arg(stage)
 
   #### Stock object ----
   Stock <- new("Stock")
   cpars_bio <- list()
 
-  if (NOS) {
-    if (mature) {
-      Stock@Name <- "Adult NOS"
-    } else {
-      Stock@Name <- "Juvenile NOS"
-    }
-  } else {
-    if (mature) {
-      Stock@Name <- "Adult HOS"
-    } else {
-      Stock@Name <- "Juvenile HOS"
-    }
-  }
+  Stock@Name <- paste(ifelse(NOS, "NOS:", "HOS:"), stage)
 
-  # Two sub-annual steps needed for return year (Harvest in first half, then broodtake before spawning)
+  # Fish spawn at the beginning of the terminal age + 1
   Stock@maxage <- SOM@maxage
   n_age <- Stock@maxage + 1
 
@@ -106,7 +95,7 @@ make_Stock <- function(SOM, NOS = TRUE, mature = TRUE) {
   # Generate recruitment every generation
   Perr_y <- matrix(0, SOM@nsim, SOM@nyears + SOM@proyears)
 
-  if (NOS && !mature) {
+  if (NOS && stage == "immature") {
     # Hatchery population has no recruitment unless Perr_y is specified by MICE Rel
     # Only works for generation by generation
     age_mat <- which(SOM@p_mature > 0)[1]
@@ -119,7 +108,8 @@ make_Stock <- function(SOM, NOS = TRUE, mature = TRUE) {
 }
 
 
-make_Fleet <- function(SOM, NOS = TRUE, mature = TRUE) {
+make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement")) {
+  stage <- match.arg(stage)
 
   Fleet <- new("Fleet")
   Fleet@Name <- "Fishery"

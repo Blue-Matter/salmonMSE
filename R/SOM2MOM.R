@@ -2,7 +2,13 @@
 #' @export
 #' @return
 #' `SOM2MOM`: \linkS4class{MOM} object
-#' @rdname salmonMSE
+#' @name salmonMSE-int
+#' @title Internal salmonMSE functions for converting operating model inputs and outputs
+#'
+#' @description
+#' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
+#' - [MMSE2SMSE()] converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
+#' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
 SOM2MOM <- function(SOM) {
 
   # Check SOM here
@@ -22,12 +28,14 @@ SOM2MOM <- function(SOM) {
 
   ns <- 1
   Stocks <- list()
-  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, mature = FALSE)    # NOS_juv
-  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, mature = TRUE)     # NOS_adult
+  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
+  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
+  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
 
   if (do_hatchery) {
-    Stocks[[3]] <- make_Stock(SOM, NOS = FALSE, mature = FALSE) # HOS_juv
-    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, mature = TRUE)  # HOS_adult
+    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
+    Stocks[[5]] <- make_Stock(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
+    Stocks[[6]] <- make_Stock(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
   }
   np <- length(Stocks)
 
@@ -36,12 +44,14 @@ SOM2MOM <- function(SOM) {
   nf <- 1
 
   Fleets <- list()
-  Fleets[[1]] <- make_Fleet(SOM, NOS = TRUE, mature = FALSE)   # NOS_juv
-  Fleets[[2]] <- make_Fleet(SOM, NOS = TRUE, mature = TRUE)    # NOS_adult
+  Fleets[[1]] <- make_Fleet(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
+  Fleets[[2]] <- make_Fleet(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
+  Fleets[[3]] <- make_Fleet(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
 
   if (do_hatchery) {
-    Fleets[[3]] <- make_Fleet(SOM, NOS = FALSE, mature = FALSE) # HOS_juv
-    Fleets[[4]] <- make_Fleet(SOM, NOS = FALSE, mature = TRUE)  # HOS_adult
+    Fleets[[4]] <- make_Fleet(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
+    Fleets[[5]] <- make_Fleet(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
+    Fleets[[6]] <- make_Fleet(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
   }
 
   MOM@Stocks <- lapply(Stocks, getElement, "Stock")
@@ -68,22 +78,27 @@ SOM2MOM <- function(SOM) {
 
   # Specify smolt natural production from NOS population
   if (do_hatchery) {
-    SSBfrom <- matrix(0, 4, 4)
-    SSBfrom[3, 2] <- 1 # Triggers SRRfun so that there is hatchery production only when there are mature fish
+    SSBfrom <- matrix(0, 6, 6)
+    SSBfrom[4, 3] <- 1 # Triggers SRRfun so that there is hatchery production (p = 4) only when there is natural escapement (p = 3)
   } else {
-    SSBfrom <- matrix(0, 2, 2)
+    SSBfrom <- matrix(0, 3, 3)
   }
-  SSBfrom[1, 2] <- 1 # Recruitment of juv NOS comes from adult NOS population
+  SSBfrom[1, 3] <- 1 # Juv NOS predicted from NOS escapement
 
-  # Move juveniles to adult
-  Herm_agemat <- matrix(c(SOM@p_mature, 1), SOM@nsim, SOM@maxage + 1, byrow = TRUE)
-  Herm <- list()
-  Herm[[1]] <- Herm_agemat
-  names(Herm) <- c("H_2_1")
+  # Move stocks around
+  # First generate the escapement, then move juveniles to adult
+  first_mature_age <- which(SOM@p_mature > 0)[1]
+  Herm_escapement <- ifelse(0:SOM@maxage >= first_mature_age, 1, 0) %>% matrix(SOM@nsim, SOM@maxage + 1, byrow = TRUE)
+  Herm_mature <- matrix(c(SOM@p_mature, 1), SOM@nsim, SOM@maxage + 1, byrow = TRUE)
 
+  # For NOS
+  Herm <- list(Herm_escapement, Herm_mature)
+  names(Herm) <- c("H_3_2", "H_2_1")
+
+  # HOS
   if (do_hatchery) {
-    Herm[[2]] <- Herm_agemat
-    names(Herm)[2] <- c("H_4_3")
+    Herm <- c(Herm, Herm)
+    names(Herm)[3:4] <- c("H_6_5", "H_5_4")
   }
 
   MOM@SexPars <- list(SSBfrom = SSBfrom, Herm = Herm, share_par = FALSE)
@@ -109,7 +124,7 @@ SOM2MOM <- function(SOM) {
                  SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, SOM@fec, SOM@p_female)
   })
 
-  habitat_change <- any(abs(SRRpars_hist - SRRpars_proj) < 1e-8)
+  habitat_change <- any(abs(SRRpars_hist - SRRpars_proj) > 1e-8)
 
   if (do_hatchery) {
     # Determine the local brood from the number of yearling and subyearling releases, their survival from egg stage,
@@ -141,7 +156,7 @@ SOM2MOM <- function(SOM) {
 
         list(
           rel_loss = SOM@rel_loss,
-          omega2 = omega * omega,
+          omega2 = omega2,
           A = 1 - SOM@heritability * SOM@fitness_variance/(omega2 + SOM@fitness_variance),
           fitness_variance = SOM@fitness_variance,
           fitness_floor = SOM@fitness_floor,
@@ -152,9 +167,10 @@ SOM2MOM <- function(SOM) {
       })
     }
 
-    # Natural smolt production from NOS and HOS escapement
+    # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
-      p_smolt = 1, p_natural = 2, p_hatchery = 4, output = "natural",
+      p_smolt = 1, p_natural = 3, p_hatchery = 6, # NOTE: what to do if no hatchery?? p_hatchery needs to be undefined
+      output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
@@ -180,7 +196,7 @@ SOM2MOM <- function(SOM) {
     nRel <- length(Rel)
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
-      p_smolt = 3, p_natural = 2, p_hatchery = 4, output = "hatchery",
+      p_smolt = 4, p_natural = 3, p_hatchery = 6, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,

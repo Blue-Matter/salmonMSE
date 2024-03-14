@@ -3,19 +3,19 @@
 #' Run salmonMSE
 #'
 #' @description
-#' `salmonMSE ` runs a salmon management strategy evaluation through the following steps:
-#' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via `SOM2MOM`
+#' `salmonMSE()` runs a salmon management strategy evaluation through the following steps:
+#' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via [SOM2MOM()]
 #' - Creates a harvest management procedure specifying the harvest control rule
-#' - Generates the historical reconstruction of the state dynamics
+#' - Generates the historical reconstruction of the state variables
 #' - Runs projection (if `Hist = FALSE`)
-#' - Converts the openMSE output into a salmon MSE object (SMSE) via `MMSE2SMSE`
+#' - Converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (SMSE) via [MMSE2SMSE()]
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param Hist Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data
 #' @param silent Logical, whether to report progress in console bar
 #' @param trace Logical, whether to report additional messages from openMSE
 #' @param convert Logical, whether to convert the output into a salmon MSE (SMSE) object
 #' @return
-#' `salmonMSE`: if `Hist = TRUE` a multiHist object (list). Otherwise, if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
+#' If `Hist = TRUE` a multiHist object (list). Otherwise, if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
@@ -24,7 +24,9 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u)
 
-  if (SOM@fitness_type == "Ford") salmonMSE_env$Ford <- data.frame()
+  salmonMSE_env$Ford <- data.frame()
+  salmonMSE_env$N <- data.frame()
+
   if (SOM@n_yearling > 0 || SOM@n_subyearling > 0) salmonMSE_env$N <- data.frame()
 
   if (!silent) message("Generating historical dynamics..")
@@ -42,7 +44,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
-    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP)
+    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford)
   } else {
     return(M)
   }
