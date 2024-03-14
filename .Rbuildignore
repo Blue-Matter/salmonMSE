@@ -11,3 +11,4 @@
 ^man-roxygen$
 LICENSE
 ^tests$
+^examples$
