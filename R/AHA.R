@@ -1,48 +1,130 @@
 
 
+#' Implementation of All-H Analyzer in R
+#'
+#' Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA
+#' and salmonMSE.
+#'
+#' @param SOM An object of class \linkS4class{SOM}
+#' @param ngen Integer, the number of generations for which to run the simulation
+#'
+#' @export
+AHA <- function(SOM, ngen = 100) {
 
-AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
-                capacity_adult = 17250,
-                capacity_smolt = 1.917e6,
-                fec_NOR = 5040,
-                p_female = 0.49,
-                surv_ocean = 0.01,                    # Ocean dynamics
-                surv_passage_juv = 1,
-                surv_passage_adult = 1,
-                u_HOR = 1e-2 * c(3.8, 2.5, 0, 14),   # Harvest dynamics
-                u_NOR = 1e-2 * c(3.8, 2.5, 0, 14),
-                surv_pre_spawn = 1,                   ## Survival prior to spawning
-                fec_HOR = 5040,                       # In-hatchery
-                surv_egg_smolt = 1e-6,
-                surv_egg_subyearling = 0.92,
-                capacity_spawn_em = 1e12,                 ## Hard wired hatchery settings
-                capacity_smolt_adult = 1e12,
-                surv_adult_return_of_yearling = 1e-4,       # Post-hatchery
-                surv_adult_return_of_subyearling = 8.5e-3,
-                RRS_HOS = 0.8,
-                p_weir_efficiency = 0,
-                p_return_hatchery = 0.04,
-                n_release_yearling = 0,
-                n_release_subyearling = 2e6,
-                brood_import = 0,
-                brood_export = 0,
-                p_NOR_brood_max = 0.7,
-                p_HOS_goal = 0,
-                p_NOB_goal = 0.51,
-                SAR_vary = c("none", "PDO", "random"),
-                fitness_type = c("Ford", "Busack", "none"), # Fitness
-                theta = c(100, 80, 70),
-                rel_loss_egg = 0.5,
-                rel_loss_fry = 0.4,
-                rel_loss_smolt = 0.1,
-                Zpop_start = c(93.1, 92, 90),
-                fitness_variance = 10,
-                selection_strength = 3,
-                heritability = 0.5,
-                fitness_floor = 0.5,
-                strays_total = 0,
-                ngen = 100
-                ) {
+  output <- .AHA(
+    prod_adult = SOM@prod_smolt[1] * SOM@prod_smolt_improve * SOM@SAR[1],
+    capacity_adult = SOM@capacity_smolt[1] * SOM@capacity_smolt_improve * SOM@SAR[1],
+    #capacity_smolt = 1.917e6,
+    fec_spawn = SOM@fec,
+    p_female = SOM@p_female,
+    surv_ocean = SOM@SAR,
+    surv_passage_juv = 1,
+    surv_passage_adult = 1,
+    u_HOR = c(sum(SOM@u), 0, 0, 0),
+    u_NOR = c(sum(SOM@u), 0, 0, 0),
+    surv_pre_spawn = SOM@s_prespawn,
+    fec_brood = SOM@fec_brood,
+    surv_egg_smolt = SOM@s_egg_smolt,
+    surv_egg_subyearling = SOM@s_egg_subyearling,
+    capacity_spawn_em = 1e12,
+    capacity_smolt_adult = 1e12,
+    surv_adult_return_of_yearling = SOM@SAR[1],
+    surv_adult_return_of_subyearling = SOM@SAR[1],
+    RRS_HOS = SOM@gamma,
+    p_weir_efficiency = SOM@premove_HOS,
+    p_return_hatchery = 0,
+    n_release_yearling = SOM@n_yearling,
+    n_release_subyearling = SOM@n_subyearling,
+    brood_import = 0,
+    brood_export = 0,
+    p_NOR_brood_max = SOM@pmax_NOB,
+    p_HOS_goal = 0, # Not used
+    p_NOB_goal = SOM@ptarget_NOB,
+    SAR_vary = "none",
+    fitness_type = SOM@fitness_type, # Fitness
+    theta = SOM@theta,
+    rel_loss_egg = SOM@rel_loss[1],
+    rel_loss_fry = SOM@rel_loss[2],
+    rel_loss_smolt = SOM@rel_loss[3],
+    Zpop_start = c(SOM@pbar_start, 100),
+    fitness_variance = SOM@fitness_variance,
+    selection_strength = SOM@selection_strength,
+    heritability = SOM@heritability,
+    fitness_floor = SOM@fitness_floor,
+    strays_total = 0,
+    ngen = ngen
+  )
+
+  var_out <- c(
+    "NOR" = "Return_NOS",
+    "HOR" = "Return_HOS",
+    "harvest_NOR" = "Catch_NOS",
+    "harvest_HOR" = "Catch_HOS",
+    "escapement_NOR" = "Escapement_NOS",
+    "escapement_HOR" = "Escapement_HOS",
+    "NOB" = "NOB",
+    "HOB" = "HOB",
+    "NOS" = "NOS",
+    "HOS" = "HOS",
+    "HOS_effective" = "HOS_effective",
+    "fry_NOS" = "Fry_NOS",
+    "fry_HOS" = "Fry_HOS",
+    "fry_HOR" = "Fry_Rel",
+    "smolt_NOS" = "Smolt_NOS",
+    "smolt_HOS" = "Smolt_HOS",
+    "smolt_HOR" = "Smolt_Rel",
+    "fitness" = "fitness",
+    "SAR_loss" = "SAR_loss"
+  )
+
+  out <- lapply(names(var_out), function(x) {
+    sapply(output, getElement, x)
+  })
+
+  structure(out, names = var_out)
+}
+
+.AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
+                 capacity_adult = 17250,
+                 #capacity_smolt = 1.917e6,
+                 fec_spawn = 5040,
+                 p_female = 0.49,
+                 surv_ocean = 0.01,                    # Ocean dynamics
+                 surv_passage_juv = 1,
+                 surv_passage_adult = 1,
+                 u_HOR = 1e-2 * c(3.8, 2.5, 0, 14),   # Harvest dynamics
+                 u_NOR = 1e-2 * c(3.8, 2.5, 0, 14),
+                 surv_pre_spawn = 1,                   ## Survival prior to spawning
+                 fec_brood = 5040,                       # In-hatchery
+                 surv_egg_smolt = 1e-6,
+                 surv_egg_subyearling = 0.92,
+                 capacity_spawn_em = 1e12,                 ## Hard wired hatchery settings
+                 capacity_smolt_adult = 1e12,
+                 surv_adult_return_of_yearling = 1e-4,       # Post-hatchery
+                 surv_adult_return_of_subyearling = 8.5e-3,
+                 RRS_HOS = 0.8,
+                 p_weir_efficiency = 0,
+                 p_return_hatchery = 0.04,
+                 n_release_yearling = 0,
+                 n_release_subyearling = 2e6,
+                 brood_import = 0,
+                 brood_export = 0,
+                 p_NOR_brood_max = 0.7,
+                 p_HOS_goal = 0,
+                 p_NOB_goal = 0.51,
+                 SAR_vary = c("none", "PDO", "random"),
+                 fitness_type = c("Ford", "Busack", "none"), # Fitness
+                 theta = c(100, 80, 70),
+                 rel_loss_egg = 0.5,
+                 rel_loss_fry = 0.4,
+                 rel_loss_smolt = 0.1,
+                 Zpop_start = c(93.1, 92, 90),
+                 fitness_variance = 10,
+                 selection_strength = 3,
+                 heritability = 0.5,
+                 fitness_floor = 0.5,
+                 strays_total = 0,
+                 ngen = 100) {
 
   SAR_vary <- match.arg(SAR_vary)
   stopifnot(SAR_vary == "none")
@@ -50,7 +132,7 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   fitness_type <- match.arg(fitness_type)
   if (fitness_type == "Busack") stop("Busack fitness calcs not completed yet")
   # Habitat section
-  prod_spawn_em <- fec_NOR * p_female
+  prod_spawn_em <- fec_spawn * p_female
 
   habitat_h8 <- 0.009 # See Excel spreadsheet
   surv_smolt_adult_obs <- surv_passage_juv * surv_ocean * surv_passage_adult # SAR, survival from release to adult return (22)
@@ -86,8 +168,8 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   p_subyearling <- 1 - p_yearling
 
   # (52)
-  brood_local <- n_release_yearling/(surv_pre_spawn * p_female * fec_HOR * surv_egg_smolt) +
-    n_release_subyearling/(surv_pre_spawn * p_female * fec_HOR * surv_egg_subyearling) - brood_import
+  brood_local <- n_release_yearling/(surv_pre_spawn * p_female * fec_brood * surv_egg_smolt) +
+    n_release_subyearling/(surv_pre_spawn * p_female * fec_brood * surv_egg_subyearling) - brood_import
 
   #SAR_rel (#56) Relative survival of hatchery origin fish after release from hatchery
   surv_adult_smolt_rel <- (surv_adult_return_of_yearling_applied * p_yearling +
@@ -99,7 +181,7 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   A <- 1 - heritability * fitness_variance/(omega2 + fitness_variance)
 
 
-  egg_per_spawner <- fec_HOR * surv_pre_spawn * p_female # E
+  egg_per_spawner <- fec_brood * surv_pre_spawn * p_female # E
   surv_egg_release <- surv_egg_subyearling * p_subyearling + surv_egg_smolt * p_yearling # F
 
   # BC
@@ -192,32 +274,32 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
 
   #AHA is always programmed so that NOR escapement is a minimum of 1.
   #NOB is limited by the max % of the NOR run specified in AHA
-  NOR_escapement <- do_harvest_NOR$N[nfishery + 1]
-  HOR_escapement <- do_harvest_HOR$N[nfishery + 1]
+  escapement_NOR <- do_harvest_NOR$N[nfishery + 1]
+  escapement_HOR <- do_harvest_HOR$N[nfishery + 1]
 
-  brood_NOB <- ifelse(NOR_escapement > 1,
-                      min(p_NOB_goal * brood_local, p_NOR_brood_max * (NOR_escapement - 1)),
+  brood_NOB <- ifelse(escapement_NOR > 1,
+                      min(p_NOB_goal * brood_local, p_NOR_brood_max * (escapement_NOR - 1)),
                       0)
 
   brood_HOB <- local({
-    aa <- min(brood_NOB/p_NOB_goal, brood_local, HOR_escapement)
+    aa <- min(brood_NOB/p_NOB_goal, brood_local, escapement_HOR)
     bb <- max(brood_local, aa)
-    cc <- min(brood_local, HOR_escapement)
+    cc <- min(brood_local, escapement_HOR)
     dd <- ifelse(p_NOB_goal > 0, bb - brood_NOB, cc)
     ee <- max(0, dd)
 
-    min(ee, p_return_hatchery * HOR_escapement)
+    min(ee, p_return_hatchery * escapement_HOR)
   })
 
   total_brood <- brood_NOB + brood_HOB + brood_import
 
-  NOS <- NOR_escapement - brood_NOB
+  NOS <- escapement_NOR - brood_NOB
 
-  HOS_total <- max(0, HOR_escapement * (1 - p_return_hatchery)) * (1 - p_weir_efficiency) + SAR_ratio * strays_total
-  HOS_effective <- max(0, HOR_escapement * (1 - p_return_hatchery)) * (1 - p_weir_efficiency) * RRS_HOS + SAR_ratio * strays_total
+  HOS_total <- max(0, escapement_HOR * (1 - p_return_hatchery)) * (1 - p_weir_efficiency) + SAR_ratio * strays_total
+  HOS_effective <- max(0, escapement_HOR * (1 - p_return_hatchery)) * (1 - p_weir_efficiency) * RRS_HOS + SAR_ratio * strays_total
 
-  HOS_goal <- min(HOS_effective, NOS * p_HOS_goal/(1 - p_HOS_goal))
-  HOS_surplus <- HOS_total - HOS_goal
+  #HOS_goal <- min(HOS_effective, NOS * p_HOS_goal/(1 - p_HOS_goal))
+  #HOS_surplus <- HOS_total - HOS_goal
 
   total_escapement <- HOS_total + NOS
   total_spawners <- HOS_effective + NOS
@@ -227,7 +309,7 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   pNOS <- NOS/total_spawners
 
   # Fitness this generation
-  if (fitness_type == "other") {
+  if (fitness_type == "none") {
 
     fitness <- 1
 
@@ -295,7 +377,7 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   fry_HOR <- total_brood * egg_per_spawner
   smolt_HOR <- total_brood * egg_per_spawner * surv_egg_release
 
-  # Next generation spawners
+  # Next generation return
   adult_HOS <- .AHA_SRR(smolt_HOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
   adult_NOS <- .AHA_SRR(smolt_NOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
 
@@ -306,12 +388,31 @@ AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
   })
 
   out <- list(
-    adult_HOS = adult_HOS,
+    NOR = NOR_total, # Natural origin return (function input)
+    HOR = HOR_total, # Hatchery origin return (function input)
+    harvest_NOR = harvest_NOR,
+    harvest_HOR = harvest_HOR,
+    escapement_NOR = escapement_NOR,
+    escapement_HOR = escapement_HOR,
+    NOB = brood_NOB,
+    HOB = brood_HOB,
+    NOS = NOS,
+    HOS = HOS_total,
+    HOS_effective = HOS_effective,
+    fitness = fitness,
+    fry_NOS = fry_NOS, # Next generation
+    fry_HOS = fry_HOS,
+    fry_HOR = fry_HOR, # Hatchery origin release
+    smolt_NOS = smolt_HOS,
+    smolt_HOS = smolt_HOS,
+    smolt_HOR = smolt_HOR,
+    adult_HOS = adult_HOS, # Actually the return
     adult_NOS = adult_NOS,
-    adult_HOR = adult_HOR,
-    pbar = pbar,
-    fitness = fitness
+    adult_HOR = adult_HOR, # Hatchery origin return
+    SAR_loss = fitprod_smolt_adult
   )
+
+  if (fitness_type == "Ford") out$pbar <- pbar
 
   return(out)
 }
