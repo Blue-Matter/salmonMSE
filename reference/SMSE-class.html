@@ -83,16 +83,16 @@
 <dd><p>Array <code>[nsim, nstocks, proyears]</code>. Spawning output of hatchery origin spawners.</p></dd>
 
 
-<dt><code>Smolts_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of natural origin spawners from the previous generation.</p></dd>
+<dt><code>Smolt_NOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of natural origin spawners.</p></dd>
 
 
-<dt><code>Smolts_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of hatchery origin spawners from the previous generation.</p></dd>
+<dt><code>Smolt_HOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of hatchery origin spawners.</p></dd>
 
 
-<dt><code>Smolts_Rel</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of broodtake from the previous generation, i.e., hatchery releases.</p></dd>
+<dt><code>Smolt_Rel</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Smolts that are offspring of broodtake, i.e., hatchery releases.</p></dd>
 
 
 <dt><code>Return_NOS</code></dt>
@@ -112,31 +112,31 @@
 
 
 <dt><code>NOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. The broodtake of fish that would be natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. The broodtake of natural origin spawners.</p></dd>
 
 
 <dt><code>HOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. The broodtake of fish that would be hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. The broodtake of hatchery origin spawners.</p></dd>
 
 
 <dt><code>NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Natural origin spawners.</p></dd>
 
 
 <dt><code>HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin spawners.</p></dd>
 
 
 <dt><code>HOS_effective</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners discounted by <code>gamma</code>.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin spawners discounted by <code>gamma</code>.</p></dd>
 
 
 <dt><code>Catch_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Catch of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Catch of natural origin spawners.</p></dd>
 
 
 <dt><code>Catch_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Catch of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Catch of hatchery origin spawners.</p></dd>
 
 
 <dt><code>U_NOS</code></dt>
@@ -177,23 +177,23 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name         nyears       proyears           nsim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         nstocks         Snames     Smolts_NOS     Smolts_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         nstocks         Snames        Fry_NOS        Fry_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric      character          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      Smolts_Rel     Return_NOS     Return_HOS Escapement_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Smolt_NOS      Smolt_HOS      Smolt_Rel     Return_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  Escapement_HOS            NOB            HOB            NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      Return_HOS Escapement_NOS Escapement_HOS            NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOS  HOS_effective      Catch_NOS      Catch_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOB            NOS            HOS  HOS_effective</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           U_NOS          U_HOS        fitness       SAR_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Catch_NOS      Catch_HOS          U_NOS          U_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         fitness       SAR_loss           Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array           list</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
