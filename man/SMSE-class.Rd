@@ -26,11 +26,11 @@ Stores the outputs from the simulation of salmon operating models.
 
 \item{\code{Fry_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Spawning output of hatchery origin spawners.}
 
-\item{\code{Smolts_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of natural origin spawners from the previous generation.}
+\item{\code{Smolt_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of natural origin spawners.}
 
-\item{\code{Smolts_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of hatchery origin spawners from the previous generation.}
+\item{\code{Smolt_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of hatchery origin spawners.}
 
-\item{\code{Smolts_Rel}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of broodtake from the previous generation, i.e., hatchery releases.}
+\item{\code{Smolt_Rel}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of broodtake, i.e., hatchery releases.}
 
 \item{\code{Return_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Mature fish that will be natural origin spawners.}
 
@@ -40,19 +40,19 @@ Stores the outputs from the simulation of salmon operating models.
 
 \item{\code{Escapement_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. The escapement of mature fish that will be hatchery origin spawners.}
 
-\item{\code{NOB}}{Array \verb{[nsim, nstocks, nage, proyears]}. The broodtake of fish that would be natural origin spawners.}
+\item{\code{NOB}}{Array \verb{[nsim, nstocks, proyears]}. The broodtake of natural origin spawners.}
 
-\item{\code{HOB}}{Array \verb{[nsim, nstocks, nage, proyears]}. The broodtake of fish that would be hatchery origin spawners.}
+\item{\code{HOB}}{Array \verb{[nsim, nstocks, proyears]}. The broodtake of hatchery origin spawners.}
 
-\item{\code{NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Natural origin spawners.}
+\item{\code{NOS}}{Array \verb{[nsim, nstocks, proyears]}. Natural origin spawners.}
 
-\item{\code{HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin spawners.}
+\item{\code{HOS}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners.}
 
-\item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
+\item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
 
-\item{\code{Catch_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Catch of natural origin spawners.}
+\item{\code{Catch_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Catch of natural origin spawners.}
 
-\item{\code{Catch_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Catch of hatchery origin spawners.}
+\item{\code{Catch_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Catch of hatchery origin spawners.}
 
 \item{\code{U_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Harvest rate of natural origin spawners.}
 

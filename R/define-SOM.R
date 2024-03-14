@@ -218,20 +218,20 @@ setMethod("initialize", "SOM",
 #' @slot Snames Character. Stock names
 #' @slot Fry_NOS Array `[nsim, nstocks, proyears]`. Spawning output of natural origin spawners.
 #' @slot Fry_HOS Array `[nsim, nstocks, proyears]`. Spawning output of hatchery origin spawners.
-#' @slot Smolts_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners from the previous generation.
-#' @slot Smolts_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners from the previous generation.
-#' @slot Smolts_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake from the previous generation, i.e., hatchery releases.
+#' @slot Smolt_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners.
+#' @slot Smolt_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners.
+#' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
 #' @slot Return_NOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be natural origin spawners.
 #' @slot Return_HOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be hatchery origin spawners.
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
 #' @slot Escapement_HOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be hatchery origin spawners.
-#' @slot NOB Array `[nsim, nstocks, nage, proyears]`. The broodtake of fish that would be natural origin spawners.
-#' @slot HOB Array `[nsim, nstocks, nage, proyears]`. The broodtake of fish that would be hatchery origin spawners.
-#' @slot NOS Array `[nsim, nstocks, nage, proyears]`. Natural origin spawners.
-#' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners.
-#' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners discounted by `gamma`.
-#' @slot Catch_NOS Array `[nsim, nstocks, nage, proyears]`. Catch of natural origin spawners.
-#' @slot Catch_HOS Array `[nsim, nstocks, nage, proyears]`. Catch of hatchery origin spawners.
+#' @slot NOB Array `[nsim, nstocks, proyears]`. The broodtake of natural origin spawners.
+#' @slot HOB Array `[nsim, nstocks, proyears]`. The broodtake of hatchery origin spawners.
+#' @slot NOS Array `[nsim, nstocks, proyears]`. Natural origin spawners.
+#' @slot HOS Array `[nsim, nstocks, proyears]`. Hatchery origin spawners.
+#' @slot HOS_effective Array `[nsim, nstocks, proyears]`. Hatchery origin spawners discounted by `gamma`.
+#' @slot Catch_NOS Array `[nsim, nstocks, proyears]`. Catch of natural origin spawners.
+#' @slot Catch_HOS Array `[nsim, nstocks, proyears]`. Catch of hatchery origin spawners.
 #' @slot U_NOS Array `[nsim, nstocks, proyears]`. Harvest rate of natural origin spawners.
 #' @slot U_HOS Array `[nsim, nstocks, proyears]`. Harvest rate of hatchery origin spawners.
 #' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness.
@@ -254,9 +254,11 @@ setClass(
     nsim = "numeric",
     nstocks = "numeric",
     Snames = "character",
-    Smolts_NOS = "array",
-    Smolts_HOS = "array",
-    Smolts_Rel = "array",
+    Fry_NOS = "array",
+    Fry_HOS = "array",
+    Smolt_NOS = "array",
+    Smolt_HOS = "array",
+    Smolt_Rel = "array",
     Return_NOS = "array",
     Return_HOS = "array",
     Escapement_NOS = "array",
