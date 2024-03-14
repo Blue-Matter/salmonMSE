@@ -10,7 +10,7 @@ Description: Simulation tools for the evaluation of salmon management strategies
   habitat actions. The backend utilizes 'openMSE'.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
-Imports: MSEtool, dplyr, methods, rlang, stats, utils
+Imports: MSEtool, dplyr, methods, reshape2, rlang, stats, utils
 Suggests: 
     testthat (>= 3.0.0)
 Encoding: UTF-8
