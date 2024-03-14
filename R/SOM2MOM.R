@@ -1,7 +1,4 @@
 
-#' @export
-#' @return
-#' `SOM2MOM`: \linkS4class{MOM} object
 #' @name salmonMSE-int
 #' @title Internal salmonMSE functions for converting operating model inputs and outputs
 #'
@@ -9,6 +6,11 @@
 #' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
 #' - [MMSE2SMSE()] converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
 #' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
+#'
+#' @param SOM An object of class \linkS4class{SOM}
+#' @export
+#' @return
+#' `SOM2MOM`: \linkS4class{MOM} object
 SOM2MOM <- function(SOM) {
 
   # Check SOM here

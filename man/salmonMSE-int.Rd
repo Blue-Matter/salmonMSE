@@ -13,6 +13,8 @@ SOM2MOM(SOM)
 \arguments{
 \item{MMSE}{Object of class \linkS4class{MMSE} returned from MSEtool}
 
+\item{SOM}{An object of class \linkS4class{SOM}}
+
 \item{Harvest_MMP}{Optional harvest function created by \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}}}
 
 \item{N}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
