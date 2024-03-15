@@ -1,12 +1,13 @@
 
 
-#' Implementation of All-H Analyzer in R
+#' All-H Analyzer
 #'
 #' Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA
 #' and salmonMSE.
 #'
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param ngen Integer, the number of generations for which to run the simulation
+#' @return A named list containing vectors of state variables (by generation). See \linkS4class{SMSE} object description.
 #'
 #' @export
 AHA <- function(SOM, ngen = 100) {
@@ -74,14 +75,21 @@ AHA <- function(SOM, ngen = 100) {
     "smolt_HOS" = "Smolt_HOS",
     "smolt_HOR" = "Smolt_Rel",
     "fitness" = "fitness",
-    "SAR_loss" = "SAR_loss"
+    "SAR_loss" = "SAR_loss",
+    "pNOB" = "pNOB",
+    "pHOS" = "pHOS"
   )
 
   out <- lapply(names(var_out), function(x) {
     sapply(output, getElement, x)
+  }) %>%
+    structure(names = var_out)
+  out$PNI <- out$pNOB/(out$pNOB + out$pHOS)
+  out$p_wild <- sapply(2:length(out$pHOS), function(g) {
+    calc_pwild(out$pHOS[g], out$pHOS[g-1], SOM@gamma)
   })
 
-  structure(out, names = var_out)
+  return(out)
 }
 
 .AHA <- function(prod_adult = 2.7,                     # AHA habitat fields
@@ -213,6 +221,11 @@ AHA <- function(SOM, ngen = 100) {
 
     if (g == 1) {
       HOR_total <- NOR_total <- 1e3
+      #HOR_total <- 0
+      #phi0 <- surv_smolt_adult_base * p_female * fec_spawn
+      #SRRpars <- .AHA_SRRpars(prod_spawn_em * prod_em_smolt, capacity_em_smolt, fec_spawn, p_female)
+      #R0 <- MSEtool::R0conv(SRRpars["alpha"], SRRpars["beta"], phi0)
+      #NOR_total <- R0 * phi0
     } else {
       pbar[, g-1] <- AHA_loop[[g-1]]$pbar
       HOR_total <- AHA_loop[[g-1]]$adult_HOR
@@ -409,7 +422,9 @@ AHA <- function(SOM, ngen = 100) {
     adult_HOS = adult_HOS, # Actually the return
     adult_NOS = adult_NOS,
     adult_HOR = adult_HOR, # Hatchery origin return
-    SAR_loss = fitprod_smolt_adult
+    SAR_loss = fitprod_smolt_adult,
+    pNOB = pNOB,
+    pHOS = 1 - pNOS
   )
 
   if (fitness_type == "Ford") out$pbar <- pbar

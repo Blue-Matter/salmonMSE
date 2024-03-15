@@ -2,7 +2,7 @@
 % Please edit documentation in R/AHA.R
 \name{AHA}
 \alias{AHA}
-\title{Implementation of All-H Analyzer in R}
+\title{All-H Analyzer}
 \usage{
 AHA(SOM, ngen = 100)
 }
@@ -10,6 +10,9 @@ AHA(SOM, ngen = 100)
 \item{SOM}{An object of class \linkS4class{SOM}}
 
 \item{ngen}{Integer, the number of generations for which to run the simulation}
+}
+\value{
+A named list containing vectors of state variables (by generation). See \linkS4class{SMSE} object description.
 }
 \description{
 Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA
