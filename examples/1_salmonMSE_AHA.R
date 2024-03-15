@@ -54,7 +54,7 @@ Habitat <- new(
 
 Harvest <- new(
   "Harvest",
-  u = c(0.038, 0.025, 0, 0.14) %>% sum(),   # Specify fixed harvest rate of mature fish
+  u = sum(c(0.038, 0.025, 0, 0.14)),        # Specify fixed harvest rate of mature fish
   m = 0                                     # Mark rate of hatchery releases (future feature)
 )
 
