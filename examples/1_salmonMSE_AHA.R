@@ -8,6 +8,8 @@ remotes::install_github("Blue-Matter/salmonMSE")
 
 library(salmonMSE)
 
+class?SOM # Definition of inputs
+
 Bio <- new(
   "Bio",
   nsim = 3,
