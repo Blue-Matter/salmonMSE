@@ -235,8 +235,28 @@ setMethod("initialize", "SOM",
 #' @slot U_NOS Array `[nsim, nstocks, proyears]`. Harvest rate of natural origin spawners.
 #' @slot U_HOS Array `[nsim, nstocks, proyears]`. Harvest rate of hatchery origin spawners.
 #' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness.
+#' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence of hatchery on mean phenotypic values.
+#' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.
 #' @slot SAR_loss Array `[nsim, nstocks, proyears]`. Realized SAR due to fitness loss.
 #' @slot Misc List. Miscellaneous output
+#'
+#' @details
+#' In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
+#'
+#' \deqn{\textrm{PNI}_t = \dfrac{p^{\textrm{NOB}}_t}{p^{\textrm{NOB}}_t + p^{\textrm{HOS}}_t}}
+#'
+#' The proportion of wild salmon is defined as:
+#'
+#' \deqn{p^{\textrm{WILD}}_t = q^{\textrm{HOS}}_t
+#' \dfrac{(q^{\textrm{HOS}}_{t-1})^2}
+#' {(q^{\textrm{HOS}}_{t-1})^2 + 2\gamma \times p^{\textrm{HOS}}_{t-1} q^{\textrm{HOS}}_{t-1} +
+#' \gamma^2 (p^{\textrm{HOS}}_{t-1})^2}}
+#'
+#' where \eqn{q = 1-p}.
+#'
+#' @references
+#' Withler et al. 2018. Genetically Based Targets for Enhanced Contributions to Canadian Pacific Chinook Salmon Populations.
+#' DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.
 #'
 #' @section Creating Object:
 #' Objects can be created by calls of the form \code{new("SMSE")}
@@ -274,6 +294,8 @@ setClass(
     U_HOS = "array",
     fitness = "array",
     SAR_loss = "array",
+    PNI = "array",
+    p_wild = "array",
     Misc = "list"
   )
 )

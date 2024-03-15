@@ -26,6 +26,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
   fitness <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   SAR_loss <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  PNI <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
+  p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
 
   # NOS state variables from MMSE object
   p_NOS_return <- 2 # MSEtool population index for returning NOS
@@ -78,6 +80,18 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
     p_smolt <- 1
     SAR_loss[, ns, ] <- exp(-MMSE@Misc$MICE$M_ageArray[, p_smolt, age_escapement - 2, 1, ])
 
+    pNOB <- get_salmonMSE_var(N, var = "pNOB")
+    pHOS <- get_salmonMSE_var(N, var = "pHOS")
+
+    PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOS) # Withler et al. 2018, page 17
+    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOS), function(t) {
+      if (t == 1 && all(!pHOS[, t])) {
+        rep(1, nrow(pHOS))
+      } else {
+        calc_pwild(pHOS[, t], pHOS[, t-1], SOM@gamma)
+      }
+    })
+
   } else {
     # If no hatchery, the NOS escapement is the NOS, fry_NOS is the spawning output
     NOS[] <- apply(Escapement_NOS, c(1, 2, 4), sum)
@@ -87,6 +101,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
 
     Fry_NOS[, ns, -SOM@proyears] <- apply(MMSE@SSB[, p_spawn, 1, -1])
     Smolt_NOS[, ns, ] <- apply(MMSE@N[, p_smolt, 1, 1, , ], 1:2, sum)
+
+    PNI[, ns, y_spawn] <- p_wild[, ns, y_spawn] <- 1
   }
 
   SMSE <- new(
@@ -116,6 +132,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
     U_NOS = U_NOS,
     U_HOS = U_HOS,
     fitness = fitness,
+    PNI = PNI,
+    p_wild = p_wild,
     SAR_loss = SAR_loss
   )
   if (!missing(Harvest_MMP)) SMSE@Misc$Harvest_MMP <- Harvest_MMP
@@ -129,4 +147,12 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
 #' @importFrom reshape2 acast
 get_salmonMSE_var <- function(N, var = "fry_NOS", p_smolt = 1) {
   filter(N, .data$p_smolt == .env$p_smolt) %>% reshape2::acast(list("x", "t"), value.var = var)
+}
+
+
+# Withler et al. 2018, page 27
+calc_pwild <- function(pHOS_cur, pHOS_prev, gamma) {
+  num <- (1 - pHOS_prev)^2
+  denom <- num + 2 * gamma * pHOS_prev * (1 - pHOS_prev) + gamma * gamma * pHOS_prev^2
+  (1 - pHOS_cur) * num/denom
 }

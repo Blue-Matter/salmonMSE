@@ -7,6 +7,20 @@
 \description{
 Stores the outputs from the simulation of salmon operating models.
 }
+\details{
+In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
+
+\deqn{\textrm{PNI}_t = \dfrac{p^{\textrm{NOB}}_t}{p^{\textrm{NOB}}_t + p^{\textrm{HOS}}_t}}
+
+The proportion of wild salmon is defined as:
+
+\deqn{p^{\textrm{WILD}}_t = q^{\textrm{HOS}}_t
+\dfrac{(q^{\textrm{HOS}}_{t-1})^2}
+{(q^{\textrm{HOS}}_{t-1})^2 + 2\gamma \times p^{\textrm{HOS}}_{t-1} q^{\textrm{HOS}}_{t-1} +
+\gamma^2 (p^{\textrm{HOS}}_{t-1})^2}}
+
+where \eqn{q = 1-p}.
+}
 \section{Slots}{
 
 \describe{
@@ -60,6 +74,10 @@ Stores the outputs from the simulation of salmon operating models.
 
 \item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness.}
 
+\item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence of hatchery on mean phenotypic values.}
+
+\item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.}
+
 \item{\code{SAR_loss}}{Array \verb{[nsim, nstocks, proyears]}. Realized SAR due to fitness loss.}
 
 \item{\code{Misc}}{List. Miscellaneous output}
@@ -72,5 +90,9 @@ Objects can be created by calls of the form \code{new("SMSE")}
 
 \examples{
 showClass("SMSE")
+}
+\references{
+Withler et al. 2018. Genetically Based Targets for Enhanced Contributions to Canadian Pacific Chinook Salmon Populations.
+DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.
 }
 \keyword{classes}

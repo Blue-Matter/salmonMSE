@@ -60,6 +60,7 @@ SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest)
 
 # run salmonMSE
 SMSE <- MMSE2SMSE(MMSE, SOM, N = salmonMSE_env$N)
+class?SMSE # Definitions of arrays
 
 # run AHA
 SAHA <- AHA(SOM)
