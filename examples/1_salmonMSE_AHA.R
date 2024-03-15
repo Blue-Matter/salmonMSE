@@ -1,4 +1,5 @@
 
+# Compare salmonMSE and AHA outputs
 
 # Install packages
 remotes::install_github("Blue-Matter/MSEtool", ref = "salmonMSE")
@@ -59,10 +60,10 @@ Harvest <- new(
 SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest)
 
 # run salmonMSE
-SMSE <- MMSE2SMSE(MMSE, SOM, N = salmonMSE_env$N)
+SMSE <- salmonMSE(SOM)
 class?SMSE # Definitions of arrays
 
-# run AHA
+# run AHA - list of vectors by generation
 SAHA <- AHA(SOM)
 
 # Compare AHA (x) and salmonMSE (y) output
