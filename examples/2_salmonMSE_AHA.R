@@ -64,3 +64,14 @@ class?SMSE # Definitions of arrays
 
 # run AHA
 SAHA <- AHA(SOM)
+
+# Compare AHA (x) and salmonMSE (y) output
+compare <- function(x, y, ylab = "y", ylim) {
+  if (missing(ylim)) ylim <- range(x, y)
+  par(mfrow = c(1, 2))
+  plot(x, xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim)
+  matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
+          ylim = ylim, typ = 'o', pch = 1)
+}
+
+compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
