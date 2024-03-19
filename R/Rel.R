@@ -5,7 +5,7 @@
 ## Internal functions to predict either:
 # (b) smolt hatchery production
 # (c) smolt natural production
-calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, brood_local,
+calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local,
                            fec_brood, s_egg) {
 
   NOR_escapement <- N[1]
@@ -20,7 +20,7 @@ calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, brood_local,
     NOB <- min(target_NOB, max_NOB)
 
     # HOB is the minimum of brood_local - NOB or the hatchery origin escapement
-    HOB <- min(brood_local - NOB, 0.999 * HOR_escapement)
+    HOB <- min(brood_local - NOB, 0.999 * HOR_escapement * premove_HOS)
   } else {
     NOB <- NOR_escapement
     HOB <- 0
@@ -28,13 +28,10 @@ calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, brood_local,
   c("NOB" = NOB, "HOB" = HOB)
 }
 
-calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
-                          fec_brood, s_egg, premove_HOS) {
-
-  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg)
-  spawners <- structure(N - broodtake, names = c("NOS", "HOS"))
-  spawners[2] <- spawners[2] * premove_HOS
-
+calc_spawners <- function(broodtake, escapement, premove_HOS) {
+  spawners <- structure(rep(0, length(escapement)), names = c("NOS", "HOS"))
+  spawners[1] <- escapement[1] - broodtake[1]
+  if (length(escapement) > 1) spawners[2] <- escapement[2] * (1 - premove_HOS)
   return(spawners)
 }
 
@@ -49,7 +46,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
   output <- match.arg(output)
 
   N[is.na(N)] <- 0
-  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg)
+  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local, fec_brood, s_egg)
 
   if (output == "hatchery") {
     fry <- sum(broodtake) * fec_brood * s_prespawn * p_female
@@ -58,8 +55,7 @@ calc_spawners <- function(N, ptarget_NOB, pmax_NOB, brood_local,
 
   } else if (output == "natural") {
     fitness_type <- match.arg(fitness_type)
-    spawners <- structure(N - broodtake, names = c("NOS", "HOS"))
-    spawners[2] <- spawners[2] * (1 - premove_HOS)
+    spawners <- calc_spawners(broodtake, N, premove_HOS)
 
     NOS <- spawners[1]
     HOS <- spawners[2]

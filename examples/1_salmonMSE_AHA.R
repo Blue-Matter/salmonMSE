@@ -34,7 +34,7 @@ Hatchery <- new(
   gamma = 0.8,
   pmax_NOB = 0.7,
   ptarget_NOB = 0.51,
-  premove_HOS = 0,
+  premove_HOS = 0.8,
   theta = c(100, 80, 70),
   rel_loss = c(0.5, 0.4, 0.1),
   fec_brood = 5040,
@@ -59,7 +59,9 @@ Harvest <- new(
 )
 
 # Stitched salmon operating model
-SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest)
+SOM <- new("SOM",
+           proyears = 100 * 3,
+           Bio, Habitat, Hatchery, Harvest)
 
 # run salmonMSE
 SMSE <- salmonMSE(SOM)
@@ -70,11 +72,13 @@ SAHA <- AHA(SOM)
 
 # Compare AHA (x) and salmonMSE (y) output
 compare <- function(x, y, ylab = "y", ylim) {
-  if (missing(ylim)) ylim <- range(x, y)
+  y[y < 1e-8] <- NA
+  if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
   par(mfrow = c(1, 2))
   plot(x, xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim)
   matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
-          ylim = ylim, typ = 'o', pch = 1)
+          ylim = ylim, typ = 'o', pch = 1, lwd = 1)
 }
 
 compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
+compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60))

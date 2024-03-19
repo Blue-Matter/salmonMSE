@@ -22,7 +22,7 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if both \code{n_yearling} and
 \code{n_subyearling} are zero.}
 
-\item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production.
+\item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
 \item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the smolt life stage (for yearling release).
@@ -33,12 +33,12 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 
 \item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
-\item{\code{pmax_NOB}}{Numeric. The maximum ratio of natural origin broodtake to the natural origin escapement.}
+\item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.}
 
 \item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.}
 
-\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin spawners removed from the spawning grounds (in order to
-ensure a high proportion of NOS).}
+\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin spawners to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). This removal is also used to calculate the available hatchery origin fish for broodtake.}
 
 \item{\code{fec_brood}}{Numeric. The fecundity of broodtake.}
 

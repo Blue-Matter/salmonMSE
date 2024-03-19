@@ -32,8 +32,8 @@ AHA <- function(SOM, ngen = 100) {
     surv_adult_return_of_yearling = SOM@SAR[1],
     surv_adult_return_of_subyearling = SOM@SAR[1],
     RRS_HOS = SOM@gamma,
-    p_weir_efficiency = SOM@premove_HOS,
-    p_return_hatchery = 0,
+    p_weir_efficiency = 0,
+    p_return_hatchery = SOM@premove_HOS,
     n_release_yearling = SOM@n_yearling,
     n_release_subyearling = SOM@n_subyearling,
     brood_import = 0,
@@ -142,7 +142,8 @@ AHA <- function(SOM, ngen = 100) {
   # Habitat section
   prod_spawn_em <- fec_spawn * p_female
 
-  habitat_h8 <- 0.009 # See Excel spreadsheet
+  #habitat_h8 <- 0.009 # See Excel spreadsheet
+  habitat_h8 <- surv_ocean
   surv_smolt_adult_obs <- surv_passage_juv * surv_ocean * surv_passage_adult # SAR, survival from release to adult return (22)
   surv_smolt_adult_base <- ifelse(habitat_h8 > 0, habitat_h8, surv_smolt_adult_obs) # (23)
 
