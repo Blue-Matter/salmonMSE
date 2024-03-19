@@ -71,7 +71,7 @@
 
 
 <dt><code>s_prespawn</code></dt>
-<dd><p>Numeric. The survival of broodtake prior to egg production.
+<dd><p>Numeric. The survival of broodtake prior to egg production. <code>1 - s_prespawn</code> is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
 Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
@@ -90,7 +90,7 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 
 
 <dt><code>pmax_NOB</code></dt>
-<dd><p>Numeric. The maximum ratio of natural origin broodtake to the natural origin escapement.</p></dd>
+<dd><p>Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.</p></dd>
 
 
 <dt><code>ptarget_NOB</code></dt>
@@ -98,8 +98,8 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 
 
 <dt><code>premove_HOS</code></dt>
-<dd><p>Numeric. The proportion of the hatchery origin spawners removed from the spawning grounds (in order to
-ensure a high proportion of NOS).</p></dd>
+<dd><p>Numeric. The proportion of the hatchery origin spawners to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). This removal is also used to calculate the available hatchery origin fish for broodtake.</p></dd>
 
 
 <dt><code>fec_brood</code></dt>
