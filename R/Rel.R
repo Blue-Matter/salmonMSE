@@ -86,8 +86,16 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
 
       # Get pbar from salmonMSE_env
       if (nrow(salmonMSE_env$Ford)) {
-        pbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt, t == max(.data$t)) %>%
-          pull(.data$pbar)
+        Ford_x <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
+        if (nrow(Ford_x)) {
+          pbar_prev <- filter(Ford_x, t == max(.data$t)) %>% pull(.data$pbar)
+          tprev <- max(Ford_x$t)
+        } else {
+          pbar_prev <- numeric(0)
+          tprev <- 0
+        }
+      } else {
+        tprev <- 0
       }
       if (nrow(salmonMSE_env$Ford) && length(pbar_prev)) {
         fitness_calcs <- calc_Ford_fitness(
@@ -114,20 +122,6 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
       capacity_smolt <- alpha_proj/beta_proj * fitness_loss[2]
 
       # Save pbar for next generation
-      if (nrow(salmonMSE_env$Ford)) {
-        tprev <- local({
-          dat <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
-          if (nrow(dat)) {
-            max(dat$t) %>% unique()
-          } else {
-            0
-          }
-        })
-
-        if (!length(tprev)) tprev <- 0
-      } else {
-        tprev <- 0
-      }
       df_Ford <- data.frame(
         x = x,
         p_smolt = p_smolt,
@@ -135,7 +129,6 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
         type = c("natural", "hatchery"),
         pbar = pbar
       )
-
       salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
 
     } else { #if (fitness_type == "none") {
@@ -161,13 +154,8 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
       if (nrow(salmonMSE_env$N)) {
         tprev <- local({
           dat <- filter(salmonMSE_env$N, x == .env$x, p_smolt == .env$p_smolt)
-          if (nrow(dat)) {
-            max(dat$t) %>% unique()
-          } else {
-            0
-          }
+          ifelse(nrow(dat), max(dat$t), 0)
         })
-        if (!length(tprev)) tprev <- 0
       } else {
         tprev <- 0
       }
