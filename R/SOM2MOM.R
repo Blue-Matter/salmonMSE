@@ -173,7 +173,7 @@ SOM2MOM <- function(SOM) {
     Rel[[1]] <- makeRel_smolt(
       p_smolt = 1, p_natural = 3, p_hatchery = 6, # NOTE: what to do if no hatchery?? p_hatchery needs to be undefined
       output = "natural",
-      ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
+      ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, # Spawning (natural production)
