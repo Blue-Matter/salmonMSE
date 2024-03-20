@@ -61,8 +61,9 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
     HOS <- spawners[2]
     HOS_effective <- spawners[2] * gamma
 
+    # Fry production in the absence of fitness effects
     fry_NOS <- NOS * p_female * fec
-    fry_HOS <- HOS_effective * p_female * fec
+    fry_HOS <- HOS_effective * p_female * fec # Or HOS * p_female * fec * gamma
 
     total_fry <- fry_NOS + fry_HOS
 
@@ -78,7 +79,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
     fry_openMSE <- N[1] * p_female * fec
     smolt_NOS_SRR <- .AHA_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
 
-    # Predicted smolts from projected SRR parameters and fitness
+    # Predicted fry and smolts from projected SRR parameters and fitness
     if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
       pNOB <- broodtake[1]/sum(broodtake)
       pHOS <- HOS_effective/(NOS + HOS_effective)
@@ -87,25 +88,32 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
       if (nrow(salmonMSE_env$Ford)) {
         pbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt, t == max(.data$t)) %>%
           pull(.data$pbar)
-        if (!length(pbar_prev)) pbar_prev <- fitness_args$pbar_start
-      } else {
-        pbar_prev <- fitness_args$pbar_start
       }
-
-      fitness_calcs <- calc_Ford_fitness(
-        pNOB, pHOS, pbar_prev, fitness_args$theta, fitness_args$omega2, fitness_args$fitness_variance,
-        fitness_args$A, fitness_args$fitness_floor, fitness_args$heritability
-      )
-      pbar <- fitness_calcs$pbar
-      fitness <- fitness_calcs$fitness
-
+      if (nrow(salmonMSE_env$Ford) && length(pbar_prev)) {
+        fitness_calcs <- calc_Ford_fitness(
+          pNOB, pHOS, pbar_prev, fitness_args$theta, fitness_args$omega2, fitness_args$fitness_variance,
+          fitness_args$A, fitness_args$fitness_floor, fitness_args$heritability
+        )
+        pbar <- fitness_calcs$pbar
+        fitness <- fitness_calcs$fitness
+      } else {
+        pbar <- fitness_args$pbar_start
+        fitness <- local({
+          x <- exp(-0.5 * (pbar[1] - fitness_args$theta[1])^2/(fitness_args$omega2+fitness_args$fitness_variance))
+          max(fitness_args$fitness_floor, x)
+        })
+      }
       fitness_loss <- fitness^fitness_args$rel_loss
 
-      prod_smolt <- alpha_proj * prod(fitness_loss[1:2])
-      capacity_smolt <- alpha_proj/beta_proj * prod(fitness_loss[1:2])
+      # Fry_NOS with fitness
+      fry_NOS_out <- fry_NOS * fitness_loss[1]
+      fry_HOS_out <- fry_HOS * fitness_loss[1]
+
+      # Update smolt SRR with fitness
+      prod_smolt <- alpha_proj * fitness_loss[2]
+      capacity_smolt <- alpha_proj/beta_proj * fitness_loss[2]
 
       # Save pbar for next generation
-      #browser(expr = x > 1)
       if (nrow(salmonMSE_env$Ford)) {
         tprev <- local({
           dat <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
@@ -116,8 +124,6 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
           }
         })
 
-        #tprev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt, t == pmax(.data$t)) %>%
-        #  pull(.data$t) %>% unique()
         if (!length(tprev)) tprev <- 0
       } else {
         tprev <- 0
@@ -138,11 +144,16 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
 
       fitness <- 1
       pNOB <- 1
-      pHOB <- 0
+      pHOS <- 0
+
+      fry_NOS_out <- fry_NOS
+      fry_HOS_out <- fry_HOS
     }
 
-    smolt_NOS_proj <- .AHA_SRR(fry_NOS, total_fry, p = prod_smolt, capacity = capacity_smolt)
-    smolt_HOS_proj <- .AHA_SRR(fry_HOS, total_fry, p = prod_smolt, capacity = capacity_smolt)
+    total_fry_out <- fry_NOS_out + fry_HOS_out
+
+    smolt_NOS_proj <- .AHA_SRR(fry_NOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
+    smolt_HOS_proj <- .AHA_SRR(fry_HOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
     total_smolt <- smolt_NOS_proj + smolt_HOS_proj
 
     if (x > 0) {
@@ -156,9 +167,6 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
             0
           }
         })
-
-        #filter(salmonMSE_env$N, x == .env$x, p_smolt == .env$p_smolt, t == max(.data$t)) %>%
-        #  pull(.data$t) %>% unique()
         if (!length(tprev)) tprev <- 0
       } else {
         tprev <- 0
@@ -168,20 +176,21 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
         x = x,
         p_smolt = p_smolt,
         t = tprev + 1,
-        NOS = NOS,
-        HOS = HOS,
-        HOS_effective = HOS_effective,
-        fry_NOS = fry_NOS,
-        fry_HOS = fry_HOS,
-        smolt_NOS = smolt_NOS_proj,
-        smolt_HOS = smolt_HOS_proj,
         Esc_NOS = N[1],
         Esc_HOS = N[2],
         NOB = broodtake[1],
         HOB = broodtake[2],
+        NOS = NOS,
+        HOS = HOS,
+        HOS_effective = HOS_effective,
+        fry_NOS = fry_NOS_out,
+        fry_HOS = fry_HOS_out,
+        smolt_NOS = smolt_NOS_proj,
+        smolt_HOS = smolt_HOS_proj,
         fitness = fitness,
         pNOB = as.numeric(pNOB),
-        pHOS = as.numeric(pHOS)
+        pHOS = as.numeric(pHOS),
+        Perr_y = total_smolt/smolt_NOS_SRR
       )
       salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
     }
