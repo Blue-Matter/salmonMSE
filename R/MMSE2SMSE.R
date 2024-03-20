@@ -81,14 +81,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
     SAR_loss[, ns, ] <- exp(-MMSE@Misc$MICE$M_ageArray[, p_smolt, age_escapement - 2, 1, ])
 
     pNOB <- get_salmonMSE_var(N, var = "pNOB")
-    pHOS <- get_salmonMSE_var(N, var = "pHOS")
+    pHOSeff <- get_salmonMSE_var(N, var = "pHOSeff")
 
-    PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOS) # Withler et al. 2018, page 17
-    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOS), function(t) {
+    PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOSeff) # Withler et al. 2018, page 17
+    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOSeff), function(t) {
       if (t == 1) {
-        rep(NA_real_, nrow(pHOS))
+        rep(NA_real_, nrow(pHOSeff))
       } else {
-        calc_pwild(pHOS[, t], pHOS[, t-1], SOM@gamma)
+        calc_pwild(pHOSeff[, t], pHOSeff[, t-1], SOM@gamma)
       }
     })
 

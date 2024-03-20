@@ -77,16 +77,16 @@ AHA <- function(SOM, ngen = 100) {
     "fitness" = "fitness",
     "SAR_loss" = "SAR_loss",
     "pNOB" = "pNOB",
-    "pHOS" = "pHOS"
+    "pHOSeff" = "pHOSeff"
   )
 
   out <- lapply(names(var_out), function(x) {
     sapply(output, getElement, x)
   }) %>%
     structure(names = var_out)
-  out$PNI <- out$pNOB/(out$pNOB + out$pHOS)
-  out$p_wild <- sapply(2:length(out$pHOS), function(g) {
-    calc_pwild(out$pHOS[g], out$pHOS[g-1], SOM@gamma)
+  out$PNI <- out$pNOB/(out$pNOB + out$pHOSeff)
+  out$p_wild <- sapply(2:length(out$pHOSeff), function(g) {
+    calc_pwild(out$pHOSeff[g], out$pHOSeff[g-1], SOM@gamma)
   })
 
   return(out)
@@ -425,7 +425,7 @@ AHA <- function(SOM, ngen = 100) {
     adult_HOR = adult_HOR, # Hatchery origin return
     SAR_loss = fitprod_smolt_adult,
     pNOB = pNOB,
-    pHOS = 1 - pNOS
+    pHOSeff = 1 - pNOS
   )
 
   if (fitness_type == "Ford") out$pbar <- pbar

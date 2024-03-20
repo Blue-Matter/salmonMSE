@@ -82,7 +82,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
     # Predicted fry and smolts from projected SRR parameters and fitness
     if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
       pNOB <- broodtake[1]/sum(broodtake)
-      pHOS <- HOS_effective/(NOS + HOS_effective)
+      pHOSeff <- HOS_effective/(NOS + HOS_effective)
 
       # Get pbar from salmonMSE_env
       if (nrow(salmonMSE_env$Ford)) {
@@ -91,7 +91,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
       }
       if (nrow(salmonMSE_env$Ford) && length(pbar_prev)) {
         fitness_calcs <- calc_Ford_fitness(
-          pNOB, pHOS, pbar_prev, fitness_args$theta, fitness_args$omega2, fitness_args$fitness_variance,
+          pNOB, pHOSeff, pbar_prev, fitness_args$theta, fitness_args$omega2, fitness_args$fitness_variance,
           fitness_args$A, fitness_args$fitness_floor, fitness_args$heritability
         )
         pbar <- fitness_calcs$pbar
@@ -144,7 +144,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
 
       fitness <- 1
       pNOB <- 1
-      pHOS <- 0
+      pHOSeff <- 0
 
       fry_NOS_out <- fry_NOS
       fry_HOS_out <- fry_HOS
@@ -189,7 +189,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
         smolt_HOS = smolt_HOS_proj,
         fitness = fitness,
         pNOB = as.numeric(pNOB),
-        pHOS = as.numeric(pHOS),
+        pHOSeff = as.numeric(pHOSeff),
         Perr_y = total_smolt/smolt_NOS_SRR
       )
       salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
