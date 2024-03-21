@@ -8,10 +8,17 @@
 #' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
 #'
 #' @param SOM An object of class \linkS4class{SOM}
+#' @param start An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
+#' simulation
 #' @export
+#' @examples
+#' \dontrun{
+#' # One thousand natural and hatchery smolts in the first year
+#' SOM <- SOM2MOM(SOM, start = list(Natural = 1e3, Hatchery = 1e3))
+#' }
 #' @return
 #' `SOM2MOM`: \linkS4class{MOM} object
-SOM2MOM <- function(SOM) {
+SOM2MOM <- function(SOM, start = list()) {
 
   # Check SOM here
   SOM <- check_SOM(SOM)
@@ -30,14 +37,14 @@ SOM2MOM <- function(SOM) {
 
   ns <- 1
   Stocks <- list()
-  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
-  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
-  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
+  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature", start)   # NOS_juv
+  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")            # NOS_recruitment
+  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement")        # NOS_escapement
 
   if (do_hatchery) {
-    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
-    Stocks[[5]] <- make_Stock(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
-    Stocks[[6]] <- make_Stock(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
+    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature", start)   # HOS_juv
+    Stocks[[5]] <- make_Stock(SOM, NOS = FALSE, stage = "return")            # HOS_recruitment
+    Stocks[[6]] <- make_Stock(SOM, NOS = FALSE, stage = "escapement")        # HOS_escapement
   }
   np <- length(Stocks)
 
@@ -209,12 +216,6 @@ SOM2MOM <- function(SOM) {
   MOM@Rel <- Rel
   #if (length(Rel)) MOM@cpars$control <- list(HistRel = FALSE)
 
-  # Run simulation
-  #multiHist <- SimulateMOM(MOM, parallel = FALSE)
-  #MMSE <- ProjectMOM(multiHist, MPs = c("Harvest_MP", "NoHarvest_MMP"), dropHist = TRUE, parallel = FALSE)
-  #
-  #MMSE@multiHist <- multiHist
-  #return(MMSE)
   return(MOM)
 }
 

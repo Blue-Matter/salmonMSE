@@ -10,17 +10,24 @@
 #' - Runs projection (if `Hist = FALSE`)
 #' - Converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (SMSE) via [MMSE2SMSE()]
 #' @param SOM An object of class \linkS4class{SOM}
+#' @param start An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
+#' simulation
 #' @param Hist Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data
 #' @param silent Logical, whether to report progress in console bar
 #' @param trace Logical, whether to report additional messages from openMSE
 #' @param convert Logical, whether to convert the output into a salmon MSE (SMSE) object
 #' @return
 #' If `Hist = TRUE` a multiHist object (list). Otherwise, if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
+#' @examples
+#' \dontrun{
+#' # One thousand natural and hatchery smolts in the first year
+#' myMSE <- salmonMSE(SOM, start = list(Natural = 1e3, Hatchery = 1e3))
+#' }
 #' @export
-salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
+salmonMSE <- function(SOM, start = list(), Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
   if (!silent) message("Converting salmon operating model to MOM..")
-  MOM <- SOM2MOM(SOM)
+  MOM <- SOM2MOM(SOM, start)
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u)
 

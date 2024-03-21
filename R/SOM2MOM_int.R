@@ -1,6 +1,6 @@
 
 
-make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement")) {
+make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"), start = list()) {
   stage <- match.arg(stage)
 
   #### Stock object ----
@@ -15,9 +15,6 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   # Survival to be modeled in cpars
   Stock@M <- Stock@Msd <- c(0, 0)
-
-  Stock@h <- rep(0.25, 2)
-  Stock@R0 <- 1
 
   if (NOS) {
     # Beverton-Holt SRR
@@ -39,6 +36,10 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   } else {
     # Custom SRR
     Stock@SRrel <- 3
+
+    Stock@h <- rep(0.99, 2)
+    Stock@R0 <- 1
+
     SRRfun <- function(SB, SRRpars) ifelse(sum(SB), 1, 0)
     SRRpars <- data.frame(x = 1:SOM@nsim)
     relRfun <- function(SSBpR, SRRpars) return(1)
@@ -100,6 +101,10 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     # Only works for generation by generation
     age_mat <- which(SOM@p_mature > 0)[1]
     Perr_y[, seq(1, SOM@nyears + SOM@proyears, by = age_mat)] <- 1
+
+    if (!is.null(start$Natural)) Perr_y[, 1] <- start$Natural/cpars_bio$R0
+  } else if (!NOS && stage == "immature" && !is.null(start$Hatchery)) {
+    Perr_y[, 1] <- start$Hatchery
   }
 
   cpars_bio$Perr_y <- cbind(matrix(0, SOM@nsim, n_age - 1), Perr_y)

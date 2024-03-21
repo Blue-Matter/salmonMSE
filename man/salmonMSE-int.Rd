@@ -8,7 +8,7 @@
 \usage{
 MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford)
 
-SOM2MOM(SOM)
+SOM2MOM(SOM, start = list())
 }
 \arguments{
 \item{MMSE}{Object of class \linkS4class{MMSE} returned from MSEtool}
@@ -20,6 +20,9 @@ SOM2MOM(SOM)
 \item{N}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{Ford}{Data frame of phenotypic trait values saved in the \link{salmonMSE_env} environment during the simulation}
+
+\item{start}{An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
+simulation}
 }
 \value{
 \code{MMSE2SMSE}: \linkS4class{SMSE} object
@@ -31,5 +34,11 @@ SOM2MOM(SOM)
 \item \code{\link[=SOM2MOM]{SOM2MOM()}} converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
 \item \code{\link[=MMSE2SMSE]{MMSE2SMSE()}} converts the openMSE output, along with additional state variables recorded in \link{salmonMSE_env}, into a salmon MSE object (\linkS4class{SMSE})
 \code{\link[=salmonMSE]{salmonMSE()}} is the wrapper function that coordinates the simulation and the output.
+}
+}
+\examples{
+\dontrun{
+# One thousand natural and hatchery smolts in the first year
+SOM <- SOM2MOM(SOM, start = list(Natural = 1e3, Hatchery = 1e3))
 }
 }
