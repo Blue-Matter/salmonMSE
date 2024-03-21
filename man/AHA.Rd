@@ -12,7 +12,7 @@ AHA(SOM, ngen = 100)
 \item{ngen}{Integer, the number of generations for which to run the simulation}
 }
 \value{
-A named list containing vectors of state variables (by generation). See \linkS4class{SMSE} object description.
+A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
 }
 \description{
 Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA

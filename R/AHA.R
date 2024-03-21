@@ -7,18 +7,32 @@
 #'
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param ngen Integer, the number of generations for which to run the simulation
-#' @return A named list containing vectors of state variables (by generation). See \linkS4class{SMSE} object description.
+#' @return A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
 #'
 #' @export
 AHA <- function(SOM, ngen = 100) {
+  SOM <- check_SOM(SOM)
+  output_sim <- lapply(1:SOM@nsim, .AHA_wrapper, SOM = SOM, ngen = ngen)
+  var_report <- names(output_sim[[1]])
+
+  output <- lapply(var_report, function(i) {
+    sapply(output_sim, getElement, i) %>% t()
+  }) %>%
+    structure(names = var_report)
+
+  return(output)
+}
+
+
+.AHA_wrapper <- function(x, SOM, ngen) {
 
   output <- .AHA(
-    prod_adult = SOM@prod_smolt[1] * SOM@prod_smolt_improve * SOM@SAR[1],
-    capacity_adult = SOM@capacity_smolt[1] * SOM@capacity_smolt_improve * SOM@SAR[1],
+    prod_adult = SOM@prod_smolt[x] * SOM@prod_smolt_improve * SOM@SAR[x],
+    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SOM@SAR[x],
     #capacity_smolt = 1.917e6,
     fec_spawn = SOM@fec,
     p_female = SOM@p_female,
-    surv_ocean = SOM@SAR,
+    surv_ocean = SOM@SAR[x],
     surv_passage_juv = 1,
     surv_passage_adult = 1,
     u_HOR = c(sum(SOM@u), 0, 0, 0),
@@ -29,8 +43,8 @@ AHA <- function(SOM, ngen = 100) {
     surv_egg_subyearling = SOM@s_egg_subyearling,
     capacity_spawn_em = 1e12,
     capacity_smolt_adult = 1e12,
-    surv_adult_return_of_yearling = SOM@SAR[1],
-    surv_adult_return_of_subyearling = SOM@SAR[1],
+    surv_adult_return_of_yearling = SOM@SAR[x],
+    surv_adult_return_of_subyearling = SOM@SAR[x],
     RRS_HOS = SOM@gamma,
     p_weir_efficiency = 0,
     p_return_hatchery = SOM@premove_HOS,

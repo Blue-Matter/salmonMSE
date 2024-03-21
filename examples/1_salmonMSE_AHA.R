@@ -60,7 +60,7 @@ Harvest <- new(
 
 # Stitched salmon operating model
 SOM <- new("SOM",
-           proyears = 100 * 3,
+           proyears = 50,
            Bio, Habitat, Hatchery, Harvest)
 
 # run salmonMSE
