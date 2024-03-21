@@ -30,7 +30,7 @@ Finally, stochasticity can be incorporated in the model to incorporate uncertain
 [openMSE](https://openmse.com/) is the population dynamics model underlying salmonMSE. 
 While openMSE is intended for the evaluation of management strategies in marine fisheries, the functionality of the software can be re-purposed to model salmon life stages. 
 Most state variables are therefore directly modeled within openMSE, while additional state variables that are needed for salmon life history are calculated in salmonMSE.
-For more information, see the article on the [population dynamics model](../model.html).
+For more information, see the article on the [population dynamics model](model.html).
 
 Use of openMSE allows for rigorous review of the source code by a wider user base.
 However, typical users of salmonMSE will not need to see the internal conversion between salmonMSE and openMSE operating models. 
@@ -76,6 +76,8 @@ SAHA <- AHA(SOM)
 ```
 
 The resulting output is a named list following the format of the `SMSE` object, but indexed by generation instead of year.
+
+More details are also provided in the [example](example.html) article.
 
 # Future development
 
