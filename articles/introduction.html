@@ -42,6 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/introduction.html">Introduction</a>
+    <a class="dropdown-item" href="../articles/model.html">Implementation of salmon dynamics</a>
   </div>
 </li>
       </ul>
@@ -106,7 +107,7 @@ of management strategies in marine fisheries, the functionality of the
 software can be re-purposed to model salmon life stages. Most state
 variables are therefore directly modeled within openMSE, while
 additional state variables that are needed for salmon life history are
-calculated in salmonMSE. For more information, see the article on the <a href="../model.html">population dynamics model</a>.</p>
+calculated in salmonMSE. For more information, see the article on the <a href="model.html">population dynamics model</a>.</p>
 <p>Use of openMSE allows for rigorous review of the source code by a
 wider user base. However, typical users of salmonMSE will not need to
 see the internal conversion between salmonMSE and openMSE operating
@@ -165,6 +166,7 @@ implementation of AHA in R as well:</p>
 <code class="sourceCode R"><span><span class="va">SAHA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
 <p>The resulting output is a named list following the format of the
 <code>SMSE</code> object, but indexed by generation instead of year.</p>
+<p>More details are also provided in the <a href="example.html">example</a> article.</p>
 </div>
 <div class="section level2">
 <h2 id="future-development">Future development<a class="anchor" aria-label="anchor" href="#future-development"></a>
