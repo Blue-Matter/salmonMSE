@@ -7,7 +7,7 @@ Authors@R:
 Date: 2024-02-28
 Maintainer: Quang Huynh <quang@bluematterscience.com>
 Description: Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and
-  habitat actions. The backend utilizes 'openMSE'.
+  habitat actions. The backend utilizes 'openMSE', but typical users of salmonMSE will not need to see the internal conversion.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
 Imports: MSEtool, dplyr, methods, reshape2, rlang, stats, utils

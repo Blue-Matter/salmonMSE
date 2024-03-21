@@ -3,6 +3,8 @@
 
 # salmonMSE
 
+> Salmonid management strategy evaluation
+
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -12,14 +14,22 @@ status](https://www.r-pkg.org/badges/version/salmonMSE)](https://CRAN.R-project.
 [![R-CMD-check](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of salmonMSE is to …
+salmonMSE is a decision-support tool for Pacific salmon focusing on
+strategic trade-offs among harvest, hatchery and habitat management
+levers.
+
+Funding for the development of salmonMSE is provided through the
+[Pacific Salmon Strategy
+Initiative](https://www.dfo-mpo.gc.ca/campaign-campagne/pss-ssp/index-eng.html)
+in collaboration with the Department of Fisheries and Oceans Canada.
 
 ## Installation
 
-You can install the development version of salmonMSE from
-[GitHub](https://github.com/) with:
+Currently, `salmonMSE` requires the developmental version of `MSEtool`.
+Both can be installed from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("Blue-Matter/salmonMSE")
+# install.packages("remotes")
+remotes::install_github("Blue-Matter/MSEtool", ref = "salmonMSE")
+remotes::install_github("Blue-Matter/salmonMSE")
 ```
