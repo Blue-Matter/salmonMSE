@@ -65,7 +65,7 @@ salmonMSE() is the wrapper function that coordinates the simulation and the outp
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MMSE2SMSE</span><span class="op">(</span><span class="va">MMSE</span>, <span class="va">SOM</span>, <span class="va">Harvest_MMP</span>, <span class="va">N</span>, <span class="va">Ford</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SOM2MOM</span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">SOM2MOM</span><span class="op">(</span><span class="va">SOM</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +89,11 @@ salmonMSE() is the wrapper function that coordinates the simulation and the outp
 <dt>Ford</dt>
 <dd><p>Data frame of phenotypic trait values saved in the <a href="salmonMSE_env.html">salmonMSE_env</a> environment during the simulation</p></dd>
 
+
+<dt>start</dt>
+<dd><p>An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
+simulation</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -100,6 +105,14 @@ salmonMSE() is the wrapper function that coordinates the simulation and the outp
 <p><code>SOM2MOM</code>: MOM object</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># One thousand natural and hatchery smolts in the first year</span></span></span>
+<span class="r-in"><span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">SOM2MOM</span><span class="op">(</span><span class="va">SOM</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Natural <span class="op">=</span> <span class="fl">1e3</span>, Hatchery <span class="op">=</span> <span class="fl">1e3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
