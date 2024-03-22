@@ -68,17 +68,22 @@ SMSE <- salmonMSE(SOM)
 class?SMSE # Definitions of arrays
 
 # run AHA - list of vectors by generation
-SAHA <- AHA(SOM)
+SAHA <- AHA(SOM, ngen = 20)
 
 # Compare AHA (x) and salmonMSE (y) output
-compare <- function(x, y, ylab = "y", ylim) {
+compare <- function(x, y, ylab = "y", ylim, yline) {
   y[y < 1e-8] <- NA
   if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
-  par(mfrow = c(1, 2))
-  plot(x, xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim)
+  par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
+  matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1)
+  if (!missing(yline)) abline(h = yline, lty = 2)
   matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
-          ylim = ylim, typ = 'o', pch = 1, lwd = 1)
+          ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1)
+  if (!missing(yline)) abline(h = yline, lty = 2)
 }
 
 compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
-compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60))
+
+#png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
+compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.3)
+#dev.off()
