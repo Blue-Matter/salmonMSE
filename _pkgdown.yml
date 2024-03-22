@@ -2,3 +2,14 @@ url: https://docs.salmonmse.com/
 template:
   bootstrap: 5
 
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Introduction
+        href: articles/introduction.html
+      - text: Simple example
+        href: articles/example.html
+      - text: Implementation
+        href: articles/model.html
