@@ -12,7 +12,9 @@ The component of the operating model that controls harvest.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{u}}{Numeric. The exploitation rate of the return.}
+\item{\code{u_preterminal}}{Numeric. The exploitation rate of the immature stock in the pre-terminal fishery.}
+
+\item{\code{u_terminal}}{Numeric. The exploitation rate of the return in the terminal fishery.}
 
 \item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity.}
 }}

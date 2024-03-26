@@ -2,12 +2,14 @@
 % Please edit documentation in R/Harvest_MMP.R
 \name{make_Harvest_MMP}
 \alias{make_Harvest_MMP}
-\title{Harvest component of operating model}
+\title{Harvest component of salmon operating model}
 \usage{
-make_Harvest_MMP(u)
+make_Harvest_MMP(u_terminal = 0.1, u_preterminal = 0)
 }
 \arguments{
-\item{u}{Numeric. Harvest rate.}
+\item{u_terminal}{Numeric between 0-1. Harvest rate of the terminal fishery.}
+
+\item{u_preterminal}{Numeric between 0-1. Harvest rate of the preterminal fishery.}
 }
 \description{
 A function that creates a multi-stock management procedure

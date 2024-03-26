@@ -26,6 +26,11 @@ AHA <- function(SOM, ngen = 100) {
 
 .AHA_wrapper <- function(x, SOM, ngen) {
 
+  if (sum(SOM@u_preterminal)) {
+    warning("Pre-terminal fishing is not modeled in AHA. Setting SOM@u_preterminal = 0")
+    SOM@u_preterminal <- 0
+  }
+
   output <- .AHA(
     prod_adult = SOM@prod_smolt[x] * SOM@prod_smolt_improve * SOM@SAR[x],
     capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SOM@SAR[x],
@@ -35,8 +40,8 @@ AHA <- function(SOM, ngen = 100) {
     surv_ocean = SOM@SAR[x],
     surv_passage_juv = 1,
     surv_passage_adult = 1,
-    u_HOR = c(sum(SOM@u), 0, 0, 0),
-    u_NOR = c(sum(SOM@u), 0, 0, 0),
+    u_HOR = c(sum(SOM@u_terminal), 0, 0, 0),
+    u_NOR = c(sum(SOM@u_terminal), 0, 0, 0),
     surv_pre_spawn = SOM@s_prespawn,
     fec_brood = SOM@fec_brood,
     surv_egg_smolt = SOM@s_egg_smolt,

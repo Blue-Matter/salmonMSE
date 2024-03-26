@@ -64,13 +64,21 @@ where \eqn{q = 1-p}.
 
 \item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
 
-\item{\code{Catch_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Catch of natural origin spawners.}
+\item{\code{CatchPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery catch of natural origin spawners.}
 
-\item{\code{Catch_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Catch of hatchery origin spawners.}
+\item{\code{CatchT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery catch of natural origin spawners.}
 
-\item{\code{U_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Harvest rate of natural origin spawners.}
+\item{\code{CatchPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery catch of hatchery origin spawners.}
 
-\item{\code{U_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Harvest rate of hatchery origin spawners.}
+\item{\code{CatchT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery catch of hatchery origin spawners.}
+
+\item{\code{UPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery harvest rate of natural origin spawners.}
+
+\item{\code{UT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery harvest rate of natural origin spawners.}
+
+\item{\code{UPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery harvest rate of hatchery origin spawners.}
+
+\item{\code{UT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery harvest rate of hatchery origin spawners.}
 
 \item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness.}
 

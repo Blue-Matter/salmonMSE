@@ -94,7 +94,8 @@ setClass(
   "Harvest",
   slots = c(
     Name = "character",
-    u = "numeric",
+    u_preterminal = "numeric",
+    u_terminal = "numeric",
     m = "numeric"
   )
 )
@@ -230,10 +231,14 @@ setMethod("initialize", "SOM",
 #' @slot NOS Array `[nsim, nstocks, proyears]`. Natural origin spawners.
 #' @slot HOS Array `[nsim, nstocks, proyears]`. Hatchery origin spawners.
 #' @slot HOS_effective Array `[nsim, nstocks, proyears]`. Hatchery origin spawners discounted by `gamma`.
-#' @slot Catch_NOS Array `[nsim, nstocks, proyears]`. Catch of natural origin spawners.
-#' @slot Catch_HOS Array `[nsim, nstocks, proyears]`. Catch of hatchery origin spawners.
-#' @slot U_NOS Array `[nsim, nstocks, proyears]`. Harvest rate of natural origin spawners.
-#' @slot U_HOS Array `[nsim, nstocks, proyears]`. Harvest rate of hatchery origin spawners.
+#' @slot CatchPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery catch of natural origin spawners.
+#' @slot CatchT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery catch of natural origin spawners.
+#' @slot CatchPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery catch of hatchery origin spawners.
+#' @slot CatchT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery catch of hatchery origin spawners.
+#' @slot UPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of natural origin spawners.
+#' @slot UT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of natural origin spawners.
+#' @slot UPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
+#' @slot UT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of hatchery origin spawners.
 #' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness.
 #' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence of hatchery on mean phenotypic values.
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.
@@ -288,10 +293,14 @@ setClass(
     NOS = "array",
     HOS = "array",
     HOS_effective = "array",
-    Catch_NOS = "array",
-    Catch_HOS = "array",
-    U_NOS = "array",
-    U_HOS = "array",
+    CatchPT_NOS = "array",
+    CatchT_NOS = "array",
+    CatchPT_HOS = "array",
+    CatchT_HOS = "array",
+    UPT_NOS = "array",
+    UT_NOS = "array",
+    UPT_HOS = "array",
+    UT_HOS = "array",
     fitness = "array",
     SAR_loss = "array",
     PNI = "array",

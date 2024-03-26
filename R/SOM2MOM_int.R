@@ -117,10 +117,16 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   stage <- match.arg(stage)
 
   Fleet <- new("Fleet")
-  Fleet@Name <- "Fishery"
+  Fleet@Name <- switch(
+    stage,
+    "immature" = "Preterminal fishery",
+    "return" = "Terminal fishery",
+    "escapement" = "Escapement placeholder"
+  )
   Fleet@nyears <- SOM@nyears
   Fleet@CurrentYr <- Sys.Date() %>% format("%Y") %>% as.numeric()
   Fleet@EffYears <- 1:Fleet@nyears
+
   Fleet@EffLower <- c(0, 0.1)
   Fleet@EffUpper <- c(0, 0.1)
 
@@ -143,13 +149,26 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet <- list()
   cpars_fleet$qs <- rep(1, SOM@nsim)
 
+  if (stage == "immature") {
+    F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR[x])))
+  } else if (stage == "return") {
+    F_hist <- -log(1 - SOM@u_terminal)
+  } else {
+    F_hist <- 0
+  }
+  cpars_fleet$Find <- matrix(F_hist, SOM@nsim, SOM@nyears)
+
   maxage <- SOM@maxage
   n_age <- maxage + 1
   cpars_fleet$V <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
 
-  # Need to select for all populations in order to remove excessive messages about selectivity < 0.01.
-  # Should be fine if all fish are mature before fishery
-  cpars_fleet$V[, n_age - 1, ] <- 1
+  # Need to define selectivity in all populations in order to remove excessive messages about selectivity < 0.01.
+  if (stage == "immature") {
+    cpars_fleet$V[, n_age - 2, ] <- 1
+  } else {
+    cpars_fleet$V[, n_age - 1, ] <- 1
+  }
+  cpars_fleet$retA <- cpars_fleet$V
 
   # Future feature for mark rate affecting harvest rate or retention of hatchery origin vs natural origin fish
   #if (NOS) {
