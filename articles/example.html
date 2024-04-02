@@ -72,7 +72,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-03-22</h4>
+            <h4 data-toc-skip class="date">2024-04-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -157,8 +157,9 @@ component). No hatchery fish are marked.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Harvest"</span>,</span>
-<span>  u <span class="op">=</span> <span class="fl">0.203</span>,  <span class="co"># Specify fixed harvest rate of mature fish</span></span>
-<span>  m <span class="op">=</span> <span class="fl">0</span>       <span class="co"># Mark rate of hatchery releases (future feature)</span></span>
+<span>  u_preterminal <span class="op">=</span> <span class="fl">0</span>,   <span class="co"># No fishery on juveniles</span></span>
+<span>  u_terminal <span class="op">=</span> <span class="fl">0.203</span>,  <span class="co"># Specify fixed harvest rate of mature fish in the terminal fishery</span></span>
+<span>  m <span class="op">=</span> <span class="fl">0</span>                <span class="co"># Mark rate of hatchery releases (future feature)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s stitch together the operating model and run the simulation
 for 50 years.</p>
