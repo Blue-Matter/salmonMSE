@@ -25,10 +25,10 @@ As model development continues, the dynamics can be stated by stock and year.
 
 # Definitions
 
-** Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.**
+**Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.**
 
 ```{r param, echo = FALSE}
-param <- read.csv("../inst/glossary.csv") %>%
+param <- read.csv("tables/glossary.csv") %>%
   mutate(Name = paste0("$", Name, "$"))
 knitr::kable(param)
 ```
