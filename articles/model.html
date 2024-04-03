@@ -44,6 +44,7 @@
     <a class="dropdown-item" href="../articles/introduction.html">Introduction</a>
     <a class="dropdown-item" href="../articles/example.html">Simple example</a>
     <a class="dropdown-item" href="../articles/model.html">Implementation</a>
+    <a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a>
   </div>
 </li>
       </ul>
@@ -72,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Implementation of salmon dynamics</h1>
             
-            <h4 data-toc-skip class="date">2024-04-02</h4>
+            <h4 data-toc-skip class="date">2024-04-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/model.Rmd" class="external-link"><code>vignettes/model.Rmd</code></a></small>
       <div class="d-none name"><code>model.Rmd</code></div>
@@ -216,7 +217,9 @@ and merely pass the smolt production back to openMSE. The result is that
 the age structure ‘catches up’ with the generational life cycle, as
 shown below.</p>
 <p><img src="../reference/figures/model-age-structure-openMSE.png"><!-- --></p>
-<p><em>Salmon age-structure as implemented in openMSE.</em></p>
+<p><em>Salmon age-structure as implemented in openMSE. Missing state
+variables are stored in a data frame in salmonMSE during the
+simulation.</em></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
