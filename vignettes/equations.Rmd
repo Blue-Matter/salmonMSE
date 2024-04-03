@@ -106,7 +106,7 @@ In the absence of fitness effects, $M^\textrm{SAR}_g = -\log(\textrm{SAR})$.
 Similarly, the pre-terminal fishery catch of immature HOS in generation $g$ is
 
 $$
-\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F^\textrm{PT}}{Z^\textrm{PT}}(1 - \exp(-Z^\textrm{PT}))\textrm{Smolt}^\textrm{Rel}_g
+\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F_g^\textrm{PT}}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))\textrm{Smolt}^\textrm{Rel}_g
 $$
 
 # Recruitment
