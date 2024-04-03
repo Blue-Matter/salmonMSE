@@ -1,0 +1,212 @@
+---
+title: "Dynamics equations"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Dynamics equations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(dplyr)
+```
+
+While salmonMSE reports state variables by year, the model is configured to model a population by successive generations. 
+Thus, the dynamics equations are currently organized by life stage.
+
+As model development continues, the dynamics can be stated by stock and year.
+
+# Definitions
+
+** Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.**
+
+```{r param, echo = FALSE}
+param <- read.csv("../inst/glossary.csv") %>%
+  mutate(Name = paste0("$", Name, "$"))
+knitr::kable(param)
+```
+
+# Natural production
+
+First, we consider natural production in the absence of fitness effects from the hatchery and habitat improvement.
+
+## Fry
+
+From the spawners (NOS and HOS) of generation $g-1$, the corresponding fry production for generation $g$ is calculated as:
+
+\begin{align}
+\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec}\\
+\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec}
+\end{align}
+
+## Smolts
+
+A Beverton-Holt stock-recruit relationship is used to calculate the smolt production
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt} \times 
+\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}}{C_\textrm{smolt}}}\\
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt} \times 
+\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}}{C_\textrm{smolt}}}
+\end{align}
+
+# Hatchery production
+
+## Broodtake
+
+The target broodtake is calculated as
+
+$$
+\textrm{Broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{subyearling}}
+$$
+
+The natural broodtake is
+
+$$
+\textrm{NOB}_{g-1} = \textrm{max}(p^\textrm{NOB}_\textrm{target} \times \textrm{Broodtake}, p^\textrm{NOB}_\textrm{max} \times \textrm{NOR}^\textrm{escapement}_{g-1})
+$$
+
+The hatchery broodtake is
+
+$$
+\textrm{HOB}_{g-1} = \textrm{min}(\textrm{Broodtake} - \textrm{NOB}_{g-1}, \textrm{HOR}^\textrm{escapement}_{g-1} \times p^\textrm{HOS}_\textrm{removal})
+$$
+
+## Smolt releases
+
+From the total broodtake $\textrm{NOB}_{g-1}$ and $\textrm{HOB}_{g-1}$, the smolt releases is calculated as
+
+$$
+\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hatchery}
+$$
+
+where the average survival of all hatchery from the egg to yearling stage is
+
+$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
+
+# Pre-terminal fishery
+
+Harvest $u^\textrm{PT}$in the pre-terminal fishery occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
+
+$$
+\textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
+$$
+
+where $F^\textrm{PT}_g$ is solved such that $u^\textrm{PT} = \frac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))$, $Z^\textrm{PT}_g = F^\textrm{PT}_g + M^\textrm{SAR}_g$.
+
+In the absence of fitness effects, $M^\textrm{SAR}_g = -\log(\textrm{SAR})$.
+
+Similarly, the pre-terminal fishery catch of immature HOS in generation $g$ is
+
+$$
+\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F^\textrm{PT}}{Z^\textrm{PT}}(1 - \exp(-Z^\textrm{PT}))\textrm{Smolt}^\textrm{Rel}_g
+$$
+
+# Recruitment
+
+The recruitment is calculated as the survival of smolts after pre-terminal harvest and marine survival:
+
+\begin{align}
+\textrm{NOR}_g &= \exp(-Z^\textrm{PT})[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]\\
+\textrm{HOR}_g &= \exp(-Z^\textrm{PT})\textrm{Smolt}^\textrm{Rel}_g
+\end{align}
+
+## Terminal fishery
+
+Catch of the terminal fishery is calculated from the harvest rate $u^T$:
+
+\begin{align}
+\textrm{Catch}^\textrm{NOS,T}_g &= u^\textrm{T} \textrm{NOR}_g\\
+\textrm{Catch}^\textrm{HOS,T}_g &= u^\textrm{T} \textrm{HOR}_g
+\end{align}
+
+# Escapement
+
+The escapement consists of the survivors of the terminal fishery:
+
+\begin{align}
+\textrm{NOR}^\textrm{escapement}_g &= (1 - u^\textrm{T}) \textrm{NOR}_g\\
+\textrm{HOR}^\textrm{escapement}_g &= (1 - u^\textrm{T}) \textrm{HOR}_g
+\end{align}
+
+# Spawners
+
+The abundance of natural origin spawners consists of the escapement reduced by the broodtake. A separate removal term is used for hatchery origin spawners are removed, where the fish removed can be used as broodtake, research purposes, management of population fitness, etc.
+
+\begin{align}
+\textrm{NOS}_g &= \textrm{NOR}^\textrm{escapement}_g - \textrm{NOB}_g\\
+\textrm{HOS}_g &= \textrm{NOR}^\textrm{escapement}_g (1 - p^\textrm{HOS}_\textrm{removal})
+\end{align}
+
+# Habitat improvement
+
+Habitat improvement can improve either the productivity parameter, capacity parameter, or both. 
+
+Base terms $P_\textrm{smolt}$ and $C_\textrm{smolt}$ are used in the historical period of the model, e.g., for conditioning from data.
+In the projection, the stock recruit parameters $P_\textrm{smolt}^\prime$ and $C_\textrm{smolt}^\prime$ are updated with the improvement parameters, $I_P$ or $I_C$, as specified in the operating model:
+
+\begin{align}
+P_\textrm{smolt}^\prime &= P_\textrm{smolt}I_P\\
+C_\textrm{smolt}^\prime &= C_\textrm{smolt}I_C
+\end{align}
+
+# Fitness effects on productivity
+
+Reproductive success of hatchery fish has been observed to be lower than their natural counterparts, either through genetic or epigenetic causes.
+
+The population fitness for generation $g$ is
+
+$$
+f_g = \exp\left(-0.5\dfrac{(\bar{p}_g^\textrm{natural} - \theta^\textrm{natural})^2}{\omega^2 + \sigma^2}\right)
+$$
+where
+
+\begin{align}
+\bar{p}_g^\textrm{natural} &= B + D\\
+\bar{p}_g^\textrm{hatchery} &= b + d
+\end{align}
+
+\begin{align}
+A &= \dfrac{\bar{p}_{g-1}^\textrm{natural}\omega^2 + \theta^\textrm{natural}\sigma^2}{\omega^2+\sigma^2}\\
+B &= p^\textrm{NOS}[\bar{p}_{g-1}^\textrm{natural} + (A - \bar{p}_{g-1}^\textrm{natural})h^2]\\
+C &= \dfrac{\bar{p}_{g-1}^\textrm{hatchery}\omega^2 + \theta^\textrm{natural}\sigma^2}{\omega^2+\sigma^2}\\
+D &= p^\textrm{HOSeff}[\bar{p}_{g-1}^\textrm{hatchery} + (C - \bar{p}_{g-1}^\textrm{hatchery})h^2]\\
+\end{align}
+
+\begin{align}
+a &= \dfrac{\bar{p}_{g-1}^\textrm{hatchery}\omega^2 + \theta^\textrm{hatchery}\sigma^2}{\omega^2+\sigma^2}\\
+b &= p^\textrm{HOB}[\bar{p}_{g-1}^\textrm{hatchery} + (a - \bar{p}_{g-1}^\textrm{hatchery})h^2]\\
+c &= \dfrac{\bar{p}_{g-1}^\textrm{natural}\omega^2 + \theta^\textrm{hatchery}\sigma^2}{\omega^2+\sigma^2}\\
+d &= p^\textrm{NOB}[\bar{p}_{g-1}^\textrm{natural} + (c - \bar{p}_{g-1}^\textrm{natural})h^2]\\
+\end{align}
+
+$$
+\omega = \Omega \sigma
+$$
+
+Fitness reduces survival in the egg, fry, and smolt life stages:
+
+\begin{align}
+\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times f_g^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times f_g^{\ell_\textrm{egg}}
+\end{align}
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt}^\prime f_g^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}\\
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt}^\prime f_g^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}
+\end{align}
+
+$$
+M^\textrm{SAR}_g = -\log(\textrm{SAR} \times f_g^{\ell_\textrm{smolt}})
+$$
+
+

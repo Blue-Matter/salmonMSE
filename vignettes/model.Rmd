@@ -86,4 +86,4 @@ Two constraints in openMSE prevent implementation of this figure in the model. F
 knitr::include_graphics("../man/figures/model-age-structure-openMSE.png")
 ```
 
-*Salmon age-structure as implemented in openMSE.*
+*Salmon age-structure as implemented in openMSE. Missing state variables are stored in a data frame in salmonMSE during the simulation.*

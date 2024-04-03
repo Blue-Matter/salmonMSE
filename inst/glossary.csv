@@ -1,36 +1,38 @@
-Variable,Definition,Type
-NOS,Natural origin spawners,Habitat
-HOS,Hatchery origin spawners,Hatchery
-HOS_{eff},"Effective number of HOS, spawning is discounted by $gamma$",Hatchery
-Cap_{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat
-Prod_{smolt},Maximum rate of recruitment of smolts (stock-recruit parameter),Habitat
-u,Harvest rate of various fisheries,Harvest
-Fec,Fecundity of broodtake (eggs per female),Population dynamics
-p_{female},Proportion of female spawners in broodtake (vs. male),Population dynamics
-SAR,Smolt-to-adult recruit survival,Population dynamics
-HOB,Hatchery origin broodtake,Hatchery
-NOB,Natural origin broodtake,Hatchery
-s_{egg-smolt},Survival of hatchery eggs to smolt,Hatchery
-s_{egg-subyearling},Survival of hatchery eggs to subyearling,Hatchery
-p_{yearling},Proportion of hatchery releases as yearling (vs. subyearling),Hatchery
-s_{prespawn},Survival of adult broodtake in hatchery,Hatchery
-n_{yearling},Target number of hatchery releases as yearlings,Hatchery
-n_{subyearling},Target number of hatchery releases as subyearlings,Hatchery
-p_{NOB},Target proportion of the total broodtake of natural origin (vs. hatchery origin),Hatchery
-p_{HOB},Target proportion of the total broodtake of hatchery origin (vs. natural origin),Hatchery
-pmax_{NOB},"Maximum proportion of the natural origin broodtake from the escapement, i.e., NOB/NOS ratio",Hatchery
-NOR,Natural origin return,Habitat
-HOR,Hachery origin return,Hatchery
-p_{hatchery},Proportion of hatchery origin escapement that return to the hatchery (vs. spawning grounds),Population dynamics
-p_{weir},Proportion of hatchery origin escapement captured in weirs,Population dynamics
-gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery
-selection_strength,Selection strength,Fitness
-theta,Optimal phenotypic value for natural and hatchery population,Fitness
-h^2,Heritability of fitness traits,Fitness
-\sigma^2,Phenotypic variation of fitness traits,Fitness
-PNI,Proportionate natural influence,Fitness
-RelLoss_i,"Fitness loss at life stage i (egg, fry, smolt)",Fitness
-pbar,Mean phenotypic value of natural and hatchery population (Ford fitness),Fitness
-m,Mark rate of hatchery fish (affects fishery retention of hatchery fish relative to natural fish),Hatchery
-p_{NOS},Proportion of natural origin spawners (vs. effective HOS),Population dynamics
-p_{HOSeff},Proportion of effective hatchery origin spawners (vs. NOS),Population dynamics
+Name,Definition,Type,Class,Slot
+\textrm{NOS},Natural origin spawners,Natural production,SMSE,NOS
+\textrm{HOS},Hatchery origin spawners,Hatchery,SMSE,HOS
+\textrm{HOS}_{eff},"Effective number of HOS, spawning output discounted by $\gamma$",Hatchery,SMSE,HOSeff
+C_\textrm{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat,SOM,capacity_smolt
+P_\textrm{smolt},Maximum rate of recruitment of smolts (stock-recruit parameter),Habitat,SOM,prod_smolt
+u^\textrm{PT},Pre-terminal fishery harvest rate,Harvest,SOM,u_preterminal
+u^\textrm{T},Terminal fishery harvest rate,Harvest,SOM,u_terminal
+\textrm{Fec},Fecundity of spawners (eggs per female),Natural production,SOM,fec
+\textrm{Fec}^\textrm{brood},Fecundity of broodtake (eggs per female),Natural production,SOM,fec_brood
+p^\textrm{female},Proportion of female spawners in broodtake and spawners,Natural production + Hatchery,SOM,p_female
+\textrm{SAR},Smolt-to-adult recruit survival,Natural production + Hatchery,SOM,SAR
+\textrm{NOB},Natural origin broodtake,Hatchery,SMSE,NOB
+\textrm{HOB},Hatchery origin broodtake,Hatchery,SMSE,HOB
+s_\textrm{yearling},Survival of hatchery eggs to yearling life stage,Hatchery,SOM,s_egg_smolt
+s_\textrm{subyearling},Survival of hatchery eggs to subyearling life stage,Hatchery,SOM,s_egg_subyearling
+p_\textrm{yearling},Proportion of hatchery releases as yearling (vs. subyearling),Hatchery,Internal state variable,-
+s_\textrm{prespawn},Survival of adult broodtake in hatchery,Hatchery,SOM,s_prespawn
+n_\textrm{yearling},Target number of hatchery releases as yearlings,Hatchery,SOM,n_yearling
+n_\textrm{subyearling},Target number of hatchery releases as subyearlings,Hatchery,SOM,n_subyearling
+p_\textrm{NOB},Proportion of the total broodtake of natural origin (vs. hatchery origin),Hatchery,Internal state variable,-
+p_\textrm{HOB},Proportion of the total broodtake of hatchery origin (vs. natural origin),Hatchery,Internal state variable,-
+p^\textrm{NOB}_\textrm{max},"Maximum proportion of the natural origin broodtake from the escapement, i.e., NOB/NOS ratio",Hatchery,SOM,pmax_NOB
+\textrm{NOR},Natural origin return,Natural production,SMSE,Return_NOS
+\textrm{HOR},Hachery origin return,Hatchery,SMSE,Return_HOS
+p^\textrm{HOS}_\textrm{removal},Proportion of hatchery origin spawners removed from spawning grounds,Hatchery,SOM,premove_HOS
+\gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery,SOM,gamma
+\Omega,Selection strength relative to fitness variance,Fitness,SOM,selection_strength
+\theta,Optimal phenotypic value for natural and hatchery population,Fitness,SOM,theta
+h^2,Heritability of fitness traits,Fitness,SOM,heritability
+\sigma^2,Phenotypic variation of fitness traits,Fitness,SOM,fitness_variance
+\textrm{PNI},Proportionate natural influence,Fitness,SMSE,PNI
+\ell_i,"Relative fitness loss at the i-th life stage (egg, fry, smolt)",Fitness,SOM,rel_loss
+\bar{p},Mean phenotypic value of natural and hatchery population ,Fitness,Internal state variable,-
+f,Population fitness,Fitness,SMSE,fitness
+m,Mark rate of hatchery fish (affects fishery retention of hatchery fish relative to natural fish),Harvest,SOM,m
+p_\textrm{NOS},Proportion of natural origin spawners (vs. effective HOS),Population dynamics,Internal state variable,-
+p_\textrm{HOSeff},Proportion of effective hatchery origin spawners (vs. NOS),Population dynamics,SMSE,pHOS

@@ -13,3 +13,5 @@ navbar:
         href: articles/example.html
       - text: Implementation
         href: articles/model.html
+      - text: Dynamics equations
+        href: articles/equations.html
