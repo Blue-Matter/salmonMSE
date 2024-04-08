@@ -13,11 +13,9 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal,
         y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
         nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
         M <- DataList[[p]][[1]]@Misc$StockPars$M_ageArray[x, , nyears + y]
-
         F_preterminal <- get_F(u = u_preterminal, M = max(M))
-        Effort <- F_preterminal
       } else {
-        Effort <- 0
+        F_preterminal <- 0
       }
       Effort <- F_preterminal
     } else {
@@ -52,8 +50,12 @@ make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0) {
 
 #' @importFrom stats uniroot
 get_F <- function(u = 0, M) {
-  .F <- uniroot(F_solver, interval = c(1e-8, 3), M = M, u = u)
-  .F$root
+  if (u > 0) {
+    .F <- uniroot(F_solver, interval = c(1e-8, 3), M = M, u = u)
+    .F$root
+  } else {
+    0
+  }
 }
 
 F_solver <- function(.F, M, u = 0) {
