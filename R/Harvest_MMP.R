@@ -49,9 +49,9 @@ make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0) {
 }
 
 #' @importFrom stats uniroot
-get_F <- function(u = 0, M) {
+get_F <- function(u = 0, M, Fmax = 20) {
   if (u > 0) {
-    .F <- uniroot(F_solver, interval = c(1e-8, 3), M = M, u = u)
+    .F <- uniroot(F_solver, interval = c(1e-8, Fmax), M = M, u = u)
     .F$root
   } else {
     0
