@@ -25,14 +25,14 @@ p^\textrm{NOB}_\textrm{max},"Maximum proportion of the natural origin broodtake 
 \textrm{HOR},Hachery origin return,Hatchery,SMSE,Return_HOS
 p^\textrm{HOS}_\textrm{removal},Proportion of hatchery origin spawners removed from spawning grounds,Hatchery,SOM,premove_HOS
 \gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery,SOM,gamma
-\Omega,Selection strength relative to fitness variance,Fitness,SOM,selection_strength
-\theta,Optimal phenotypic value for natural and hatchery population,Fitness,SOM,theta
+\bar{z},Mean phenotypic value of progeny in natural and hatchery environments,Fitness,Internal state variable,-
+\theta,Optimal phenotypic value for natural and hatchery environments,Fitness,SOM,theta
+\sigma^2,Variance of phenotypic traits in population,Fitness,SOM,fitness_variance
+\Omega,Selection strength: fitness variance relative to phenotypic variance,Fitness,SOM,selection_strength
 h^2,Heritability of fitness traits,Fitness,SOM,heritability
-\sigma^2,Phenotypic variation of fitness traits,Fitness,SOM,fitness_variance
-\textrm{PNI},Proportionate natural influence,Fitness,SMSE,PNI
+\bar{W},Population fitness in the natural or hatchery environment,Fitness,SMSE,fitness
 \ell_i,"Relative fitness loss at the i-th life stage (egg, fry, smolt)",Fitness,SOM,rel_loss
-\bar{p},Mean phenotypic value of natural and hatchery population ,Fitness,Internal state variable,-
-f,Population fitness,Fitness,SMSE,fitness
+\textrm{PNI},Proportionate natural influence,Fitness,SMSE,PNI
 m,Mark rate of hatchery fish (affects fishery retention of hatchery fish relative to natural fish),Harvest,SOM,m
 p_\textrm{NOS},Proportion of natural origin spawners (vs. effective HOS),Population dynamics,Internal state variable,-
 p_\textrm{HOSeff},Proportion of effective hatchery origin spawners (vs. NOS),Population dynamics,SMSE,pHOS

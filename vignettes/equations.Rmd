@@ -25,7 +25,7 @@ As model development continues, the dynamics can be stated by stock and year.
 
 # Definitions
 
-**Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.**
+*Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.*
 
 ```{r param, echo = FALSE}
 param <- read.csv("tables/glossary.csv") %>%
@@ -43,8 +43,10 @@ From the spawners (NOS and HOS) of generation $g-1$, the corresponding fry produ
 
 \begin{align}
 \textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec}\\
-\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec}
+\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{\textrm{eff}g-1} \times p^\textrm{female} \times \textrm{Fec}
 \end{align}
+
+where $\textrm{HOS}_{\textrm{eff},g-1} = \gamma \times \textrm{HOS}_{g-1}$.
 
 ## Smolts
 
@@ -84,16 +86,16 @@ $$
 From the total broodtake $\textrm{NOB}_{g-1}$ and $\textrm{HOB}_{g-1}$, the smolt releases is calculated as
 
 $$
-\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hatchery}
+\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hat.}
 $$
 
 where the average survival of all hatchery from the egg to yearling stage is
 
-$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
+$s^\textrm{hat.} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
 
 # Pre-terminal fishery
 
-Harvest $u^\textrm{PT}$in the pre-terminal fishery occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
+Harvest $u^\textrm{PT}$ in the pre-terminal fishery occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
 
 $$
 \textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
@@ -157,56 +159,87 @@ P_\textrm{smolt}^\prime &= P_\textrm{smolt}I_P\\
 C_\textrm{smolt}^\prime &= C_\textrm{smolt}I_C
 \end{align}
 
-# Fitness effects on productivity
+# Fitness effects on survival
 
-Reproductive success of hatchery fish has been observed to be lower than their natural counterparts, either through genetic or epigenetic causes.
+Reproductive success of hatchery fish has been observed to be lower than their natural counterparts, either through genetic or epigenetic causes, and is accounted for in the $\gamma$ parameter (see review in [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html)).
 
-The population fitness for generation $g$ is
+Through genetic and epigenetic factors, survival of hatchery juveniles in the hatchery environment selects for fish with a phenotype best adapted for that environment, and likewise for juveniles spawned in the natural environment. 
+Since these traits are heritable, hatchery programs can shift the fitness of the natural progeny away from the optimum for the natural environment towards that of the hatchery environment on an evolutionary time scale, i.e., over a number of generations.
+
+As described in [Ford 2002](https://doi.org/10.1046/j.1523-1739.2002.00257.x) and derived in [Lande 1976](https://doi.org/10.1111/j.1558-5646.1976.tb00911.x), the fitness loss function $W$ for an individual with phenotypic trait value $z$ in a given environment is
 
 $$
-f_g = \exp\left(-0.5\dfrac{(\bar{p}_g^\textrm{natural} - \theta^\textrm{natural})^2}{\omega^2 + \sigma^2}\right)
+W(z) = \exp\left(\dfrac{-(z-\theta)^2}{2\omega^2}\right)
 $$
-where
+
+where $\theta$ is the optimum for that environment and $\omega^2$ is the fitness variance.
+
+If the phenotypic trait value $z$ in the population is a random normal variable with mean $\bar{z}$ and variance $\sigma^2$, then the mean fitness of the population in generation $g$ is $\bar{W}(z) = \int W(z) f(z) dz$. The solution is proportional to
+
+$$
+\bar{W}(z) \propto \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
+$$
+
+We want to follow the mean fitness of generation $g$ for the natural environment:
+
+$$
+\bar{W}^\textrm{nat.}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{nat.}_g-\theta^\textrm{nat.})^2}{2(\omega+\sigma)^2}\right)
+$$
+
+The mean phenotypic value $\bar{z}$ is calculated iteratively, where the change from generation $g-1$ to $g$ is
 
 \begin{align}
-\bar{p}_g^\textrm{natural} &= B + D\\
-\bar{p}_g^\textrm{hatchery} &= b + d
+\Delta\bar{z} &= \bar{z}_g - \bar{z}_{g-1} = (\bar{z}^\prime_{g-1} - \bar{z}_{g-1})h^2\\
+\bar{z}_g &= \bar{z}_{g-1} + (\bar{z}^\prime_{g-1} - \bar{z}_{g-1})h^2\\
 \end{align}
+
+where $h^2$ is the heritability of $z$ and $\bar{z}^\prime_{g-1}$ is the trait value after applying the fitness function, defined as:
 
 \begin{align}
-A &= \dfrac{\bar{p}_{g-1}^\textrm{natural}\omega^2 + \theta^\textrm{natural}\sigma^2}{\omega^2+\sigma^2}\\
-B &= p^\textrm{NOS}[\bar{p}_{g-1}^\textrm{natural} + (A - \bar{p}_{g-1}^\textrm{natural})h^2]\\
-C &= \dfrac{\bar{p}_{g-1}^\textrm{hatchery}\omega^2 + \theta^\textrm{natural}\sigma^2}{\omega^2+\sigma^2}\\
-D &= p^\textrm{HOSeff}[\bar{p}_{g-1}^\textrm{hatchery} + (C - \bar{p}_{g-1}^\textrm{hatchery})h^2]\\
+\bar{z}^\prime_{g-1} &= \dfrac{1}{\bar{W}_{g-1}}\int W_{g-1}(z)\times zf(z)dz\\
+\bar{z}^\prime_{g-1} &= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2} - \bar{z}_{g-1}\right)h^2
 \end{align}
 
-\begin{align}
-a &= \dfrac{\bar{p}_{g-1}^\textrm{hatchery}\omega^2 + \theta^\textrm{hatchery}\sigma^2}{\omega^2+\sigma^2}\\
-b &= p^\textrm{HOB}[\bar{p}_{g-1}^\textrm{hatchery} + (a - \bar{p}_{g-1}^\textrm{hatchery})h^2]\\
-c &= \dfrac{\bar{p}_{g-1}^\textrm{natural}\omega^2 + \theta^\textrm{hatchery}\sigma^2}{\omega^2+\sigma^2}\\
-d &= p^\textrm{NOB}[\bar{p}_{g-1}^\textrm{natural} + (c - \bar{p}_{g-1}^\textrm{natural})h^2]\\
-\end{align}
+With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^{nat.}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^{hat.}$):
 
 $$
-\omega = \Omega \sigma
+\bar{z}^\textrm{nat.}_g = p^\textrm{NOS}_{g-1} \bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOS}_{g-1}) \bar{z}^{\prime\textrm{hat.}}_{g-1}
 $$
+
+where $p^\textrm{NOS} = \textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. The mean trait value in the hatchery environment $\bar{z}^\textrm{hat.}_g$ is a weighted average of the mean trait value of the natural origin broodtake in the natural environment and hatchery origin broodtake in the hatchery environment:
+
+$$
+\bar{z}^\textrm{hat.}_g = p^\textrm{NOB}_{g-1} \bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOB}_{g-1}) \bar{z}^{\prime\textrm{hat.}}_{g-1}
+$$
+
+where $p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})$.
+
+The fitness variance and phenotype variance are assumed constant between the two environments. The fitness variance is parameterized relative to the variance of the phenotype, i.e., $\omega = \Omega \sigma$ where $\Omega$ is the "selection strength".
 
 Fitness reduces survival in the egg, fry, and smolt life stages:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times f_g^{\ell_\textrm{egg}}\\
-\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times f_g^{\ell_\textrm{egg}}
+\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times (W^\textrm{nat.}_g)^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times (W^\textrm{nat.}_g)^{\ell_\textrm{egg}}
 \end{align}
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt}^\prime f_g^{\ell_\textrm{fry}} \times 
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt}^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
 \textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt}^\prime f_g^{\ell_\textrm{fry}} \times 
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt}^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
 \textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}
 \end{align}
 
 $$
-M^\textrm{SAR}_g = -\log(\textrm{SAR} \times f_g^{\ell_\textrm{smolt}})
+M^\textrm{SAR}_g = -\log(\textrm{SAR} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
 $$
 
+where $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$.
 
+PNI (proportionate natural influence) is an approximation of the rate of gene flow from the hatchery to the natural environment:
+
+$$
+\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + (1 - p^{\textrm{NOS}}_g)}
+$$
+
+Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI.
