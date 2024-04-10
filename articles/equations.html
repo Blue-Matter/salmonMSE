@@ -303,8 +303,8 @@ NOS)</td>
 </tr>
 <tr class="odd">
 <td align="left"><span class="math inline">\(\bar{z}\)</span></td>
-<td align="left">Mean phenotypic value of progeny in natural and
-hatchery environments</td>
+<td align="left">Mean phenotypic value of cohort in natural and hatchery
+environments</td>
 <td align="left">Fitness</td>
 <td align="left">Internal state variable</td>
 <td align="left">-</td>
@@ -334,7 +334,7 @@ phenotypic variance</td>
 </tr>
 <tr class="odd">
 <td align="left"><span class="math inline">\(h^2\)</span></td>
-<td align="left">Heritability of fitness traits</td>
+<td align="left">Heritability of phenotypic traits</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">heritability</td>
@@ -597,8 +597,8 @@ solution is proportional to</p>
 \]</span></p>
 <p>We want to follow the mean fitness of generation <span class="math inline">\(g\)</span> for the natural environment:</p>
 <p><span class="math display">\[
-\bar{W}^\textrm{nat.}_g =
-\exp\left(\dfrac{-(\bar{z}^\textrm{nat.}_g-\theta^\textrm{nat.})^2}{2(\omega+\sigma)^2}\right)
+\bar{W}^\textrm{natural}_g =
+\exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
 \]</span></p>
 <p>The mean phenotypic value <span class="math inline">\(\bar{z}\)</span> is calculated iteratively, where
 the change from generation <span class="math inline">\(g-1\)</span> to
@@ -621,24 +621,24 @@ W_{g-1}(z)\times zf(z)dz\\
 <p>With a hatchery program, the mean trait value of the progeny in the
 natural environment is a weighted average between the mean trait value
 of natural origin spawners in the natural environment (with optimum
-value <span class="math inline">\(\theta^{nat.}\)</span>) and that of
-hatchery origin spawners in the hatchery environment (with optimum value
-<span class="math inline">\(\theta^{hat.}\)</span>):</p>
+value <span class="math inline">\(\theta^\textrm{natural}\)</span>) and
+that of hatchery origin spawners in the hatchery environment (with
+optimum value <span class="math inline">\(\theta^\textrm{hatchery}\)</span>):</p>
 <p><span class="math display">\[
-\bar{z}^\textrm{nat.}_g = p^\textrm{NOS}_{g-1}
-\bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOS}_{g-1})
-\bar{z}^{\prime\textrm{hat.}}_{g-1}
+\bar{z}^\textrm{natural}_g = p^\textrm{NOS}_{g-1} \times
+\bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOS}_{g-1})
+\times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 \]</span></p>
 <p>where <span class="math inline">\(p^\textrm{NOS} =
 \textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})\)</span>. The
 mean trait value in the hatchery environment <span class="math inline">\(\bar{z}^\textrm{hat.}_g\)</span> is a weighted
 average of the mean trait value of the natural origin broodtake in the
-natural environment and hatchery origin broodtake in the hatchery
-environment:</p>
+natural environment and that of the hatchery origin broodtake in the
+hatchery environment:</p>
 <p><span class="math display">\[
-\bar{z}^\textrm{hat.}_g = p^\textrm{NOB}_{g-1}
-\bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOB}_{g-1})
-\bar{z}^{\prime\textrm{hat.}}_{g-1}
+\bar{z}^\textrm{hatchery}_g = p^\textrm{NOB}_{g-1} \times
+\bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOB}_{g-1})
+\times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 \]</span></p>
 <p>where <span class="math inline">\(p^\textrm{NOB} =
 \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})\)</span>.</p>
