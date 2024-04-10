@@ -183,7 +183,7 @@ $$
 We want to follow the mean fitness of generation $g$ for the natural environment:
 
 $$
-\bar{W}^\textrm{nat.}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{nat.}_g-\theta^\textrm{nat.})^2}{2(\omega+\sigma)^2}\right)
+\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
 $$
 
 The mean phenotypic value $\bar{z}$ is calculated iteratively, where the change from generation $g-1$ to $g$ is
@@ -200,16 +200,16 @@ where $h^2$ is the heritability of $z$ and $\bar{z}^\prime_{g-1}$ is the trait v
 \bar{z}^\prime_{g-1} &= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2} - \bar{z}_{g-1}\right)h^2
 \end{align}
 
-With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^{nat.}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^{hat.}$):
+With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^\textrm{natural}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^\textrm{hatchery}$):
 
 $$
-\bar{z}^\textrm{nat.}_g = p^\textrm{NOS}_{g-1} \bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOS}_{g-1}) \bar{z}^{\prime\textrm{hat.}}_{g-1}
+\bar{z}^\textrm{natural}_g = p^\textrm{NOS}_{g-1} \times \bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOS}_{g-1}) \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 $$
 
-where $p^\textrm{NOS} = \textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. The mean trait value in the hatchery environment $\bar{z}^\textrm{hat.}_g$ is a weighted average of the mean trait value of the natural origin broodtake in the natural environment and hatchery origin broodtake in the hatchery environment:
+where $p^\textrm{NOS} = \textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. The mean trait value in the hatchery environment $\bar{z}^\textrm{hat.}_g$ is a weighted average of the mean trait value of the natural origin broodtake in the natural environment and that of the hatchery origin broodtake in the hatchery environment:
 
 $$
-\bar{z}^\textrm{hat.}_g = p^\textrm{NOB}_{g-1} \bar{z}^{\prime\textrm{nat.}}_{g-1} + (1 - p^\textrm{NOB}_{g-1}) \bar{z}^{\prime\textrm{hat.}}_{g-1}
+\bar{z}^\textrm{hatchery}_g = p^\textrm{NOB}_{g-1} \times \bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOB}_{g-1}) \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 $$
 
 where $p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})$.
