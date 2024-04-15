@@ -32,12 +32,12 @@ AHA <- function(SOM, ngen = 100) {
   }
 
   output <- .AHA(
-    prod_adult = SOM@prod_smolt[x] * SOM@prod_smolt_improve * SOM@SAR[x],
-    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SOM@SAR[x],
+    prod_adult = SOM@prod_smolt[x] * SOM@prod_smolt_improve * SOM@SAR_NOS[x],
+    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SOM@SAR_NOS[x],
     #capacity_smolt = 1.917e6,
     fec_spawn = SOM@fec,
     p_female = SOM@p_female,
-    surv_ocean = SOM@SAR[x],
+    surv_ocean = SOM@SAR_NOS[x],
     surv_passage_juv = 1,
     surv_passage_adult = 1,
     u_HOR = c(sum(SOM@u_terminal), 0, 0, 0),
@@ -48,8 +48,8 @@ AHA <- function(SOM, ngen = 100) {
     surv_egg_subyearling = SOM@s_egg_subyearling,
     capacity_spawn_em = 1e12,
     capacity_smolt_adult = 1e12,
-    surv_adult_return_of_yearling = SOM@SAR[x],
-    surv_adult_return_of_subyearling = SOM@SAR[x],
+    surv_adult_return_of_yearling = SOM@SAR_HOS[x],
+    surv_adult_return_of_subyearling = SOM@SAR_HOS[x],
     RRS_HOS = SOM@gamma,
     p_weir_efficiency = 0,
     p_return_hatchery = SOM@premove_HOS,

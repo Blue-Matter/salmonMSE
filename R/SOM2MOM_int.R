@@ -24,7 +24,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       .AHA_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
     })
 
-    phi0 <- SOM@SAR * SOM@p_female * SOM@fec
+    phi0 <- SOM@SAR_NOS * SOM@p_female * SOM@fec
 
     h <- MSEtool::hconv(SRRpars_hist["alpha", ], phi0)
     R0 <- MSEtool::R0conv(SRRpars_hist["alpha", ], SRRpars_hist["beta", ], phi0)
@@ -78,7 +78,11 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # There is a requirement for spawners per recruit spool-up.
   # Should be okay so long as all fish immature prior to mat_age
   cpars_bio$M_ageArray[] <- .Machine$double.eps
-  cpars_bio$M_ageArray[, n_age - 2, ] <- -log(SOM@SAR)
+  if (NOS) {
+    cpars_bio$M_ageArray[, n_age - 2, ] <- -log(SOM@SAR_NOS)
+  } else {
+    cpars_bio$M_ageArray[, n_age - 2, ] <- -log(SOM@SAR_HOS)
+  }
 
   # No plus group, terminal spawning at the last age class
   cpars_bio$plusgroup <- 0L
@@ -150,7 +154,11 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet$qs <- rep(1, SOM@nsim)
 
   if (stage == "immature") {
-    F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR[x])))
+    if (NOS) {
+      F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_NOS[x])))
+    } else {
+      F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_HOS[x])))
+    }
   } else if (stage == "return") {
     F_hist <- -log(1 - SOM@u_terminal)
   } else {

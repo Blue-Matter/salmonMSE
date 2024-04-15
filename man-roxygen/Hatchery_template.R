@@ -9,6 +9,7 @@
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`.
 #' @slot s_egg_subyearling Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`.
+#' @slot SAR_HOS Vector length `nsim`. Survival to adult return of hatchery origin fish (density-independent, time-invariant).
 #' @slot gamma Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.
 #' @slot pmax_NOB Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.
 #' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.

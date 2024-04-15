@@ -191,11 +191,11 @@ SOM2MOM <- function(SOM, start = list()) {
     # Marine survival of natural and hatchery fish reduced by fitness
     if (SOM@fitness_type != "none") {
       Rel[[2]] <- makeRel_SAR(
-        p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
+        p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR_NOS, rel_loss = SOM@rel_loss[3],
         age_mat = which(SOM@p_mature == 1)[1]
       )
       Rel[[3]] <- makeRel_SAR(
-        p_smolt = 3, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR, rel_loss = SOM@rel_loss[3],
+        p_smolt = 3, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR_HOS, rel_loss = SOM@rel_loss[3],
         age_mat = which(SOM@p_mature == 1)[1]
       )
     }
@@ -239,10 +239,12 @@ check_SOM <- function(SOM) {
     if (length(v) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
   })
 
-  var_stochastic <- c("capacity_smolt", "prod_smolt", "SAR")
+  var_stochastic <- c("capacity_smolt", "prod_smolt", "SAR_NOS", "SAR_HOS")
   for(i in var_stochastic) {
-    if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
-    if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
+    if (i != "SAR_HOS" || (SOM@n_subyearling > 0 && SOM@n_yearling > 0)) {
+      if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
+      if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
+    }
   }
 
   slot(SOM, "fitness_type") <- match.arg(slot(SOM, "fitness_type"), choices = c("Ford", "none"))

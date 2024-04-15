@@ -38,7 +38,7 @@ setClass(
     p_mature = "numeric",         # Age at which adults mature and return
     capacity_smolt = "numeric",   # Beverton-Holt asymptote. Not unfished capacity!!
     prod_smolt = "numeric",       # Productivity adult/SAR. At unfished, prod_smolt = 1/SAR
-    SAR = "numeric",              # Future feature to allow for time-varying (PDO forcing)
+    SAR_NOS = "numeric",          # Future feature to allow for time-varying (PDO forcing)
     fec = "numeric",              # Spawning fecundity of NOS and HOS
     p_female = "numeric"
     #strays = 0
@@ -131,6 +131,7 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
+    SAR_HOS = "numeric",
     gamma = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",

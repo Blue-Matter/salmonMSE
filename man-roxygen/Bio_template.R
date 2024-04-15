@@ -6,6 +6,6 @@
 #'  density-dependent natural smolt production from fry life stage.
 #' @slot prod_smolt Vector length `nsim`. The productivity parameter of the Beverton-Holt stock-recruit function.
 #'  Natural per-capita smolt production as the population approaches zero (density-independent component).
-#' @slot SAR Vector length `nsim`. Survival to adult return (density-independent, time-invariant).
+#' @slot SAR_NOS Vector length `nsim`. Survival to adult return of natural origin fish (density-independent, time-invariant).
 #' @slot fec Numeric. Female fecundity of natural origin spawners.
 #' @slot p_female Numeric. The proportion of females in the spawning population.

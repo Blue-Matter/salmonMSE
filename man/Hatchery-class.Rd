@@ -31,6 +31,8 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
+\item{\code{SAR_HOS}}{Vector length \code{nsim}. Survival to adult return of hatchery origin fish (density-independent, time-invariant).}
+
 \item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
 \item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.}

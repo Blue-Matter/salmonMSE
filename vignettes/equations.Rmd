@@ -98,18 +98,20 @@ $s^\textrm{hat.} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{
 Harvest $u^\textrm{PT}$ in the pre-terminal fishery occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
 
 $$
-\textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
+\textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
 $$
 
-where $F^\textrm{PT}_g$ is solved such that $u^\textrm{PT} = \frac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))$, $Z^\textrm{PT}_g = F^\textrm{PT}_g + M^\textrm{SAR}_g$.
+where $F^\textrm{PT}_g$ is solved such that $u^\textrm{PT} = \frac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT,NOS}_g))$, $Z^\textrm{PT,NOS}_g = F^\textrm{PT,NOS}_g + M^\textrm{SAR,NOS}_g$.
 
-In the absence of fitness effects, $M^\textrm{SAR}_g = -\log(\textrm{SAR})$.
+In the absence of fitness effects, $M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS})$.
 
 Similarly, the pre-terminal fishery catch of immature HOS in generation $g$ is
 
 $$
-\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F_g^\textrm{PT}}{Z^\textrm{PT}_g}(1 - \exp(-Z^\textrm{PT}_g))\textrm{Smolt}^\textrm{Rel}_g
+\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F_g^\textrm{PT,HOS}}{Z^\textrm{PT,HOS}_g}(1 - \exp(-Z^\textrm{PT,HOS}_g))\textrm{Smolt}^\textrm{Rel}_g
 $$
+
+and SAR can differ between natural origin and hatchery origin fish.
 
 # Recruitment
 
@@ -233,7 +235,7 @@ Fitness can reduce survival in the egg, fry, and smolt life stages:
 \end{align}
 
 $$
-M^\textrm{SAR}_g = -\log(\textrm{SAR} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
+M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
 $$
 
 where $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$.

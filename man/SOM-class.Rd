@@ -31,7 +31,7 @@ density-dependent natural smolt production from fry life stage.}
 \item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
 Natural per-capita smolt production as the population approaches zero (density-independent component).}
 
-\item{\code{SAR}}{Vector length \code{nsim}. Survival to adult return (density-independent, time-invariant).}
+\item{\code{SAR_NOS}}{Vector length \code{nsim}. Survival to adult return of natural origin fish (density-independent, time-invariant).}
 
 \item{\code{fec}}{Numeric. Female fecundity of natural origin spawners.}
 
@@ -57,6 +57,8 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
+
+\item{\code{SAR_HOS}}{Vector length \code{nsim}. Survival to adult return of hatchery origin fish (density-independent, time-invariant).}
 
 \item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
