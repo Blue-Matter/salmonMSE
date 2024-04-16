@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
@@ -73,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-04-10</h4>
+            <h4 data-toc-skip class="date">2024-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -91,10 +91,10 @@ and year.</p>
 </h2>
 <p><em>Definition of variable names and the corresponding slots in
 either the input (SOM) or output (SMSE) objects in salmonMSE.</em></p>
-<table class="table">
+<table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
-<col width="47%">
+<col width="48%">
 <col width="14%">
 <col width="11%">
 <col width="9%">
@@ -286,14 +286,22 @@ the escapement, i.e., NOB/NOS ratio</td>
 <td align="left">Return_HOS</td>
 </tr>
 <tr class="odd">
+<td align="left"><span class="math inline">\(p^\textrm{hatchery}\)</span></td>
+<td align="left">Proportion of hatchery origin escapement to hatchery,
+available for broodtake</td>
+<td align="left">Hatchery</td>
+<td align="left">SOM</td>
+<td align="left">phatchery</td>
+</tr>
+<tr class="even">
 <td align="left"><span class="math inline">\(p^\textrm{HOS}_\textrm{removal}\)</span></td>
-<td align="left">Proportion of hatchery origin spawners removed from
-spawning grounds</td>
+<td align="left">Proportion of hatchery origin escapement removed from
+spawning grounds, not available for broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">premove_HOS</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\gamma\)</span></td>
 <td align="left">Reduced reproductive success of HOS (relative to
 NOS)</td>
@@ -301,7 +309,7 @@ NOS)</td>
 <td align="left">SOM</td>
 <td align="left">gamma</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\bar{z}\)</span></td>
 <td align="left">Mean phenotypic value of cohort in natural and hatchery
 environments</td>
@@ -309,7 +317,7 @@ environments</td>
 <td align="left">Internal state variable</td>
 <td align="left">-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\theta\)</span></td>
 <td align="left">Optimal phenotypic value for natural and hatchery
 environments</td>
@@ -317,14 +325,14 @@ environments</td>
 <td align="left">SOM</td>
 <td align="left">theta</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\sigma^2\)</span></td>
 <td align="left">Variance of phenotypic traits in population</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">fitness_variance</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\Omega\)</span></td>
 <td align="left">Selection strength: fitness variance relative to
 phenotypic variance</td>
@@ -332,14 +340,14 @@ phenotypic variance</td>
 <td align="left">SOM</td>
 <td align="left">selection_strength</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(h^2\)</span></td>
 <td align="left">Heritability of phenotypic traits</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">heritability</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\bar{W}\)</span></td>
 <td align="left">Population fitness in the natural or hatchery
 environment</td>
@@ -347,7 +355,7 @@ environment</td>
 <td align="left">SMSE</td>
 <td align="left">fitness</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\ell_i\)</span></td>
 <td align="left">Relative fitness loss at the i-th life stage (egg, fry,
 smolt)</td>
@@ -355,14 +363,14 @@ smolt)</td>
 <td align="left">SOM</td>
 <td align="left">rel_loss</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(\textrm{PNI}\)</span></td>
 <td align="left">Proportionate natural influence</td>
 <td align="left">Fitness</td>
 <td align="left">SMSE</td>
 <td align="left">PNI</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(m\)</span></td>
 <td align="left">Mark rate of hatchery fish (affects fishery retention
 of hatchery fish relative to natural fish)</td>
@@ -370,7 +378,7 @@ of hatchery fish relative to natural fish)</td>
 <td align="left">SOM</td>
 <td align="left">m</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><span class="math inline">\(p_\textrm{NOS}\)</span></td>
 <td align="left">Proportion of natural origin spawners (vs. effective
 HOS)</td>
@@ -378,7 +386,7 @@ HOS)</td>
 <td align="left">Internal state variable</td>
 <td align="left">-</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(p_\textrm{HOSeff}\)</span></td>
 <td align="left">Proportion of effective hatchery origin spawners
 (vs. NOS)</td>
@@ -431,7 +439,7 @@ smolt production</p>
 <div class="section level3">
 <h3 id="broodtake">Broodtake<a class="anchor" aria-label="anchor" href="#broodtake"></a>
 </h3>
-<p>The target broodtake is calculated as</p>
+<p>The target total broodtake is calculated as</p>
 <p><span class="math display">\[
 \textrm{Broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{prespawn}
 p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{yearling}} +
@@ -448,7 +456,7 @@ p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{yearling}} +
 <p><span class="math display">\[
 \textrm{HOB}_{g-1} = \textrm{min}(\textrm{Broodtake} -
 \textrm{NOB}_{g-1}, \textrm{HOR}^\textrm{escapement}_{g-1} \times
-p^\textrm{HOS}_\textrm{removal})
+p^\textrm{hatchery})
 \]</span></p>
 </div>
 <div class="section level3">
@@ -459,12 +467,12 @@ calculated as</p>
 <p><span class="math display">\[
 \textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times
 \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female}
-\textrm{Fec}^\textrm{brood}s^\textrm{hat.}
+\textrm{Fec}^\textrm{brood}s^\textrm{hatchery}
 \]</span></p>
-<p>where the average survival of all hatchery from the egg to yearling
-stage is</p>
-<p><span class="math inline">\(s^\textrm{hat.} = s^\textrm{subyearling}
-(1 - p^\textrm{yearling}) + s^\textrm{yearling}
+<p>where the average survival of all hatchery fish from the egg to
+yearling stage is</p>
+<p><span class="math inline">\(s^\textrm{hatchery} =
+s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling}
 p^\textrm{yearling}\)</span> and <span class="math inline">\(p^\textrm{yearling} =
 n^\textrm{yearling}/(n^\textrm{subyearling} +
 n^\textrm{yearling})\)</span>.</p>
@@ -479,24 +487,26 @@ pre-terminal fishery occurs simultaneously along with marine survival
 Pre-terminal fishery catch of immature NOS of generation <span class="math inline">\(g\)</span> is calculated as</p>
 <p><span class="math display">\[
 \textrm{Catch}^\textrm{NOS,PT}_g =
-\dfrac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 -
+\dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 -
 \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g +
 \textrm{Smolt}^\textrm{NOS}_g]
 \]</span></p>
 <p>where <span class="math inline">\(F^\textrm{PT}_g\)</span> is solved
 such that <span class="math inline">\(u^\textrm{PT} =
-\frac{F^\textrm{PT}_g}{Z^\textrm{PT}_g}(1 -
-\exp(-Z^\textrm{PT}_g))\)</span>, <span class="math inline">\(Z^\textrm{PT}_g = F^\textrm{PT}_g +
-M^\textrm{SAR}_g\)</span>.</p>
-<p>In the absence of fitness effects, <span class="math inline">\(M^\textrm{SAR}_g =
--\log(\textrm{SAR})\)</span>.</p>
+\frac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 -
+\exp(-Z^\textrm{PT,NOS}_g))\)</span>, <span class="math inline">\(Z^\textrm{PT,NOS}_g = F^\textrm{PT,NOS}_g +
+M^\textrm{SAR,NOS}_g\)</span>.</p>
+<p>In the absence of fitness effects, <span class="math inline">\(M^\textrm{SAR,NOS}_g =
+-\log(\textrm{SAR}^\textrm{NOS})\)</span>.</p>
 <p>Similarly, the pre-terminal fishery catch of immature HOS in
 generation <span class="math inline">\(g\)</span> is</p>
 <p><span class="math display">\[
 \textrm{Catch}^\textrm{HOS,PT}_g =
-\dfrac{F_g^\textrm{PT}}{Z^\textrm{PT}_g}(1 -
-\exp(-Z^\textrm{PT}_g))\textrm{Smolt}^\textrm{Rel}_g
+\dfrac{F_g^\textrm{PT,HOS}}{Z^\textrm{PT,HOS}_g}(1 -
+\exp(-Z^\textrm{PT,HOS}_g))\textrm{Smolt}^\textrm{Rel}_g
 \]</span></p>
+<p>and SAR can differ between natural origin and hatchery origin
+fish.</p>
 </div>
 <div class="section level2">
 <h2 id="recruitment">Recruitment<a class="anchor" aria-label="anchor" href="#recruitment"></a>
@@ -504,9 +514,11 @@ generation <span class="math inline">\(g\)</span> is</p>
 <p>The recruitment is calculated as the survival of smolts after
 pre-terminal harvest and marine survival:</p>
 <p><span class="math display">\[\begin{align}
-\textrm{NOR}_g &amp;= \exp(-Z^\textrm{PT})[\textrm{Smolt}^\textrm{HOS}_g
-+ \textrm{Smolt}^\textrm{NOS}_g]\\
-\textrm{HOR}_g &amp;= \exp(-Z^\textrm{PT})\textrm{Smolt}^\textrm{Rel}_g
+\textrm{NOR}_g &amp;=
+\exp(-Z^\textrm{PT,NOS})[\textrm{Smolt}^\textrm{HOS}_g +
+\textrm{Smolt}^\textrm{NOS}_g]\\
+\textrm{HOR}_g &amp;=
+\exp(-Z^\textrm{PT,HOS})\textrm{Smolt}^\textrm{Rel}_g
 \end{align}\]</span></p>
 <div class="section level3">
 <h3 id="terminal-fishery">Terminal fishery<a class="anchor" aria-label="anchor" href="#terminal-fishery"></a>
@@ -534,14 +546,18 @@ pre-terminal harvest and marine survival:</p>
 <h2 id="spawners">Spawners<a class="anchor" aria-label="anchor" href="#spawners"></a>
 </h2>
 <p>The abundance of natural origin spawners consists of the escapement
-reduced by the broodtake. A separate removal term is used for hatchery
-origin spawners are removed, where the fish removed can be used as
-broodtake, research purposes, management of population fitness, etc.</p>
+reduced by the broodtake.</p>
+<p>The hatchery origin spawners is the escapement, reduced by the
+proportion <span class="math inline">\(p^\textrm{hatchery}\)</span>
+returning to the hatchery, either by swim-in facilities or direct
+removal. A second removal term <span class="math inline">\(p^\textrm{HOS}_\textrm{removal}\)</span> removes
+fish from the spawning grounds, these animals are not available for
+broodtake.</p>
 <p><span class="math display">\[\begin{align}
 \textrm{NOS}_g &amp;= \textrm{NOR}^\textrm{escapement}_g -
 \textrm{NOB}_g\\
 \textrm{HOS}_g &amp;= \textrm{NOR}^\textrm{escapement}_g (1 -
-p^\textrm{HOS}_\textrm{removal})
+p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
 \end{align}\]</span></p>
 </div>
 <div class="section level2">
@@ -571,11 +587,11 @@ et al. 2018</a>).</p>
 <p>Through genetic and epigenetic factors, survival of hatchery
 juveniles in the hatchery environment selects for fish with a phenotype
 best adapted for that environment, and likewise for juveniles spawned in
-the natural environment. Since these traits are heritable, hatchery
-programs can shift the fitness of the natural progeny away from the
-optimum for the natural environment towards that of the hatchery
-environment on an evolutionary time scale, i.e., over a number of
-generations.</p>
+the natural environment. Since these traits are heritable, the fitness
+of the natural population can shift away from the optimum for the
+natural environment towards that of the hatchery environment on an
+evolutionary time scale, i.e., over a number of generations, when
+hatchery fish are allowed to spawn.</p>
 <p>As described in <a href="https://doi.org/10.1046/j.1523-1739.2002.00257.x" class="external-link">Ford 2002</a>
 and derived in <a href="https://doi.org/10.1111/j.1558-5646.1976.tb00911.x" class="external-link">Lande
 1976</a>, the fitness loss function <span class="math inline">\(W\)</span> for an individual with phenotypic trait
@@ -589,20 +605,20 @@ that environment and <span class="math inline">\(\omega^2\)</span> is
 the fitness variance.</p>
 <p>If the phenotypic trait value <span class="math inline">\(z\)</span>
 in the population is a random normal variable with mean <span class="math inline">\(\bar{z}\)</span> and variance <span class="math inline">\(\sigma^2\)</span>, then the mean fitness of the
-population in generation <span class="math inline">\(g\)</span> is <span class="math inline">\(\bar{W}(z) = \int W(z) f(z) dz\)</span>. The
-solution is proportional to</p>
+population in generation <span class="math inline">\(g\)</span> is <span class="math inline">\(\bar{W}(z) = \int W(z) f(z) dz\)</span>, where
+<span class="math inline">\(f(z)\)</span> is the Gaussian probability
+density function. The solution is proportional to</p>
 <p><span class="math display">\[
 \bar{W}(z) \propto
 \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
 \]</span></p>
-<p>We want to follow the mean fitness of generation <span class="math inline">\(g\)</span> for the natural environment:</p>
+<p>We follow the mean fitness of generation <span class="math inline">\(g\)</span> for the natural environment:</p>
 <p><span class="math display">\[
 \bar{W}^\textrm{natural}_g =
 \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
 \]</span></p>
-<p>The mean phenotypic value <span class="math inline">\(\bar{z}\)</span> is calculated iteratively, where
-the change from generation <span class="math inline">\(g-1\)</span> to
-<span class="math inline">\(g\)</span> is</p>
+<p>The mean phenotype <span class="math inline">\(\bar{z}\)</span> is
+calculated iteratively, where the change from generation <span class="math inline">\(g-1\)</span> to <span class="math inline">\(g\)</span> is</p>
 <p><span class="math display">\[\begin{align}
 \Delta\bar{z} &amp;= \bar{z}_g - \bar{z}_{g-1} = (\bar{z}^\prime_{g-1} -
 \bar{z}_{g-1})h^2\\
@@ -615,8 +631,8 @@ after applying the fitness function, defined as:</p>
 <p><span class="math display">\[\begin{align}
 \bar{z}^\prime_{g-1} &amp;= \dfrac{1}{\bar{W}_{g-1}}\int
 W_{g-1}(z)\times zf(z)dz\\
-\bar{z}^\prime_{g-1} &amp;= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta
-\sigma^2}{\omega^2 + \sigma^2} - \bar{z}_{g-1}\right)h^2
+&amp;= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 +
+\sigma^2} - \bar{z}_{g-1}\right)h^2
 \end{align}\]</span></p>
 <p>With a hatchery program, the mean trait value of the progeny in the
 natural environment is a weighted average between the mean trait value
@@ -630,8 +646,8 @@ optimum value <span class="math inline">\(\theta^\textrm{hatchery}\)</span>):</p
 \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 \]</span></p>
 <p>where <span class="math inline">\(p^\textrm{NOS} =
-\textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})\)</span>. The
-mean trait value in the hatchery environment <span class="math inline">\(\bar{z}^\textrm{hat.}_g\)</span> is a weighted
+\textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})\)</span>.</p>
+<p>Similarly, the mean trait value in the hatchery environment <span class="math inline">\(\bar{z}^\textrm{hatchery}_g\)</span> is a weighted
 average of the mean trait value of the natural origin broodtake in the
 natural environment and that of the hatchery origin broodtake in the
 hatchery environment:</p>
@@ -642,10 +658,12 @@ hatchery environment:</p>
 \]</span></p>
 <p>where <span class="math inline">\(p^\textrm{NOB} =
 \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})\)</span>.</p>
-<p>The fitness variance and phenotype variance are assumed constant
-between the two environments. The fitness variance is parameterized
-relative to the variance of the phenotype, i.e., <span class="math inline">\(\omega = \Omega \sigma\)</span> where <span class="math inline">\(\Omega\)</span> is the “selection strength”.</p>
-<p>Fitness reduces survival in the egg, fry, and smolt life stages:</p>
+<p>The fitness variance <span class="math inline">\(\omega^2\)</span>
+and phenotype variance <span class="math inline">\(\sigma^2\)</span> are
+assumed constant between the two environments. The fitness variance is
+parameterized relative to the variance of the phenotype, i.e., <span class="math inline">\(\omega = \Omega \sigma\)</span> where <span class="math inline">\(\Omega\)</span> is the “selection strength”.</p>
+<p>Fitness can reduce survival in the egg, fry, and smolt life
+stages:</p>
 <p><span class="math display">\[\begin{align}
 \textrm{Fry}^\textrm{NOS}_g &amp;= \textrm{NOS}_{g-1} \times
 p^\textrm{female} \times \textrm{Fec} \times
@@ -667,7 +685,7 @@ p^\textrm{female} \times \textrm{Fec} \times
 \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}
 \end{align}\]</span></p>
 <p><span class="math display">\[
-M^\textrm{SAR}_g = -\log(\textrm{SAR} \times
+M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR} \times
 (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
 \]</span></p>
 <p>where <span class="math inline">\(\ell_i\)</span> is the proportion
@@ -695,7 +713,7 @@ maintains high PNI.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer>

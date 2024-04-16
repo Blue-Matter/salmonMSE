@@ -6,7 +6,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
@@ -94,6 +94,10 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
+<dt><code>SAR_HOS</code></dt>
+<dd><p>Vector length <code>nsim</code>. Survival to adult return of hatchery origin fish (density-independent, time-invariant).</p></dd>
+
+
 <dt><code>gamma</code></dt>
 <dd><p>Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.</p></dd>
 
@@ -106,9 +110,15 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 <dd><p>Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.</p></dd>
 
 
+<dt><code>phatchery</code></dt>
+<dd><p>Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+or swim-in facilities. These fish are available for broodtake.</p></dd>
+
+
 <dt><code>premove_HOS</code></dt>
-<dd><p>Numeric. The proportion of the hatchery origin spawners to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). This removal is also used to calculate the available hatchery origin fish for broodtake.</p></dd>
+<dd><p>Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
+imperfect implementation of weir removal.</p></dd>
 
 
 <dt><code>fec_brood</code></dt>
@@ -120,31 +130,31 @@ ensure a high proportion of NOS). This removal is also used to calculate the ava
 
 
 <dt><code>theta</code></dt>
-<dd><p>Vector length 3.</p></dd>
+<dd><p>Vector length 2. The optimum phenotype value for the natural and hatchery environments.</p></dd>
 
 
 <dt><code>rel_loss</code></dt>
-<dd><p>Vector length 3.</p></dd>
+<dd><p>Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.</p></dd>
 
 
 <dt><code>pbar_start</code></dt>
-<dd><p>Vector length 2.</p></dd>
+<dd><p>Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.</p></dd>
 
 
 <dt><code>fitness_variance</code></dt>
-<dd><p>Numeric.</p></dd>
+<dd><p>Numeric. The variance of the phenotype in the population. Assumed identical between the natural and hatchery environments.</p></dd>
 
 
 <dt><code>selection_strength</code></dt>
-<dd><p>Numeric.</p></dd>
+<dd><p>Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.</p></dd>
 
 
 <dt><code>heritability</code></dt>
-<dd><p>Numeric.</p></dd>
+<dd><p>Numeric. The heritability of the phenotypic trait. Between 0-1.</p></dd>
 
 
 <dt><code>fitness_floor</code></dt>
-<dd><p>Numeric.</p></dd>
+<dd><p>Numeric. The minimum fitness value in the natural environment.</p></dd>
 
 
 </dl></div>
@@ -168,20 +178,20 @@ ensure a high proportion of NOS). This removal is also used to calculate the ava
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:          s_prespawn        s_egg_smolt  s_egg_subyearling</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               gamma           pmax_NOB        ptarget_NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             SAR_HOS              gamma           pmax_NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_HOS          fec_brood       fitness_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric          character</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               theta           rel_loss         pbar_start</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:    fitness_variance selection_strength       heritability</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            rel_loss         pbar_start   fitness_variance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       fitness_floor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  selection_strength       heritability      fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Known Subclasses: "SOM"</span>
 </code></pre></div>
@@ -195,7 +205,7 @@ ensure a high proportion of NOS). This removal is also used to calculate the ava
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer></div>

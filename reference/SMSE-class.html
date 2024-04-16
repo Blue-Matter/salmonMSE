@@ -6,7 +6,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
@@ -184,15 +184,16 @@
 
 
 <dt><code>fitness</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Fitness.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Fitness of the natural spawning population.</p></dd>
 
 
 <dt><code>PNI</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportionate natural influence of hatchery on mean phenotypic values.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportionate natural influence, index of gene flow from hatchery to the natural environment.</p></dd>
 
 
 <dt><code>p_wild</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of wild spawners, whose parents also spawned in the natural environment assuming
+non-assortative mating, defined under Canada's Wild Salmon Policy.</p></dd>
 
 
 <dt><code>SAR_loss</code></dt>
@@ -260,7 +261,7 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer></div>
