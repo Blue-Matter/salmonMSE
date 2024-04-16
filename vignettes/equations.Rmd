@@ -50,7 +50,7 @@ where $\textrm{HOS}_{\textrm{eff},g-1} = \gamma \times \textrm{HOS}_{g-1}$.
 
 ## Smolts
 
-A Beverton-Holt stock-recruit relationship is used to calculate the smolt production
+Survival to the smolt stage is density-dependent throught the Beverton-Holt stock-recruit relationship. Smolt production is
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt} \times 
@@ -237,7 +237,7 @@ Fitness can reduce survival in the egg, fry, and smolt life stages:
 \end{align}
 
 $$
-M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
+M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
 $$
 
 where $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$.

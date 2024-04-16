@@ -188,14 +188,10 @@ SOM2MOM <- function(SOM, start = list()) {
       fitness_args = fitness_args
     )
 
-    # Marine survival of natural and hatchery fish reduced by fitness
+    # Marine survival of natural origin fish
     if (SOM@fitness_type != "none") {
       Rel[[2]] <- makeRel_SAR(
         p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR_NOS, rel_loss = SOM@rel_loss[3],
-        age_mat = which(SOM@p_mature == 1)[1]
-      )
-      Rel[[3]] <- makeRel_SAR(
-        p_smolt = 3, p_naturalsmolt = 1, fitness_type = SOM@fitness_type, SAR = SOM@SAR_HOS, rel_loss = SOM@rel_loss[3],
         age_mat = which(SOM@p_mature == 1)[1]
       )
     }
