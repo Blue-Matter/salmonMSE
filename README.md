@@ -30,6 +30,6 @@ Both can be installed from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("Blue-Matter/MSEtool", ref = "salmonMSE")
+remotes::install_github("Blue-Matter/MSEtool")
 remotes::install_github("Blue-Matter/salmonMSE")
 ```

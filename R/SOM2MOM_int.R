@@ -64,7 +64,9 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   # Ignore area dynamics
   Stock@Size_area_1 <- Stock@Frac_area_1 <- Stock@Prob_staying <- c(0.5, 0.5)
-  Stock@Fdisc <- c(0, 0)
+
+  # Proportion of releases that die (only if there is discarding from mark-selective fishing)
+  Stock@Fdisc <- rep(SOM@release_mort, 2)
 
   # Custom pars
   # Catch works on the basis of biomass so we need to set weight at age = 1
@@ -176,7 +178,15 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   } else {
     cpars_fleet$V[, n_age - 1, ] <- 1
   }
+
   cpars_fleet$retA <- cpars_fleet$V
+  if (SOM@m > 0) {
+    if (NOS) {
+      cpars_fleet$retA[] <- 1e-8
+    } else {
+      cpars_fleet$retA <- cpars_fleet$V * SOM@m
+    }
+  }
 
   # Future feature for mark rate affecting harvest rate or retention of hatchery origin vs natural origin fish
   #if (NOS) {

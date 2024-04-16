@@ -222,7 +222,7 @@ check_SOM <- function(SOM) {
                 "n_yearling", "n_subyearling",
                 "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS", "fec_brood",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
-                "u_preterminal", "u_terminal", "m",
+                "u_preterminal", "u_terminal", "m", "release_mort",
                 "fitness_type", "fitness_variance", "selection_strength", "heritability", "fitness_floor")
   lapply(var_len1, function(i) {
     v <- slot(SOM, i)

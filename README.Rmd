@@ -33,6 +33,6 @@ Currently, `salmonMSE` requires the developmental version of `MSEtool`. Both can
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("Blue-Matter/MSEtool", ref = "salmonMSE")
+remotes::install_github("Blue-Matter/MSEtool")
 remotes::install_github("Blue-Matter/salmonMSE")
 ```

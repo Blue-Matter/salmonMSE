@@ -2,7 +2,7 @@
 # Compare salmonMSE and AHA outputs
 
 # Install packages
-remotes::install_github("Blue-Matter/MSEtool", ref = "salmonMSE")
+remotes::install_github("Blue-Matter/MSEtool")
 remotes::install_github("Blue-Matter/salmonMSE")
 
 
@@ -58,7 +58,8 @@ Harvest <- new(
   "Harvest",
   u_preterminal = 0,             # No pre-terminal fishery
   u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
-  m = 0                          # Mark rate of hatchery releases (future feature)
+  m = 0,                         # Mark rate of hatchery releases
+  release_mort = 0.1
 )
 
 # Stitched salmon operating model
@@ -67,7 +68,7 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest)
 
 # run salmonMSE
-SMSE <- salmonMSE(SOM)
+SMSE <- salmonMSE(SOM, convert = FALSE)
 class?SMSE # Definitions of arrays
 
 # run AHA - list of vectors by generation

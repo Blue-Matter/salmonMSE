@@ -96,7 +96,8 @@ setClass(
     Name = "character",
     u_preterminal = "numeric",
     u_terminal = "numeric",
-    m = "numeric"
+    m = "numeric",
+    release_mort = "numeric"
   )
 )
 
