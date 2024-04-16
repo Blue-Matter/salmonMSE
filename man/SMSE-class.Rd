@@ -80,11 +80,12 @@ where \eqn{q = 1-p}.
 
 \item{\code{UT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery harvest rate of hatchery origin spawners.}
 
-\item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness.}
+\item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness of the natural spawning population.}
 
-\item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence of hatchery on mean phenotypic values.}
+\item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence, index of gene flow from hatchery to the natural environment.}
 
-\item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.}
+\item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, whose parents also spawned in the natural environment assuming
+non-assortative mating, defined under Canada's Wild Salmon Policy.}
 
 \item{\code{SAR_loss}}{Array \verb{[nsim, nstocks, proyears]}. Realized SAR due to fitness loss.}
 

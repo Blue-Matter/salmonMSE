@@ -46,19 +46,19 @@ ensure a high proportion of NOS). This removal is also used to calculate the ava
 
 \item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".}
 
-\item{\code{theta}}{Vector length 3.}
+\item{\code{theta}}{Vector length 2. The optimum phenotype value for the natural and hatchery environments.}
 
-\item{\code{rel_loss}}{Vector length 3.}
+\item{\code{rel_loss}}{Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.}
 
-\item{\code{pbar_start}}{Vector length 2.}
+\item{\code{pbar_start}}{Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.}
 
-\item{\code{fitness_variance}}{Numeric.}
+\item{\code{fitness_variance}}{Numeric. The variance of the phenotype in the population. Assumed identical between the natural and hatchery environments.}
 
-\item{\code{selection_strength}}{Numeric.}
+\item{\code{selection_strength}}{Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.}
 
-\item{\code{heritability}}{Numeric.}
+\item{\code{heritability}}{Numeric. The heritability of the phenotypic trait. Between 0-1.}
 
-\item{\code{fitness_floor}}{Numeric.}
+\item{\code{fitness_floor}}{Numeric. The minimum fitness value in the natural environment.}
 }}
 
 \section{Creating Object}{

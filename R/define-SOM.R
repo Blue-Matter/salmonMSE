@@ -240,9 +240,10 @@ setMethod("initialize", "SOM",
 #' @slot UT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of natural origin spawners.
 #' @slot UPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
 #' @slot UT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of hatchery origin spawners.
-#' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness.
-#' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence of hatchery on mean phenotypic values.
-#' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, defined under Canada's Wild Salmon Policy.
+#' @slot fitness Array `[nsim, nstocks, proyears]`. Fitness of the natural spawning population.
+#' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence, index of gene flow from hatchery to the natural environment.
+#' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, whose parents also spawned in the natural environment assuming
+#' non-assortative mating, defined under Canada's Wild Salmon Policy.
 #' @slot SAR_loss Array `[nsim, nstocks, proyears]`. Realized SAR due to fitness loss.
 #' @slot Misc List. Miscellaneous output
 #'
