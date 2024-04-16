@@ -5,7 +5,7 @@
 ## Internal functions to predict either:
 # (b) smolt hatchery production
 # (c) smolt natural production
-calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local,
+calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, phatchery, brood_local,
                            fec_brood, s_egg) {
 
   NOR_escapement <- N[1]
@@ -20,7 +20,7 @@ calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local,
     NOB <- min(target_NOB, max_NOB)
 
     # HOB is the minimum of brood_local - NOB or the hatchery origin escapement
-    HOB <- min(brood_local - NOB, 0.999 * HOR_escapement * premove_HOS)
+    HOB <- min(brood_local - NOB, 0.999 * HOR_escapement * phatchery)
   } else {
     NOB <- NOR_escapement
     HOB <- 0
@@ -28,16 +28,16 @@ calc_broodtake <- function(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local,
   c("NOB" = NOB, "HOB" = HOB)
 }
 
-calc_spawners <- function(broodtake, escapement, premove_HOS) {
+calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   spawners <- structure(rep(0, length(escapement)), names = c("NOS", "HOS"))
   spawners[1] <- escapement[1] - broodtake[1]
-  if (length(escapement) > 1) spawners[2] <- escapement[2] * (1 - premove_HOS)
+  if (length(escapement) > 1) spawners[2] <- escapement[2] * (1 - phatchery) * (1 - premove_HOS)
   return(spawners)
 }
 
 
 .smolt_func <- function(N, x = -1, output = c("natural", "hatchery"),
-                        ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, premove_HOS, s_prespawn, # Broodtake & hatchery production
+                        ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, # Spawning (natural production)
                         SRRpars_hist, SRRpars_proj,
                         fitness_type = c("Ford", "none"), # Spawning (natural production)
@@ -46,7 +46,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
   output <- match.arg(output)
 
   N[is.na(N)] <- 0
-  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, premove_HOS, brood_local, fec_brood, s_egg)
+  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, phatchery, brood_local, fec_brood, s_egg)
 
   if (output == "hatchery") {
     fry <- sum(broodtake) * fec_brood * s_prespawn * p_female
@@ -55,7 +55,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
 
   } else if (output == "natural") {
     fitness_type <- match.arg(fitness_type)
-    spawners <- calc_spawners(broodtake, N, premove_HOS)
+    spawners <- calc_spawners(broodtake, N, phatchery, premove_HOS)
 
     NOS <- spawners[1]
     HOS <- spawners[2]
@@ -190,7 +190,7 @@ calc_spawners <- function(broodtake, escapement, premove_HOS) {
 
 makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
                           output = c("natural", "hatchery"),
-                          ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, premove_HOS, s_prespawn, # Broodtake & hatchery production
+                          ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                           p_female, fec, gamma, # Spawning (natural production)
                           SRRpars_hist, SRRpars_proj,  # Spawning (natural production)
                           fitness_type = c("Ford", "none"), fitness_args) {
@@ -204,6 +204,7 @@ makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
   formals(func)$brood_local <- brood_local
   formals(func)$fec_brood <- fec_brood
   formals(func)$s_egg <- s_egg
+  formals(func)$phatchery <- phatchery
   formals(func)$premove_HOS <- premove_HOS
   formals(func)$s_prespawn <- s_prespawn
   formals(func)$p_female <- p_female

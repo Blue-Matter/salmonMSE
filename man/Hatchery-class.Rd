@@ -39,8 +39,12 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 
 \item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.}
 
-\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin spawners to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). This removal is also used to calculate the available hatchery origin fish for broodtake.}
+\item{\code{phatchery}}{Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+or swim-in facilities. These fish are available for broodtake.}
+
+\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
+imperfect implementation of weir removal.}
 
 \item{\code{fec_brood}}{Numeric. The fecundity of broodtake.}
 

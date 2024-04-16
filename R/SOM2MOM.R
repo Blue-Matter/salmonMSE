@@ -182,7 +182,7 @@ SOM2MOM <- function(SOM, start = list()) {
       output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
-      premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
+      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, # Spawning (natural production)
       SRRpars_hist, SRRpars_proj, fitness_type = SOM@fitness_type, # Spawning (natural production)
       fitness_args = fitness_args
@@ -208,7 +208,7 @@ SOM2MOM <- function(SOM, start = list()) {
       p_smolt = 4, p_natural = 3, p_hatchery = 6, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
-      premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
+      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma
     )
   }
@@ -224,7 +224,7 @@ check_SOM <- function(SOM) {
   var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "fec", "p_female",
                 "capacity_smolt_improve", "prod_smolt_improve",
                 "n_yearling", "n_subyearling",
-                "pmax_NOB", "ptarget_NOB", "premove_HOS", "fec_brood",
+                "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS", "fec_brood",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
                 "u_preterminal", "u_terminal", "m",
                 "fitness_type", "fitness_variance", "selection_strength", "heritability", "fitness_floor")

@@ -63,7 +63,7 @@ A Beverton-Holt stock-recruit relationship is used to calculate the smolt produc
 
 ## Broodtake
 
-The target broodtake is calculated as
+The target total broodtake is calculated as
 
 $$
 \textrm{Broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{subyearling}}
@@ -78,7 +78,7 @@ $$
 The hatchery broodtake is
 
 $$
-\textrm{HOB}_{g-1} = \textrm{min}(\textrm{Broodtake} - \textrm{NOB}_{g-1}, \textrm{HOR}^\textrm{escapement}_{g-1} \times p^\textrm{HOS}_\textrm{removal})
+\textrm{HOB}_{g-1} = \textrm{min}(\textrm{Broodtake} - \textrm{NOB}_{g-1}, \textrm{HOR}^\textrm{escapement}_{g-1} \times p^\textrm{hatchery})
 $$
 
 ## Smolt releases
@@ -86,12 +86,12 @@ $$
 From the total broodtake $\textrm{NOB}_{g-1}$ and $\textrm{HOB}_{g-1}$, the smolt releases is calculated as
 
 $$
-\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hat.}
+\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hatchery}
 $$
 
-where the average survival of all hatchery from the egg to yearling stage is
+where the average survival of all hatchery fish from the egg to yearling stage is
 
-$s^\textrm{hat.} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
+$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
 
 # Pre-terminal fishery
 
@@ -118,8 +118,8 @@ and SAR can differ between natural origin and hatchery origin fish.
 The recruitment is calculated as the survival of smolts after pre-terminal harvest and marine survival:
 
 \begin{align}
-\textrm{NOR}_g &= \exp(-Z^\textrm{PT})[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]\\
-\textrm{HOR}_g &= \exp(-Z^\textrm{PT})\textrm{Smolt}^\textrm{Rel}_g
+\textrm{NOR}_g &= \exp(-Z^\textrm{PT,NOS})[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]\\
+\textrm{HOR}_g &= \exp(-Z^\textrm{PT,HOS})\textrm{Smolt}^\textrm{Rel}_g
 \end{align}
 
 ## Terminal fishery
@@ -142,11 +142,13 @@ The escapement consists of the survivors of the terminal fishery:
 
 # Spawners
 
-The abundance of natural origin spawners consists of the escapement reduced by the broodtake. A separate removal term is used for hatchery origin spawners are removed, where the fish removed can be used as broodtake, research purposes, management of population fitness, etc.
+The abundance of natural origin spawners consists of the escapement reduced by the broodtake. 
+
+The hatchery origin spawners is the escapement, reduced by the proportion $p^\textrm{hatchery}$ returning to the hatchery, either by swim-in facilities or direct removal. A second removal term $p^\textrm{HOS}_\textrm{removal}$ removes fish from the spawning grounds, these animals are not available for broodtake.
 
 \begin{align}
 \textrm{NOS}_g &= \textrm{NOR}^\textrm{escapement}_g - \textrm{NOB}_g\\
-\textrm{HOS}_g &= \textrm{NOR}^\textrm{escapement}_g (1 - p^\textrm{HOS}_\textrm{removal})
+\textrm{HOS}_g &= \textrm{NOR}^\textrm{escapement}_g (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
 \end{align}
 
 # Habitat improvement

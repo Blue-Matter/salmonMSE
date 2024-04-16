@@ -135,6 +135,7 @@ setClass(
     gamma = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
+    phatchery = "numeric",
     premove_HOS = "numeric",
     fec_brood = "numeric",
     fitness_type = "character",

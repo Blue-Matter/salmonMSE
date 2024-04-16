@@ -13,8 +13,11 @@
 #' @slot gamma Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.
 #' @slot pmax_NOB Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.
 #' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.
-#' @slot premove_HOS Numeric. The proportion of the hatchery origin spawners to be removed from the spawning grounds (in order to
-#'  ensure a high proportion of NOS). This removal is also used to calculate the available hatchery origin fish for broodtake.
+#' @slot phatchery Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+#'  or swim-in facilities. These fish are available for broodtake.
+#' @slot premove_HOS Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+#'  ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
+#'  imperfect implementation of weir removal.
 #' @slot fec_brood Numeric. The fecundity of broodtake.
 #' @slot fitness_type Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
