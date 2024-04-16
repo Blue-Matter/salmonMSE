@@ -73,7 +73,11 @@
 
 
 <dt><code>m</code></dt>
-<dd><p>Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity.</p></dd>
+<dd><p>Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity. Mark-selective fishing (MSF) is implemented if <code>m &gt; 0</code>.</p></dd>
+
+
+<dt><code>release_mort</code></dt>
+<dd><p>Numeric. The proportion of released fish that die due to release. Implemented to model mark-selective fishing. Not used if <code>m = 0</code>.</p></dd>
 
 
 </dl></div>
@@ -90,9 +94,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Harvest" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name u_preterminal    u_terminal             m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name u_preterminal    u_terminal             m  release_mort</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       numeric       numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Known Subclasses: "SOM"</span>
 </code></pre></div>

@@ -217,7 +217,11 @@ imperfect implementation of weir removal.</p></dd>
 
 
 <dt><code>m</code></dt>
-<dd><p>Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity.</p></dd>
+<dd><p>Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity. Mark-selective fishing (MSF) is implemented if <code>m &gt; 0</code>.</p></dd>
+
+
+<dt><code>release_mort</code></dt>
+<dd><p>Numeric. The proportion of released fish that die due to release. Implemented to model mark-selective fishing. Not used if <code>m = 0</code>.</p></dd>
 
 
 </dl></div>
