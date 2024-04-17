@@ -29,7 +29,7 @@ salmonMSE <- function(SOM, start = list(), Hist = FALSE, silent = FALSE, trace =
   if (!silent) message("Converting salmon operating model to MOM..")
   MOM <- SOM2MOM(SOM, start)
 
-  Harvest_MMP <- make_Harvest_MMP(SOM@u_terminal, SOM@u_preterminal)
+  Harvest_MMP <- make_Harvest_MMP(SOM@u_terminal, SOM@u_preterminal, SOM@m, SOM@release_mort)
 
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()

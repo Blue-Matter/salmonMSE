@@ -157,12 +157,18 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   if (stage == "immature") {
     if (NOS) {
-      F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_NOS[x])))
+      F_hist <- sapply(
+        1:SOM@nsim,
+        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_NOS[x]), ret = SOM@m, release_mort = SOM@release_mort)
+      )
     } else {
-      F_hist <- sapply(1:SOM@nsim, function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_HOS[x])))
+      F_hist <- sapply(
+        1:SOM@nsim,
+        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_HOS[x]), ret = SOM@m, release_mort = SOM@release_mort)
+      )
     }
   } else if (stage == "return") {
-    F_hist <- -log(1 - SOM@u_terminal)
+    F_hist <- get_F(u = SOM@u_terminal, M = 0, ret = SOM@m, release_mort = SOM@release_mort)
   } else {
     F_hist <- 0
   }

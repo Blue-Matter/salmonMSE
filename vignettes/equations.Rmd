@@ -95,7 +95,7 @@ $s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\tex
 
 # Pre-terminal fishery
 
-Harvest $u^\textrm{PT}$ in the pre-terminal fishery occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
+Harvest $u^\textrm{PT}$ in the pre-terminal fishery, assuming no mark-selective fishing, occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
 
 $$
 \textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
@@ -124,7 +124,7 @@ The recruitment is calculated as the survival of smolts after pre-terminal harve
 
 ## Terminal fishery
 
-Catch of the terminal fishery is calculated from the harvest rate $u^T$:
+Assuming no mark-selective fishing, the catch of the terminal fishery is calculated from the harvest rate $u^T$:
 
 \begin{align}
 \textrm{Catch}^\textrm{NOS,T}_g &= u^\textrm{T} \textrm{NOR}_g\\
@@ -248,4 +248,36 @@ $$
 \textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + (1 - p^{\textrm{NOS}}_g)}
 $$
 
-Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI.
+Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI (low rate of gene flow from the hatchery environment).
+
+Assuming non-assortative mating, the proportion of wild salmon, natural origin fish whose parents were also natural spawners, is
+
+
+
+# Mark-selective fishing
+
+If the mark rate of hatchery fish $m$ is specified to be greater than zero, then mark-selective fishing is implemented for both the pre-terminal and terminal fisheries. 
+The mark rate is a proxy for retention and the harvest rate $u$ corresponds to the ratio of the retained catch and abundance of hatchery origin fish.
+The harvest rate and mortality will differ between hatchery and natural origin fish when there is no retention on the latter, i.e., $m^\textrm{NOS} = 0$.
+
+Intuitively, fishing effort can increase in a mark-selective fishery compared to non-selective fishery, e.g., if the mark rate is 20 percent, then the fishing effort is 500 percent higher than in a non-selective fishery in order to attain the specified retention quota or bag limit.
+Additional mortality can occur for un-marked fish, depending on the proportion of released fish that die ($\delta$).
+
+The instantaneous fishing mortality in the pre-terminal and terminal fishery is
+
+\begin{align}
+F^\textrm{PT} &= mE^\textrm{PT} + (1 - m)\delta E^\textrm{PT}\\
+F^\textrm{T} &= mE^\textrm{T} + (1 - m)\delta E^\textrm{T}
+\end{align}
+
+where $E$ is an index of fishing effort. 
+
+The effort for the pre-terminal and terminal fisheries is obtained from the corresponding $u$ such that
+
+\begin{align}
+u^\textrm{PT} &= \dfrac{mE^\textrm{PT}}{F^\textrm{PT} + M^\textrm{SAR}}(1 - \exp(-[F^\textrm{PT}+M^\textrm{SAR}])\\
+u^\textrm{T} &= \dfrac{mE^\textrm{T}}{F^\textrm{T}}(1 - \exp(-F^\textrm{T}))
+\end{align}
+
+The proportion of released fish that die is $(1 - m)\delta E(1 - \exp(-[F+M])/(F+M)$ and $(1 - m)\delta E(1 - \exp(-F)/F$ in the pre-terminal and terminal fishery, respectively.
+

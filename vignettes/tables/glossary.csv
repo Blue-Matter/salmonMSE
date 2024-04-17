@@ -6,6 +6,8 @@ C_\textrm{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat,S
 P_\textrm{smolt},Maximum rate of recruitment of smolts (stock-recruit parameter),Habitat,SOM,prod_smolt
 u^\textrm{PT},Pre-terminal fishery harvest rate,Harvest,SOM,u_preterminal
 u^\textrm{T},Terminal fishery harvest rate,Harvest,SOM,u_terminal
+m,Mark rate of hatchery fish,Harvest,SOM,m
+\delta,Mortality from catch and release (proportion),Harvest,SOM,release_mort
 \textrm{Fec},Fecundity of spawners (eggs per female),Natural production,SOM,fec
 \textrm{Fec}^\textrm{brood},Fecundity of broodtake (eggs per female),Natural production,SOM,fec_brood
 p^\textrm{female},Proportion of female spawners in broodtake and spawners,Natural production + Hatchery,SOM,p_female

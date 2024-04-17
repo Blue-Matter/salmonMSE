@@ -4,12 +4,16 @@
 \alias{make_Harvest_MMP}
 \title{Harvest component of salmon operating model}
 \usage{
-make_Harvest_MMP(u_terminal = 0.1, u_preterminal = 0)
+make_Harvest_MMP(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0)
 }
 \arguments{
 \item{u_terminal}{Numeric between 0-1. Harvest rate of the terminal fishery.}
 
 \item{u_preterminal}{Numeric between 0-1. Harvest rate of the preterminal fishery.}
+
+\item{m}{Numeric between 0-1. Mark rate, i.e., retention rate.}
+
+\item{release_mort}{Numeric between 0-1. Release mortality, proportion of released fish that die.}
 }
 \description{
 A function that creates a multi-stock management procedure
