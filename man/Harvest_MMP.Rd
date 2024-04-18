@@ -31,7 +31,7 @@ Harvest_MMP(
 \item{m}{Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 Retention in the operating model is specified in the \linkS4class{MOM} object}
 
-\item{release_mort}{Release mortality of discarded fish. Only used to calculate the fishing effort.
+\item{release_mort}{Length two numeric for the release mortality of discarded fish in the pre-terminal and terminal fishery. Only used to calculate the fishing effort.
 Release mortality in the operating model is specified in the \linkS4class{MOM} object}
 
 \item{p_terminal}{Population index for the recruitment that experiences the terminal fishing mortality}

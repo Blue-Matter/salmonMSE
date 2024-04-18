@@ -97,7 +97,8 @@ imperfect implementation of weir removal.}
 
 \item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity. Mark-selective fishing (MSF) is implemented if \code{m > 0}.}
 
-\item{\code{release_mort}}{Numeric. The proportion of released fish that die due to release. Implemented to model mark-selective fishing. Not used if \code{m = 0}.}
+\item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
+Implemented to model mark-selective fishing. Not used if \code{m = 0}.}
 }}
 
 \section{Objects from the Class}{

@@ -66,7 +66,11 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@Size_area_1 <- Stock@Frac_area_1 <- Stock@Prob_staying <- c(0.5, 0.5)
 
   # Proportion of releases that die (only if there is discarding from mark-selective fishing)
-  Stock@Fdisc <- rep(SOM@release_mort, 2)
+  if (stage == "immature") {
+    Stock@Fdisc <- rep(SOM@release_mort[1], 2)
+  } else {
+    Stock@Fdisc <- rep(SOM@release_mort[2], 2)
+  }
 
   # Custom pars
   # Catch works on the basis of biomass so we need to set weight at age = 1
@@ -159,16 +163,16 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     if (NOS) {
       F_hist <- sapply(
         1:SOM@nsim,
-        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_NOS[x]), ret = SOM@m, release_mort = SOM@release_mort)
+        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_NOS[x]), ret = SOM@m, release_mort = SOM@release_mort[1])
       )
     } else {
       F_hist <- sapply(
         1:SOM@nsim,
-        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_HOS[x]), ret = SOM@m, release_mort = SOM@release_mort)
+        function(x) get_F(u = SOM@u_preterminal, M = -log(SOM@SAR_HOS[x]), ret = SOM@m, release_mort = SOM@release_mort[1])
       )
     }
   } else if (stage == "return") {
-    F_hist <- get_F(u = SOM@u_terminal, M = 0, ret = SOM@m, release_mort = SOM@release_mort)
+    F_hist <- get_F(u = SOM@u_terminal, M = 0, ret = SOM@m, release_mort = SOM@release_mort[2])
   } else {
     F_hist <- 0
   }

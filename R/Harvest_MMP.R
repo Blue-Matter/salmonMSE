@@ -11,7 +11,7 @@
 #' @param u_preterminal Harvest rate of retained catch in the pre-terminal fishery
 #' @param m Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 #' Retention in the operating model is specified in the \linkS4class{MOM} object
-#' @param release_mort Release mortality of discarded fish. Only used to calculate the fishing effort.
+#' @param release_mort Length two numeric for the release mortality of discarded fish in the pre-terminal and terminal fishery. Only used to calculate the fishing effort.
 #' Release mortality in the operating model is specified in the \linkS4class{MOM} object
 #' @param p_terminal Population index for the recruitment that experiences the terminal fishing mortality
 #' @param p_preterminal Population index for immature fish that experience the pre-terminal fishing mortality
@@ -29,7 +29,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
 
     if (p %in% p_terminal) {
       if (m > 0) {
-        Effort <- get_F(u = u_terminal, M = 0, ret = m, release_mort = release_mort)
+        Effort <- get_F(u = u_terminal, M = 0, ret = m, release_mort = release_mort[2])
       } else {
         Effort <- -log(1 - u_terminal)
       }
@@ -38,7 +38,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
         y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
         nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
         M <- DataList[[p]][[1]]@Misc$StockPars$M_ageArray[x, , nyears + y]
-        F_preterminal <- get_F(u = u_preterminal, M = max(M), ret = ifelse(m > 0, m, 1), release_mort = SOM@release_mort)
+        F_preterminal <- get_F(u = u_preterminal, M = max(M), ret = ifelse(m > 0, m, 1), release_mort = SOM@release_mort[1])
       } else {
         F_preterminal <- 0
       }
@@ -64,7 +64,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
 #' @param u_terminal Numeric between 0-1. Harvest rate of the terminal fishery.
 #' @param u_preterminal Numeric between 0-1. Harvest rate of the preterminal fishery.
 #' @param m Numeric between 0-1. Mark rate, i.e., retention rate.
-#' @param release_mort Numeric between 0-1. Release mortality, proportion of released fish that die.
+#' @param release_mort Vector length 2 (each numeric between 0-1). Release mortality, proportion of released fish that die.
 #'
 #' @export
 make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0) {

@@ -13,7 +13,7 @@ make_Harvest_MMP(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0)
 
 \item{m}{Numeric between 0-1. Mark rate, i.e., retention rate.}
 
-\item{release_mort}{Numeric between 0-1. Release mortality, proportion of released fish that die.}
+\item{release_mort}{Vector length 2 (each numeric between 0-1). Release mortality, proportion of released fish that die.}
 }
 \description{
 A function that creates a multi-stock management procedure

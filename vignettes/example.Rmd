@@ -92,7 +92,7 @@ Harvest <- new(
   u_preterminal = 0,   # No fishery on juveniles
   u_terminal = 0.203,  # Specify fixed harvest rate of mature fish in the terminal fishery
   m = 0,               # Mark rate of hatchery releases
-  release_mort = 0.1
+  release_mort = c(0.1, 0.1)
 )
 ```
 
