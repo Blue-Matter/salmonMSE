@@ -95,7 +95,7 @@ $s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\tex
 
 # Pre-terminal fishery
 
-Harvest $u^\textrm{PT}$ in the pre-terminal fishery, assuming no mark-selective fishing, occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
+Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, assuming no mark-selective fishing, occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
 
 $$
 \textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
@@ -124,7 +124,7 @@ The recruitment is calculated as the survival of smolts after pre-terminal harve
 
 ## Terminal fishery
 
-Assuming no mark-selective fishing, the retained catch of the terminal fishery is calculated from the harvest rate $u^T$:
+Assuming no mark-selective fishing, the retained catch of the terminal ($\textrm{T}$) fishery is calculated from the harvest rate $u$:
 
 \begin{align}
 \textrm{Catch}^\textrm{NOS,T}_g &= u^\textrm{T} \textrm{NOR}_g\\
@@ -268,28 +268,50 @@ Assuming non-assortative mating, the denominator in the second term is the compo
 
 # Mark-selective fishing
 
-If the mark rate of hatchery fish $m$ is specified to be greater than zero, then mark-selective fishing is implemented for both the pre-terminal and terminal fisheries. 
-The mark rate is a proxy for retention and the harvest rate $u$ corresponds to the ratio of the retained catch and abundance of hatchery origin fish.
-The harvest rate and mortality will differ between hatchery and natural origin fish when there is no retention on the latter, i.e., $m^\textrm{NOS} = 0$.
+If the mark rate $m$ of hatchery fish greater than zero, then mark-selective fishing is implemented for both the pre-terminal and terminal fisheries. 
+The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$ corresponds to the ratio of the kept catch and abundance.
+The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch and dead releases. 
+Exploitation rates differ between hatchery and natural origin fish because there is no retention of the latter.
 
-Intuitively, fishing effort can increase in a mark-selective fishery compared to non-selective fishery, e.g., if the mark rate is 20 percent, then the fishing effort is 500 percent higher than in a non-selective fishery in order to attain the specified retention quota or bag limit.
-Additional mortality can occur for un-marked fish, depending on the proportion of released fish that die ($\delta$).
-
-The instantaneous fishing mortality in the pre-terminal and terminal fishery is
+Let the instantaneous fishing mortality for kept catch and released catch be 
 
 \begin{align}
-F^\textrm{PT} &= mE^\textrm{PT} + (1 - m)\delta E^\textrm{PT}\\
-F^\textrm{T} &= mE^\textrm{T} + (1 - m)\delta E^\textrm{T}
+F^\textrm{kept} &= mE\\
+F^\textrm{rel.} &= (1 - m)\delta E
 \end{align}
 
-where $E$ is an index of fishing effort. 
+where $\delta$ is the proportion of released fish that die. 
 
-The effort for the pre-terminal and terminal fisheries is obtained from the corresponding $u$ such that
+$E$ is an index of fishing effort that links together $F^\textrm{kept}$ and $F^\textrm{rel.}$.
+Intuitively, fishing effort can increase in a mark-selective fishery compared to non-selective fishery, e.g., if the mark rate is 20 percent, then the fishing effort could increase up to 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
+Additional catch and release mortality then occurs for un-marked fish, according to $\delta$.
+
+In the pre-terminal ($\textrm{PT}$) fishery, $E$ is solved to satisfy the following equation for hatchery fish:
+
+$$
+u^\textrm{harvest,HOS,PT} = \dfrac{F^\textrm{kept,PT}}{Z^\textrm{HOS,PT}}(1 - \exp(-Z^\textrm{HOS,PT}))
+$$
+
+where $Z^\textrm{HOS,PT} = F^\textrm{kept,PT} + F^\textrm{rel,PT} + M^\textrm{SAR,HOS} = mE^\textrm{PT} + (1 - m)\delta^\textrm{PT}E^\textrm{PT} + M^\textrm{SAR,HOS}$.
+
+The corresponding exploitation rates are
 
 \begin{align}
-u^\textrm{PT} &= \dfrac{mE^\textrm{PT}}{F^\textrm{PT} + M^\textrm{SAR}}(1 - \exp(-[F^\textrm{PT}+M^\textrm{SAR}])\\
-u^\textrm{T} &= \dfrac{mE^\textrm{T}}{F^\textrm{T}}(1 - \exp(-F^\textrm{T}))
+u^\textrm{exploit,HOS,PT} &= \dfrac{F^\textrm{kept,PT} + F^\textrm{rel,PT}}{Z^\textrm{HOS,PT}}(1 - \exp(-Z^\textrm{HOS,PT}))\\
+u^\textrm{exploit,NOS,PT} &= \dfrac{F^\textrm{rel,PT}}{Z^\textrm{NOS,PT}}(1 - \exp(-Z^\textrm{NOS,PT}))
 \end{align}
 
-The proportion of released fish that die is $(1 - m)\delta E(1 - \exp(-[F+M])/(F+M)$ and $(1 - m)\delta E(1 - \exp(-F)/F$ in the pre-terminal and terminal fishery, respectively.
+for natural and hatchery fish, respectively, and $Z^\textrm{NOS,PT} = F^\textrm{rel,PT} + M^\textrm{SAR,NOS}$.
 
+Similarly, the fishing effort of the terminal fishery satisfies the equation
+
+$$
+u^\textrm{harvest,HOS,T} = \dfrac{F^\textrm{kept,T}}{F^\textrm{kept,T} + F^\textrm{rel,T}}(1 - \exp(-[F^\textrm{kept,T} + F^\textrm{rel,T}]))
+$$
+
+The corresponding exploitation rates are
+
+\begin{align}
+u^\textrm{exploit,HOS,T} &= 1 - \exp(-[F^\textrm{kept,T} + F^\textrm{rel,T}])\\
+u^\textrm{exploit,NOS,T} &= 1 - \exp(-F^\textrm{rel,T})
+\end{align}
