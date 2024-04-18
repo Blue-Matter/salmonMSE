@@ -95,13 +95,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
 
     pNOB <- get_salmonMSE_var(N, var = "pNOB")
     pHOSeff <- get_salmonMSE_var(N, var = "pHOSeff")
+    pHOScensus <- get_salmonMSE_var(N, var = "pHOScensus")
 
     PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOSeff) # Withler et al. 2018, page 17
-    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOSeff), function(t) {
+    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOScensus), function(t) {
       if (t == 1) {
-        rep(NA_real_, nrow(pHOSeff))
+        rep(NA_real_, nrow(pHOScensus))
       } else {
-        calc_pwild(pHOSeff[, t], pHOSeff[, t-1], SOM@gamma)
+        calc_pwild(pHOScensus[, t], pHOScensus[, t-1], SOM@gamma)
       }
     })
 

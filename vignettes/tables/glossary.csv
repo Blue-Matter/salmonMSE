@@ -38,4 +38,5 @@ h^2,Heritability of phenotypic traits,Fitness,SOM,heritability
 \textrm{PNI},Proportionate natural influence,Fitness,SMSE,PNI
 m,Mark rate of hatchery fish (affects fishery retention of hatchery fish relative to natural fish),Harvest,SOM,m
 p_\textrm{NOS},Proportion of natural origin spawners (vs. effective HOS),Population dynamics,Internal state variable,-
-p_\textrm{HOSeff},Proportion of effective hatchery origin spawners (vs. NOS),Population dynamics,SMSE,pHOS
+p_\textrm{HOSeff},Proportion of effective hatchery origin spawners (vs. NOS),Population dynamics,SMSE,"NOS, HOS_effective"
+p_\textrm{HOScensus},Proportion of hatchery origin spawners (vs. NOS),Population dynamics,SMSE,"NOS, HOS"

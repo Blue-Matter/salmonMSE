@@ -83,6 +83,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
       pNOB <- broodtake[1]/sum(broodtake)
       pHOSeff <- HOS_effective/(NOS + HOS_effective)
+      pHOScensus <- HOS/(NOS + HOS)
 
       # Get pbar from salmonMSE_env
       if (nrow(salmonMSE_env$Ford)) {
@@ -178,6 +179,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
         fitness = fitness,
         pNOB = as.numeric(pNOB),
         pHOSeff = as.numeric(pHOSeff),
+        pHOScensus = as.numeric(pHOScensus),
         Perr_y = total_smolt/smolt_NOS_SRR
       )
       salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)

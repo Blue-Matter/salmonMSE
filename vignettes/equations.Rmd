@@ -124,7 +124,7 @@ The recruitment is calculated as the survival of smolts after pre-terminal harve
 
 ## Terminal fishery
 
-Assuming no mark-selective fishing, the catch of the terminal fishery is calculated from the harvest rate $u^T$:
+Assuming no mark-selective fishing, the retained catch of the terminal fishery is calculated from the harvest rate $u^T$:
 
 \begin{align}
 \textrm{Catch}^\textrm{NOS,T}_g &= u^\textrm{T} \textrm{NOR}_g\\
@@ -207,10 +207,10 @@ where $h^2$ is the heritability of $z$ and $\bar{z}^\prime_{g-1}$ is the trait v
 With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^\textrm{natural}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^\textrm{hatchery}$):
 
 $$
-\bar{z}^\textrm{natural}_g = p^\textrm{NOS}_{g-1} \times \bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOS}_{g-1}) \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
+\bar{z}^\textrm{natural}_g = (1 - p^\textrm{HOSeff}_{g-1}) \times \bar{z}^{\prime\textrm{natural}}_{g-1} + p^\textrm{HOSeff}_{g-1} \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
 $$
 
-where $p^\textrm{NOS} = \textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. 
+where $p^\textrm{HOSeff} = \gamma\times\textrm{HOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. 
 
 Similarly, the mean trait value in the hatchery environment $\bar{z}^\textrm{hatchery}_g$ is a weighted average of the mean trait value of the natural origin broodtake in the natural environment and that of the hatchery origin broodtake in the hatchery environment:
 
@@ -245,7 +245,7 @@ where $\ell_i$ is the proportion of the fitness loss apportioned among the three
 PNI (proportionate natural influence) is an approximation of the rate of gene flow from the hatchery to the natural environment:
 
 $$
-\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + (1 - p^{\textrm{NOS}}_g)}
+\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + p^{\textrm{HOSeff}}_g}
 $$
 
 Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI (low rate of gene flow from the hatchery environment).
@@ -253,17 +253,18 @@ Generally, a combination of minimizing hatchery releases, increasing natural bro
 The proportion of wild salmon, natural origin fish whose parents were also natural spawners, is
 
 $$
-p^\textrm{WILD}_g = p^\textrm{NOS}_g \times
-\dfrac{(p^\textrm{NOS}_{g-1})^2}
-{(p^\textrm{NOS}_{g-1})^2 + 2 p^\textrm{NOS}_{g-1}(1 - p^\textrm{NOS}_{g-1}) +
-(1 - p^{\textrm{NOS}}_{g-1})^2}
+p^\textrm{WILD}_g = (1 - p^\textrm{HOScensus}_g) \times
+\dfrac{(1 - p^\textrm{HOScensus}_{g-1})^2}
+{(1 - p^\textrm{HOScensus}_{g-1})^2 + 2 \gamma \times p^\textrm{HOScensus}_{g-1}(1 - p^\textrm{HOScensus}_{g-1}) +
+\gamma^2 (p^\textrm{HOScensus}_{g-1})^2}
 $$
 
-where the first term is the proportion of natural spawners in the current generation $g$. 
+where $p^\textrm{HOScensus} = \textrm{HOS}/(\textrm{HOS} + \textrm{NOS})$. 
 
-The fraction in the second term discounts the proportion of the current generation to those whose parents were both natural spawners.
+The first term is the proportion of natural spawners in the current generation $g$. 
 
-Assuming non-assortative mating, the denominator in the second term consists of the proportion of animals whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
+The fraction in the second term discounts the proportion of the current generation to those whose parents were both natural spawners. 
+Assuming non-assortative mating, the denominator in the second term is the composition of animals whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
 
 # Mark-selective fishing
 

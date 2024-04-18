@@ -10,16 +10,18 @@ Stores the outputs from the simulation of salmon operating models.
 \details{
 In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
 
-\deqn{\textrm{PNI}_t = \dfrac{p^{\textrm{NOB}}_t}{p^{\textrm{NOB}}_t + p^{\textrm{HOS}}_t}}
+\deqn{\textrm{PNI}_t = \dfrac{p^\textrm{NOB}_t}{p^\textrm{NOB}_t + p^\textrm{HOSeff}_t}}
+
+with \eqn{p^\textrm{HOSeff} = \textrm{HOSeff}/(\textrm{NOS} + \textrm{HOSeff})}.
 
 The proportion of wild salmon is defined as:
 
-\deqn{p^{\textrm{WILD}}_t = q^{\textrm{HOS}}_t
-\dfrac{(q^{\textrm{HOS}}_{t-1})^2}
-{(q^{\textrm{HOS}}_{t-1})^2 + 2\gamma \times p^{\textrm{HOS}}_{t-1} q^{\textrm{HOS}}_{t-1} +
-\gamma^2 (p^{\textrm{HOS}}_{t-1})^2}}
+\deqn{p^{\textrm{WILD}}_t = q^\textrm{HOScen}_t
+\dfrac{(q^\textrm{HOScen}_{t-1})^2}
+{(q^\textrm{HOScen}_{t-1})^2 + 2\gamma \times p^\textrm{HOScen}_{t-1} q^\textrm{HOScen}_{t-1} +
+\gamma^2 (p^\textrm{HOScen}_{t-1})^2}}
 
-where \eqn{q = 1-p}.
+where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \textrm{HOS})}.
 }
 \section{Slots}{
 
@@ -84,7 +86,7 @@ where \eqn{q = 1-p}.
 
 \item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence, index of gene flow from hatchery to the natural environment.}
 
-\item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, whose parents also spawned in the natural environment assuming
+\item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 non-assortative mating, defined under Canada's Wild Salmon Policy.}
 
 \item{\code{SAR_loss}}{Array \verb{[nsim, nstocks, proyears]}. Realized SAR due to fitness loss.}
