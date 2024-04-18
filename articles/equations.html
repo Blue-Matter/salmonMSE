@@ -406,7 +406,14 @@ HOS)</td>
 (vs. NOS)</td>
 <td align="left">Population dynamics</td>
 <td align="left">SMSE</td>
-<td align="left">pHOS</td>
+<td align="left">NOS, HOS_effective</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(p_\textrm{HOScensus}\)</span></td>
+<td align="left">Proportion of hatchery origin spawners (vs. NOS)</td>
+<td align="left">Population dynamics</td>
+<td align="left">SMSE</td>
+<td align="left">NOS, HOS</td>
 </tr>
 </tbody>
 </table>
@@ -496,9 +503,11 @@ n^\textrm{yearling})\)</span>.</p>
 <h2 id="pre-terminal-fishery">Pre-terminal fishery<a class="anchor" aria-label="anchor" href="#pre-terminal-fishery"></a>
 </h2>
 <p>Harvest <span class="math inline">\(u^\textrm{PT}\)</span> in the
-pre-terminal fishery, assuming no mark-selective fishing, occurs
-simultaneously along with marine survival (<span class="math inline">\(\textrm{SAR}\)</span>, constant base term).
-Pre-terminal fishery catch of immature NOS of generation <span class="math inline">\(g\)</span> is calculated as</p>
+pre-terminal (<span class="math inline">\(\textrm{PT}\)</span>) fishery,
+assuming no mark-selective fishing, occurs simultaneously along with
+marine survival (<span class="math inline">\(\textrm{SAR}\)</span>,
+constant base term). Pre-terminal fishery catch of immature NOS of
+generation <span class="math inline">\(g\)</span> is calculated as</p>
 <p><span class="math display">\[
 \textrm{Catch}^\textrm{NOS,PT}_g =
 \dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 -
@@ -537,8 +546,9 @@ pre-terminal harvest and marine survival:</p>
 <div class="section level3">
 <h3 id="terminal-fishery">Terminal fishery<a class="anchor" aria-label="anchor" href="#terminal-fishery"></a>
 </h3>
-<p>Assuming no mark-selective fishing, the catch of the terminal fishery
-is calculated from the harvest rate <span class="math inline">\(u^T\)</span>:</p>
+<p>Assuming no mark-selective fishing, the retained catch of the
+terminal (<span class="math inline">\(\textrm{T}\)</span>) fishery is
+calculated from the harvest rate <span class="math inline">\(u\)</span>:</p>
 <p><span class="math display">\[\begin{align}
 \textrm{Catch}^\textrm{NOS,T}_g &amp;= u^\textrm{T} \textrm{NOR}_g\\
 \textrm{Catch}^\textrm{HOS,T}_g &amp;= u^\textrm{T} \textrm{HOR}_g
@@ -655,12 +665,13 @@ value <span class="math inline">\(\theta^\textrm{natural}\)</span>) and
 that of hatchery origin spawners in the hatchery environment (with
 optimum value <span class="math inline">\(\theta^\textrm{hatchery}\)</span>):</p>
 <p><span class="math display">\[
-\bar{z}^\textrm{natural}_g = p^\textrm{NOS}_{g-1} \times
-\bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOS}_{g-1})
-\times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
+\bar{z}^\textrm{natural}_g = (1 - p^\textrm{HOSeff}_{g-1}) \times
+\bar{z}^{\prime\textrm{natural}}_{g-1} + p^\textrm{HOSeff}_{g-1} \times
+\bar{z}^{\prime\textrm{hatchery}}_{g-1}
 \]</span></p>
-<p>where <span class="math inline">\(p^\textrm{NOS} =
-\textrm{NOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})\)</span>.</p>
+<p>where <span class="math inline">\(p^\textrm{HOSeff} =
+\gamma\times\textrm{HOS}/(\textrm{NOS} +
+\gamma\times\textrm{HOS})\)</span>.</p>
 <p>Similarly, the mean trait value in the hatchery environment <span class="math inline">\(\bar{z}^\textrm{hatchery}_g\)</span> is a weighted
 average of the mean trait value of the natural origin broodtake in the
 natural environment and that of the hatchery origin broodtake in the
@@ -707,8 +718,8 @@ of the fitness loss apportioned among the three life stages, <span class="math i
 <p>PNI (proportionate natural influence) is an approximation of the rate
 of gene flow from the hatchery to the natural environment:</p>
 <p><span class="math display">\[
-\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + (1 -
-p^{\textrm{NOS}}_g)}
+\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g +
+p^{\textrm{HOSeff}}_g}
 \]</span></p>
 <p>Generally, a combination of minimizing hatchery releases, increasing
 natural broodtake, and reducing spawning of hatchery origin fish
@@ -717,58 +728,83 @@ environment).</p>
 <p>The proportion of wild salmon, natural origin fish whose parents were
 also natural spawners, is</p>
 <p><span class="math display">\[
-p^\textrm{WILD}_g = p^\textrm{NOS}_g \times
-\dfrac{(p^\textrm{NOS}_{g-1})^2}
-{(p^\textrm{NOS}_{g-1})^2 + 2 p^\textrm{NOS}_{g-1}(1 -
-p^\textrm{NOS}_{g-1}) +
-(1 - p^{\textrm{NOS}}_{g-1})^2}
+p^\textrm{WILD}_g = (1 - p^\textrm{HOScensus}_g) \times
+\dfrac{(1 - p^\textrm{HOScensus}_{g-1})^2}
+{(1 - p^\textrm{HOScensus}_{g-1})^2 + 2 \gamma \times
+p^\textrm{HOScensus}_{g-1}(1 - p^\textrm{HOScensus}_{g-1}) +
+\gamma^2 (p^\textrm{HOScensus}_{g-1})^2}
 \]</span></p>
-<p>where the first term is the proportion of natural spawners in the
-current generation <span class="math inline">\(g\)</span>.</p>
+<p>where <span class="math inline">\(p^\textrm{HOScensus} =
+\textrm{HOS}/(\textrm{HOS} + \textrm{NOS})\)</span>.</p>
+<p>The first term is the proportion of natural spawners in the current
+generation <span class="math inline">\(g\)</span>.</p>
 <p>The fraction in the second term discounts the proportion of the
-current generation to those whose parents were both natural
-spawners.</p>
-<p>Assuming non-assortative mating, the denominator in the second term
-consists of the proportion of animals whose parents who are both natural
-origin, mixed origin (one parent in natural origin and the other is
-hatchery origin), and both hatchery origin.</p>
+current generation to those whose parents were both natural spawners.
+Assuming non-assortative mating, the denominator in the second term is
+the composition of animals whose parents who are both natural origin,
+mixed origin (one parent in natural origin and the other is hatchery
+origin), and both hatchery origin.</p>
 </div>
 <div class="section level2">
 <h2 id="mark-selective-fishing">Mark-selective fishing<a class="anchor" aria-label="anchor" href="#mark-selective-fishing"></a>
 </h2>
-<p>If the mark rate of hatchery fish <span class="math inline">\(m\)</span> is specified to be greater than zero,
-then mark-selective fishing is implemented for both the pre-terminal and
-terminal fisheries. The mark rate is a proxy for retention and the
-harvest rate <span class="math inline">\(u\)</span> corresponds to the
-ratio of the retained catch and abundance of hatchery origin fish. The
-harvest rate and mortality will differ between hatchery and natural
-origin fish when there is no retention on the latter, i.e., <span class="math inline">\(m^\textrm{NOS} = 0\)</span>.</p>
-<p>Intuitively, fishing effort can increase in a mark-selective fishery
-compared to non-selective fishery, e.g., if the mark rate is 20 percent,
-then the fishing effort is 500 percent higher than in a non-selective
-fishery in order to attain the specified retention quota or bag limit.
-Additional mortality can occur for un-marked fish, depending on the
-proportion of released fish that die (<span class="math inline">\(\delta\)</span>).</p>
-<p>The instantaneous fishing mortality in the pre-terminal and terminal
-fishery is</p>
+<p>If the mark rate <span class="math inline">\(m\)</span> of hatchery
+fish greater than zero, then mark-selective fishing is implemented for
+both the pre-terminal and terminal fisheries. The mark rate is a proxy
+for retention and the harvest rate <span class="math inline">\(u^\textrm{harvest}\)</span> corresponds to the
+ratio of the kept catch and abundance. The exploitation rate <span class="math inline">\(u^\textrm{exploit}\)</span> is calculated from
+kept catch and dead releases. Exploitation rates differ between hatchery
+and natural origin fish because there is no retention of the latter.</p>
+<p>Let the instantaneous fishing mortality for kept catch and released
+catch be</p>
 <p><span class="math display">\[\begin{align}
-F^\textrm{PT} &amp;= mE^\textrm{PT} + (1 - m)\delta E^\textrm{PT}\\
-F^\textrm{T} &amp;= mE^\textrm{T} + (1 - m)\delta E^\textrm{T}
+F^\textrm{kept} &amp;= mE\\
+F^\textrm{rel.} &amp;= (1 - m)\delta E
 \end{align}\]</span></p>
-<p>where <span class="math inline">\(E\)</span> is an index of fishing
-effort.</p>
-<p>The effort for the pre-terminal and terminal fisheries is obtained
-from the corresponding <span class="math inline">\(u\)</span> such
-that</p>
+<p>where <span class="math inline">\(\delta\)</span> is the proportion
+of released fish that die.</p>
+<p><span class="math inline">\(E\)</span> is an index of fishing effort
+that links together <span class="math inline">\(F^\textrm{kept}\)</span>
+and <span class="math inline">\(F^\textrm{rel.}\)</span>. Intuitively,
+fishing effort can increase in a mark-selective fishery compared to
+non-selective fishery, e.g., if the mark rate is 20 percent, then the
+fishing effort could increase up to 500 percent higher than in a
+non-selective fishery in order to attain the kept quota or bag limit.
+Additional catch and release mortality then occurs for un-marked fish,
+according to <span class="math inline">\(\delta\)</span>.</p>
+<p>In the pre-terminal (<span class="math inline">\(\textrm{PT}\)</span>) fishery, <span class="math inline">\(E\)</span> is solved to satisfy the following
+equation for hatchery fish:</p>
+<p><span class="math display">\[
+u^\textrm{harvest,HOS,PT} =
+\dfrac{F^\textrm{kept,PT}}{Z^\textrm{HOS,PT}}(1 -
+\exp(-Z^\textrm{HOS,PT}))
+\]</span></p>
+<p>where <span class="math inline">\(Z^\textrm{HOS,PT} =
+F^\textrm{kept,PT} + F^\textrm{rel,PT} + M^\textrm{SAR,HOS} =
+mE^\textrm{PT} + (1 - m)\delta^\textrm{PT}E^\textrm{PT} +
+M^\textrm{SAR,HOS}\)</span>.</p>
+<p>The corresponding exploitation rates are</p>
 <p><span class="math display">\[\begin{align}
-u^\textrm{PT} &amp;= \dfrac{mE^\textrm{PT}}{F^\textrm{PT} +
-M^\textrm{SAR}}(1 - \exp(-[F^\textrm{PT}+M^\textrm{SAR}])\\
-u^\textrm{T} &amp;= \dfrac{mE^\textrm{T}}{F^\textrm{T}}(1 -
-\exp(-F^\textrm{T}))
+u^\textrm{exploit,HOS,PT} &amp;= \dfrac{F^\textrm{kept,PT} +
+F^\textrm{rel,PT}}{Z^\textrm{HOS,PT}}(1 - \exp(-Z^\textrm{HOS,PT}))\\
+u^\textrm{exploit,NOS,PT} &amp;=
+\dfrac{F^\textrm{rel,PT}}{Z^\textrm{NOS,PT}}(1 -
+\exp(-Z^\textrm{NOS,PT}))
 \end{align}\]</span></p>
-<p>The proportion of released fish that die is <span class="math inline">\((1 - m)\delta E(1 - \exp(-[F+M])/(F+M)\)</span>
-and <span class="math inline">\((1 - m)\delta E(1 - \exp(-F)/F\)</span>
-in the pre-terminal and terminal fishery, respectively.</p>
+<p>for natural and hatchery fish, respectively, and <span class="math inline">\(Z^\textrm{NOS,PT} = F^\textrm{rel,PT} +
+M^\textrm{SAR,NOS}\)</span>.</p>
+<p>Similarly, the fishing effort of the terminal fishery satisfies the
+equation</p>
+<p><span class="math display">\[
+u^\textrm{harvest,HOS,T} = \dfrac{F^\textrm{kept,T}}{F^\textrm{kept,T} +
+F^\textrm{rel,T}}(1 - \exp(-[F^\textrm{kept,T} + F^\textrm{rel,T}]))
+\]</span></p>
+<p>The corresponding exploitation rates are</p>
+<p><span class="math display">\[\begin{align}
+u^\textrm{exploit,HOS,T} &amp;= 1 - \exp(-[F^\textrm{kept,T} +
+F^\textrm{rel,T}])\\
+u^\textrm{exploit,NOS,T} &amp;= 1 - \exp(-F^\textrm{rel,T})
+\end{align}\]</span></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

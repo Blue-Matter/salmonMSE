@@ -59,13 +59,14 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>In generation \(t\), proportionate natural influence (PNI) is defined as:</p>
-<p>$$\textrm{PNI}_t = \dfrac{p^{\textrm{NOB}}_t}{p^{\textrm{NOB}}_t + p^{\textrm{HOS}}_t}$$</p>
+<p>$$\textrm{PNI}_t = \dfrac{p^\textrm{NOB}_t}{p^\textrm{NOB}_t + p^\textrm{HOSeff}_t}$$</p>
+<p>with \(p^\textrm{HOSeff} = \textrm{HOSeff}/(\textrm{NOS} + \textrm{HOSeff})\).</p>
 <p>The proportion of wild salmon is defined as:</p>
-<p>$$p^{\textrm{WILD}}_t = q^{\textrm{HOS}}_t
-\dfrac{(q^{\textrm{HOS}}_{t-1})^2}
-{(q^{\textrm{HOS}}_{t-1})^2 + 2\gamma \times p^{\textrm{HOS}}_{t-1} q^{\textrm{HOS}}_{t-1} +
-\gamma^2 (p^{\textrm{HOS}}_{t-1})^2}$$</p>
-<p>where \(q = 1-p\).</p>
+<p>$$p^{\textrm{WILD}}_t = q^\textrm{HOScen}_t
+\dfrac{(q^\textrm{HOScen}_{t-1})^2}
+{(q^\textrm{HOScen}_{t-1})^2 + 2\gamma \times p^\textrm{HOScen}_{t-1} q^\textrm{HOScen}_{t-1} +
+\gamma^2 (p^\textrm{HOScen}_{t-1})^2}$$</p>
+<p>where \(q = 1-p\) and \(p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \textrm{HOS})\).</p>
     </div>
     <div class="section level2">
     <h2 id="slots">Slots<a class="anchor" aria-label="anchor" href="#slots"></a></h2>
@@ -192,7 +193,7 @@
 
 
 <dt><code>p_wild</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of wild spawners, whose parents also spawned in the natural environment assuming
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 non-assortative mating, defined under Canada's Wild Salmon Policy.</p></dd>
 
 
