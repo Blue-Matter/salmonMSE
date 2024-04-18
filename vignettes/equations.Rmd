@@ -250,9 +250,20 @@ $$
 
 Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI (low rate of gene flow from the hatchery environment).
 
-Assuming non-assortative mating, the proportion of wild salmon, natural origin fish whose parents were also natural spawners, is
+The proportion of wild salmon, natural origin fish whose parents were also natural spawners, is
 
+$$
+p^\textrm{WILD}_g = p^\textrm{NOS}_g \times
+\dfrac{(p^\textrm{NOS}_{g-1})^2}
+{(p^\textrm{NOS}_{g-1})^2 + 2 p^\textrm{NOS}_{g-1}(1 - p^\textrm{NOS}_{g-1}) +
+(1 - p^{\textrm{NOS}}_{g-1})^2}
+$$
 
+where the first term is the proportion of natural spawners in the current generation $g$. 
+
+The fraction in the second term discounts the proportion of the current generation to those whose parents were both natural spawners.
+
+Assuming non-assortative mating, the denominator in the second term consists of the proportion of animals whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
 
 # Mark-selective fishing
 
