@@ -66,21 +66,37 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
 
-\item{\code{CatchPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery catch of natural origin spawners.}
+\item{\code{KPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery kept catch of natural origin spawners.}
 
-\item{\code{CatchT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery catch of natural origin spawners.}
+\item{\code{KT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery kept catch of natural origin spawners.}
 
-\item{\code{CatchPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery catch of hatchery origin spawners.}
+\item{\code{KPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery kept catch of hatchery origin spawners.}
 
-\item{\code{CatchT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery catch of hatchery origin spawners.}
+\item{\code{KT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery kept catch of hatchery origin spawners.}
 
-\item{\code{UPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery harvest rate of natural origin spawners.}
+\item{\code{DPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery released catch (live and dead) of natural origin spawners.}
+
+\item{\code{DT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery released catch (live and dead) of natural origin spawners.}
+
+\item{\code{DPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery released catch (live and dead) of hatchery origin spawners.}
+
+\item{\code{DT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery released catch (live and dead) hatchery origin spawners.}
+
+\item{\code{UPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery harvest rate (from kept catch) of natural origin spawners.}
 
 \item{\code{UT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery harvest rate of natural origin spawners.}
 
 \item{\code{UPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery harvest rate of hatchery origin spawners.}
 
 \item{\code{UT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery harvest rate of hatchery origin spawners.}
+
+\item{\code{ExPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery exploitation rate (from kept catch and dead releases) of natural origin spawners.}
+
+\item{\code{ExT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery exploitation rate of natural origin spawners.}
+
+\item{\code{ExPT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery exploitation rate of hatchery origin spawners.}
+
+\item{\code{ExT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery exploitation rate of hatchery origin spawners.}
 
 \item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness of the natural spawning population.}
 

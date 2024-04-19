@@ -172,7 +172,11 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       )
     }
   } else if (stage == "return") {
-    F_hist <- get_F(u = SOM@u_terminal, M = 0, ret = SOM@m, release_mort = SOM@release_mort[2])
+    if (SOM@m > 0) {
+      F_hist <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
+    } else {
+      F_hist <- -log(1 - SOM@u_terminal)
+    }
   } else {
     F_hist <- 0
   }

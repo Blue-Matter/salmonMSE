@@ -16,8 +16,10 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
   Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   NOB <- HOB <- array(0, c(SOM@nsim, ns, SOM@proyears))
-  CatchPT_NOS <- CatchT_NOS <- CatchPT_HOS <- CatchT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -41,12 +43,19 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
 
   Escapement_NOS[, ns, nage, -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, age_escapement, 1, -1, ], 1:2, sum)
 
-  CatchPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, 1, 1, ]
-  CatchT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, 1, 1, ]
+  KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, 1, 1, ]
+  KT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, 1, 1, ]
 
-  UT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_return, 1, 1, ])
+  DPT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_imm, 1, 1, ] - MMSE@Catch[, p_NOS_imm, 1, 1, ]
+  DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, 1, 1, ] - MMSE@Catch[, p_NOS_return, 1, 1, ]
+
+  ExPT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_imm, 1, 1, ])
   UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, 1, 1, ]/apply(MMSE@N[, p_NOS_imm, age_escapement-2, 1, , ], 1:2, sum)
   UPT_NOS[is.na(UPT_NOS)] <- 0
+
+  ExT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_return, 1, 1, ])
+  UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, 1, 1, ]/apply(MMSE@N[, p_NOS_return, age_escapement-1, 1, , ], 1:2, sum)
+  UT_NOS[is.na(UT_NOS)] <- 0
 
   do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
   if (do_hatchery) {
@@ -59,12 +68,19 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
 
     Escapement_HOS[, ns, nage, -SOM@proyears] <- apply(MMSE@N[, p_HOS_escapement, age_escapement, 1, -1, ], 1:2, sum)
 
-    CatchPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, 1, 1, ]
-    CatchT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, 1, 1, ]
+    KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, 1, 1, ]
+    KT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, 1, 1, ]
 
-    UT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, 1, 1, ])
+    DPT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_imm, 1, 1, ] - MMSE@Catch[, p_HOS_imm, 1, 1, ]
+    DT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_return, 1, 1, ] - MMSE@Catch[, p_HOS_return, 1, 1, ]
+
+    ExPT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_imm, 1, 1, ])
     UPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, 1, 1, ]/apply(MMSE@N[, p_HOS_imm, age_escapement-2, 1, , ], 1:2, sum)
     UPT_HOS[is.na(UPT_HOS)] <- 0
+
+    ExT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, 1, 1, ])
+    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, 1, 1, ]/apply(MMSE@N[, p_HOS_return, age_escapement-1, 1, , ], 1:2, sum)
+    UT_HOS[is.na(UT_HOS)] <- 0
 
     # NOS + HOS state variables from salmonMSE
     ngen <- length(unique(salmonMSE_env$N$t))
@@ -141,14 +157,22 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford) {
     NOS = NOS,
     HOS = HOS,
     HOS_effective = HOS_effective,
-    CatchPT_NOS = CatchPT_NOS,
-    CatchT_NOS = CatchT_NOS,
-    CatchPT_HOS = CatchPT_HOS,
-    CatchT_NOS = CatchT_NOS,
+    KPT_NOS = KPT_NOS,
+    KT_NOS = KT_NOS,
+    KPT_HOS = KPT_HOS,
+    KT_HOS = KT_HOS,
+    DPT_NOS = DPT_NOS,
+    DT_NOS = DT_NOS,
+    DPT_HOS = DPT_HOS,
+    DT_HOS = DT_HOS,
     UPT_NOS = UPT_NOS,
     UT_NOS = UT_NOS,
     UPT_HOS = UPT_HOS,
     UT_HOS = UT_HOS,
+    ExPT_NOS = ExPT_NOS,
+    ExT_NOS = ExT_NOS,
+    ExPT_HOS = ExPT_HOS,
+    ExT_HOS = ExT_HOS,
     fitness = fitness,
     PNI = PNI,
     p_wild = p_wild,

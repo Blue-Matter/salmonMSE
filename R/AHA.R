@@ -78,8 +78,8 @@ AHA <- function(SOM, ngen = 100) {
   var_out <- c(
     "NOR" = "Return_NOS",
     "HOR" = "Return_HOS",
-    "harvest_NOR" = "Catch_NOS",
-    "harvest_HOR" = "Catch_HOS",
+    "harvest_NOR" = "KT_NOS",
+    "harvest_HOR" = "KT_HOS",
     "escapement_NOR" = "Escapement_NOS",
     "escapement_HOR" = "Escapement_HOS",
     "NOB" = "NOB",
