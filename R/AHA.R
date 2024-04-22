@@ -12,6 +12,29 @@
 #' @export
 AHA <- function(SOM, ngen = 100) {
   SOM <- check_SOM(SOM)
+
+  if (sum(SOM@u_preterminal)) {
+    warning("Pre-terminal fishing is not modeled in AHA. Setting SOM@u_preterminal = 0")
+    SOM@u_preterminal <- 0
+  }
+
+  if (SOM@SRrel != "BH") {
+    warning("Only Beverton-Holt smolt production is used in AHA. Setting SOM@SRrel = \"BH\"")
+    SOM@SRrel <- "BH"
+  }
+
+  if (SOM@m > 0) {
+    .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
+    Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
+    Fret <- SOM@m * .F
+    u_NOR <- 1 - exp(-Frel)
+    u_HOR <- 1 - exp(-Frel - Fret)
+    message(
+      "Mark rate greater than zero detected. For AHA, setting harvest rate of natural and hatchery fish = ",
+      round(u_NOR, 3), " and ", round(u_HOR, 3), ", respectively. Catch represents kept catch + dead releases."
+    )
+  }
+
   output_sim <- lapply(1:SOM@nsim, .AHA_wrapper, SOM = SOM, ngen = ngen)
   var_report <- names(output_sim[[1]])
 
@@ -26,9 +49,14 @@ AHA <- function(SOM, ngen = 100) {
 
 .AHA_wrapper <- function(x, SOM, ngen) {
 
-  if (sum(SOM@u_preterminal)) {
-    warning("Pre-terminal fishing is not modeled in AHA. Setting SOM@u_preterminal = 0")
-    SOM@u_preterminal <- 0
+  if (SOM@m > 0) {
+    .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
+    Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
+    Fret <- SOM@m * .F
+    u_NOR <- 1 - exp(-Frel)
+    u_HOR <- 1 - exp(-Frel - Fret)
+  } else {
+    u_NOR <- u_HOR <- SOM@u_terminal
   }
 
   output <- .AHA(
@@ -40,8 +68,8 @@ AHA <- function(SOM, ngen = 100) {
     surv_ocean = SOM@SAR_NOS[x],
     surv_passage_juv = 1,
     surv_passage_adult = 1,
-    u_HOR = c(sum(SOM@u_terminal), 0, 0, 0),
-    u_NOR = c(sum(SOM@u_terminal), 0, 0, 0),
+    u_HOR = c(u_HOR, 0, 0, 0),
+    u_NOR = c(u_NOR, 0, 0, 0),
     surv_pre_spawn = SOM@s_prespawn,
     fec_brood = SOM@fec_brood,
     surv_egg_smolt = SOM@s_egg_smolt,
