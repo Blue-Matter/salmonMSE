@@ -69,15 +69,15 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     if (!total_fry) return(0) # Perr_y = 0
 
-    alpha_hist <- SRRpars_hist["alpha", max(x, 1)]
-    beta_hist <- SRRpars_hist["beta", max(x, 1)]
+    alpha_hist <- SRRpars_hist[1, max(x, 1)]
+    beta_hist <- SRRpars_hist[2, max(x, 1)]
 
-    alpha_proj <- SRRpars_proj["alpha", max(x, 1)]
-    beta_proj <- SRRpars_proj["beta", max(x, 1)]
+    alpha_proj <- SRRpars_proj[1, max(x, 1)]
+    beta_proj <- SRRpars_proj[2, max(x, 1)]
 
     # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production)
     fry_openMSE <- N[1] * p_female * fec
-    smolt_NOS_SRR <- .AHA_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
+    smolt_NOS_SRR <- calc_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
 
     # Predicted fry and smolts from projected SRR parameters and fitness
     if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
@@ -146,8 +146,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     total_fry_out <- fry_NOS_out + fry_HOS_out
 
-    smolt_NOS_proj <- .AHA_SRR(fry_NOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
-    smolt_HOS_proj <- .AHA_SRR(fry_HOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
+    smolt_NOS_proj <- calc_SRR(fry_NOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
+    smolt_HOS_proj <- calc_SRR(fry_HOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
     total_smolt <- smolt_NOS_proj + smolt_HOS_proj
 
     if (x > 0) {
@@ -226,8 +226,8 @@ makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
       formals(func)$fitness_args <- fitness_args
       formals(func)$p_smolt <- p_smolt
     }
-    N_natural <- seq(0, 1/SRRpars_proj["beta", 1], length.out = 10)
-    N_hatchery <- seq(0, 1/SRRpars_proj["beta", 1], length.out = 10)
+    N_natural <- seq(0, 1/SRRpars_proj[2, 1], length.out = 10)
+    N_hatchery <- seq(0, 1/SRRpars_proj[2, 1], length.out = 10)
   } else {
     N_natural <- seq(0, 1000, length.out = 10)
     N_hatchery <- seq(0, 1000, length.out = 10)

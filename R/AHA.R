@@ -243,8 +243,8 @@ AHA <- function(SOM, ngen = 100) {
       HOR_total <- NOR_total <- 1e3
       #HOR_total <- 0
       #phi0 <- surv_smolt_adult_base * p_female * fec_spawn
-      #SRRpars <- .AHA_SRRpars(prod_spawn_em * prod_em_smolt, capacity_em_smolt, fec_spawn, p_female)
-      #R0 <- MSEtool::R0conv(SRRpars["alpha"], SRRpars["beta"], phi0)
+      #SRRpars <- calc_SRRpars(prod_spawn_em * prod_em_smolt, capacity_em_smolt, fec_spawn, p_female)
+      #R0 <- MSEtool::R0conv(SRRpars[1], SRRpars[2], phi0)
       #NOR_total <- R0 * phi0
     } else {
       pbar[, g-1] <- AHA_loop[[g-1]]$pbar
@@ -273,6 +273,8 @@ AHA <- function(SOM, ngen = 100) {
       capacity_spawn_em, capacity_em_smolt, capacity_smolt_adult,
       egg_per_spawner, surv_egg_release, surv_release_adult[g]
     )
+
+    browser(expr = AHA_loop[[g]]$adult_NOS < 1)
   }
 
   return(AHA_loop)
@@ -398,12 +400,12 @@ AHA <- function(SOM, ngen = 100) {
 
   ## Next generation - natural production
   # AI, AJ - offspring from hatchery origin spawners + natural origin spawners
-  fry_HOS <- .AHA_SRR(HOS_effective, total_spawners, fitprod_spawn_em, fitcap_spawn_em)
-  fry_NOS <- .AHA_SRR(NOS, total_spawners, fitprod_spawn_em, fitcap_spawn_em)
+  fry_HOS <- calc_SRR(HOS_effective, total_spawners, fitprod_spawn_em, fitcap_spawn_em)
+  fry_NOS <- calc_SRR(NOS, total_spawners, fitprod_spawn_em, fitcap_spawn_em)
   total_fry <- fry_HOS + fry_NOS
 
-  smolt_HOS <- .AHA_SRR(fry_HOS, total_fry, fitprod_em_smolt, fitcap_em_smolt)
-  smolt_NOS <- .AHA_SRR(fry_NOS, total_fry, fitprod_em_smolt, fitcap_em_smolt)
+  smolt_HOS <- calc_SRR(fry_HOS, total_fry, fitprod_em_smolt, fitcap_em_smolt)
+  smolt_NOS <- calc_SRR(fry_NOS, total_fry, fitprod_em_smolt, fitcap_em_smolt)
   total_smolt <- smolt_HOS + smolt_NOS
 
   ## Hatchery origin release
@@ -411,8 +413,8 @@ AHA <- function(SOM, ngen = 100) {
   smolt_HOR <- total_brood * egg_per_spawner * surv_egg_release
 
   # Next generation return
-  adult_HOS <- .AHA_SRR(smolt_HOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
-  adult_NOS <- .AHA_SRR(smolt_NOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
+  adult_HOS <- calc_SRR(smolt_HOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
+  adult_NOS <- calc_SRR(smolt_NOS, total_smolt + smolt_HOR, fitprod_smolt_adult, fitcap_smolt_adult)
 
   adult_HOR <- local({
     smolt_temp <- smolt_HOR * surv_release_adult

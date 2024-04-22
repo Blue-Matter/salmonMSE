@@ -84,16 +84,3 @@ catch_fn <- function(return_size, u, surv_passage = c(1, 1, 1, 1), nfishery = 4)
 
   return(list(catch = catch, N = N))
 }
-
-.AHA_SRR <- function(Nnum, Nden = Nnum, p, capacity) {
-  denom <- 1 + Nden * p /capacity
-  Nnum * p/denom
-}
-
-.AHA_SRRpars <- function(prod, capacity, f, p_female) {
-  alpha <- prod/f/p_female
-  beta <- alpha/capacity
-  c("alpha" = alpha, "beta" = beta)
-}
-
-

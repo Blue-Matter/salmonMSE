@@ -21,13 +21,13 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     Stock@SRrel <- 1
 
     SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-      .AHA_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
+      calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
     })
 
     phi0 <- SOM@SAR_NOS * SOM@p_female * SOM@fec
 
-    h <- MSEtool::hconv(SRRpars_hist["alpha", ], phi0)
-    R0 <- MSEtool::R0conv(SRRpars_hist["alpha", ], SRRpars_hist["beta", ], phi0)
+    h <- MSEtool::hconv(SRRpars_hist[1, ], phi0)
+    R0 <- MSEtool::R0conv(SRRpars_hist[1, ], SRRpars_hist[2, ], phi0)
 
     Stock@h <- range(h)
     Stock@R0 <- mean(R0)

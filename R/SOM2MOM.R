@@ -125,11 +125,11 @@ SOM2MOM <- function(SOM, start = list()) {
   # (the escapement is the spawning output)
 
   SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-    .AHA_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
+    calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
   })
 
   SRRpars_proj <- sapply(1:SOM@nsim, function(x) {
-    .AHA_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
+    calc_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
                  SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, SOM@fec, SOM@p_female)
   })
 
@@ -242,8 +242,9 @@ check_SOM <- function(SOM) {
   })
 
   var_stochastic <- c("capacity_smolt", "prod_smolt", "SAR_NOS", "SAR_HOS")
+  need_SAR_HOS <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
   for(i in var_stochastic) {
-    if (i != "SAR_HOS" || (SOM@n_subyearling > 0 && SOM@n_yearling > 0)) {
+    if (i != "SAR_HOS" || need_SAR_HOS) {
       if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
       if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
     }

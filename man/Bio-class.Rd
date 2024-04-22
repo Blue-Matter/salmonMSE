@@ -23,10 +23,11 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{p_mature}}{Vector of length \code{maxage}. The proportion mature by age.}
 
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function for
-density-dependent natural smolt production from fry life stage.}
+density-dependent natural smolt production from fry life stage. Units of spawners.}
 
 \item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
-Natural per-capita smolt production as the population approaches zero (density-independent component).}
+Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,
+frequently equivalent to recruits per spawner divided by marine survival.}
 
 \item{\code{SAR_NOS}}{Vector length \code{nsim}. Survival to adult return of natural origin fish (density-independent, time-invariant).}
 
