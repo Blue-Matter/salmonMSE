@@ -1,4 +1,10 @@
 
+#' @rdname salmonMSE-int
+#' @param NOS Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish
+#' @param stage Character indicating the corresponding salmon life stage of the Stock or Fleet object
+#' @return
+#' `make_Stock`: List containing a \linkS4class{Stock} object and accompanying custom parameters list
+#' @export
 make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"), start = list()) {
   stage <- match.arg(stage)
 
@@ -121,7 +127,12 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   return(list(Stock = Stock, cpars_bio = cpars_bio))
 }
 
-
+#' @rdname salmonMSE-int
+#' @param NOS Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish
+#' @param stage Character indicating the corresponding salmon life stage of the Stock or Fleet object
+#' @return
+#' `make_Stock`: List containing a \linkS4class{Fleet} object and accompanying custom parameters list
+#' @export
 make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement")) {
   stage <- match.arg(stage)
 
@@ -201,12 +212,6 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     }
   }
 
-  # Future feature for mark rate affecting harvest rate or retention of hatchery origin vs natural origin fish
-  #if (NOS) {
-  #  cpars_fleet$V[, 2 * age_mat, ] <- Harvest$m
-  #} else {
-  #  cpars_fleet$V[, 2 * age_mat, ] <- 1
-  #}
   return(list(Fleet = Fleet, cpars_fleet = cpars_fleet))
 }
 
