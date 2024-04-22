@@ -39,7 +39,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 .smolt_func <- function(N, x = -1, output = c("natural", "hatchery"),
                         ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, # Spawning (natural production)
-                        SRRpars_hist, SRRpars_proj,
+                        SRRpars_hist, SRRpars_proj, SRrel = c("BH", "Ricker"),
                         fitness_type = c("Ford", "none"), # Spawning (natural production)
                         fitness_args, p_smolt) {
 
@@ -54,6 +54,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     return(smolt)
 
   } else if (output == "natural") {
+    SRrel <- match.arg(SRrel)
     fitness_type <- match.arg(fitness_type)
     spawners <- calc_spawners(broodtake, N, phatchery, premove_HOS)
 
@@ -63,7 +64,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     # Fry production in the absence of fitness effects
     fry_NOS <- NOS * p_female * fec
-    fry_HOS <- HOS_effective * p_female * fec # Or HOS * p_female * fec * gamma
+    fry_HOS <- HOS_effective * p_female * fec
 
     total_fry <- fry_NOS + fry_HOS
 
@@ -77,7 +78,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production)
     fry_openMSE <- N[1] * p_female * fec
-    smolt_NOS_SRR <- calc_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = alpha_hist/beta_hist)
+    capacity_SRR <- ifelse(SRrel == "BH", alpha_hist/beta_hist, exp(-1) * alpha_hist/beta_hist)
+    smolt_NOS_SRR <- calc_SRR(fry_openMSE, fry_openMSE, p = alpha_hist, capacity = capacity_SRR, SRrel)
 
     # Predicted fry and smolts from projected SRR parameters and fitness
     if (brood_local > 0 && fitness_type == "Ford" && x > 0) {
@@ -120,7 +122,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
       # Update smolt SRR with fitness
       prod_smolt <- alpha_proj * fitness_loss[2]
-      capacity_smolt <- alpha_proj/beta_proj * fitness_loss[2]
+      capacity_smolt <- fitness_loss[2] * ifelse(SRrel == "BH", alpha_proj/beta_proj, exp(-1) * alpha_proj/beta_proj)
 
       # Save pbar for next generation
       df_Ford <- data.frame(
@@ -134,7 +136,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     } else { #if (fitness_type == "none") {
       prod_smolt <- alpha_proj
-      capacity_smolt <- alpha_proj/beta_proj
+      capacity_smolt <- ifelse(SRrel == "BH", alpha_proj/beta_proj, exp(-1) * alpha_proj/beta_proj)
 
       fitness <- 1
       pNOB <- 1
@@ -146,8 +148,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     total_fry_out <- fry_NOS_out + fry_HOS_out
 
-    smolt_NOS_proj <- calc_SRR(fry_NOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
-    smolt_HOS_proj <- calc_SRR(fry_HOS_out, total_fry_out, p = prod_smolt, capacity = capacity_smolt)
+    smolt_NOS_proj <- calc_SRR(fry_NOS_out, total_fry_out, prod_smolt, capacity_smolt, SRrel)
+    smolt_HOS_proj <- calc_SRR(fry_HOS_out, total_fry_out, prod_smolt, capacity_smolt, SRrel)
     total_smolt <- smolt_NOS_proj + smolt_HOS_proj
 
     if (x > 0) {
@@ -194,7 +196,7 @@ makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
                           output = c("natural", "hatchery"),
                           ptarget_NOB, pmax_NOB, brood_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                           p_female, fec, gamma, # Spawning (natural production)
-                          SRRpars_hist, SRRpars_proj,  # Spawning (natural production)
+                          SRRpars_hist, SRRpars_proj, SRrel = c("BH", "Ricker"),  # Spawning (natural production)
                           fitness_type = c("Ford", "none"), fitness_args) {
 
   output <- match.arg(output)
@@ -214,12 +216,15 @@ makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
 
   if (output == "natural") {
 
+    SRrel <- match.arg(SRrel)
+
     formals(func)$p_female <- p_female
     formals(func)$fec <- fec
     formals(func)$gamma <- gamma
 
     formals(func)$SRRpars_hist <- SRRpars_hist
     formals(func)$SRRpars_proj <- SRRpars_proj
+    formals(func)$SRrel <- SRrel
     formals(func)$fitness_type <- fitness_type
 
     if (fitness_type != "none") {

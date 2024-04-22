@@ -29,6 +29,7 @@ Bio <- new(
   nsim = 3,
   maxage = 3,
   p_mature = c(0, 0, 1),
+  SRrel = "BH",
   capacity_smolt = 17250,   # Beverton-Holt asymptote
   prod_smolt = 300,         # Equal to prod_adult/SAR
   SAR_NOS = 0.01,           # Future feature allows for time-varying SAR

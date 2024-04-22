@@ -1,5 +1,4 @@
 
-
 make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"), start = list()) {
   stage <- match.arg(stage)
 
@@ -17,17 +16,17 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@M <- Stock@Msd <- c(0, 0)
 
   if (NOS) {
-    # Beverton-Holt SRR
-    Stock@SRrel <- 1
+    # 1 = Beverton-Holt, 2 = Ricker
+    Stock@SRrel <- ifelse(SOM@SRrel == "BH", 1, 2)
 
     SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-      calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
+      calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female, SOM@SRrel)
     })
 
     phi0 <- SOM@SAR_NOS * SOM@p_female * SOM@fec
 
-    h <- MSEtool::hconv(SRRpars_hist[1, ], phi0)
-    R0 <- MSEtool::R0conv(SRRpars_hist[1, ], SRRpars_hist[2, ], phi0)
+    h <- MSEtool::hconv(SRRpars_hist[1, ], phi0, SR = ifelse(SOM@SRrel == "BH", 1, 2))
+    R0 <- MSEtool::R0conv(SRRpars_hist[1, ], SRRpars_hist[2, ], phi0, SR = ifelse(SOM@SRrel == "BH", 1, 2))
 
     Stock@h <- range(h)
     Stock@R0 <- mean(R0)

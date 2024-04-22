@@ -36,6 +36,7 @@ setClass(
     nsim = "numeric",
     maxage = "numeric",
     p_mature = "numeric",         # Age at which adults mature and return
+    SRrel = "character",
     capacity_smolt = "numeric",   # Beverton-Holt asymptote. Not unfished capacity!!
     prod_smolt = "numeric",       # Productivity adult/SAR. At unfished, prod_smolt = 1/SAR
     SAR_NOS = "numeric",          # Future feature to allow for time-varying (PDO forcing)

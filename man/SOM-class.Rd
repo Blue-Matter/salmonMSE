@@ -25,8 +25,10 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{p_mature}}{Vector of length \code{maxage}. The proportion mature by age.}
 
-\item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function for
-density-dependent natural smolt production from fry life stage. Units of spawners.}
+\item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
+
+\item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
+density-dependent natural smolt production from fry life stage. Units of smolts.}
 
 \item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
 Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,

@@ -15,6 +15,7 @@ Bio <- new(
   nsim = 3,
   maxage = 3,
   p_mature = c(0, 0, 1),
+  SRrel = "BH",
   capacity_smolt = 17250,   # Beverton-Holt asymptote. Not unfished capacity!!
   prod_smolt = 300,         # Productivity adult/SAR. At unfished equilibrium the realized smolt productivity = 1/SAR
   SAR_NOS = 0.01,           # Future feature to allow for time-varying (PDO forcing)

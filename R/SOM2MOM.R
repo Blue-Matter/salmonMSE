@@ -125,12 +125,12 @@ SOM2MOM <- function(SOM, start = list()) {
   # (the escapement is the spawning output)
 
   SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-    calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female)
+    calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female, SOM@SRrel)
   })
 
   SRRpars_proj <- sapply(1:SOM@nsim, function(x) {
     calc_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
-                 SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, SOM@fec, SOM@p_female)
+                 SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, SOM@fec, SOM@p_female, SOM@SRrel)
   })
 
   habitat_change <- any(abs(SRRpars_hist - SRRpars_proj) > 1e-8)
@@ -184,7 +184,7 @@ SOM2MOM <- function(SOM, start = list()) {
       brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, # Spawning (natural production)
-      SRRpars_hist, SRRpars_proj, fitness_type = SOM@fitness_type, # Spawning (natural production)
+      SRRpars_hist, SRRpars_proj, SRrel = SOM@SRrel, fitness_type = SOM@fitness_type, # Spawning (natural production)
       fitness_args = fitness_args
     )
 
@@ -251,6 +251,7 @@ check_SOM <- function(SOM) {
   }
 
   slot(SOM, "fitness_type") <- match.arg(slot(SOM, "fitness_type"), choices = c("Ford", "none"))
+  slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
 
   return(SOM)
 }

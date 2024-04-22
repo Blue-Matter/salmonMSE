@@ -50,14 +50,33 @@ where $\textrm{HOS}_{\textrm{eff},g-1} = \gamma \times \textrm{HOS}_{g-1}$.
 
 ## Smolts
 
-Survival to the smolt stage is density-dependent throught the Beverton-Holt stock-recruit relationship. Smolt production is
+Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-recruit relationship, smolt production is
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt} \times 
-\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}}{C_\textrm{smolt}}}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt} \times 
-\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}}{C_\textrm{smolt}}}
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha \times 
+\textrm{Fry}^\textrm{NOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha \times 
+\textrm{Fry}^\textrm{HOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
 \end{align}
+
+where $\alpha = P_\textrm{smolt} \times p_\textrm{female} \times \textrm{Fec}$ and $\beta = \frac{\alpha}{C_\textrm{smolt}}$
+
+With the Ricker stock-recruit relationship, smolt production is
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_g &= \alpha \times 
+\textrm{Fry}^\textrm{NOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}])\\
+\textrm{Smolt}^\textrm{HOS}_g &= \alpha \times 
+\textrm{Fry}^\textrm{HOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}])
+\end{align}
+
+where $\alpha = P_\textrm{smolt} \times p_\textrm{female} \times \textrm{Fec}$ and $\beta = \frac{\alpha}{C_\textrm{smolt}\times e}$, $e$ is Euler's number.
+
+```{r SRR, echo = FALSE}
+knitr::include_graphics("../man/figures/SRR.png")
+```
+
+*Comparison of the two smolt production functions alongside the one-to-one line. While the slopes near the origin are identical, the curvature differs at large stock sizes. Productivity is in units of smolts per spawner.*
 
 # Hatchery production
 
@@ -156,11 +175,22 @@ The hatchery origin spawners is the escapement, reduced by the proportion $p^\te
 Habitat improvement can improve either the productivity parameter, capacity parameter, or both. 
 
 Base terms $P_\textrm{smolt}$ and $C_\textrm{smolt}$ are used in the historical period of the model, e.g., for conditioning from data.
-In the projection, the stock recruit parameters $P_\textrm{smolt}^\prime$ and $C_\textrm{smolt}^\prime$ are updated with the improvement parameters, $I_P$ or $I_C$, as specified in the operating model:
+In the projection, the stock recruit parameters $P_\textrm{smolt}^\prime$ and $C_\textrm{smolt}^\prime$ are updated with the improvement parameters, $I_P$ or $I_C$, as specified in the operating model.
+
+The predicted Beverton-Holt smolt production in the projection is:
 
 \begin{align}
-P_\textrm{smolt}^\prime &= P_\textrm{smolt}I_P\\
-C_\textrm{smolt}^\prime &= C_\textrm{smolt}I_C
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha^\prime \times 
+\textrm{Fry}^\textrm{NOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha^\prime \times 
+\textrm{Fry}^\textrm{HOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
+\end{align}
+
+where 
+
+\begin{align}
+\alpha^\prime &= P_\textrm{smolt}\times I_P \times p^\textrm{female} \times \textrm{Fec}\\
+\beta^\prime &= \dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C}
 \end{align}
 
 # Fitness effects on survival
@@ -230,10 +260,10 @@ Fitness can reduce survival in the egg, fry, and smolt life stages:
 \end{align}
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{P_\textrm{smolt}^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{P_\textrm{smolt}^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}
+\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{NOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{HOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
 \end{align}
 
 $$
