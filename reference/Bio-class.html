@@ -81,14 +81,19 @@
 <dd><p>Vector of length <code>maxage</code>. The proportion mature by age.</p></dd>
 
 
+<dt><code>SRrel</code></dt>
+<dd><p>Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"</p></dd>
+
+
 <dt><code>capacity_smolt</code></dt>
-<dd><p>Vector length <code>nsim</code>. The asymptote of the Beverton-Holt stock-recruit function for
-density-dependent natural smolt production from fry life stage.</p></dd>
+<dd><p>Vector length <code>nsim</code>. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
+density-dependent natural smolt production from fry life stage. Units of smolts.</p></dd>
 
 
 <dt><code>prod_smolt</code></dt>
 <dd><p>Vector length <code>nsim</code>. The productivity parameter of the Beverton-Holt stock-recruit function.
-Natural per-capita smolt production as the population approaches zero (density-independent component).</p></dd>
+Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,
+frequently equivalent to recruits per spawner divided by marine survival.</p></dd>
 
 
 <dt><code>SAR_NOS</code></dt>
@@ -121,11 +126,11 @@ Natural per-capita smolt production as the population approaches zero (density-i
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name           nsim         maxage       p_mature</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  capacity_smolt     prod_smolt        SAR_NOS            fec</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric        numeric        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           SRrel capacity_smolt     prod_smolt        SAR_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             fec       p_female</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Known Subclasses: "SOM"</span>
 </code></pre></div>

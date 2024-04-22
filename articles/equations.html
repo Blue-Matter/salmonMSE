@@ -73,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-04-21</h4>
+            <h4 data-toc-skip class="date">2024-04-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -140,8 +140,8 @@ parameter)</td>
 </tr>
 <tr class="odd">
 <td align="left"><span class="math inline">\(P_\textrm{smolt}\)</span></td>
-<td align="left">Maximum rate of recruitment of smolts (stock-recruit
-parameter)</td>
+<td align="left">Maximum smolt production rate (stock-recruit
+parameter), units of smolts per spawner</td>
 <td align="left">Habitat</td>
 <td align="left">SOM</td>
 <td align="left">prod_smolt</td>
@@ -441,17 +441,37 @@ p^\textrm{female} \times \textrm{Fec}\\
 <div class="section level3">
 <h3 id="smolts">Smolts<a class="anchor" aria-label="anchor" href="#smolts"></a>
 </h3>
-<p>Survival to the smolt stage is density-dependent throught the
-Beverton-Holt stock-recruit relationship. Smolt production is</p>
+<p>Survival to the smolt stage is density-dependent. With the
+Beverton-Holt stock-recruit relationship, smolt production is</p>
 <p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &amp;= \frac{P_\textrm{smolt} \times
-\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g +
-\textrm{Fry}^\textrm{HOS}_g)
-\frac{P_\textrm{smolt}}{C_\textrm{smolt}}}\\
-\textrm{Smolt}^\textrm{HOS}_g &amp;= \frac{P_\textrm{smolt} \times
-\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g +
-\textrm{Fry}^\textrm{HOS}_g) \frac{P_\textrm{smolt}}{C_\textrm{smolt}}}
+\textrm{Smolt}^\textrm{NOS}_g &amp;= \frac{\alpha \times
+\textrm{Fry}^\textrm{NOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g +
+\textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &amp;= \frac{\alpha \times
+\textrm{Fry}^\textrm{HOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g +
+\textrm{Fry}^\textrm{HOS}_g)}
 \end{align}\]</span></p>
+<p>where <span class="math inline">\(\alpha = P_\textrm{smolt} \times
+p_\textrm{female} \times \textrm{Fec}\)</span> and <span class="math inline">\(\beta =
+\frac{\alpha}{C_\textrm{smolt}}\)</span></p>
+<p>With the Ricker stock-recruit relationship, smolt production is</p>
+<p><span class="math display">\[\begin{align}
+\textrm{Smolt}^\textrm{NOS}_g &amp;= \alpha \times
+\textrm{Fry}^\textrm{NOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g
++ \textrm{Fry}^\textrm{HOS}])\\
+\textrm{Smolt}^\textrm{HOS}_g &amp;= \alpha \times
+\textrm{Fry}^\textrm{HOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g
++ \textrm{Fry}^\textrm{HOS}])
+\end{align}\]</span></p>
+<p>where <span class="math inline">\(\alpha = P_\textrm{smolt} \times
+p_\textrm{female} \times \textrm{Fec}\)</span> and <span class="math inline">\(\beta = \frac{\alpha}{C_\textrm{smolt}\times
+e}\)</span>, <span class="math inline">\(e\)</span> is Euler’s
+number.</p>
+<p><img src="../reference/figures/SRR.png"><!-- --></p>
+<p><em>Comparison of the two smolt production functions alongside the
+one-to-one line. While the slopes near the origin are identical, the
+curvature differs at large stock sizes. Productivity is in units of
+smolts per spawner.</em></p>
 </div>
 </div>
 <div class="section level2">
@@ -595,10 +615,23 @@ historical period of the model, e.g., for conditioning from data. In the
 projection, the stock recruit parameters <span class="math inline">\(P_\textrm{smolt}^\prime\)</span> and <span class="math inline">\(C_\textrm{smolt}^\prime\)</span> are updated with
 the improvement parameters, <span class="math inline">\(I_P\)</span> or
 <span class="math inline">\(I_C\)</span>, as specified in the operating
-model:</p>
+model.</p>
+<p>The predicted Beverton-Holt smolt production in the projection
+is:</p>
 <p><span class="math display">\[\begin{align}
-P_\textrm{smolt}^\prime &amp;= P_\textrm{smolt}I_P\\
-C_\textrm{smolt}^\prime &amp;= C_\textrm{smolt}I_C
+\textrm{Smolt}^\textrm{NOS}_g &amp;= \frac{\alpha^\prime \times
+\textrm{Fry}^\textrm{NOS}_g}{1 +
+\beta^\prime(\textrm{Fry}^\textrm{NOS}_g +
+\textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &amp;= \frac{\alpha^\prime \times
+\textrm{Fry}^\textrm{HOS}_g}{1 +
+\beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
+\end{align}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\begin{align}
+\alpha^\prime &amp;= P_\textrm{smolt}\times I_P \times p^\textrm{female}
+\times \textrm{Fec}\\
+\beta^\prime &amp;= \dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C}
 \end{align}\]</span></p>
 </div>
 <div class="section level2">
@@ -698,16 +731,15 @@ p^\textrm{female} \times \textrm{Fec} \times
 (W^\textrm{nat.}_g)^{\ell_\textrm{egg}}
 \end{align}\]</span></p>
 <p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &amp;= \frac{P_\textrm{smolt}^\prime
+\textrm{Smolt}^\textrm{NOS}_g &amp;= \frac{\alpha^\prime
 (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times
-\textrm{Fry}^\textrm{NOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g +
-\textrm{Fry}^\textrm{HOS}_g)
-\frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}\\
-\textrm{Smolt}^\textrm{HOS}_g &amp;= \frac{P_\textrm{smolt}^\prime
+\textrm{Fry}^\textrm{NOS}_g}{1 +
+\beta^\prime(\textrm{Fry}^\textrm{NOS}_g +
+\textrm{Fry}^\textrm{HOS}_g)}\\
+\textrm{Smolt}^\textrm{HOS}_g &amp;= \frac{\alpha^\prime
 (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times
-\textrm{Fry}^\textrm{HOS}_g}{1 + (\textrm{Fry}^\textrm{NOS}_g +
-\textrm{Fry}^\textrm{HOS}_g)
-\frac{P_\textrm{smolt}^\prime}{C_\textrm{smolt}^\prime}}
+\textrm{Fry}^\textrm{HOS}_g}{1 +
+\beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
 \end{align}\]</span></p>
 <p><span class="math display">\[
 M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS} \times
