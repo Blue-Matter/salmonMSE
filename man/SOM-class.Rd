@@ -8,6 +8,10 @@
 \description{
 An object containing all the parameters for a salmon operating model (SOM).
 }
+\details{
+A description of the fitness parameters and hatchery dynamics is available in the
+\href{https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival}{online documentation}.
+}
 \section{Slots}{
 
 \describe{
@@ -23,7 +27,7 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
-\item{\code{p_mature}}{Vector of length \code{maxage}. The proportion mature by age.}
+\item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
 
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
 
@@ -34,9 +38,15 @@ density-dependent natural smolt production from fry life stage. Units of smolts.
 Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,
 frequently equivalent to recruits per spawner divided by marine survival.}
 
-\item{\code{SAR_NOS}}{Vector length \code{nsim}. Survival to adult return of natural origin fish (density-independent, time-invariant).}
+\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function.}
 
-\item{\code{fec}}{Numeric. Female fecundity of natural origin spawners.}
+\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function.}
+
+\item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+Natural mortality of immature natural origin fish.
+To replicate the SAR parameter of a stage-specific model, set \code{Mocean_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
+
+\item{\code{fec}}{Vector by age (length \code{maxage}). Female fecundity of natural origin spawners.}
 
 \item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
 
@@ -61,7 +71,9 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{SAR_HOS}}{Vector length \code{nsim}. Survival to adult return of hatchery origin fish (density-independent, time-invariant).}
+\item{\code{Mocean_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+Natural mortality of immature hatchery origin fish.
+To replicate the SAR parameter of a stage-specific model, set \code{Mocean_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 
@@ -102,11 +114,30 @@ imperfect implementation of weir removal.}
 
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
 Implemented to model mark-selective fishing. Not used if \code{m = 0}.}
+
+\item{\code{vulPT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
+
+\item{\code{vulT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the terminal fishery.}
+
+\item{\code{HistSmolt}}{Vector by historical years (\code{nyears}) or a matrix by \verb{[nsim, nyears]}. The natural smolt production.}
+
+\item{\code{HistSpawner}}{Array by \verb{[nsim, maxage, nyears]}. Total spawners (natural and hatchery origin combined) in the natural environment.}
+
+\item{\code{HistN}}{Array by \verb{[nsim, maxage, nyears, 2]}. The abundance of immature fish at the beginning of the annual time step. The first array slice
+corresponds to natural origin fish and the second array slice corresponds to hatchery origin fish.}
+
+\item{\code{HistYearling}}{Vector by historical years. Hatchery releases (number of smolts).}
+
+\item{\code{HistFPT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the preterminal fishery.
+The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish.}
+
+\item{\code{HistFT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the terminal fishery.
+The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish.}
 }}
 
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new("SOM", Bio, Habitat, Hatchery, Harvest)}.
+\code{new("SOM", Bio, Habitat, Hatchery, Harvest, Historical)}.
 }
 
 \keyword{classes}

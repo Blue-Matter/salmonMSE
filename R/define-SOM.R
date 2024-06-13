@@ -7,7 +7,8 @@
 #' @importFrom rlang .data .env
 NULL
 
-
+setClassUnion("num.array", c("numeric", "array"))
+setClassUnion("num.matrix", c("numeric", "matrix"))
 
 # ---- Bio Class -----
 #' Class \code{"Bio"}
@@ -35,11 +36,13 @@ setClass(
     Name = "character",
     nsim = "numeric",
     maxage = "numeric",
-    p_mature = "numeric",         # Age at which adults mature and return
+    p_mature = "num.array",         # Age at which adults mature and return
     SRrel = "character",
     capacity_smolt = "numeric",   # Beverton-Holt asymptote. Not unfished capacity!!
     prod_smolt = "numeric",       # Productivity adult/SAR. At unfished, prod_smolt = 1/SAR
-    SAR_NOS = "numeric",          # Future feature to allow for time-varying (PDO forcing)
+    a = "numeric",
+    Smax = "numeric",
+    Mocean_NOS = "num.array",     # Future feature to allow for time-varying (PDO forcing)
     fec = "numeric",              # Spawning fecundity of NOS and HOS
     p_female = "numeric"
     #strays = 0
@@ -98,10 +101,42 @@ setClass(
     u_preterminal = "numeric",
     u_terminal = "numeric",
     m = "numeric",
-    release_mort = "numeric"
+    release_mort = "numeric",
+    vulPT = "numeric",
+    vulT = "numeric"
   )
 )
 
+
+# ---- Historical Class -----
+#' Class \code{"Historical"}
+#'
+#' The component of the operating model that specifies the historical dynamics.
+#'
+#' @name Historical-class
+#' @docType class
+#' @slot Name Character. Identifying name
+#' @template Historical_template
+#'
+#' @section Creating Object:
+#' Objects can be created by calls of the form \code{new("Historical")}
+#'
+#' @export
+#' @keywords classes
+#' @examples
+#' showClass("Historical")
+setClass(
+  "Historical",
+  slots = c(
+    Name = "character",
+    HistSmolt = "num.matrix",
+    HistSpawner = "array",
+    HistN = "array",
+    HistYearling = "numeric",
+    HistFPT = "num.array",
+    HistFT = "num.array"
+  )
+)
 
 
 # ---- Hatchery Class -----
@@ -133,7 +168,7 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
-    SAR_HOS = "numeric",
+    Mocean_HOS = "num.array",         # Future feature to allow for time-varying (PDO forcing)
     gamma = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
@@ -151,14 +186,13 @@ setClass(
   )
 )
 
-
 #' Class \code{"SOM"}
 #'
 #' An object containing all the parameters for a salmon operating model (SOM).
 #'
 #' @name SOM-class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new("SOM", Bio, Habitat, Hatchery, Harvest)}.
+#' \code{new("SOM", Bio, Habitat, Hatchery, Harvest, Historical)}.
 #'
 #' @slot Name Character. Identifying name
 #' @slot nyears Integer. The number of historical years
@@ -169,6 +203,7 @@ setClass(
 #' @template Habitat_template
 #' @template Hatchery_template
 #' @template Harvest_template
+#' @template Historical_template
 #' @keywords classes
 #'
 #' @export
@@ -180,12 +215,12 @@ SOM <- setClass(
     proyears = "numeric",
     seed = "numeric"
   ),
-  contains = c("Bio", "Habitat", "Hatchery", "Harvest")
+  contains = c("Bio", "Habitat", "Hatchery", "Harvest", "Historical")
 )
 
 #' @importFrom utils packageVersion
 setMethod("initialize", "SOM",
-          function(.Object, Bio, Habitat, Hatchery, Harvest,
+          function(.Object, Bio, Habitat, Hatchery, Harvest, Historical,
                    nyears = 2, proyears = 20, seed = 1, ...) {
 
             dots <- list(...)
@@ -199,6 +234,7 @@ setMethod("initialize", "SOM",
             if (!missing(Habitat)) for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
             if (!missing(Hatchery)) for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
             if (!missing(Harvest)) for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
+            if (!missing(Historical)) for(i in slotNames(Historical)) slot(.Object, i) <- slot(Historical, i)
 
             attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
             attr(.Object, "date") <- date()

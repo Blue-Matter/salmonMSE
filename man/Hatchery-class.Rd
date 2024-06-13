@@ -10,6 +10,9 @@ The component of the operating model that controls the hatchery management.
 \details{
 Various parameters can be stochastic (length \code{nsim}) or input as a single numeric
 (value identical across all simulations).
+
+A description of the fitness parameters and hatchery dynamics is available in the
+\href{https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival}{online documentation}.
 }
 \section{Slots}{
 
@@ -31,7 +34,9 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
 
-\item{\code{SAR_HOS}}{Vector length \code{nsim}. Survival to adult return of hatchery origin fish (density-independent, time-invariant).}
+\item{\code{Mocean_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+Natural mortality of immature hatchery origin fish.
+To replicate the SAR parameter of a stage-specific model, set \code{Mocean_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
 

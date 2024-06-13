@@ -220,7 +220,11 @@ SOM2MOM <- function(SOM, start = list()) {
 
 check_SOM <- function(SOM) {
 
-  var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "fec", "p_female",
+  slot(SOM, "fitness_type") <- match.arg(slot(SOM, "fitness_type"), choices = c("Ford", "none"))
+  slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
+
+  # Length 1
+  var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female",
                 "capacity_smolt_improve", "prod_smolt_improve",
                 "n_yearling", "n_subyearling",
                 "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS", "fec_brood",
@@ -232,29 +236,122 @@ check_SOM <- function(SOM) {
     if (length(v) != 1) stop("Slot ", i, " must be a single numeric")
   })
 
+  # Length 2
   var_len2 <- "release_mort"
   lapply(var_len2, function(i) {
     v <- slot(SOM, i)
     if (length(v) != 2) stop("Slot ", i, " must be a vector of length 2")
   })
 
-  var_maxage <- "p_mature"
+  # Length maxage
+  var_maxage <- c("fec", "vulPT", "vulT")
   lapply(var_maxage, function(i) {
     v <- slot(SOM, i)
     if (length(v) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
   })
 
-  var_stochastic <- c("capacity_smolt", "prod_smolt", "SAR_NOS", "SAR_HOS")
-  need_SAR_HOS <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
-  for(i in var_stochastic) {
-    if (i != "SAR_HOS" || need_SAR_HOS) {
-      if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
-      if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
+  # Length maxage to full array
+  var_dyn <- c("p_mature", "Mocean_NOS", "Mocean_HOS")
+  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+  for(i in var_dyn) {
+    if (i != "Mocean_HOS" || do_hatchery) {
+      if (is.array(slot(SOM, i))) {
+
+        dim_check <- all(dim(slot(SOM, i)) == c(SOM@nsim, SOM@maxage, SOM@nyears + SOM@proyears))
+        if (!dim_check) {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears + SOM@proyears), collapse = ", "))
+        }
+
+      } else {
+        if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@maxage)
+        if (length(slot(SOM, i)) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
+
+        dyn_array <- slot(SOM, i) %>%
+          array(c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
+          aperm(c(2, 1, 3))
+        slot(SOM, i) <- dyn_array
+      }
     }
   }
 
-  slot(SOM, "fitness_type") <- match.arg(slot(SOM, "fitness_type"), choices = c("Ford", "none"))
-  slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
+  # Length nsim
+  if (SOM@SRrel == "BH") {
+    var_stochastic <- c("capacity_smolt", "prod_smolt")
+  } else {
+    var_stochastic <- c("a", "Smax")
+  }
+  for(i in var_stochastic) {
+    if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
+    if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
+  }
+
+  # Various hist objects
+  # Length nyears to `nsim, nyears` matrix or `nsim, nyears, 2` array or `nsim, maxage, nyears` array or `nsim, maxage, nyears, 2`
+  var_hist <- c("HistSmolt", "HistYearling", "HistSpawner", "HistFPT", "HistFT", "HistN")
+  check_hist <- sapply(var_hist, function(i) length(slot(SOM, i)) > 0)
+  if (all(check_hist)) {
+    for(i in var_hist) {
+
+      dim_i <- dim(slot(SOM, i))
+      if (is.null(dim_i)) {
+
+        if (i == "HistSpawner") {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+        } else if (i == "HistN") {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+        } else {
+          if (length(slot(SOM, i)) != SOM@nyears) {
+            stop("Slot ", i, " must be length ", SOM@nyears)
+          }
+
+          if (i == "HistSmolt") {
+            slot(SOM, i) <- matrix(slot(SOM, i), SOM@nsim, SOM@nyears, byrow = TRUE)
+          } else if (i %in% c("HistFPT", "HistFT")) {
+            slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
+              aperm(c(2, 1, 3))
+          }
+        }
+
+      }
+
+      dim_i <- dim(slot(SOM, i)) # Re-check
+      if (i == "HistSmolt") {
+        dim_check <- length(dim_i) == 2 && all(dim_i == c(SOM@nsim, SOM@nyears))
+
+        if (!dim_check) {
+          stop("Slot ", i, " must be a matrix of dimension ",
+               paste(c(SOM@nsim, SOM@nyears), collapse = ", "))
+        }
+      } else if (i == "HistSpawner") {
+        dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears))
+
+        if (!dim_check) {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+        }
+      } else if (i == "HistN") {
+        dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
+
+        if (!dim_check) {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+        }
+      } else if (i %in% c("HistFPT", "HistFT")) {
+        dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@nyears, 2))
+
+        if (!dim_check) {
+          stop("Slot ", i, " must be an array of dimension ",
+               paste(c(SOM@nsim, SOM@nyears, 2), collapse = ", "))
+        }
+      }
+    }
+
+  } else if (any(check_hist)) {
+    stop("All historical slots should be filled")
+  }
 
   return(SOM)
 }

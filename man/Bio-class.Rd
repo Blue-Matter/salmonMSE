@@ -20,7 +20,7 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
-\item{\code{p_mature}}{Vector of length \code{maxage}. The proportion mature by age.}
+\item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
 
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
 
@@ -31,9 +31,15 @@ density-dependent natural smolt production from fry life stage. Units of smolts.
 Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,
 frequently equivalent to recruits per spawner divided by marine survival.}
 
-\item{\code{SAR_NOS}}{Vector length \code{nsim}. Survival to adult return of natural origin fish (density-independent, time-invariant).}
+\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function.}
 
-\item{\code{fec}}{Numeric. Female fecundity of natural origin spawners.}
+\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function.}
+
+\item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+Natural mortality of immature natural origin fish.
+To replicate the SAR parameter of a stage-specific model, set \code{Mocean_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
+
+\item{\code{fec}}{Vector by age (length \code{maxage}). Female fecundity of natural origin spawners.}
 
 \item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
 }}
