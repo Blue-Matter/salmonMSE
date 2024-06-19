@@ -25,15 +25,15 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
 
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from fry life stage. Units of smolts.}
+density-dependent natural smolt production from fry life stage. \strong{Units of smolts.}}
 
 \item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
-Natural per-capita smolt production as the population approaches zero (density-independent component). Units of smolts per spawner,
+Natural per-capita smolt production as the population approaches zero (density-independent component). \strong{Units of smolts per spawner},
 frequently equivalent to recruits per spawner divided by marine survival.}
 
-\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function.}
+\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function. \strong{Units of smolts per egg.}}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function.}
+\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function. \strong{Units of eggs.}}
 
 \item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
 Natural mortality of immature natural origin fish.

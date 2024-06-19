@@ -89,19 +89,27 @@ SOM2MOM <- function(SOM, start = list()) {
   # Ignore Complexes, ns = 1
 
   # Specify smolt natural production from NOS population
-  if (do_hatchery) {
-    SSBfrom <- matrix(0, 6, 6)
-    SSBfrom[4, 3] <- 1 # Triggers SRRfun so that there is hatchery production (p = 4) only when there is natural escapement (p = 3)
-  } else {
-    SSBfrom <- matrix(0, 3, 3)
-  }
+  # Integrated hatchery: triggers SRRfun so that there is hatchery production (p = 4) only when there is natural escapement (p = 3)
+  SSBfrom <- matrix(0, np, np)
+  if (do_hatchery) SSBfrom[4, 3] <- 1
   SSBfrom[1, 3] <- 1 # Juv NOS predicted from NOS escapement
 
   # Move stocks around
   # First generate the escapement, then move juveniles to adult
-  first_mature_age <- which(SOM@p_mature > 0)[1]
-  Herm_escapement <- ifelse(0:SOM@maxage >= first_mature_age, 1, 0) %>% matrix(SOM@nsim, SOM@maxage + 1, byrow = TRUE)
-  Herm_mature <- matrix(c(SOM@p_mature, 1), SOM@nsim, SOM@maxage + 1, byrow = TRUE)
+  first_mature_age <- sapply(1:(SOM@nyears + SOM@proyears), function(y) {
+    sapply(1:SOM@nsim, function(x) {
+      which(SOM@p_mature[x, , y] > 0)[1]
+    })
+  })
+  Herm_escapement <- sapply(1:SOM@nsim, function(x) {
+    sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(0:SOM@maxage >= first_mature_age[x, y], 1, 0))
+  }, simplify = "array") %>%
+    aperm(c(3, 1, 2))
+
+  Herm_mature <- sapply(1:SOM@nsim, function(x) {
+    sapply(1:(SOM@nyears + SOM@proyears), function(y) c(SOM@p_mature[x, , y], 1))
+  }, simplify = "array") %>%
+    aperm(c(3, 1, 2))
 
   # For NOS
   Herm <- list(Herm_escapement, Herm_mature)
