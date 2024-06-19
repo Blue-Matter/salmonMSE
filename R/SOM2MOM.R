@@ -134,17 +134,24 @@ SOM2MOM <- function(SOM, start = list()) {
 
   # Not needed if no habitat improvement and no hatchery! SRR pars in the OM should suffice in that case
   # (the escapement is the spawning output)
-
-  SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-    calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female, SOM@SRrel)
+  SRRpars_hist <- Stocks[[1]]$cpars_bio$SRR$SRRpars
+  SRRpars_proj <- local({
+    if (SOM@SRrel == "BH") {
+      pars <- lapply(1:SOM@nsim, function(x) {
+        calc_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
+                     SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, sum(SOM@fec), SOM@p_female)
+      })
+      a <- vapply(pars, getElement, numeric(1), 1)
+      b <- vapply(pars, getElement, numeric(1), 2)
+    } else {
+      a <- SOM@a * SOM@prod_smolt_improve
+      b <- 1/SOM@Smax/SOM@capacity_smolt_improve
+    }
+    data.frame(a = a, b = b, phi0 = phi0, SPRcrash = 1/a/phi0, SRrel = SOM@SRrel)
   })
 
-  SRRpars_proj <- sapply(1:SOM@nsim, function(x) {
-    calc_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
-                 SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, SOM@fec, SOM@p_female, SOM@SRrel)
-  })
-
-  habitat_change <- any(abs(SRRpars_hist - SRRpars_proj) > 1e-8)
+  #habitat_change <- any(abs(SRRpars_hist[, 1:2] - SRRpars_proj[, 1:2]) > 1e-8)
+  habitat_change <- SOM@prod_smolt_improve != 1 || SOM@capacity_smolt_improve != 1
 
   if (do_hatchery) {
     # Determine the local brood from the number of yearling and subyearling releases, their survival from egg stage,

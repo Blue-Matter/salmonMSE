@@ -21,40 +21,50 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # Survival to be modeled in cpars
   Stock@M <- Stock@Msd <- c(0, 0)
 
+  # Need custom SRR partial maturity at age
+  h <- R0 <- rep(1, SOM@nsim)
+
+  Stock@SRrel <- 3
+
+  Stock@h <- rep(0.99, 2)
+  Stock@R0 <- 1
+
+  # Unfished survival and spawners per recruit
+  NPR_unfished <- matrix(NA_real_, SOM@nsim, SOM@maxage)
+  NPR_unfished[, 1] <- 1
+  for (a in 2:SOM@maxage) {
+    NPR_unfished[, a] <- NPR_unfished[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
+  }
+  phi0 <- colSums(t(NPR_unfished) * SOM@p_female * SOM@fec)
+
   if (NOS) {
-    # 1 = Beverton-Holt, 2 = Ricker. Ricker is trigger for model with partial maturity
-    Stock@SRrel <- ifelse(SOM@SRrel == "BH", 1, 3)
 
     if (SOM@SRrel == "BH") {
-      SRRpars_hist <- sapply(1:SOM@nsim, function(x) {
-        calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], SOM@fec, SOM@p_female, SOM@SRrel)
+      pars <- lapply(1:SOM@nsim, function(x) {
+        calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], sum(SOM@fec), SOM@p_female)
       })
-
-      phi0 <- SOM@SAR_NOS * SOM@p_female * SOM@fec
-
-      h <- MSEtool::hconv(SRRpars_hist[1, ], phi0, SR = ifelse(SOM@SRrel == "BH", 1, 2))
-      R0 <- MSEtool::R0conv(SRRpars_hist[1, ], SRRpars_hist[2, ], phi0, SR = ifelse(SOM@SRrel == "BH", 1, 2))
-
-      Stock@h <- range(h)
-      Stock@R0 <- mean(R0)
-      cpars_bio$hs <- h
-      cpars_bio$R0 <- R0
+      a <- vapply(pars, getElement, numeric(1), 1)
+      b <- vapply(pars, getElement, numeric(1), 2)
     } else {
-
-      # Need custom SRR for OM with partial maturity at age
-      h <- R0 <- rep(1, SOM@nsim)
-
-      Stock@SRrel <- 3
-
-      Stock@h <- rep(0.99, 2)
-      Stock@R0 <- 1
-
-      SRRfun <- function(SB, SRRpars) SRRpars$a * SB * exp(-SRRpars$b * SB)
-      SRRpars <- data.frame(a = SOM@a, b = 1/SOM@Smax)
-      relRfun <- function(SSBpR, SRRpars) log(SRRpars$a * SSBpR)/SRRpars$b/SSBpR
-      SPRcrashfun <- function(SSBpR0, SRRpars) SRRpars$a
-      cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
+      a <- SOM@a
+      b <- 1/SOM@Smax
     }
+    SRRpars <- data.frame(a = a, b = b, phi0 = phi0, SPRcrash = 1/a/phi0, SRrel = SOM@SRrel)
+    SRRfun <- function(SB, SRRpars) {
+      if (SRRpars$SRrel == "BH") {
+        SRRpars$a * SB / (1 + SRRpars$b * SB)
+      } else {
+        SRRpars$a * SB * exp(-SRRpars$b * SB)
+      }
+    }
+    relRfun <- function(SSBpR, SRRpars) {
+      if (SRRpars$SRrel == "BH") {
+        (SRRpars$a * SSBpR - 1)/SRRpars$b/SSBpR
+      } else {
+        log(SRRpars$a * SSBpR)/SRRpars$b/SSBpR
+      }
+    }
+    SPRcrashfun <- function(SSBpR0, SRRpars) SRRpars$SPRcrash
 
   } else {
     # Custom SRR
@@ -63,12 +73,13 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     Stock@h <- rep(0.99, 2)
     Stock@R0 <- 1
 
-    SRRfun <- function(SB, SRRpars) ifelse(sum(SB), 1, 0)
     SRRpars <- data.frame(x = 1:SOM@nsim)
+    SRRfun <- function(SB, SRRpars) ifelse(sum(SB), 1, 0)
     relRfun <- function(SSBpR, SRRpars) return(1)
     SPRcrashfun <- function(SSBpR0, SRRpars) return(0)
-    cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
   }
+
+  cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
 
   # Ignore depletion setup (use cpars$qs = 1, and Eff)
   Stock@D <- c(0, 0)
@@ -152,12 +163,6 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   if (length(SOM@HistN)) {
     if (stage == "immature") {
       pind <- ifelse(NOS, 1, 2)
-
-      NPR_unfished <- matrix(NA_real_, SOM@nsim, SOM@maxage)
-      NPR_unfished[, 1] <- 1
-      for (a in 2:SOM@maxage) {
-        NPR_unfished[, a] <- NPR_unfished[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
-      }
 
       # With custom SRR, we set R0 = 1!
       Ninit <- SOM@HistN[, , 1, pind]
