@@ -88,7 +88,7 @@ or swim-in facilities. These fish are available for broodtake.}
 ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
 imperfect implementation of weir removal.}
 
-\item{\code{fec_brood}}{Numeric. The fecundity of broodtake.}
+\item{\code{fec_brood}}{Vector of length \code{maxage}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery.}
 
 \item{\code{fitness_type}}{Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".}
 

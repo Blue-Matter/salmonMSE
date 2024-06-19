@@ -24,7 +24,7 @@
 #' @slot premove_HOS Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
 #'  ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
 #'  imperfect implementation of weir removal.
-#' @slot fec_brood Numeric. The fecundity of broodtake.
+#' @slot fec_brood Vector of length `maxage`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery.
 #' @slot fitness_type Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
 #' @slot rel_loss Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.

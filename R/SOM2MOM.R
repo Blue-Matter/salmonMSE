@@ -154,22 +154,18 @@ SOM2MOM <- function(SOM, start = list()) {
   habitat_change <- SOM@prod_smolt_improve != 1 || SOM@capacity_smolt_improve != 1
 
   if (do_hatchery) {
-    # Determine the local brood from the number of yearling and subyearling releases, their survival from egg stage,
+    # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
     # and fecundity of broodtake (identical between natural and hatchery escapement)
-
     # This is a management action, cannot be stochastic
-    brood_import <- 0
-    brood_local <- SOM@n_yearling/(SOM@s_prespawn * SOM@p_female * SOM@fec_brood * SOM@s_egg_smolt) +
-      SOM@n_subyearling/(SOM@s_prespawn * SOM@p_female * SOM@fec_brood * SOM@s_egg_subyearling) -
-      brood_import
-    brood_local <- round(brood_local, 3)
+    # No imports
+    egg_local <- SOM@n_yearling/SOM@s_egg_smolt + SOM@n_subyearling/SOM@s_egg_subyearling
 
     # Survival of eggs in the hatchery
     p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
     s_egg_hatchery <- SOM@s_egg_subyearling * (1 - p_yearling) + SOM@s_egg_smolt * p_yearling
 
   } else {
-    brood_local <- 0
+    egg_local <- 0
     s_egg_hatchery <- NA
   }
 
@@ -199,7 +195,7 @@ SOM2MOM <- function(SOM, start = list()) {
       p_smolt = 1, p_natural = 3, p_hatchery = 6, # NOTE: what to do if no hatchery?? p_hatchery needs to be undefined
       output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
-      brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
+      egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, # Spawning (natural production)
       SRRpars_hist, SRRpars_proj, SRrel = SOM@SRrel, fitness_type = SOM@fitness_type, # Spawning (natural production)
@@ -242,7 +238,7 @@ check_SOM <- function(SOM) {
   var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female",
                 "capacity_smolt_improve", "prod_smolt_improve",
                 "n_yearling", "n_subyearling",
-                "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS", "fec_brood",
+                "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
                 "u_preterminal", "u_terminal", "m",
                 "fitness_type", "fitness_variance", "selection_strength", "heritability", "fitness_floor")
@@ -259,7 +255,7 @@ check_SOM <- function(SOM) {
   })
 
   # Length maxage
-  var_maxage <- c("fec", "vulPT", "vulT")
+  var_maxage <- c("fec", "vulPT", "vulT", "fec_brood")
   lapply(var_maxage, function(i) {
     v <- slot(SOM, i)
     if (length(v) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
