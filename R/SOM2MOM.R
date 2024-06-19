@@ -145,7 +145,7 @@ SOM2MOM <- function(SOM, start = list()) {
       b <- vapply(pars, getElement, numeric(1), 2)
     } else {
       a <- SOM@a * SOM@prod_smolt_improve
-      b <- 1/SOM@Smax/SOM@capacity_smolt_improve
+      b <- 1/SOM@Smax * SOM@capacity_smolt_improve
     }
     data.frame(a = a, b = b, phi0 = phi0, SPRcrash = 1/a/phi0, SRrel = SOM@SRrel)
   })
