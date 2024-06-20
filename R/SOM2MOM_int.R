@@ -35,7 +35,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     } else {
       b <- 1/SOM@Smax
     }
-    SRRpars <- data.frame(a = a, b = b, phi = phi, SPRcrash = 1/a/phi, SRrel = SOM@SRrel)
+    SRRpars <- data.frame(a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel)
     SRRfun <- function(SB, SRRpars) {
       if (SRRpars$SRrel == "BH") {
         SRRpars$a * SB / (1 + SRRpars$b * SB)

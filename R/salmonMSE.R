@@ -33,8 +33,7 @@ salmonMSE <- function(SOM, start = list(), Hist = FALSE, silent = FALSE, trace =
 
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()
-
-  if (SOM@n_yearling > 0 || SOM@n_subyearling > 0) salmonMSE_env$N <- data.frame()
+  salmonMSE_env$state <- data.frame()
 
   if (!silent) message("Generating historical dynamics..")
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
