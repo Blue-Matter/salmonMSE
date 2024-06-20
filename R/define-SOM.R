@@ -39,9 +39,9 @@ setClass(
     p_mature = "num.array",         # Age at which adults mature and return
     SRrel = "character",
     capacity_smolt = "numeric",   # Beverton-Holt asymptote. Not unfished capacity!!
-    prod_smolt = "numeric",       # Productivity adult/SAR. At unfished, prod_smolt = 1/SAR
-    a = "numeric",
+    kappa = "numeric",
     Smax = "numeric",
+    phi = "numeric",
     Mocean_NOS = "num.array",     # Future feature to allow for time-varying (PDO forcing)
     fec = "numeric",              # Spawning fecundity of NOS and HOS
     p_female = "numeric"
@@ -73,7 +73,7 @@ setClass(
   slots = c(
     Name = "character",
     capacity_smolt_improve = "numeric",    # Improves Beverton-Holt asymptote by 10% in projection
-    prod_smolt_improve = "numeric"           # Keep productivity (SR alpha) constant
+    kappa_improve = "numeric"
   )
 )
 

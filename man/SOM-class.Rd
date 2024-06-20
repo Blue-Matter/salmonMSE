@@ -34,13 +34,16 @@ A description of the fitness parameters and hatchery dynamics is available in th
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
 density-dependent natural smolt production from fry life stage. \strong{Units of smolts.}}
 
-\item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
-Natural per-capita smolt production as the population approaches zero (density-independent component). \strong{Units of smolts per spawner},
-frequently equivalent to recruits per spawner divided by marine survival.}
+\item{\code{kappa}}{Vector length \code{nsim}. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
+Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per egg}.
+In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.}
 
-\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function. \strong{Units of smolts per egg.}}
+\item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function. \strong{Units of eggs.}}
+\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished recruits per spawner.
+The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
+the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mocean_NOS} corresponding
+to the first year.}
 
 \item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
 Natural mortality of immature natural origin fish.
@@ -51,9 +54,10 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mocean_NOS[a
 \item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
 
 \item{\code{capacity_smolt_improve}}{Numeric. The proportional change in the smolt capacity parameter in the projection period.
-For example, 1.1 represents a 10 percent improvement.}
+For example, 1.1 represents a 10 percent improvement. For the Beverton-Holt function, this increases the asymptote by 10 percent.
+For the Ricker function, this increases the maximum smolt production by 10 percent.}
 
-\item{\code{prod_smolt_improve}}{Numeric. The proportional change in the smolt productivity parameter in the projection period.
+\item{\code{kappa_improve}}{Numeric. The proportional change in the compensation ratio, i.e., changing the smolt productivity, in the projection period.
 For example, 1.1 represents a 10 percent improvement.}
 
 \item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if both \code{n_yearling} and

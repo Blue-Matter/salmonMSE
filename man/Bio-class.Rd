@@ -27,13 +27,16 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
 density-dependent natural smolt production from fry life stage. \strong{Units of smolts.}}
 
-\item{\code{prod_smolt}}{Vector length \code{nsim}. The productivity parameter of the Beverton-Holt stock-recruit function.
-Natural per-capita smolt production as the population approaches zero (density-independent component). \strong{Units of smolts per spawner},
-frequently equivalent to recruits per spawner divided by marine survival.}
+\item{\code{kappa}}{Vector length \code{nsim}. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
+Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per egg}.
+In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.}
 
-\item{\code{a}}{Vector length \code{nsim}. The alpha parameter of the Ricker stock-recruit function. \strong{Units of smolts per egg.}}
+\item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The Smax parameter of the Ricker stock-recruit function. \strong{Units of eggs.}}
+\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished recruits per spawner.
+The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
+the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mocean_NOS} corresponding
+to the first year.}
 
 \item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
 Natural mortality of immature natural origin fish.

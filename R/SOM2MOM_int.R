@@ -28,28 +28,14 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   Stock@h <- rep(0.99, 2)
   Stock@R0 <- 1
-
-  # Unfished survival and spawners per recruit
-  NPR_unfished <- matrix(NA_real_, SOM@nsim, SOM@maxage)
-  NPR_unfished[, 1] <- 1
-  for (a in 2:SOM@maxage) {
-    NPR_unfished[, a] <- NPR_unfished[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
-  }
-  phi0 <- colSums(t(NPR_unfished) * SOM@p_female * SOM@fec)
-
   if (NOS) {
-
+    a <- SOM@kappa/SOM@phi
     if (SOM@SRrel == "BH") {
-      pars <- lapply(1:SOM@nsim, function(x) {
-        calc_SRRpars(SOM@prod_smolt[x], SOM@capacity_smolt[x], sum(SOM@fec), SOM@p_female)
-      })
-      a <- vapply(pars, getElement, numeric(1), 1)
-      b <- vapply(pars, getElement, numeric(1), 2)
+      b <- a/SOM@capacity_smolt
     } else {
-      a <- SOM@a
       b <- 1/SOM@Smax
     }
-    SRRpars <- data.frame(a = a, b = b, phi0 = phi0, SPRcrash = 1/a/phi0, SRrel = SOM@SRrel)
+    SRRpars <- data.frame(a = a, b = b, phi = phi, SPRcrash = 1/a/phi, SRrel = SOM@SRrel)
     SRRfun <- function(SB, SRRpars) {
       if (SRRpars$SRrel == "BH") {
         SRRpars$a * SB / (1 + SRRpars$b * SB)

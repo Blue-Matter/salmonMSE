@@ -135,8 +135,6 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production)
     fry_openMSE <- sum(N[1] * p_female * fec)
-    #capacity_SRR <- ifelse(SRrel == "BH", alpha_hist/beta_hist, exp(-1) * alpha_hist/beta_hist)
-
     if (SRrel == "BH") {
       smolt_NOS_SRR <- alpha_hist * fry_openMSE/(1 + beta_hist * fry_openMSE)
     } else {
@@ -183,8 +181,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       fry_HOS_out <- fry_HOS * fitness_loss[1]
 
       # Update smolt SRR with fitness
-      prod_smolt <- alpha_proj * fitness_loss[2]
-      capacity_smolt <- fitness_loss[2] * ifelse(SRrel == "BH", alpha_proj/beta_proj, exp(-1) * alpha_proj/beta_proj)
+      alpha_fitness <- alpha_proj * fitness_loss[2]
+      beta_fitness <- beta_proj / fitness_loss[2]
 
       # Save pbar for next generation
       df_Ford <- data.frame(
@@ -197,8 +195,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
 
     } else { #if (fitness_type == "none") {
-      prod_smolt <- alpha_proj
-      capacity_smolt <- ifelse(SRrel == "BH", alpha_proj/beta_proj, exp(-1) * alpha_proj/beta_proj)
+      alpha_fitness <- alpha_proj
+      beta_fitness <- beta_proj
 
       fitness <- 1
       pNOB <- 1
@@ -209,10 +207,13 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     }
 
     total_fry_out <- fry_NOS_out + fry_HOS_out
-
-    smolt_NOS_proj <- calc_SRR(fry_NOS_out, total_fry_out, prod_smolt, capacity_smolt, SRrel)
-    smolt_HOS_proj <- calc_SRR(fry_HOS_out, total_fry_out, prod_smolt, capacity_smolt, SRrel)
-    total_smolt <- smolt_NOS_proj + smolt_HOS_proj
+    if (SRrel == "BH") {
+      smolt_NOS_proj <- alpha_proj * fry_NOS_out/(1 + beta_proj * total_fry_out)
+      smolt_HOS_proj <- alpha_proj * fry_HOS_out/(1 + beta_proj * total_fry_out)
+    } else {
+      smolt_NOS_proj <- alpha_proj * fry_NOS_out * exp(-beta_proj * total_fry_out)
+      smolt_HOS_proj <- alpha_proj * fry_HOS_out * exp(-beta_proj * total_fry_out)
+    }
 
     if (x > 0) {
       # Save fry, smolts, and spawners for next generation
@@ -293,8 +294,8 @@ makeRel_smolt <- function(p_smolt = 1, p_natural = 2, p_hatchery = 4,
       formals(func)$fitness_args <- fitness_args
       formals(func)$p_smolt <- p_smolt
     }
-    N_natural <- seq(0, 1/SRRpars_proj[2, 1], length.out = 10)
-    N_hatchery <- seq(0, 1/SRRpars_proj[2, 1], length.out = 10)
+    N_natural <- seq(0, 1/SRRpars_proj[1, "b"], length.out = 10)
+    N_hatchery <- seq(0, 1/SRRpars_proj[1, "b"], length.out = 10)
   } else {
     N_natural <- seq(0, 1000, length.out = 10)
     N_hatchery <- seq(0, 1000, length.out = 10)

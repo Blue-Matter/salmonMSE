@@ -134,24 +134,16 @@ SOM2MOM <- function(SOM, start = list()) {
 
   # Not needed if no habitat improvement and no hatchery! SRR pars in the OM should suffice in that case
   # (the escapement is the spawning output)
-  SRRpars_hist <- Stocks[[1]]$cpars_bio$SRR$SRRpars
-  SRRpars_proj <- local({
-    if (SOM@SRrel == "BH") {
-      pars <- lapply(1:SOM@nsim, function(x) {
-        calc_SRRpars(SOM@prod_smolt[x] * SOM@prod_smolt_improve,
-                     SOM@capacity_smolt[x] * SOM@capacity_smolt_improve, sum(SOM@fec), SOM@p_female)
-      })
-      a <- vapply(pars, getElement, numeric(1), 1)
-      b <- vapply(pars, getElement, numeric(1), 2)
-    } else {
-      a <- SOM@a * SOM@prod_smolt_improve
-      b <- 1/SOM@Smax * SOM@capacity_smolt_improve
-    }
-    data.frame(a = a, b = b, phi0 = phi0, SPRcrash = 1/a/phi0, SRrel = SOM@SRrel)
-  })
+  SRRpars_hist <- SRRpars_proj <- Stocks[[1]]$cpars_bio$SRR$SRRpars
+  SRRpars_proj[, "a"] <- SOM@kappa/SOM@phi * SOM@kappa_improve
 
-  #habitat_change <- any(abs(SRRpars_hist[, 1:2] - SRRpars_proj[, 1:2]) > 1e-8)
-  habitat_change <- SOM@prod_smolt_improve != 1 || SOM@capacity_smolt_improve != 1
+  if (SOM@SRrel == "BH") {
+    SRRpars_hist[, "b"] <- SRRpars_proj[, "a"]/SOM@capacity_smolt/SOM@capacity_smolt_improve
+  } else {
+    SRRpars_hist[, "b"] <- 1/SOM@Smax/SOM@capacity_smolt_improve
+  }
+
+  habitat_change <- SOM@kappa_improve != 1 || SOM@capacity_smolt_improve != 1
 
   if (do_hatchery) {
     # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
@@ -236,7 +228,7 @@ check_SOM <- function(SOM) {
 
   # Length 1
   var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female",
-                "capacity_smolt_improve", "prod_smolt_improve",
+                "capacity_smolt_improve", "kappa_improve",
                 "n_yearling", "n_subyearling",
                 "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
@@ -288,11 +280,26 @@ check_SOM <- function(SOM) {
 
   # Length nsim
   if (SOM@SRrel == "BH") {
-    var_stochastic <- c("capacity_smolt", "prod_smolt")
+    var_stochastic <- c("capacity_smolt", "kappa", "phi")
   } else {
-    var_stochastic <- c("a", "Smax")
+    var_stochastic <- c("Smax", "kappa", "phi")
   }
   for(i in var_stochastic) {
+    if (i == "phi") {
+      if (!length(slot(SOM, i))) {
+
+        slot(SOM, i) <- local({
+          NPR <- matrix(NA_real_, SOM@nsim, SOM@maxage)
+          NPR[, 1] <- 1
+          for (a in 2:SOM@maxage) {
+            NPR[, a] <- NPR[, a-1] * exp(-SOM@Mocean_NOS[, a-1, 1]) * (1 - SOM@p_mature[, a-1, 1])
+          }
+          EPR <- NPR * SOM@p_mature[, , 1]
+          colSums(t(EPR) * SOM@p_female * SOM@fec)
+        })
+
+      }
+    }
     if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
     if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
   }

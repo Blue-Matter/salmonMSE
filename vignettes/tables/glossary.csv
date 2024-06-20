@@ -3,7 +3,7 @@ Name,Definition,Type,Class,Slot
 \textrm{HOS},Hatchery origin spawners,Hatchery,SMSE,HOS
 \textrm{HOS}_\textrm{eff},"Effective number of HOS, spawning output discounted by $\gamma$",Hatchery,SMSE,HOSeff
 C_\textrm{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat,SOM,capacity_smolt
-P_\textrm{smolt},"Maximum smolt production rate (stock-recruit parameter), units of smolts per spawner",Habitat,SOM,prod_smolt
+\kappa,"Maximum recruit production rate (stock-recruit parameter), units of recruits per spawner",Habitat,SOM,kappa
 u^\textrm{PT},Pre-terminal fishery harvest rate,Harvest,SOM,u_preterminal
 u^\textrm{T},Terminal fishery harvest rate,Harvest,SOM,u_terminal
 m,Mark rate of hatchery fish,Harvest,SOM,m
