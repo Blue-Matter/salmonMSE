@@ -103,7 +103,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   output <- match.arg(output)
 
   N[is.na(N)] <- 0
-  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, phatchery, egg_local, fec_brood, p_female, fec_brood, gamma, s_prespawn)
+  broodtake <- calc_broodtake(N, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, gamma, s_prespawn)
 
   if (output == "hatchery") {
     fry <- sum(broodtake$NOB + broodtake$HOB * fec_brood * s_prespawn * p_female)

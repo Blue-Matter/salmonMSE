@@ -209,7 +209,7 @@ SOM2MOM <- function(SOM, start = list()) {
     Rel[[nRel + 1]] <- makeRel_smolt(
       p_smolt = 4, p_natural = 3, p_hatchery = 6, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
-      brood_local = brood_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
+      egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma
     )
