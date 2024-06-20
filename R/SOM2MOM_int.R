@@ -107,7 +107,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     cpars_bio$Mat_age[, n_age, ] <- 1 # No spawning, n_age should be an empty age class
   }
 
-  cpars_bio$M_ageArray <- array(.Machine$double.eps, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
+  cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
   # All ocean survival occurs in the age class prior to maturity
   # There is a requirement for spawners per recruit spool-up.
   # Should be okay so long as all fish immature prior to mat_age
@@ -122,6 +122,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   } else if (stage == "escapement") {
     cpars_bio$M_ageArray[] <- 1e8  # Escapement either removed (broodtake, etc.) or spawns at beginning of year and then dies
   }
+  cpars_bio$M_ageArray[cpars_bio$M_ageArray < .Machine$double.eps] <- .Machine$double.eps
 
   # Unfished spawners per recruit must be identical between immature and mature NOS populations (for BH..?)
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
