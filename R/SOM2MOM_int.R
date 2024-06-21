@@ -95,6 +95,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # Custom pars
   # Catch works on the basis of biomass so we need to set weight at age = 1
   cpars_bio$Wt_age <- array(1, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
+  cpars_bio$Wa <- cpars_bio$Wb <- rep(1, SOM@nsim) # Avoids lm fitting in MSEtool::SampleStockPars()
 
   # Spawning at the last age class, solely for necessary but irrelevant per recruit calculations
   # Maturity that activates return phase modeled by Herm feature
