@@ -379,13 +379,13 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 # N is a dummy variable
 .SAR_fitness <- function(N, x = -1,
                          fitness_type = c("Ford", "none"), # Spawning (natural production)
-                         SAR = 0.01, rel_loss = 1, p_naturalsmolt = 1) {
+                         rel_loss = 1, p_naturalsmolt = 1) {
 
   fitness_type <- match.arg(fitness_type)
   stopifnot(fitness_type == "Ford")
 
-  if (nrow(salmonMSE_env$N) && x > 0) {
-    fitness_df <- filter(salmonMSE_env$N, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
+  if (nrow(salmonMSE_env$state) && x > 0) {
+    fitness_df <- filter(salmonMSE_env$state, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
 
     if (nrow(fitness_df)) {
       tmax <- ifelse(nrow(fitness_df), max(fitness_df$t), 1)
@@ -401,13 +401,11 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   }
 
   fitness_loss <- fitness^rel_loss
-  SAR_loss <- SAR[x] * fitness_loss
-  M_loss <- -log(SAR_loss)
-  return(M_loss)
+  return(fitness_loss)
 }
 
 
-makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c("Ford", "none"), SAR, rel_loss, age_mat) {
+makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c("Ford", "none"), rel_loss, maxage) {
 
   fitness_type <- match.arg(fitness_type)
   stopifnot(fitness_type == "Ford")
@@ -418,9 +416,8 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
   formals(func)$p_naturalsmolt <- p_naturalsmolt
   formals(func)$rel_loss <- rel_loss
   formals(func)$fitness_type <- fitness_type
-  formals(func)$SAR <- SAR
 
-  model <- data.frame(M = -log(SAR[1]), N = seq(0, 10), x = -1)
+  model <- data.frame(M = 1, N = seq(0, 10), x = -1)
 
   response <- paste0("M_", p_smolt)
   input <- paste0("N_", p_smolt)
@@ -433,9 +430,10 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
     CV = 0,
     terms = terms,
     type = "Natural mortality",
-    Rel = "Marine survival reduced by fitness"
+    Rel = "Marine survival reduced by fitness",
+    mult = TRUE,
+    age = seq(0, maxage)
   )
-  if (!missing(age_mat)) out$age <- age_mat - 2
   structure(out, class = "SARfitness")
 }
 
