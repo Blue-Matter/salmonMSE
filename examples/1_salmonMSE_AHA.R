@@ -16,10 +16,10 @@ Bio <- new(
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
-  capacity_smolt = 17250,   # Beverton-Holt asymptote. Not unfished capacity!!
-  prod_smolt = 300,         # Productivity adult/SAR. At unfished equilibrium the realized smolt productivity = 1/SAR
-  SAR_NOS = 0.01,           # Future feature to allow for time-varying (PDO forcing)
-  fec = 5040,               # Spawning fecundity of NOS and HOS
+  capacity_smolt = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
+  kappa = 3,                  # Productivity in recruits per spawner
+  Mocean_NOS = c(0, -log(0.01), 0),
+  fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49
   #strays = 0
 )
@@ -32,7 +32,7 @@ Hatchery <- new(
   s_prespawn = 1,                   # Survival prior to spawning
   s_egg_smolt = 1e-6,               # Survival of eggs in hatchery
   s_egg_subyearling = 0.92,
-  SAR_HOS = Bio@SAR_NOS,
+  Mocean_HOS = Bio@Mocean_NOS,
   gamma = 0.8,
   pmax_NOB = 0.7,
   ptarget_NOB = 0.51,
@@ -40,7 +40,7 @@ Hatchery <- new(
   premove_HOS = 0,
   theta = c(100, 80),
   rel_loss = c(0.5, 0.4, 0.1),
-  fec_brood = 5040,
+  fec_brood = c(0, 0, 5040),
   fitness_type = "Ford",
   pbar_start = c(93.1, 92),
   fitness_variance = 10,
@@ -52,7 +52,7 @@ Hatchery <- new(
 Habitat <- new(
   "Habitat",
   capacity_smolt_improve = 1,    # Keep carrying capacity (SR alpha/beta) constant
-  prod_smolt_improve = 1         # Keep productivity (SR alpha) constant
+  kappa_improve = 1              # Keep productivity (SR alpha) constant
 )
 
 Harvest <- new(
@@ -60,16 +60,28 @@ Harvest <- new(
   u_preterminal = 0,             # No pre-terminal fishery
   u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
   m = 0,                         # Mark rate of hatchery releases
-  release_mort = c(0.1, 0.1)
+  release_mort = c(0.1, 0.1),
+  vulPT = c(0, 0, 0),
+  vulT = c(1, 1, 1)
 )
+
+HistN <- array(0, c(3, 3, 2, 2))
+HistN[, 1, 1, 1] <- 1000
+
+Historical <- new(
+  "Historical",
+  HistN = HistN
+)
+
 
 # Stitched salmon operating model
 SOM <- new("SOM",
+           nyears = 2,
            proyears = 50,
-           Bio, Habitat, Hatchery, Harvest)
+           Bio, Habitat, Hatchery, Harvest, Historical = Historical)
 
 # run salmonMSE
-SMSE <- salmonMSE(SOM)
+SMSE <- salmonMSE(SOM, convert = FALSE)
 class?SMSE # Definitions of arrays
 
 # run AHA - list of vectors by generation
