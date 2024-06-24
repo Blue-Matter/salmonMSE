@@ -4,23 +4,27 @@
 \alias{get_F}
 \title{Calculate F from harvest rate}
 \usage{
-get_F(u = 0, M, ret = 0, release_mort = 0, Fmax = 20)
+get_F(u = 0, M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20)
 }
 \arguments{
 \item{u}{Harvest rate, between 0-1}
 
 \item{M}{Instantaneous natural mortality rate}
 
+\item{N}{Abundance}
+
+\item{vul}{Vulnerability}
+
 \item{ret}{Retention rate, between 0-1}
 
-\item{release_mort}{Release mortality as a proportion, between 0-1}
+\item{release_mort}{Release mortality as a proportion, between 0-1. Only relevant if \code{ret < 1}}
 
 \item{Fmax}{Maximum allowable value of F}
 }
 \value{
-Numeric
+Numeric for the apical F
 }
 \description{
-Solves for instantaneous fishing mortality rate from harvest rate
+Solves for apical instantaneous fishing mortality rate from harvest rate (total retained catch over total abundance).
 }
 \keyword{internal}

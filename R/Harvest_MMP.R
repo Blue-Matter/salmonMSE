@@ -26,26 +26,34 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
   nf <- length(DataList[[1]])
 
   multiRec <- lapply(1:np, function(p) {
+    y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
+    nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
 
-    if (p %in% p_terminal) {
-      if (m > 0) {
-        Effort <- get_F(u = u_terminal, M = 0, ret = m, release_mort = release_mort[2])
-      } else {
-        Effort <- -log(1 - u_terminal)
-      }
+    Nage <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ])
+    V <- DataList[[p]][[1]]@Misc$FleetPars$V[x, , nyears + y]
+
+    if (!sum(Nage)) {
+      Effort <- 0
     } else if (p %in% p_preterminal) {
       if (u_preterminal > 0) {
-        y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
-        nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
         M <- DataList[[p]][[1]]@Misc$StockPars$M_ageArray[x, , nyears + y]
-        F_preterminal <- get_F(u = u_preterminal, M = max(M), ret = ifelse(m > 0, m, 1), release_mort = SOM@release_mort[1])
+        # F_preterminal
+        Effort <- get_F(
+          u = u_preterminal, M = M, N = Nage, vul = V, ret = ifelse(m > 0, m, 1), release_mort = release_mort[1]
+        )
       } else {
-        F_preterminal <- 0
+        Effort <- 0
       }
-      Effort <- F_preterminal
-    } else {
-      Effort <- 0
-    }
+    } else if (p %in% p_terminal) {
+      if (u_terminal > 0) {
+        # F_terminal
+        Effort <- get_F(
+          u = u_terminal, M = rep(0, length(Nage)), N = Nage, vul = V, ret = ifelse(m > 0, m, 1), release_mort = release_mort[2]
+        )
+      } else {
+        Effort <- 0
+      }
+    } else
 
     lapply(1:nf, function(f) {
       Rec <- new("Rec")
@@ -79,29 +87,41 @@ make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0, m = 0, release
 
 #' Calculate F from harvest rate
 #'
-#' Solves for instantaneous fishing mortality rate from harvest rate
+#' Solves for apical instantaneous fishing mortality rate from harvest rate (total retained catch over total abundance).
 #'
 #' @param u Harvest rate, between 0-1
 #' @param M Instantaneous natural mortality rate
+#' @param N Abundance
+#' @param vul Vulnerability
 #' @param ret Retention rate, between 0-1
-#' @param release_mort Release mortality as a proportion, between 0-1
+#' @param release_mort Release mortality as a proportion, between 0-1. Only relevant if `ret < 1`
 #' @param Fmax Maximum allowable value of F
-#' @return Numeric
+#' @return Numeric for the apical F
 #'
 #' @keywords internal
 #'
 #' @importFrom stats uniroot
-get_F <- function(u = 0, M, ret = 0, release_mort = 0, Fmax = 20) {
+get_F <- function(u = 0, M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20) {
   if (u > 0) {
-    .F <- uniroot(F_solver, interval = c(1e-8, Fmax), M = M, ret = ret, release_mort = release_mort, u = u)
-    .F$root
+    .F <- try(
+      uniroot(F_solver, interval = c(1e-8, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u),
+      silent = TRUE
+    )
+    if (is.character(.F)) {
+      return(Fmax)
+    } else {
+      return(.F$root)
+    }
   } else {
-    0
+    return(0)
   }
 }
 
-F_solver <- function(.F, M, ret, release_mort, u = 0) {
-  Z <- ret * .F + (1 - ret) * release_mort * .F + M
-  ret * .F/Z * (1 - exp(-Z)) - u
+F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0) {
+  F_age <- vul * .F
+  Z <- ret * F_age + (1 - ret) * release_mort * F_age + M
+  catch_ret <- ret * F_age/Z * (1 - exp(-Z)) * N
+  catch_ret[is.na(catch_ret)] <- 0
+  sum(catch_ret)/sum(N) - u
 }
 
