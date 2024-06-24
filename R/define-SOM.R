@@ -291,7 +291,7 @@ setMethod("initialize", "SOM",
 #' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence, index of gene flow from hatchery to the natural environment.
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
-#' @slot SAR_loss Array `[nsim, nstocks, proyears]`. Realized SAR due to fitness loss.
+#' @slot Mocean_loss Array `[nsim, nstocks, nage, proyears]`. Realized natural mortality in the marine environment due to fitness loss.
 #' @slot Misc List. Miscellaneous output
 #'
 #' @details
@@ -361,7 +361,7 @@ setClass(
     ExPT_HOS = "array",
     ExT_HOS = "array",
     fitness = "array",
-    SAR_loss = "array",
+    Mocean_loss = "array",
     PNI = "array",
     p_wild = "array",
     Misc = "list"

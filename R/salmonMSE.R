@@ -50,7 +50,7 @@ salmonMSE <- function(SOM, start = list(), Hist = FALSE, silent = FALSE, trace =
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
-    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford)
+    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford, salmonMSE_env$state)
   } else {
     return(M)
   }

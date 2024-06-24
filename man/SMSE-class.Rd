@@ -105,7 +105,7 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 \item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 non-assortative mating, defined under Canada's Wild Salmon Policy.}
 
-\item{\code{SAR_loss}}{Array \verb{[nsim, nstocks, proyears]}. Realized SAR due to fitness loss.}
+\item{\code{Mocean_loss}}{Array \verb{[nsim, nstocks, nage, proyears]}. Realized natural mortality in the marine environment due to fitness loss.}
 
 \item{\code{Misc}}{List. Miscellaneous output}
 }}
