@@ -8,7 +8,7 @@
 \alias{make_Fleet}
 \title{Internal salmonMSE functions for converting operating model inputs and outputs}
 \usage{
-MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford)
+MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford, state)
 
 SOM2MOM(SOM, start = list())
 
@@ -28,9 +28,11 @@ make_Fleet(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 
 \item{Harvest_MMP}{Optional harvest function created by \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}}}
 
-\item{N}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
+\item{N}{Data frame of abundance at age saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{Ford}{Data frame of phenotypic trait values saved in the \link{salmonMSE_env} environment during the simulation}
+
+\item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{start}{An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
 simulation}

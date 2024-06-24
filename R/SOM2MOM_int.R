@@ -146,7 +146,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$plusgroup <- 0L
 
   # Generate recruitment devs from Historical object. Specify future rec dev = 1, updated by hatchery Rel
-  Perr_y <- matrix(0, SOM@nsim, SOM@maxage + SOM@nyears + SOM@proyears)
+  Perr_y <- matrix(1, SOM@nsim, SOM@maxage + SOM@nyears + SOM@proyears)
 
   if (length(SOM@HistN)) {
     if (stage == "immature") {
@@ -154,7 +154,13 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
       # With custom SRR, we set R0 = 1!
       Ninit <- SOM@HistN[, , 1, pind]
-      Perr_init <- Ninit/NPR_unfished
+
+      NPR <- matrix(NA_real_, SOM@nsim, SOM@maxage)
+      NPR[, 1] <- 1
+      for (a in 2:SOM@maxage) {
+        NPR[, a] <- NPR[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
+      }
+      Perr_init <- Ninit/NPR
       Perr_y[, seq(SOM@maxage + 1, 2)] <- Perr_init
       Perr_y[, 1] <- 0
 
@@ -164,9 +170,6 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       } else {
         Perr_y[, SOM@maxage + 2:SOM@nyears] <- SOM@HistN[, 1, -1, pind]
       }
-
-      # Projected rec dev
-      Perr_y[, SOM@maxage + SOM@nyears + 1:SOM@proyears] <- 1
     }
   }
 

@@ -55,7 +55,9 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 }
 
 
-.egg_func <- function(ptake, N, gamma = 1, fec, p_female, s_prespawn, val = 0) sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
+.egg_func <- function(ptake, N, gamma = 1, fec, p_female, s_prespawn, val = 0) {
+  sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
+}
 
 .broodtake_func <- function(ptake_NOB, NOR_escapement, HOR_escapement, phatchery, p_female, fec, gamma,
                             egg_target, s_prespawn, ptarget_NOB, opt = TRUE) {
@@ -81,13 +83,15 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   }
 
   HOB <- ptake_HOB * HOR_escapement * phatchery
-  egg_HOB <- .egg_func(ptake_HOB, N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn)
+  egg_HOB_actual <- .egg_func(
+    ptake_HOB, N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
+  )
 
   if (opt) {
     obj <- log(sum(NOB)/sum(NOB + HOB)) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
-    output <- list(egg_NOB = egg_NOB, egg_HOB = egg_HOB, ptake_HOB = ptake_HOB, NOB = NOB, HOB = HOB)
+    output <- list(egg_NOB = egg_NOB, egg_HOB = egg_HOB_actual, ptake_HOB = ptake_HOB, NOB = NOB, HOB = HOB)
     return(output)
   }
 }
@@ -290,10 +294,10 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   formals(func)$fec_brood <- fec_brood
   formals(func)$s_egg <- s_egg
   formals(func)$phatchery <- phatchery
-  formals(func)$premove_HOS <- premove_HOS
   formals(func)$s_prespawn <- s_prespawn
   formals(func)$p_female <- p_female
   formals(func)$output <- output
+  formals(func)$gamma <- gamma
 
   maxage <- length(fec)
 
@@ -301,9 +305,8 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
 
     SRrel <- match.arg(SRrel)
 
-    formals(func)$p_female <- p_female
+    formals(func)$premove_HOS <- premove_HOS
     formals(func)$fec <- fec
-    formals(func)$gamma <- gamma
 
     formals(func)$SRRpars_hist <- SRRpars_hist
     formals(func)$SRRpars_proj <- SRRpars_proj
@@ -318,10 +321,12 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
 
   N_natural <- rep(1, maxage) %>% structure(names = paste0("Nage_", p_natural, 1:maxage))
   N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
+  Nage <- cbind(N_natural, N_hatchery)
 
-  Perr_y <- func(cbind(N_natural, N_hatchery))
+  Perr_y <- func(Nage)
 
-  model <- c(Perr_y = Perr_y, N_natural, N_hatchery, x = -1) %>% t() %>% as.data.frame()
+  #model <- c(Perr_y = Perr_y, N_natural, N_hatchery, x = -1) %>% t() %>% as.data.frame()
+  model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1)
 
   response <- paste0("Perr_y_", p_smolt)
   input <- paste0("Nage_", c(p_natural, p_hatchery))
@@ -354,7 +359,7 @@ predict.RelSmolt <- function(object, newdata, ...) {
   val <- sapply(1:nrow(newdata), function(i) {
     Esc_NOS <- newdata[i, grepl(vars_Rel[1], vars)] %>% as.numeric()
     Esc_HOS <- newdata[i, grepl(vars_Rel[2], vars)] %>% as.numeric()
-    Nage <- cbind(Esc_NOS, Esc_HOS)
+    Nage <- cbind(Esc_NOS, Esc_HOS)[-1, ]
     x <- newdata[i, "x"]
     object$func(Nage = Nage, x = x)
   })
@@ -377,7 +382,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
 # Marine survival of natural origin smolts, as reduced by fitness
 # N is a dummy variable
-.SAR_fitness <- function(N, x = -1,
+.SAR_fitness <- function(x = -1,
                          fitness_type = c("Ford", "none"), # Spawning (natural production)
                          rel_loss = 1, p_naturalsmolt = 1) {
 
@@ -438,7 +443,11 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
 }
 
 #' @export
-predict.SARfitness <- predict.RelSmolt
+predict.SARfitness <- function(object, newdata, ...) {
+  if (missing(newdata)) return(object$fitted.values)
+  val <- sapply(newdata[, "x"], object$func)
+  return(val)
+}
 
 #' @export
 simulate.SARfitness <- simulate.RelSmolt
