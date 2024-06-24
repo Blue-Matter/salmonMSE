@@ -380,8 +380,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   val
 }
 
-# Marine survival of natural origin smolts, as reduced by fitness
-# N is a dummy variable
+# Natural mortality in the marine environment of natural origin smolts, increased due to fitness loss
 .SAR_fitness <- function(x = -1,
                          fitness_type = c("Ford", "none"), # Spawning (natural production)
                          rel_loss = 1, p_naturalsmolt = 1) {
@@ -406,7 +405,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   }
 
   fitness_loss <- fitness^rel_loss
-  return(fitness_loss)
+  return(1/fitness_loss)
 }
 
 
