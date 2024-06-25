@@ -307,10 +307,8 @@ check_SOM <- function(SOM) {
   # Various hist objects
   # Length nyears to `nsim, nyears` matrix or `nsim, nyears, 2` array or `nsim, maxage, nyears` array or `nsim, maxage, nyears, 2`
   var_hist <- c("HistSmolt", "HistYearling", "HistSpawner", "HistFPT", "HistFT", "HistN")
-  check_hist <- sapply(var_hist, function(i) length(slot(SOM, i)) > 0)
-  if (all(check_hist)) {
-    for(i in var_hist) {
-
+  for(i in var_hist) {
+    if (length(slot(SOM, i))) {
       dim_i <- dim(slot(SOM, i))
       if (is.null(dim_i)) {
 
@@ -366,9 +364,6 @@ check_SOM <- function(SOM) {
         }
       }
     }
-
-  } else if (any(check_hist)) {
-    stop("All historical slots should be filled")
   }
 
   return(SOM)
