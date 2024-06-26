@@ -10,14 +10,9 @@
 \usage{
 MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford, state)
 
-SOM2MOM(SOM, start = list())
+SOM2MOM(SOM)
 
-make_Stock(
-  SOM,
-  NOS = TRUE,
-  stage = c("immature", "return", "escapement"),
-  start = list()
-)
+make_Stock(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 
 make_Fleet(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 }
@@ -33,9 +28,6 @@ make_Fleet(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 \item{Ford}{Data frame of phenotypic trait values saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
-
-\item{start}{An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
-simulation}
 
 \item{NOS}{Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish}
 
@@ -59,10 +51,4 @@ simulation}
 }
 
 \code{\link[=salmonMSE]{salmonMSE()}} is the wrapper function that coordinates the simulation and the output.
-}
-\examples{
-\dontrun{
-# One thousand natural and hatchery smolts in the first year
-SOM <- SOM2MOM(SOM, start = list(Natural = 1e3, Hatchery = 1e3))
-}
 }

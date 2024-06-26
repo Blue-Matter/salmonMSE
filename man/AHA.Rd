@@ -4,12 +4,14 @@
 \alias{AHA}
 \title{All-H Analyzer}
 \usage{
-AHA(SOM, ngen = 100)
+AHA(SOM, ngen = 100, silent = FALSE)
 }
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
 
 \item{ngen}{Integer, the number of generations for which to run the simulation}
+
+\item{silent}{Logical, indicates whether to silence messages to the R console}
 }
 \value{
 A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.

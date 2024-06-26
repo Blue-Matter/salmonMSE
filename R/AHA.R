@@ -7,10 +7,11 @@
 #'
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param ngen Integer, the number of generations for which to run the simulation
+#' @param silent Logical, indicates whether to silence messages to the R console
 #' @return A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
 #'
 #' @export
-AHA <- function(SOM, ngen = 100) {
+AHA <- function(SOM, ngen = 100, silent = FALSE) {
   SOM <- check_SOM(SOM)
 
   if (sum(SOM@u_preterminal)) {
@@ -21,6 +22,37 @@ AHA <- function(SOM, ngen = 100) {
   if (SOM@SRrel != "BH") {
     warning("Only Beverton-Holt smolt production is used in AHA. Setting SOM@SRrel = \"BH\"")
     SOM@SRrel <- "BH"
+  }
+
+  if (!length(SOM@capacity_smolt)) {
+    stop("Need to specify SOM@capacity_smolt")
+  }
+
+  age_mature <- SOM@p_mature[1, , 1] > 0
+  age_mature <- which(age_mature)[1]
+  message("Age of maturity assumed to be: ", age_mature)
+
+  fec <- SOM@fec[age_mature]
+  SOM@fec <- fec
+  message("Fecundity of spawners assumed to be: ", fec)
+
+  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+  if (do_hatchery) {
+    fec_brood <- SOM@fec_brood[age_mature]
+    message("Fecundity of broodtake assumed to be: ", fec_brood)
+  } else {
+    fec_brood <- 0
+  }
+  SOM@fec_brood <- fec_brood
+
+  message("SAR calculated from survival from Mocean to age ", age_mature)
+
+  surv_NOS <- surv_HOS <- matrix(1, SOM@nsim, age_mature)
+  for (a in 2:age_mature) {
+    surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Mocean_NOS[, a-1, 1])
+    if (do_hatchery) {
+      surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Mocean_HOS[, a-1, 1])
+    }
   }
 
   if (SOM@m > 0) {
@@ -35,7 +67,7 @@ AHA <- function(SOM, ngen = 100) {
     )
   }
 
-  output_sim <- lapply(1:SOM@nsim, .AHA_wrapper, SOM = SOM, ngen = ngen)
+  output_sim <- lapply(1:SOM@nsim, .AHA_wrapper, SOM = SOM, ngen = ngen, SAR_NOS = surv_NOS[, age_mature], SAR_HOS = surv_HOS[, age_mature])
   var_report <- names(output_sim[[1]])
 
   output <- lapply(var_report, function(i) {
@@ -47,7 +79,7 @@ AHA <- function(SOM, ngen = 100) {
 }
 
 
-.AHA_wrapper <- function(x, SOM, ngen) {
+.AHA_wrapper <- function(x, SOM, ngen, SAR_NOS, SAR_HOS) {
 
   if (SOM@m > 0) {
     .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
@@ -60,24 +92,23 @@ AHA <- function(SOM, ngen = 100) {
   }
 
   output <- .AHA(
-    prod_adult = SOM@prod_smolt[x] * SOM@prod_smolt_improve * SOM@SAR_NOS[x],
-    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SOM@SAR_NOS[x],
-    #capacity_smolt = 1.917e6,
-    fec_spawn = SOM@fec,
+    prod_adult = SOM@kappa[x] * SOM@kappa_improve,
+    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SAR_NOS[x],
+    fec_spawn = sum(SOM@fec),
     p_female = SOM@p_female,
-    surv_ocean = SOM@SAR_NOS[x],
+    surv_ocean = SAR_NOS[x],
     surv_passage_juv = 1,
     surv_passage_adult = 1,
     u_HOR = c(u_HOR, 0, 0, 0),
     u_NOR = c(u_NOR, 0, 0, 0),
     surv_pre_spawn = SOM@s_prespawn,
-    fec_brood = SOM@fec_brood,
+    fec_brood = sum(SOM@fec_brood),
     surv_egg_smolt = SOM@s_egg_smolt,
     surv_egg_subyearling = SOM@s_egg_subyearling,
     capacity_spawn_em = 1e12,
     capacity_smolt_adult = 1e12,
-    surv_adult_return_of_yearling = SOM@SAR_HOS[x],
-    surv_adult_return_of_subyearling = SOM@SAR_HOS[x],
+    surv_adult_return_of_yearling = SAR_HOS[x],
+    surv_adult_return_of_subyearling = SAR_HOS[x],
     RRS_HOS = SOM@gamma,
     p_weir_efficiency = SOM@premove_HOS,
     p_return_hatchery = SOM@phatchery,

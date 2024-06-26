@@ -65,8 +65,9 @@ Harvest <- new(
   vulT = c(1, 1, 1)
 )
 
+# 1000 NOS and HOS for the first generation
 HistN <- array(0, c(3, 3, 2, 2))
-HistN[, 1, 1, 1] <- 1000
+HistN[, 1, 1, ] <- 1000/0.203/0.01 # Number of smolts is 1000 divided by harvest rate and SAR
 
 Historical <- new(
   "Historical",
@@ -81,7 +82,7 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical = Historical)
 
 # run salmonMSE
-SMSE <- salmonMSE(SOM, convert = FALSE)
+SMSE <- salmonMSE(SOM)
 class?SMSE # Definitions of arrays
 
 # run AHA - list of vectors by generation
@@ -101,6 +102,6 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
 
 compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
 
-#png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
-compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.3)
-#dev.off()
+png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
+compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.9731)
+dev.off()

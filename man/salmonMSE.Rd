@@ -4,20 +4,10 @@
 \alias{salmonMSE}
 \title{Run salmonMSE}
 \usage{
-salmonMSE(
-  SOM,
-  start = list(),
-  Hist = FALSE,
-  silent = FALSE,
-  trace = FALSE,
-  convert = TRUE
-)
+salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 }
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
-
-\item{start}{An optional named list to specify the natural smolt production ('Natural') and smolt releases ('Hatchery') at the start of the
-simulation}
 
 \item{Hist}{Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data}
 
@@ -38,11 +28,5 @@ If \code{Hist = TRUE} a multiHist object (list). Otherwise, if \code{convert = T
 \item Generates the historical reconstruction of the state variables
 \item Runs projection (if \code{Hist = FALSE})
 \item Converts the openMSE output, along with additional state variables recorded in \link{salmonMSE_env}, into a salmon MSE object (SMSE) via \code{\link[=MMSE2SMSE]{MMSE2SMSE()}}
-}
-}
-\examples{
-\dontrun{
-# One thousand natural and hatchery smolts in the first year
-myMSE <- salmonMSE(SOM, start = list(Natural = 1e3, Hatchery = 1e3))
 }
 }

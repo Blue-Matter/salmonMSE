@@ -5,7 +5,7 @@
 #' @return
 #' `make_Stock`: List containing a \linkS4class{Stock} object and accompanying custom parameters list
 #' @export
-make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"), start = list()) {
+make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapement")) {
   stage <- match.arg(stage)
 
   #### Stock object ----
