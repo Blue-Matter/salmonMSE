@@ -53,7 +53,9 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
       } else {
         Effort <- 0
       }
-    } else
+    } else { # Escapement
+      Effort <- 0
+    }
 
     lapply(1:nf, function(f) {
       Rec <- new("Rec")
@@ -62,6 +64,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
       return(Rec)
     })
   })
+
   return(multiRec)
 }
 
