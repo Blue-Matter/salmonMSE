@@ -9,7 +9,6 @@
 #' `MMSE2SMSE`: \linkS4class{SMSE} object
 #' @export
 MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
-
   ns <- 1 # Number of stocks
   nage <- SOM@maxage
 
@@ -37,29 +36,40 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   p_NOS_return <- 2 # MSEtool population index for returning NOS
   p_NOS_escapement <- 3 # NOS escapement
 
-  age_bio <- seq(1, nage)
-  age_escapement <- age_bio + 1 # MSEtool age class
+  # openMSE year and age indices
+  t1 <- seq(1, 2 * SOM@proyears, 2)
+  t2 <- seq(2, 2 * SOM@proyears, 2)
+
+  a1 <- seq(1, 2 * SOM@maxage + 1, 2)
+  a2 <- seq(2, 2 * SOM@maxage + 1, 2)
+
+  a_imm <- a1[-length(a1)]
+  a_return <- a2
+  a_esc <- a1[-1]
+  #age_escapement <- age_bio + 1 # MSEtool age class
 
   f <- 1 # Fleet
   mp <- 1 # Only MP run per OM
-  y_spawn <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0) - 1
 
-  Return_NOS[, ns, age_bio, ] <- apply(MMSE@N[, p_NOS_return, age_bio, mp, , ], 1:3, sum)
-  Escapement_NOS[, ns, age_bio, -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, age_escapement, mp, -1, ], 1:3, sum)
+  y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0)
+  y_spawn <- 0.5 * (y_spawnOM - 1)
+
+  Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
+  Escapement_NOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , - 1]
 
   # Total catch
-  KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, ]
-  KT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, ]
+  KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
+  KT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]
 
-  DPT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_imm, f, mp, ] - MMSE@Catch[, p_NOS_imm, f, mp, ]
-  DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, f, mp, ] - MMSE@Catch[, p_NOS_return, f, mp, ]
+  DPT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_imm, f, mp, t1] - MMSE@Catch[, p_NOS_imm, f, mp, t1]
+  DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
 
-  ExPT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_imm, f, mp, ])
-  UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, ]/apply(MMSE@N[, p_NOS_imm, age_bio, mp, , ], c(1, 3), sum)
+  ExPT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_imm, f, mp, t1])
+  UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
   UPT_NOS[is.na(UPT_NOS)] <- 0
 
-  ExT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_return, f, mp, ])
-  UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, ]/apply(MMSE@N[, p_NOS_return, age_bio, mp, , ], c(1, 3), sum)
+  ExT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_return, f, mp, t2])
+  UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], c(1, 3), sum)
   UT_NOS[is.na(UT_NOS)] <- 0
 
   do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
@@ -69,21 +79,21 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_HOS_return <- 5 # Population index for returning HOS
     p_HOS_escapement <- 6 # NOS escapement
 
-    Return_HOS[, ns, age_bio, ] <- apply(MMSE@N[, p_HOS_return, age_bio, mp, , ], 1:3, sum)
-    Escapement_HOS[, ns, age_bio, -SOM@proyears] <- apply(MMSE@N[, p_HOS_escapement, age_escapement, mp, -1, ], 1:3, sum)
+    Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
+    Escapement_HOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , -1]
 
-    KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, ]
-    KT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, ]
+    KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
+    KT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]
 
-    DPT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_imm, f, mp, ] - MMSE@Catch[, p_HOS_imm, f, mp, ]
-    DT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_return, f, mp, ] - MMSE@Catch[, p_HOS_return, f, mp, ]
+    DPT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_imm, f, mp, t1] - MMSE@Catch[, p_HOS_imm, f, mp, t1]
+    DT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_return, f, mp, t2] - MMSE@Catch[, p_HOS_return, f, mp, t2]
 
-    ExPT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_imm, f, mp, ])
-    UPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, ]/apply(MMSE@N[, p_HOS_imm, age_bio, mp, , ], c(1, 3), sum)
+    ExPT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_imm, f, mp, t1])
+    UPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]/apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
     UPT_HOS[is.na(UPT_HOS)] <- 0
 
-    ExT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, f, mp, ])
-    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, ]/apply(MMSE@N[, p_HOS_return, age_bio, mp, , ], c(1, 3), sum)
+    ExT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, f, mp, t1])
+    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/apply(MMSE@N[, p_HOS_return, a_imm, mp, t2, ], c(1, 3), sum)
     UT_HOS[is.na(UT_HOS)] <- 0
 
     # NOS + HOS state variables from salmonMSE
@@ -109,10 +119,10 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     # Smolt releases and SAR loss from openMSE
     p_smolt_rel <- 4
     a_smolt <- 1
-    Smolt_Rel[, ns, ] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, , ], 1:2, sum)
+    Smolt_Rel[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     p_smolt <- 1
-    Mocean_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, age_bio, mp, ]
+    Mocean_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
 
     pNOB <- get_salmonMSE_var(state, var = "pNOB")
     pHOSeff <- get_salmonMSE_var(state, var = "pHOSeff")
@@ -135,8 +145,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_spawn <- 3 # NOS escapement
     a_smolt <- 1
 
-    Fry_NOS[, ns, -SOM@proyears] <- MMSE@SSB[, p_spawn, mp, -1] # -1 from 1-year lag
-    Smolt_NOS[, ns, ] <- apply(MMSE@N[, p_smolt, a_smolt, mp, , ], 1:2, sum)
+    Fry_NOS[, ns, y_spawn] <- MMSE@SSB[, p_spawn, mp, y_spawnOM] # -1 from 1-year lag
+    Smolt_NOS[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     PNI[, ns, y_spawn] <- p_wild[, ns, y_spawn] <- 1
   }

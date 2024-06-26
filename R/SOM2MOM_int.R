@@ -15,8 +15,19 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@Name <- paste(ifelse(NOS, "NOS:", "HOS:"), stage)
 
   # Fish spawn at the beginning of the terminal age + 1
-  Stock@maxage <- SOM@maxage
-  n_age <- Stock@maxage + 1
+  n_age <- 2 * SOM@maxage + 1
+  Stock@maxage <- n_age - 1
+  nyears <- 2 * SOM@nyears
+  proyears <- 2 * SOM@proyears
+
+  # Time steps for first and second half of the year
+  t1 <- seq(1, nyears, 2)
+  t2 <- seq(2, nyears, 2)
+
+  all_t1 <- seq(1, nyears + proyears, 2)
+  all_t2 <- seq(2, nyears + proyears, 2)
+
+  a2 <- seq(2, n_age, 2)
 
   # Survival to be modeled in cpars
   Stock@M <- Stock@Msd <- c(0, 0)
@@ -80,7 +91,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@LenCV <- c(0.05, 0.05)
   Stock@Linfsd <- Stock@Ksd <-
     Stock@L50 <- Stock@L50_95 <- c(0, 0)
-  Stock@a <- Stock@b <- 0
+  Stock@a <- Stock@b <- 1
 
   # Ignore area dynamics
   Stock@Size_area_1 <- Stock@Frac_area_1 <- Stock@Prob_staying <- c(0.5, 0.5)
@@ -93,30 +104,28 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   }
 
   # Custom pars
-  # Catch works on the basis of biomass so we need to set weight at age = 1
-  cpars_bio$Wt_age <- array(1, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
-  cpars_bio$Wa <- cpars_bio$Wb <- rep(1, SOM@nsim) # Avoids lm fitting in MSEtool::SampleStockPars()
+  # openMSE catch is in biomass so we need to set weight at age = 1 to operate as numbers
+  cpars_bio$Wt_age <- array(1, c(SOM@nsim, n_age, nyears + proyears))
+  cpars_bio$Wa <- cpars_bio$Wb <- 1 # Avoids lm fitting in MSEtool::SampleStockPars()
 
   # Spawning at the last age class, solely for necessary but irrelevant per recruit calculations
   # Maturity that activates return phase modeled by Herm feature
   # Unfished spawners per recruit must be identical between immature and mature NOS population
-  cpars_bio$Mat_age <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
+  cpars_bio$Mat_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
 
-  if (stage == "escapement") { # All escapement are mature and will spawn
-    cpars_bio$Mat_age[] <- 1
+  if (stage == "escapement") { # All escapement are mature and will spawn in the beginning of the first half of the year
+    cpars_bio$Mat_age[, , all_t1] <- 1
   } else {
     cpars_bio$Mat_age[, n_age, ] <- 1 # No spawning, n_age should be an empty age class
   }
 
-  cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
-  # All ocean survival occurs in the age class prior to maturity
-  # There is a requirement for spawners per recruit spool-up.
-  # Should be okay so long as all fish immature prior to mat_age
+  # Ocean survival occurs in the second time step of the year
+  cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
     if (NOS) {
-      cpars_bio$M_ageArray[, 2:n_age - 1, ] <- SOM@Mocean_NOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mocean_NOS
     } else {
-      cpars_bio$M_ageArray[, 2:n_age - 1, ] <- SOM@Mocean_HOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mocean_HOS
     }
   } else if (stage == "return") {
     cpars_bio$M_ageArray[, n_age, ] <- 0.1 # Return does not experience M, n_age should be an empty age class
@@ -126,49 +135,56 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$M_ageArray[cpars_bio$M_ageArray < .Machine$double.eps] <- .Machine$double.eps
 
   # Unfished spawners per recruit must be identical between immature and mature NOS populations (for BH..?)
-  cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
+  cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
 
   if (stage == "escapement") {
     fec_array <- array(SOM@fec, c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
       aperm(c(2, 1, 3))
+    age_fec <- seq(3, n_age, 2)
     if (NOS) {
-      cpars_bio$Fec_age[, -1, ] <- SOM@p_female * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@p_female * fec_array
     } else {
-      cpars_bio$Fec_age[, -1, ] <- SOM@p_female * SOM@gamma * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@p_female * SOM@gamma * fec_array
     }
   } else {
     cpars_bio$Fec_age[, n_age, ] <- 1
   }
 
-  #cpars_bio$spawn_time_frac <- rep(0, SOM@nsim) # Spawn at the beginning of the year in the age of maturity + 1
+  #cpars_bio$spawn_time_frac <- rep(0, SOM@nsim) # Spawn at the beginning of the year, i.e., same time step when age-1 smolts appear
 
   # No plus group
   cpars_bio$plusgroup <- 0L
 
   # Generate recruitment devs from Historical object. Specify future rec dev = 1, updated by hatchery Rel
-  Perr_y <- matrix(1, SOM@nsim, SOM@maxage + SOM@nyears + SOM@proyears)
+  Perr_y <- matrix(0, SOM@nsim, Stock@maxage + nyears + proyears)
 
-  if (length(SOM@HistN)) {
-    if (stage == "immature") {
+  if (stage == "immature") {
+
+    if (NOS) {
+      Perr_y[, Stock@maxage + all_t1] <- 1
+    }
+
+    if (length(SOM@HistN)) {
       pind <- ifelse(NOS, 1, 2)
 
-      # With custom SRR, we set R0 = 1!
-      Ninit <- SOM@HistN[, , 1, pind]
+      # Initial abundance vector. With custom SRR, we set R0 = 1!
+      Ninit <- SOM@HistN[, -1, 1, pind]
 
-      NPR <- matrix(NA_real_, SOM@nsim, SOM@maxage)
+      NPR <- matrix(NA_real_, SOM@nsim, Stock@maxage)
       NPR[, 1] <- 1
-      for (a in 2:SOM@maxage) {
+      for (a in 2:Stock@maxage) {
         NPR[, a] <- NPR[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
       }
-      Perr_init <- Ninit/NPR
-      Perr_y[, seq(SOM@maxage + 1, 2)] <- Perr_init
-      Perr_y[, 1] <- 0
+      age_init <- seq(1, Stock@maxage, 2)[-1]
 
-      # Main ts
+      Perr_init <- Ninit/NPR[, rev(age_init)]
+      Perr_y[, rev(age_init)] <- Perr_init
+
+      # Main historical ts
       if (NOS) {
-        Perr_y[, SOM@maxage + 2:SOM@nyears] <- 1
+        Perr_y[, Stock@maxage + t1] <- SOM@HistN[, 1, , pind]
       } else {
-        Perr_y[, SOM@maxage + 2:SOM@nyears] <- SOM@HistN[, 1, -1, pind]
+        Perr_y[, Stock@maxage + t1] <- SOM@HistN[, 1, , pind]
       }
     }
   }
@@ -194,9 +210,22 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     "return" = "Terminal fishery",
     "escapement" = "Escapement placeholder"
   )
-  Fleet@nyears <- SOM@nyears
+
+  n_age <- 2 * SOM@maxage + 1
+  maxage <- n_age - 1
+  nyears <- 2 * SOM@nyears
+  proyears <- 2 * SOM@proyears
+
+  Fleet@nyears <- nyears
   Fleet@CurrentYr <- Sys.Date() %>% format("%Y") %>% as.numeric()
   Fleet@EffYears <- 1:Fleet@nyears
+
+  # Time step for the first and second half of the year
+  t1 <- seq(1, nyears, 2)
+  t2 <- seq(2, nyears, 2)
+
+  a1 <- seq(1, n_age, 1)
+  a2 <- seq(2, n_age, 2)
 
   Fleet@EffLower <- c(0, 0.1)
   Fleet@EffUpper <- c(0, 0.1)
@@ -220,39 +249,30 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet <- list()
   cpars_fleet$qs <- rep(1, SOM@nsim)
 
+  cpars_fleet$Find <- matrix(0.1, SOM@nsim, Fleet@nyears) # Escapement experiences zero F
   Find <- ifelse(NOS, 1, 2)
   if (stage == "immature") {
     if (length(SOM@HistFPT)) {
       F_hist <- SOM@HistFPT[, , Find]
-    } else {
-      F_hist <- matrix(0.1, SOM@nsim, SOM@nyears)
+      cpars_fleet$Find[, t1] <- F_hist
     }
   } else if (stage == "return") {
-
     if (length(SOM@HistFT)) {
       F_hist <- SOM@HistFT[, , Find]
-    } else {
-      F_hist <- matrix(0.1, SOM@nsim, SOM@nyears)
+      cpars_fleet$Find[, t2] <- F_hist
     }
-
-  } else {
-    F_hist <- matrix(0, SOM@nsim, SOM@nyears)
   }
-  cpars_fleet$Find <- F_hist
 
-  maxage <- SOM@maxage
-  n_age <- maxage + 1
-  cpars_fleet$V <- array(0, c(SOM@nsim, n_age, SOM@nyears + SOM@proyears))
-
-  # Need to define selectivity in all populations (life stages) in order to remove excessive messages about selectivity < 0.01.
+  cpars_fleet$V <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
 
     if (all(!SOM@vulPT)) {
+      # Define dummy selectivity to remove excessive messages about selectivity < 0.01.
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      cpars_fleet$V[, -n_age, ] <- SOM@vulPT %>%
-        array(c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
+      vulPT <- array(SOM@vulPT, c(SOM@maxage, SOM@nsim, nyears + proyears)) %>%
         aperm(c(2, 1, 3))
+      cpars_fleet$V[, a1, ] <- vulPT
     }
 
   } else if (stage == "return") {
@@ -260,13 +280,13 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     if (all(!SOM@vulT)) {
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      cpars_fleet$V[, -n_age, ] <- SOM@vulT %>%
-        array(c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
+      vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, nyears + proyears)) %>%
         aperm(c(2, 1, 3))
+      cpars_fleet$V[, a2, ] <- vulT
     }
 
   } else {
-    cpars_fleet$V[, n_age - 1, ] <- 1
+    cpars_fleet$V[, n_age, ] <- 1
   }
 
   cpars_fleet$retA <- cpars_fleet$V

@@ -28,9 +28,9 @@ SOM2MOM <- function(SOM, start = list()) {
 
   MOM <- suppressMessages(new("MOM"))
   MOM@Name <- SOM@Name
-  MOM@proyears <- SOM@proyears
+  MOM@proyears <- 2 * SOM@proyears
   MOM@nsim <- SOM@nsim
-  MOM@interval <- SOM@proyears + 1
+  MOM@interval <- 1
   MOM@pstar <- 0.5
   MOM@maxF <- 4.61 #-log(0.01) # Harvest rate can't exceed 0.99
   MOM@reps <- 1
@@ -101,15 +101,15 @@ SOM2MOM <- function(SOM, start = list()) {
       which(SOM@p_mature[x, , y] > 0)[1]
     })
   })
-  Herm_escapement <- sapply(1:SOM@nsim, function(x) {
-    sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(0:SOM@maxage >= first_mature_age[x, y], 1, 0))
+  nage <- 2 * SOM@maxage + 1
+  nyears <- 2 * SOM@nyears
+  proyears <- 2 * SOM@proyears
+  Herm_escapement <- Herm_mature <- array(0, c(SOM@nsim, nage, nyears + proyears))
+  Herm_escapement[, 2 * seq(1, SOM@maxage) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
+    sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:SOM@maxage >= first_mature_age[x, y], 1, 0))
   }, simplify = "array") %>%
     aperm(c(3, 1, 2))
-
-  Herm_mature <- sapply(1:SOM@nsim, function(x) {
-    sapply(1:(SOM@nyears + SOM@proyears), function(y) c(SOM@p_mature[x, , y], 1))
-  }, simplify = "array") %>%
-    aperm(c(3, 1, 2))
+  Herm_mature[, 2 * seq(1, SOM@maxage), seq(2, nyears + proyears, 2)] <- SOM@p_mature
 
   # For NOS
   Herm <- list(Herm_escapement, Herm_mature)
