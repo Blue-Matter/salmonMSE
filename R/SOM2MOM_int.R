@@ -164,7 +164,12 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       Recruit <- Njuv * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
       Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
       SpawnerOM <- Recruit * exp(-Fterm) # Escapement
-      SpawnerHist <- SOM@HistSpawner[x, , , pind]
+
+      if (length(SOM@HistSpawner)) {
+        SpawnerHist <- SOM@HistSpawner[x, , , pind]
+      } else {
+        SpawnerHist <- SpawnerOM
+      }
 
       if (NOS) {
         EggOM <- colSums(SpawnerOM * SOM@fec * SOM@p_female)
