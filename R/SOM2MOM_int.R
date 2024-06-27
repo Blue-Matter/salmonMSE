@@ -32,11 +32,8 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # Survival to be modeled in cpars
   Stock@M <- Stock@Msd <- c(0, 0)
 
-  # Need custom SRR partial maturity at age
-  h <- R0 <- rep(1, SOM@nsim)
-
+  # Stock-recruit relationship (custom option)
   Stock@SRrel <- 3
-
   Stock@h <- rep(0.99, 2)
   Stock@R0 <- 1
   if (NOS) {
@@ -135,7 +132,6 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   # Unfished spawners per recruit must be identical between immature and mature NOS populations (for BH..?)
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
-
   if (stage == "escapement") {
     fec_array <- array(SOM@fec, c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
       aperm(c(2, 1, 3))
@@ -155,54 +151,63 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$plusgroup <- 0L
 
   # Generate recruitment devs from Historical object. Specify future rec dev = 1, updated by hatchery Rel
-  Perr_y <- matrix(0, SOM@nsim, Stock@maxage + nyears + proyears)
+  cpars_bio$Perr_y <- matrix(0, SOM@nsim, Stock@maxage + nyears + proyears)
+  if (stage == "immature" && NOS) cpars_bio$Perr_y[, Stock@maxage + all_t1] <- 1
 
-  if (stage == "immature") {
+  if (length(SOM@HistN) && stage %in% c("immature", "escapement")) {
+    pind <- ifelse(NOS, 1, 2)
 
-    if (NOS) {
-      Perr_y[, Stock@maxage + all_t1] <- 1
-    }
+    # Main historical ts, get deviations in fecundity (escapement) and Perr_y (immature)
+    HistPars <- lapply(1:SOM@nsim, function(x) {
+      Njuv <- SOM@HistN[x, , , pind]
+      Fjuv <- outer(SOM@vulPT, SOM@HistFPT[x, , pind])
+      Recruit <- Njuv * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
+      Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
+      SpawnerOM <- Recruit * exp(-Fterm) # Escapement
+      SpawnerHist <- SOM@HistSpawner[x, , , pind]
 
-    if (length(SOM@HistN)) {
-      pind <- ifelse(NOS, 1, 2)
+      if (NOS) {
+        EggOM <- colSums(SpawnerOM * SOM@fec * SOM@p_female)
+      } else {
+        EggOM <- colSums(SpawnerOM * SOM@gamma * SOM@fec * SOM@p_female)
+      }
+      EggHist <- colSums(SpawnerHist * SOM@fec * SOM@p_female)
+      fec_ratio <- EggHist/EggOM
+      fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
 
+      if (NOS) {
+        Smolt_pred <- SRRfun(EggHist, SRRpars[x, ])
+        Smolt_actual <- SOM@HistN[x, 1, , pind]
+        dev <- c(Smolt_actual[1], Smolt_actual[-1]/Smolt_pred[-SOM@nyears])
+      } else {
+        dev <- SOM@HistN[x, 1, , pind]
+      }
+      list(dev = dev, fec_ratio = fec_ratio)
+    })
+
+    # Specify rec devs
+    if (stage == "immature") {
       # Initial abundance vector. With custom SRR, we set R0 = 1!
-      Ninit <- SOM@HistN[, -1, 1, pind]
-
       NPR <- matrix(NA_real_, SOM@nsim, Stock@maxage)
       NPR[, 1] <- 1
       for (a in 2:Stock@maxage) {
         NPR[, a] <- NPR[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
       }
       age_init <- seq(1, Stock@maxage, 2)[-1]
-
+      Ninit <- SOM@HistN[, -1, 1, pind]
       Perr_init <- Ninit/NPR[, rev(age_init)]
-      Perr_y[, rev(age_init)] <- Perr_init
+      cpars_bio$Perr_y[, rev(age_init)] <- Perr_init
 
-      # Main historical ts
-      if (NOS) {
+      Perr_main <- sapply(HistPars, getElement, "dev")
+      cpars_bio$Perr_y[, Stock@maxage + t1] <- t(Perr_main)
 
-        Perr_main <- sapply(1:SOM@nsim, function(x) {
-          Njuv <- SOM@HistN[x, , , pind]
-          Fjuv <- outer(SOM@vulPT, SOM@HistFPT[x, , pind])
-          Recruit <- Njuv * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
-          Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
-          Spawner <- Recruit * exp(-Fterm)
-          Egg_pred <- colSums(Spawner * SOM@fec * SOM@p_female)
-          Smolt_pred <- SRRfun(Egg_pred, SRRpars[x, ])
-          Smolt_actual <- SOM@HistN[x, 1, , pind]
-          dev <- c(Smolt_actual[1], Smolt_actual[-1]/Smolt_pred[-SOM@nyears])
-          return(dev)
-        })
-
-        Perr_y[, Stock@maxage + t1] <- t(Perr_main)
-      } else {
-        Perr_y[, Stock@maxage + t1] <- SOM@HistN[, 1, , pind]
-      }
+    } else if (stage == "escapement") {
+      # Specify fecundity adjustment to match escapement to spawners
+      fec_adjust <- replicate(length(age_fec), sapply(HistPars, getElement, "fec_ratio")) %>%
+        aperm(c(2, 3, 1))
+      cpars_bio$Fec_age[, age_fec, t1 + 2] <- cpars_bio$Fec_age[, age_fec, t1 + 2] * fec_adjust
     }
   }
-
-  cpars_bio$Perr_y <- Perr_y
 
   return(list(Stock = Stock, cpars_bio = cpars_bio))
 }
