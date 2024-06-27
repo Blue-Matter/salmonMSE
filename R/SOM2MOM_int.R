@@ -267,7 +267,7 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet <- list()
   cpars_fleet$qs <- rep(1, SOM@nsim)
 
-  cpars_fleet$Find <- matrix(0.1, SOM@nsim, Fleet@nyears) # Escapement experiences zero F
+  cpars_fleet$Find <- matrix(0, SOM@nsim, Fleet@nyears) # Escapement experiences zero F
   Find <- ifelse(NOS, 1, 2)
   if (stage == "immature") {
     if (length(SOM@HistFPT)) {
@@ -281,6 +281,10 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       cpars_fleet$Find[, t1] <- 0
       cpars_fleet$Find[, t2] <- F_hist
     }
+  }
+  if (stage %in% c("immature", "return")) { # FinF must be greater than zero
+    FinF <- cpars_fleet$Find[, nyears] < 1e-4
+    cpars_Fleet$Find[FinF, nyears] <- 1e-4
   }
 
   cpars_fleet$V <- array(0, c(SOM@nsim, n_age, nyears + proyears))
