@@ -303,52 +303,56 @@ check_SOM <- function(SOM) {
   }
 
   # Various hist objects
-  # Length nyears to `nsim, nyears` matrix or `nsim, nyears, 2` array or `nsim, maxage, nyears` array or `nsim, maxage, nyears, 2`
   var_hist <- c("HistN", "HistSpawner", "HistFPT", "HistFT")
-  for(i in var_hist) {
-    if (length(slot(SOM, i))) {
+  check_hist <- sapply(var_hist, function(i) length(slot(SOM, i)) > 0)
+  if (all(check_hist)) {
+    for(i in var_hist) {
+      if (length(slot(SOM, i))) {
 
-      dim_i <- dim(slot(SOM, i))
-      if (is.null(dim_i)) { # Check if vector
-        if (i == "HistSpawner") {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-        } else if (i == "HistN") {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-        } else if (i %in% c("HistFPT", "HistFT")) {
-          if (length(slot(SOM, i)) != SOM@nyears) {
-            stop("Slot ", i, " must be length ", SOM@nyears)
+        dim_i <- dim(slot(SOM, i))
+        if (is.null(dim_i)) { # Check if vector
+          if (i == "HistSpawner") {
+            stop("Slot ", i, " must be an array of dimension ",
+                 paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+          } else if (i == "HistN") {
+            stop("Slot ", i, " must be an array of dimension ",
+                 paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+          } else if (i %in% c("HistFPT", "HistFT")) {
+            if (length(slot(SOM, i)) != SOM@nyears) {
+              stop("Slot ", i, " must be length ", SOM@nyears)
+            }
+            slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
+              aperm(c(2, 1, 3))
           }
-          slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
-            aperm(c(2, 1, 3))
         }
-      }
 
-      dim_i <- dim(slot(SOM, i)) # Re-check with full dimensions
-      if (i == "HistSpawner") {
-        dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
+        dim_i <- dim(slot(SOM, i)) # Re-check with full dimensions
+        if (i == "HistSpawner") {
+          dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
 
-        if (!dim_check) {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
-        }
-      } else if (i == "HistN") {
-        dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
+          if (!dim_check) {
+            stop("Slot ", i, " must be an array of dimension ",
+                 paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+          }
+        } else if (i == "HistN") {
+          dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
 
-        if (!dim_check) {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-        }
-      } else if (i %in% c("HistFPT", "HistFT")) {
-        dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@nyears, 2))
+          if (!dim_check) {
+            stop("Slot ", i, " must be an array of dimension ",
+                 paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+          }
+        } else if (i %in% c("HistFPT", "HistFT")) {
+          dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@nyears, 2))
 
-        if (!dim_check) {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@nyears, 2), collapse = ", "))
+          if (!dim_check) {
+            stop("Slot ", i, " must be an array of dimension ",
+                 paste(c(SOM@nsim, SOM@nyears, 2), collapse = ", "))
+          }
         }
       }
     }
+  } else if (any(check_hist)) {
+    stop("All historical slots should be filled")
   }
 
   return(SOM)
