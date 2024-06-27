@@ -187,6 +187,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       } else {
         dev <- SOM@HistN[x, 1, , pind]
       }
+      dev[is.na(dev)] <- 0
       list(dev = dev, fec_ratio = fec_ratio)
     })
 
@@ -213,6 +214,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       cpars_bio$Fec_age[, age_fec, t1 + 2] <- cpars_bio$Fec_age[, age_fec, t1 + 2] * fec_adjust
     }
   }
+  cpars_bio$AC <- rep(0, SOM@nsim)
 
   return(list(Stock = Stock, cpars_bio = cpars_bio))
 }
@@ -289,7 +291,7 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   }
   if (stage %in% c("immature", "return")) { # FinF must be greater than zero
     FinF <- cpars_fleet$Find[, nyears] < 1e-4
-    cpars_Fleet$Find[FinF, nyears] <- 1e-4
+    cpars_fleet$Find[FinF, nyears] <- 1e-4
   }
 
   cpars_fleet$V <- array(0, c(SOM@nsim, n_age, nyears + proyears))

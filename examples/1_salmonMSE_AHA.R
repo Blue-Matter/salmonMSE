@@ -10,6 +10,7 @@ library(salmonMSE)
 
 class?SOM # Definition of inputs
 
+SAR <- 0.01
 Bio <- new(
   "Bio",
   nsim = 3,
@@ -18,7 +19,7 @@ Bio <- new(
   SRrel = "BH",
   capacity_smolt = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
   kappa = 3,                  # Productivity in recruits per spawner
-  Mocean_NOS = c(0, -log(0.01), 0),
+  Mocean_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49
   #strays = 0
@@ -66,20 +67,20 @@ Harvest <- new(
 )
 
 # 1000 NOS and HOS for the first generation
-HistN <- array(0, c(3, 3, 2, 2))
-HistN[, 1, 1, ] <- 1000/0.203/0.01 # Number of smolts is 1000 divided by harvest rate and SAR
+nyears <- 2
+HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears, 2))
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/Harvest@u_terminal/SAR
 
 Historical <- new(
   "Historical",
   HistN = HistN
 )
 
-
 # Stitched salmon operating model
 SOM <- new("SOM",
            nyears = 2,
            proyears = 50,
-           Bio, Habitat, Hatchery, Harvest, Historical = Historical)
+           Bio, Habitat, Hatchery, Harvest, Historical)
 
 # run salmonMSE
 SMSE <- salmonMSE(SOM)
