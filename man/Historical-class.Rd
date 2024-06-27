@@ -12,14 +12,11 @@ The component of the operating model that specifies the historical dynamics.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{HistSmolt}}{Vector by historical years (\code{nyears}) or a matrix by \verb{[nsim, nyears]}. The natural smolt production.}
+\item{\code{HistSpawner}}{Array by \verb{[nsim, maxage, nyears, 2]}. Spawners at age in the natural environment. For the fourth dimension, the first array corresponds
+to natural origin spawners and the second array corresponds to hatchery origin spawners.}
 
-\item{\code{HistSpawner}}{Array by \verb{[nsim, maxage, nyears]}. Total spawners (natural and hatchery origin combined) in the natural environment.}
-
-\item{\code{HistN}}{Array by \verb{[nsim, maxage, nyears, 2]}. The abundance of immature fish at the beginning of the annual time step. The first array slice
-corresponds to natural origin fish and the second array slice corresponds to hatchery origin fish.}
-
-\item{\code{HistYearling}}{Vector by historical years. Hatchery releases (number of smolts).}
+\item{\code{HistN}}{Array by \verb{[nsim, maxage, nyears, 2]}. The abundance of immature fish at the beginning of the annual time step. For the fourth dimension, the first array corresponds
+to natural origin fish and the second array corresponds to hatchery origin fish.}
 
 \item{\code{HistFPT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the preterminal fishery.
 The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish.}

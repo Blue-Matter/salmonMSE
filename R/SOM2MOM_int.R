@@ -112,7 +112,6 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # Maturity that activates return phase modeled by Herm feature
   # Unfished spawners per recruit must be identical between immature and mature NOS population
   cpars_bio$Mat_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
-
   if (stage == "escapement") { # All escapement are mature and will spawn in the beginning of the first half of the year
     cpars_bio$Mat_age[, , all_t1] <- 1
   } else {
@@ -182,7 +181,21 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
       # Main historical ts
       if (NOS) {
-        Perr_y[, Stock@maxage + t1] <- SOM@HistN[, 1, , pind]
+
+        Perr_main <- sapply(1:SOM@nsim, function(x) {
+          Njuv <- SOM@HistN[x, , , pind]
+          Fjuv <- outer(SOM@vulPT, SOM@HistFPT[x, , pind])
+          Recruit <- Njuv * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
+          Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
+          Spawner <- Recruit * exp(-Fterm)
+          Egg_pred <- colSums(Spawner * SOM@fec * SOM@p_female)
+          Smolt_pred <- SRRfun(Egg_pred, SRRpars[x, ])
+          Smolt_actual <- SOM@HistN[x, 1, , pind]
+          dev <- c(Smolt_actual[1], Smolt_actual[-1]/Smolt_pred[-SOM@nyears])
+          return(dev)
+        })
+
+        Perr_y[, Stock@maxage + t1] <- t(Perr_main)
       } else {
         Perr_y[, Stock@maxage + t1] <- SOM@HistN[, 1, , pind]
       }
@@ -217,14 +230,14 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   proyears <- 2 * SOM@proyears
 
   Fleet@nyears <- nyears
-  Fleet@CurrentYr <- Sys.Date() %>% format("%Y") %>% as.numeric()
+  Fleet@CurrentYr <- nyears
   Fleet@EffYears <- 1:Fleet@nyears
 
   # Time step for the first and second half of the year
   t1 <- seq(1, nyears, 2)
   t2 <- seq(2, nyears, 2)
 
-  a1 <- seq(1, n_age, 1)
+  a1 <- seq(1, 2 * SOM@maxage, 2)
   a2 <- seq(2, n_age, 2)
 
   Fleet@EffLower <- c(0, 0.1)
@@ -255,10 +268,12 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     if (length(SOM@HistFPT)) {
       F_hist <- SOM@HistFPT[, , Find]
       cpars_fleet$Find[, t1] <- F_hist
+      cpars_fleet$Find[, t2] <- 0
     }
   } else if (stage == "return") {
     if (length(SOM@HistFT)) {
       F_hist <- SOM@HistFT[, , Find]
+      cpars_fleet$Find[, t1] <- 0
       cpars_fleet$Find[, t2] <- F_hist
     }
   }
@@ -289,13 +304,15 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     cpars_fleet$V[, n_age, ] <- 1
   }
 
-  cpars_fleet$retA <- cpars_fleet$V
   if (SOM@m > 0) {
+    cpars_fleet$retA <- cpars_fleet$V
+    retAproj <- cpars_fleet$retA[, , nyears + seq(1, proyears)]
     if (NOS) {
-      cpars_fleet$retA[] <- 1e-8
+      retAproj[] <- .Machine$double.eps
     } else {
-      cpars_fleet$retA <- cpars_fleet$V * SOM@m
+      retAproj[retAproj > 0] <- SOM@m
     }
+    cpars_fleet$retA[, , nyears + seq(1, proyears)] <- retAproj
   }
 
   return(list(Fleet = Fleet, cpars_fleet = cpars_fleet))

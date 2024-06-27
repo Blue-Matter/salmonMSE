@@ -15,8 +15,6 @@
 #' @return
 #' `SOM2MOM`: \linkS4class{MOM} object
 SOM2MOM <- function(SOM) {
-
-  # Check SOM here
   SOM <- check_SOM(SOM)
 
   MOM <- suppressMessages(new("MOM"))
@@ -98,11 +96,16 @@ SOM2MOM <- function(SOM) {
   nyears <- 2 * SOM@nyears
   proyears <- 2 * SOM@proyears
   Herm_escapement <- Herm_mature <- array(0, c(SOM@nsim, nage, nyears + proyears))
+
+  # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
+  Herm_mature[, 2 * seq(1, SOM@maxage), seq(2, nyears + proyears, 2)] <- SOM@p_mature
+
+  # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
+  # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
   Herm_escapement[, 2 * seq(1, SOM@maxage) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
     sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:SOM@maxage >= first_mature_age[x, y], 1, 0))
   }, simplify = "array") %>%
     aperm(c(3, 1, 2))
-  Herm_mature[, 2 * seq(1, SOM@maxage), seq(2, nyears + proyears, 2)] <- SOM@p_mature
 
   # For NOS
   Herm <- list(Herm_escapement, Herm_mature)
@@ -143,7 +146,9 @@ SOM2MOM <- function(SOM) {
     # and fecundity of broodtake (identical between natural and hatchery escapement)
     # This is a management action, cannot be stochastic
     # No imports
-    egg_local <- SOM@n_yearling/SOM@s_egg_smolt + SOM@n_subyearling/SOM@s_egg_subyearling
+    egg_yearling <- ifelse(SOM@n_yearling > 0, SOM@n_yearling/SOM@s_egg_smolt, 0)
+    egg_subyearling <- ifelse(SOM@n_subyearling > 0, SOM@n_subyearling/SOM@s_egg_subyearling, 0)
+    egg_local <- egg_yearling + egg_subyearling
 
     # Survival of eggs in the hatchery
     p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
@@ -209,7 +214,7 @@ SOM2MOM <- function(SOM) {
   }
 
   MOM@Rel <- Rel
-  if (length(Rel)) MOM@cpars$control <- list(HistRel = FALSE)
+  MOM@cpars$control <- list(HistRel = FALSE, HermEq = FALSE)
 
   return(MOM)
 }
@@ -299,43 +304,30 @@ check_SOM <- function(SOM) {
 
   # Various hist objects
   # Length nyears to `nsim, nyears` matrix or `nsim, nyears, 2` array or `nsim, maxage, nyears` array or `nsim, maxage, nyears, 2`
-  var_hist <- c("HistSmolt", "HistYearling", "HistSpawner", "HistFPT", "HistFT", "HistN")
+  var_hist <- c("HistN", "HistSpawner", "HistFPT", "HistFT")
   for(i in var_hist) {
     if (length(slot(SOM, i))) {
-      dim_i <- dim(slot(SOM, i))
-      if (is.null(dim_i)) {
 
+      dim_i <- dim(slot(SOM, i))
+      if (is.null(dim_i)) { # Check if vector
         if (i == "HistSpawner") {
           stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+               paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
         } else if (i == "HistN") {
           stop("Slot ", i, " must be an array of dimension ",
                paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-        } else {
+        } else if (i %in% c("HistFPT", "HistFT")) {
           if (length(slot(SOM, i)) != SOM@nyears) {
             stop("Slot ", i, " must be length ", SOM@nyears)
           }
-
-          if (i == "HistSmolt") {
-            slot(SOM, i) <- matrix(slot(SOM, i), SOM@nsim, SOM@nyears, byrow = TRUE)
-          } else if (i %in% c("HistFPT", "HistFT")) {
-            slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
-              aperm(c(2, 1, 3))
-          }
+          slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
+            aperm(c(2, 1, 3))
         }
-
       }
 
-      dim_i <- dim(slot(SOM, i)) # Re-check
-      if (i == "HistSmolt") {
-        dim_check <- length(dim_i) == 2 && all(dim_i == c(SOM@nsim, SOM@nyears))
-
-        if (!dim_check) {
-          stop("Slot ", i, " must be a matrix of dimension ",
-               paste(c(SOM@nsim, SOM@nyears), collapse = ", "))
-        }
-      } else if (i == "HistSpawner") {
-        dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears))
+      dim_i <- dim(slot(SOM, i)) # Re-check with full dimensions
+      if (i == "HistSpawner") {
+        dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
 
         if (!dim_check) {
           stop("Slot ", i, " must be an array of dimension ",
