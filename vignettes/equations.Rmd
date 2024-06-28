@@ -18,10 +18,7 @@ knitr::opts_chunk$set(
 library(dplyr)
 ```
 
-While salmonMSE reports state variables by year, the model is configured to model a population by successive generations. 
-Thus, the dynamics equations are currently organized by life stage.
-
-As model development continues, the dynamics can be stated by stock and year.
+salmonMSE utilizes an age-structured model. The population is tracked by age and year but various dynamics correspond to the salmon life stages as described below.
 
 # Definitions
 
@@ -35,167 +32,202 @@ knitr::kable(param)
 
 # Natural production
 
-First, we consider natural production in the absence of fitness effects from the hatchery and habitat improvement.
+First, we consider natural production in the absence of fitness effects from the hatchery improvement.
 
 ## Fry
 
-From the spawners (NOS and HOS) of generation $g-1$, the corresponding fry production for generation $g$ is calculated as:
+From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding fry production of the subsequent generation is calculated as:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec}\\
-\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{\textrm{eff}g-1} \times p^\textrm{female} \times \textrm{Fec}
+\textrm{Fry}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
+\textrm{Fry}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
 \end{align}
 
-where $\textrm{HOS}_{\textrm{eff},g-1} = \gamma \times \textrm{HOS}_{g-1}$.
+where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the superscript denotes the parentage of the progeny.
 
 ## Smolts
 
 Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-recruit relationship, smolt production is
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{NOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{HOS}_g}{1 + \beta(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
 \end{align}
 
-where $\alpha = P_\textrm{smolt} \times p_\textrm{female} \times \textrm{Fec}$ and $\beta = \frac{\alpha}{C_\textrm{smolt}}$
+where $\alpha = \kappa/\phi$ and $\beta = \alpha/{C_\textrm{smolt}}$.
 
 With the Ricker stock-recruit relationship, smolt production is
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \alpha \times 
-\textrm{Fry}^\textrm{NOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}])\\
-\textrm{Smolt}^\textrm{HOS}_g &= \alpha \times 
-\textrm{Fry}^\textrm{HOS}_g\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}])
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
+\textrm{Fry}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
+\textrm{Fry}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])
 \end{align}
 
-where $\alpha = P_\textrm{smolt} \times p_\textrm{female} \times \textrm{Fec}$ and $\beta = \frac{\alpha}{C_\textrm{smolt}\times e}$, $e$ is Euler's number.
+where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$, and the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
 
-```{r SRR, echo = FALSE}
-knitr::include_graphics("../man/figures/SRR.png")
-```
-
-*Comparison of the two smolt production functions alongside the one-to-one line. While the slopes near the origin are identical, the curvature differs at large stock sizes. Productivity is in units of smolts per spawner.*
-
-# Hatchery production
-
-## Broodtake
-
-The target total broodtake is calculated as
-
-$$
-\textrm{Broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{prespawn} p^\textrm{female} \textrm{Fec}^\textrm{brood} s^\textrm{subyearling}}
-$$
-
-The natural broodtake is
-
-$$
-\textrm{NOB}_{g-1} = \textrm{max}(p^\textrm{NOB}_\textrm{target} \times \textrm{Broodtake}, p^\textrm{NOB}_\textrm{max} \times \textrm{NOR}^\textrm{escapement}_{g-1})
-$$
-
-The hatchery broodtake is
-
-$$
-\textrm{HOB}_{g-1} = \textrm{min}(\textrm{Broodtake} - \textrm{NOB}_{g-1}, \textrm{HOR}^\textrm{escapement}_{g-1} \times p^\textrm{hatchery})
-$$
-
-## Smolt releases
-
-From the total broodtake $\textrm{NOB}_{g-1}$ and $\textrm{HOB}_{g-1}$, the smolt releases is calculated as
-
-$$
-\textrm{Smolt}^\textrm{Rel}_g = (\textrm{NOB}_{g-1} + \gamma \times \textrm{HOB}_{g-1}) s^\textrm{prespawn}p^\textrm{female} \textrm{Fec}^\textrm{brood}s^\textrm{hatchery}
-$$
-
-where the average survival of all hatchery fish from the egg to yearling stage is
-
-$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$  and $p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$.
-
-# Pre-terminal fishery
-
-Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, assuming no mark-selective fishing, occurs simultaneously along with marine survival ($\textrm{SAR}$, constant base term). Pre-terminal fishery catch of immature NOS of generation $g$ is calculated as
-
-$$
-\textrm{Catch}^\textrm{NOS,PT}_g = \dfrac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT}_g))[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]
-$$
-
-where $F^\textrm{PT}_g$ is solved such that $u^\textrm{PT} = \frac{F^\textrm{PT,NOS}_g}{Z^\textrm{PT,NOS}_g}(1 - \exp(-Z^\textrm{PT,NOS}_g))$, $Z^\textrm{PT,NOS}_g = F^\textrm{PT,NOS}_g + M^\textrm{SAR,NOS}_g$.
-
-In the absence of fitness effects, $M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS})$.
-
-Similarly, the pre-terminal fishery catch of immature HOS in generation $g$ is
-
-$$
-\textrm{Catch}^\textrm{HOS,PT}_g = \dfrac{F_g^\textrm{PT,HOS}}{Z^\textrm{PT,HOS}_g}(1 - \exp(-Z^\textrm{PT,HOS}_g))\textrm{Smolt}^\textrm{Rel}_g
-$$
-
-and SAR can differ between natural origin and hatchery origin fish.
-
-# Recruitment
-
-The recruitment is calculated as the survival of smolts after pre-terminal harvest and marine survival:
-
-\begin{align}
-\textrm{NOR}_g &= \exp(-Z^\textrm{PT,NOS})[\textrm{Smolt}^\textrm{HOS}_g + \textrm{Smolt}^\textrm{NOS}_g]\\
-\textrm{HOR}_g &= \exp(-Z^\textrm{PT,HOS})\textrm{Smolt}^\textrm{Rel}_g
-\end{align}
-
-## Terminal fishery
-
-Assuming no mark-selective fishing, the retained catch of the terminal ($\textrm{T}$) fishery is calculated from the harvest rate $u$:
-
-\begin{align}
-\textrm{Catch}^\textrm{NOS,T}_g &= u^\textrm{T} \textrm{NOR}_g\\
-\textrm{Catch}^\textrm{HOS,T}_g &= u^\textrm{T} \textrm{HOR}_g
-\end{align}
-
-# Escapement
-
-The escapement consists of the survivors of the terminal fishery:
-
-\begin{align}
-\textrm{NOR}^\textrm{escapement}_g &= (1 - u^\textrm{T}) \textrm{NOR}_g\\
-\textrm{HOR}^\textrm{escapement}_g &= (1 - u^\textrm{T}) \textrm{HOR}_g
-\end{align}
-
-# Spawners
-
-The abundance of natural origin spawners consists of the escapement reduced by the broodtake. 
-
-The hatchery origin spawners is the escapement, reduced by the proportion $p^\textrm{hatchery}$ returning to the hatchery, either by swim-in facilities or direct removal. A second removal term $p^\textrm{HOS}_\textrm{removal}$ removes fish from the spawning grounds, these animals are not available for broodtake.
-
-\begin{align}
-\textrm{NOS}_g &= \textrm{NOR}^\textrm{escapement}_g - \textrm{NOB}_g\\
-\textrm{HOS}_g &= \textrm{NOR}^\textrm{escapement}_g (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
-\end{align}
+If there is knife-edge maturity, i.e., all fish mature at the same age, then the equation simplifies to $\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}$, with $\textrm{SAR}$ as the marine survival.
 
 # Habitat improvement
 
 Habitat improvement can improve either the productivity parameter, capacity parameter, or both. 
 
-Base terms $P_\textrm{smolt}$ and $C_\textrm{smolt}$ are used in the historical period of the model, e.g., for conditioning from data.
-In the projection, the stock recruit parameters $P_\textrm{smolt}^\prime$ and $C_\textrm{smolt}^\prime$ are updated with the improvement parameters, $I_P$ or $I_C$, as specified in the operating model.
+Base terms $\alpha$ and $\beta$ are used in the historical period of the model, e.g., conditioning from data.
+In the projection, the stock recruit parameters $\alpha^\prime$ and $\beta^\prime$ are updated with the improvement parameters, $I_\kappa$ or $I_C$, as specified in the operating model.
 
-The predicted Beverton-Holt smolt production in the projection is:
-
-\begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha^\prime \times 
-\textrm{Fry}^\textrm{NOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha^\prime \times 
-\textrm{Fry}^\textrm{HOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
-\end{align}
-
-where 
+The corresponding parameters in the projection is:
 
 \begin{align}
-\alpha^\prime &= P_\textrm{smolt}\times I_P \times p^\textrm{female} \times \textrm{Fec}\\
-\beta^\prime &= \dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C}
+\alpha^\prime &= \dfrac{\kappa}{\phi}\times I_\kappa\\
+\beta^\prime &= 
+\begin{cases}
+\dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C} & \textrm{Beverton-Holt}\\
+\dfrac{1}{S_\textrm{max} \times I_C} & \textrm{Ricker}\\
+\end{cases}
 \end{align}
+
+
+```{r SRR, echo = FALSE}
+knitr::include_graphics("../man/figures/SRR.png")
+```
+
+*Comparison of the change in two density-dependent stock-recruit functions if the improvement parameter is applied to either the compensation ratio (kappa) or capacity parameter. The base value of kappa is 3, Beverton-Holt capacity is 1000, and Ricker Smax is 500. The dotted line is the one-to-one unfished replacement line (corresponding to $1/\phi$).*
+
+# Hatchery production
+
+## Broodtake
+
+The annual target egg production for the hatchery is calculated from the target releases as
+
+$$
+\textrm{Egg}_\textrm{broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{subyearling}}
+$$
+
+where $s$ is the corresponding survival term from the egg life stage.
+
+Given the escapement in year $y$, the proportion of the escapement is taken as broodtake $p^\textrm{broodtake}$:
+
+\begin{align}
+\textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a}\\
+\textrm{HOB}_{y,a} &= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a}
+\end{align}
+
+The proportion of the available hatchery fish for broodtake is controlled by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
+
+The realized hatchery egg production in year $y$ is
+
+\begin{align}
+\textrm{Egg}_\textrm{y}^\textrm{NOB} &= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{HOB} &= \sum_a \textrm{HOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a
+\end{align}
+
+The proportion taken as broodtake is solved annually to satisfy the following conditions:
+
+$\dfrac{\sum_a\textrm{NOB}_{y,a}}{\sum_a\textrm{NOB}_{y,a} + \sum_a\textrm{HOB}_{y,a}} = p^\textrm{NOB}_\textrm{target}$
+
+$0 < p^\textrm{broodtake,HOB} < 1$
+
+$0 < p^\textrm{broodtake,NOB} < p^\textrm{NOB}_\textrm{max}$
+
+$\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} = \textrm{Egg}_\textrm{broodtake}$
+
+The NOB target ratio $p^\textrm{NOB}_\textrm{target}$ ensures that there is a sufficiently high proportion of natural origin fish in the broodtake, while the maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ ensures that there remains sufficiently high abundance of natural origin spawners. 
+
+Egg production is subject to a survival term $s^\textrm{prespawn}$.
+
+The total egg production in a given year can fail to reach the target because there is insufficient natural origin escapement. 
+In this case, the NOB take is set to the maximum removal rate ($p^\textrm{broodtake,NOB} = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB.
+
+## Smolt releases
+
+From the total broodtake, the smolt releases is calculated as
+
+$$
+\textrm{Smolt}^\textrm{Rel}_{y+1} = (\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB}) s^\textrm{hatchery}
+$$
+
+where the survival of hatchery from egg to smolt is a weighted average from the proportion of yearling and subyearling releases:
+
+$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$
+
+$p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$
+
+# Pre-terminal fishery
+
+Let $N^\textrm{juv}_{y,a}$ be the juvenile abundance in the population and $N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y$ and $N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}$. The superscript for the smolt variable corresponds to the parentage while the superscript for $N$ denotes the origin of the current cohort.
+
+Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, assuming no mark-selective fishing, is modeled as a seasonal process. The kept catch $K$ is
+
+\begin{align}
+K^\textrm{NOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,NOS}_{y,a}\\
+K^\textrm{HOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,HOS}_{y,a}\\
+\end{align}
+
+The instantaneous fishing mortality is solved to meet the following condition
+
+$$
+u^\textrm{PT} = \dfrac{\sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a} + \sum_a N^\textrm{juv,HOS}_{y,a}}
+$$
+
+# Recruitment and maturity
+
+The recruitment is calculated from the survival of juvenile fish after pre-terminal harvest and maturation:
+
+\begin{align}
+\textrm{NOR}_{y,a} &= N^\textrm{juv,NOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}\\
+\textrm{HOR}_{y,a} &= N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
+\end{align}
+
+The juvenile abundance in the following year consists of fish that did not mature and subsequently survived ocean mortality $M$:
+
+\begin{align}
+N^\textrm{juv,NOS}_{y+1,a+1} &= N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
+N^\textrm{juv,HOS}_{y+1,a+1} &= N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
+\end{align}
+
+## Terminal fishery
+
+Assuming no mark-selective fishing, the retained catch of the terminal ($\textrm{T}$) fishery is calculated from the harvest rate similarly as with the pre-terminal fishery:
+
+\begin{align}
+K^\textrm{NOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{NOR}_{y,a}\\
+K^\textrm{HOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{HOR}_{y,a}\\
+\end{align}
+
+subject to
+
+$$
+u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{NOR}_{y,a} + \sum_a \textrm{HOR}_{y,a}}
+$$
+
+# Escapement and spawners
+
+The escapement consists of the survivors of the terminal fishery:
+
+\begin{align}
+\textrm{NOR}^\textrm{escapement}_{y,a} &= \textrm{NOR}_{y,a}\exp(-v_aF^\textrm{T}_y)\\
+\textrm{HOR}^\textrm{escapement}_{y,a} &= \textrm{HOR}_{y,a}\exp(-v_aF^\textrm{T}_y)
+\end{align}
+
+The abundance of natural origin spawners consists of the escapement reduced by the broodtake. 
+
+$$
+\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a}
+$$
+
+The hatchery origin spawners is the escapement, reduced by the proportion $p^\textrm{hatchery}$ returning to the hatchery, either by swim-in facilities or direct removal. A second removal term $p^\textrm{HOS}_\textrm{removal}$ removes fish from the spawning grounds, these animals are not available for broodtake.
+
+$$
+\textrm{HOS}_{y,a} = \textrm{HOR}^\textrm{escapement}_{y,a} (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
+$$
+
 
 # Fitness effects on survival
 
-Reproductive success of hatchery fish has been observed to be lower than their natural counterparts, either through genetic or epigenetic causes, and is accounted for in the $\gamma$ parameter (see review in [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html)).
+Reproductive success of first generation hatchery fish has been observed to be lower than their natural counterparts, and is accounted for in the $\gamma$ parameter (see review in [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html)).
 
 Through genetic and epigenetic factors, survival of hatchery juveniles in the hatchery environment selects for fish with a phenotype best adapted for that environment, and likewise for juveniles spawned in the natural environment. 
 Since these traits are heritable, the fitness of the natural population can shift away from the optimum for the natural environment towards that of the hatchery environment on an evolutionary time scale, i.e., over a number of generations, when hatchery fish are allowed to spawn.
@@ -252,18 +284,39 @@ where $p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})$.
 
 The fitness variance $\omega^2$ and phenotype variance $\sigma^2$ are assumed constant between the two environments. The fitness variance is parameterized relative to the variance of the phenotype, i.e., $\omega = \Omega \sigma$ where $\Omega$ is the "selection strength".
 
+## Mixed brood-year return
+
+If a mixed-brood year return in year $y$ across several ages $a$ produces the smolt cohort in year $y+1$, then the mean trait value in that cohort is calculated from a weighted average by brood year and age class fecundity:
+
+\begin{align}
+\bar{z}^\textrm{natural}_{y+1} &= \sum_a p^\textrm{NOS}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOSeff}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}\\
+\bar{z}^\textrm{hatchery}_{y+1} &= \sum_a p^\textrm{NOB}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOB}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}
+\end{align}
+
+where
+
+$p^\textrm{NOS}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma \times \textrm{HOS}_{y,a})}$
+
+$p^\textrm{HOSeff}_{y,a} = \dfrac{\textrm{Fec}_a \times \gamma \times \textrm{HOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma \times \textrm{HOS}_{y,a})}$
+
+$p^\textrm{NOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{NOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a})}$
+
+$p^\textrm{HOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{HOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a})}$
+
+## Fitness loss
+
 Fitness can reduce survival in the egg, fry, and smolt life stages:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_g &= \textrm{NOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times (W^\textrm{nat.}_g)^{\ell_\textrm{egg}}\\
-\textrm{Fry}^\textrm{HOS}_g &= \gamma \times \textrm{HOS}_{g-1} \times p^\textrm{female} \times \textrm{Fec} \times (W^\textrm{nat.}_g)^{\ell_\textrm{egg}}
+\textrm{Fry}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
 \end{align}
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_g &= \frac{\alpha^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{NOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}\\
-\textrm{Smolt}^\textrm{HOS}_g &= \frac{\alpha^\prime (W^\textrm{nat.}_g)^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{HOS}_g}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_g + \textrm{Fry}^\textrm{HOS}_g)}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^\prime (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^\prime (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
 \end{align}
 
 $$
@@ -272,15 +325,19 @@ $$
 
 where $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$.
 
-PNI (proportionate natural influence) is an approximation of the rate of gene flow from the hatchery to the natural environment:
+## PNI
+
+PNI (proportionate natural influence) is an approximation of the rate of gene flow from the hatchery to the natural environment, calculated for the progeny in year $y+1$ from the parental composition of year $y$:
 
 $$
-\textrm{PNI}_g = \dfrac{p^{\textrm{NOB}}_g}{p^{\textrm{NOB}}_g + p^{\textrm{HOSeff}}_g}
+\textrm{PNI}_{y+1} = \dfrac{\sum_a p^{\textrm{NOB}}_{y,a}}{\sum_a p^{\textrm{NOB}}_{y,a} + \sum_a p^{\textrm{HOSeff}}_{y,a}}
 $$
 
-Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing spawning of hatchery origin fish maintains high PNI (low rate of gene flow from the hatchery environment).
+Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing the number hatchery origin spawners maintains high PNI, i.e., low rate of gene flow from the hatchery to natural environment.
 
-The proportion of wild salmon, natural origin fish whose parents were also natural spawners, is
+## Wild salmon
+
+With single brood-year returns, the proportion of wild salmon, natural origin spawners whose parents were also natural spawners, can be calculated as
 
 $$
 p^\textrm{WILD}_g = (1 - p^\textrm{HOScensus}_g) \times
@@ -295,6 +352,22 @@ The first term is the proportion of natural spawners in the current generation $
 
 The fraction in the second term discounts the proportion of the current generation to those whose parents were both natural spawners. 
 Assuming non-assortative mating, the denominator in the second term is the composition of animals whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
+
+To generalize for mixed-brood year return, we calculate the probability weighted across brood-years:
+
+$$
+p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times \dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
+{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2 + 2 \gamma \times (\sum_{a'}p^\textrm{NOScensus}_{y-a,a'})(\sum_{a'}p^\textrm{HOScensus}_{y-a,a'}) +
+\gamma^2 (\sum_{a'}p^\textrm{HOScensus}_{y-a,a'})^2}
+$$
+
+where 
+
+$p^\textrm{NOScensus}_{y,a} = \dfrac{\textrm{NOS}_{y,a}}{\sum_a{\textrm{NOS}_{y,a}} + \sum_a\textrm{HOS}_{y,a}}$
+
+$p^\textrm{HOScensus}_{y,a} = \dfrac{\textrm{HOS}_{y,a}}{\sum_a{\textrm{NOS}_{y,a}} + \sum_a\textrm{HOS}_{y,a}}$
+
+The summation across dummy age variable $a'$ calculates the total proportion of spawners by origin in year $y-a$, assuming non-assortative mating across age and origin.
 
 # Mark-selective fishing
 
@@ -312,36 +385,39 @@ F^\textrm{rel.} &= (1 - m)\delta E
 
 where $\delta$ is the proportion of released fish that die. 
 
-$E$ is an index of fishing effort that links together $F^\textrm{kept}$ and $F^\textrm{rel.}$.
-Intuitively, fishing effort can increase in a mark-selective fishery compared to non-selective fishery, e.g., if the mark rate is 20 percent, then the fishing effort could increase up to 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
+$E$ is an index of fishing effort, also referred to as the encounter rate by the fishery, that links together $F^\textrm{kept}$ and $F^\textrm{rel.}$.
+Intuitively, fishing effort can increase in a mark-selective fishery compared to non-selective fishery.
+For example, if the mark rate is 20 percent, then the fishing effort could be 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
 Additional catch and release mortality then occurs for un-marked fish, according to $\delta$.
 
 In the pre-terminal ($\textrm{PT}$) fishery, $E$ is solved to satisfy the following equation for hatchery fish:
 
 $$
-u^\textrm{harvest,HOS,PT} = \dfrac{F^\textrm{kept,PT}}{Z^\textrm{HOS,PT}}(1 - \exp(-Z^\textrm{HOS,PT}))
+u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}
 $$
 
-where $Z^\textrm{HOS,PT} = F^\textrm{kept,PT} + F^\textrm{rel,PT} + M^\textrm{SAR,HOS} = mE^\textrm{PT} + (1 - m)\delta^\textrm{PT}E^\textrm{PT} + M^\textrm{SAR,HOS}$.
+where the kept catch $K$ is
 
-The corresponding exploitation rates are
+$K^\textrm{HOS,PT} = \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y + F^\textrm{rel,PT}_y}(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} + F^\textrm{rel,PT}]))N^\textrm{juv,HOS}_{y,a}$.
+
+The corresponding exploitation rates from kept catch and dead discards are
 
 \begin{align}
-u^\textrm{exploit,HOS,PT} &= \dfrac{F^\textrm{kept,PT} + F^\textrm{rel,PT}}{Z^\textrm{HOS,PT}}(1 - \exp(-Z^\textrm{HOS,PT}))\\
-u^\textrm{exploit,NOS,PT} &= \dfrac{F^\textrm{rel,PT}}{Z^\textrm{NOS,PT}}(1 - \exp(-Z^\textrm{NOS,PT}))
+u^\textrm{exploit,HOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}\\
+u^\textrm{exploit,NOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a}}
 \end{align}
 
-for natural and hatchery fish, respectively, and $Z^\textrm{NOS,PT} = F^\textrm{rel,PT} + M^\textrm{SAR,NOS}$.
+for natural and hatchery fish, respectively.
 
 Similarly, the fishing effort of the terminal fishery satisfies the equation
 
 $$
-u^\textrm{harvest,HOS,T} = \dfrac{F^\textrm{kept,T}}{F^\textrm{kept,T} + F^\textrm{rel,T}}(1 - \exp(-[F^\textrm{kept,T} + F^\textrm{rel,T}]))
+u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}
 $$
 
-The corresponding exploitation rates are
+with the corresponding exploitation rates:
 
 \begin{align}
-u^\textrm{exploit,HOS,T} &= 1 - \exp(-[F^\textrm{kept,T} + F^\textrm{rel,T}])\\
-u^\textrm{exploit,NOS,T} &= 1 - \exp(-F^\textrm{rel,T})
+u^\textrm{exploit,HOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,T}_y + F^\textrm{rel.,T}_y]))\textrm{HOR}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}\\
+u^\textrm{exploit,NOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel,T}_y))^\textrm{NOR}_{y,a}}{\sum_a \textrm{NOR}_{y,a}}
 \end{align}

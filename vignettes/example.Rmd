@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 ```
 
 Here, we show a simple example of a salmon operating model where all fish mature at age 3 and follows the structure of an analysis done in AHA.
+The historical spool-up is not informed by an estimation model. The model is used to project the proposed management levers to determine the equilibrium properties of the system.
 
 We create several S4 objects, the `Bio` object contains the natural biological dynamics, including the maturity ogive `p_mature`, fecundity, as well as the density-dependent survival of smolts through the capacity and compensation ratio parameters (`capacity_smolt` and `kappa`, respectively).
 

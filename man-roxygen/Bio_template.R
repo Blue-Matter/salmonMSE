@@ -9,7 +9,7 @@
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component). **Units of recruits per egg**.
 #'  In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
 #' @slot Smax Vector length `nsim`. The spawning output that maximizes smolt production in the Ricker stock-recruit function. **Units of egg production.**
-#' @slot phi Optional parameter, vector length `nsim`. Unfished recruits per spawner.
+#' @slot phi Optional parameter, vector length `nsim`. Unfished egg production rate per smolt.
 #'  The `alpha` parameter of the stock-recruit function will be the ratio of `kappa` and `phi`. In stage-based models,
 #'  the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mocean_NOS` corresponding
 #'  to the first year.

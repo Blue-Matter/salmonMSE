@@ -2,16 +2,21 @@ Name,Definition,Type,Class,Slot
 \textrm{NOS},Natural origin spawners,Natural production,SMSE,NOS
 \textrm{HOS},Hatchery origin spawners,Hatchery,SMSE,HOS
 \textrm{HOS}_\textrm{eff},"Effective number of HOS, spawning output discounted by $\gamma$",Hatchery,SMSE,HOSeff
-C_\textrm{smolt},Carrying capacity of smolts (stock-recruit parameter),Habitat,SOM,capacity_smolt
-\kappa,"Maximum recruit production rate (stock-recruit parameter), units of recruits per spawner",Habitat,SOM,kappa
+C_\textrm{smolt},Carrying capacity of smolts (Beverton-Holt stock-recruit parameter),Natural production + Habitat,SOM,capacity_smolt
+S_\textrm{max},Spawning output that maximizes smolt production (Ricker stock-recruit parameter),Natural production + Habitat,SOM,Smax
+\kappa,"Maximum recruitment production rate (stock-recruit parameter), units of recruit per spawner",Natural production  + Habitat,SOM,kappa
+\phi,"Unfished egg production rate, units of egg per smolt",Natural production,SOM,phi
+r,"Maturity at age, i.e., recruitment rate",Natural production,SOM,p_mature
 u^\textrm{PT},Pre-terminal fishery harvest rate,Harvest,SOM,u_preterminal
 u^\textrm{T},Terminal fishery harvest rate,Harvest,SOM,u_terminal
 m,Mark rate of hatchery fish,Harvest,SOM,m
 \delta,Mortality from catch and release (proportion),Harvest,SOM,release_mort
+v,Relative vulnerability by age to the fishery,Harvest,SOM,"vulPT, vulT"
 \textrm{Fec},Fecundity of spawners (eggs per female),Natural production,SOM,fec
 \textrm{Fec}^\textrm{brood},Fecundity of broodtake (eggs per female),Natural production,SOM,fec_brood
 p^\textrm{female},Proportion of female spawners in broodtake and spawners,Natural production + Hatchery,SOM,p_female
-\textrm{SAR},Smolt-to-adult recruit survival,Natural production + Hatchery,SOM,SAR
+\textrm{SAR},Smolt-to-adult recruit survival,Natural production + Hatchery,-,-
+M,Instantaneous natural mortality in the marine environment,Natural production + Hatchery,SOM,"Mocean_NOS, Mocean_HOS"
 \textrm{NOB},Natural origin broodtake,Hatchery,SMSE,NOB
 \textrm{HOB},Hatchery origin broodtake,Hatchery,SMSE,HOB
 s_\textrm{yearling},Survival of hatchery eggs to yearling life stage,Hatchery,SOM,s_egg_smolt

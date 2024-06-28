@@ -40,7 +40,7 @@ In stage-based models, equivalent to the product of smolt productivity (smolts p
 
 \item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}
 
-\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished recruits per spawner.
+\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished egg production rate per smolt.
 The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
 the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mocean_NOS} corresponding
 to the first year.}
