@@ -66,10 +66,10 @@ Harvest <- new(
   vulT = c(1, 1, 1)
 )
 
-# 1000 NOS and HOS for the first generation
+# Escapement of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
 HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears, 2))
-HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/Harvest@u_terminal/SAR
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/(1 - Harvest@u_terminal)/SAR
 
 Historical <- new(
   "Historical",

@@ -104,13 +104,13 @@ Harvest <- new(
 )
 ```
 
-To start the projection, we specify the conditions for the spool-up with the Historical object. We will have a two-year spool-up with ultimately 1000 NOS and HOS in the first generation (for all simulations). This is accomplished by setting a spool-up period of 2 years (`nyears`) and specify the immature abundance of age 1 fish at the beginning of year 1 and age 2 fish at the start of year 2. Since we model ocean survival during age 2, abundance of the cohort doesn't change.
+To start the projection, we specify the conditions for the spool-up with the Historical object. We will have a two-year spool-up with an escapement of 1000 natural origin fish and 1000 hatchery origin fish each in the first generation (for all simulations). This is accomplished by setting a spool-up period of 2 years (`nyears`) and specify the immature abundance of age 1 fish at the beginning of year 1 and age 2 fish at the start of year 2. Since we model ocean survival during age 2, abundance of the cohort doesn't change.
 
 ```{r, eval = FALSE}
-# 1000 NOS and HOS for the first generation
+# Escapement of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
 HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears, 2))
-HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/Harvest@u_terminal/SAR
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/(1 - Harvest@u_terminal)/SAR
 
 Historical <- new(
   "Historical",
