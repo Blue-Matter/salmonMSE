@@ -84,7 +84,7 @@ Various constraints in openMSE prevent implementation of this figure in the mode
 
 Additionally, two seasonal time steps per calendar year are needed to model maturation of a cohort in between the timing of the pre-terminal and terminal fishery. As a result, for immature salmon, vulnerability to the pre-terminal seasonal fishery occurs in the first half of the year and ocean mortality occurs in the second half of the year. For salmon that mature, vulnerability to the terminal seasonal fishery occurs in the second half of the year. The component of the cohort that matures does not experience ocean mortality during the last year of life.
 
-```{r age-structure2, eval = TRUE, echo = FALSE, out.width = "2500px"}
+```{r age-structure2, eval = TRUE, echo = FALSE}
 knitr::include_graphics("../man/figures/model-age-structure-openMSE.png")
 ```
 
