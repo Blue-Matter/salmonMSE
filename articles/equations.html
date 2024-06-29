@@ -900,17 +900,19 @@ p^\textrm{HOScensus}_{g-1}(1 - p^\textrm{HOScensus}_{g-1}) +
 \textrm{HOS}/(\textrm{HOS} + \textrm{NOS})\)</span>.</p>
 <p>The first term is the proportion of natural spawners in the current
 generation <span class="math inline">\(g\)</span>.</p>
-<p>The fraction in the second term discounts the proportion of the
-current generation to those whose parents were both natural spawners.
-Assuming non-assortative mating, the denominator in the second term is
-the composition of animals whose parents who are both natural origin,
-mixed origin (one parent in natural origin and the other is hatchery
-origin), and both hatchery origin.</p>
+<p>The ratio comprising the second term discounts the proportion of the
+current generation to include natural spawners whose parents were both
+natural spawners. Assuming non-assortative mating, the three terms in
+the denominator gives the composition of generation <span class="math inline">\(g\)</span> whose parents who are both natural
+origin, mixed origin (one parent in natural origin and the other is
+hatchery origin), and both hatchery origin.</p>
 <p>To generalize for mixed-brood year return, we calculate the
 probability weighted across brood-years and age class fecundity:</p>
 <p><span class="math display">\[
-p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times
-\dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
+p^\textrm{WILD}_y = \sum_a
+\dfrac{\textrm{NOS}_{y,a}}{\sum_{a'}(\textrm{NOS}_{y,a'} +
+\textrm{HOS}_{y,a'})} \times \dfrac{(\sum_{a'}
+p^\textrm{NOScensus}_{y-a,a'})^2}
 {(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2 + 2 \gamma \times
 (\sum_{a'}p^\textrm{NOScensus}_{y-a,a'})(\sum_{a'}p^\textrm{HOScensus}_{y-a,a'})
 +
@@ -923,18 +925,22 @@ p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times
 <p><span class="math inline">\(p^\textrm{HOScensus}_{y,a} =
 \dfrac{\textrm{Fec}_a \times \textrm{HOS}_{y,a}}{\sum_a{\textrm{Fec}_a
 (\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}\)</span></p>
-<p>The summation across dummy age variable <span class="math inline">\(a'\)</span> calculates the total proportion of
-spawners by origin in year <span class="math inline">\(y-a\)</span>,
-assuming non-assortative mating across age and origin.</p>
+<p>The probability of finding a wild salmon in year <span class="math inline">\(y\)</span> is the sum of probabilities of finding
+a wild salmon over all ages. For each age <span class="math inline">\(a\)</span>, the first ratio is the probability of
+finding a natural spawner in year <span class="math inline">\(y\)</span>. The second ratio is the probability of
+mating success from two parental natural spawners in year <span class="math inline">\(y-a\)</span> using a Punnett square, assuming
+non-assortative mating across age and origin. The summation across dummy
+age variable <span class="math inline">\(a'\)</span> calculates the
+total proportion of spawners in a given year.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="mark-selective-fishing">Mark-selective fishing<a class="anchor" aria-label="anchor" href="#mark-selective-fishing"></a>
 </h2>
 <p>If the mark rate <span class="math inline">\(m\)</span> of hatchery
-fish greater than zero, then mark-selective fishing is implemented for
-both the pre-terminal and terminal fisheries. The mark rate is a proxy
-for retention and the harvest rate <span class="math inline">\(u^\textrm{harvest}\)</span> corresponds to the
+fish is greater than zero, then mark-selective fishing is implemented
+for both the pre-terminal and terminal fisheries. The mark rate is a
+proxy for retention and the harvest rate <span class="math inline">\(u^\textrm{harvest}\)</span> corresponds to the
 ratio of the kept catch and abundance. The exploitation rate <span class="math inline">\(u^\textrm{exploit}\)</span> is calculated from
 kept catch and dead releases. Exploitation rates differ between hatchery
 and natural origin fish because there is no retention of the latter.</p>
@@ -949,7 +955,7 @@ of released fish that die.</p>
 <p><span class="math inline">\(E\)</span> is an index of fishing effort,
 also referred to as the encounter rate by the fishery, that links
 together <span class="math inline">\(F^\textrm{kept}\)</span> and <span class="math inline">\(F^\textrm{rel.}\)</span>. Intuitively, fishing
-effort can increase in a mark-selective fishery compared to
+effort can increase in a mark-selective fishery compared to a
 non-selective fishery. For example, if the mark rate is 20 percent, then
 the fishing effort could be 500 percent higher than in a non-selective
 fishery in order to attain the kept quota or bag limit. Additional catch
@@ -961,23 +967,23 @@ u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a
 N^\textrm{juv,HOS}_{y,a}}
 \]</span></p>
 <p>where the kept catch <span class="math inline">\(K\)</span> is</p>
-<p><span class="math inline">\(K^\textrm{HOS,PT} =
+<p><span class="math inline">\(K^\textrm{HOS,PT}_{y,a} =
 \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y +
-F^\textrm{rel,PT}_y}(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} +
-F^\textrm{rel,PT}]))N^\textrm{juv,HOS}_{y,a}\)</span>.</p>
-<p>The corresponding exploitation rates from kept catch and dead
-discards are</p>
+F^\textrm{rel,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} +
+F^\textrm{rel,PT}])\right)N^\textrm{juv,HOS}_{y,a}\)</span>.</p>
+<p>The exploitation rate for natural origin fish is calculated from dead
+discards. The exploitation rate for hatchery origin fish is calculated
+from kept catch and dead discards:</p>
 <p><span class="math display">\[\begin{align}
+u^\textrm{exploit,NOS,PT}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a
+F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a
+N^\textrm{juv,NOS}_{y,a}}\\
 u^\textrm{exploit,HOS,PT}_y &amp;= \dfrac{\sum_a (1 -
 \exp(-v_a[F^\textrm{kept,PT}_y +
 F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a
-N^\textrm{juv,HOS}_{y,a}}\\
-u^\textrm{exploit,NOS,PT}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a
-F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a
-N^\textrm{juv,NOS}_{y,a}}
+N^\textrm{juv,HOS}_{y,a}}
 \end{align}\]</span></p>
-<p>for natural and hatchery fish, respectively.</p>
-<p>Similarly, the fishing effort of the terminal fishery satisfies the
+<p>Similarly, in the terminal fishery, the fishing effort satisfies the
 equation</p>
 <p><span class="math display">\[
 u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a
