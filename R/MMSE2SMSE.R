@@ -93,7 +93,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     UPT_HOS[is.na(UPT_HOS)] <- 0
 
     ExT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, f, mp, t1])
-    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/apply(MMSE@N[, p_HOS_return, a_imm, mp, t2, ], c(1, 3), sum)
+    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], c(1, 3), sum)
     UT_HOS[is.na(UT_HOS)] <- 0
 
     # NOS + HOS state variables from salmonMSE

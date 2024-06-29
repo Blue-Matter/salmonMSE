@@ -331,16 +331,15 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   if (!is.na(p_hatchery)) {
     N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
     Nage <- cbind(N_natural, N_hatchery)
+    Perr_y <- func(Nage, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1, y = 1)
     input <- paste0("Nage_", c(p_natural, p_hatchery))
   } else {
     Nage <- matrix(N_natural, ncol = 1)
-
+    Perr_y <- func(Nage, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, sum(N_natural), x = -1, y = 1)
     input <- paste0("Nage_", p_natural)
   }
-
-  Perr_y <- func(Nage, x = -1, y = 1)
 
   response <- paste0("Perr_y_", p_smolt)
   terms <- c(response, input, "x", "y")
