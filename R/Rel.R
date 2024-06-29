@@ -101,7 +101,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 }
 
 
-.smolt_func <- function(Nage, x = -1, output = c("natural", "hatchery"),
+.smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
                         ptarget_NOB, pmax_NOB, egg_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, # Spawning (natural production)
                         SRRpars_hist, SRRpars_proj, SRrel = c("BH", "Ricker"),
@@ -331,19 +331,19 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   if (!is.na(p_hatchery)) {
     N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
     Nage <- cbind(N_natural, N_hatchery)
-    model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1)
+    model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1, y = 1)
     input <- paste0("Nage_", c(p_natural, p_hatchery))
   } else {
     Nage <- matrix(N_natural, ncol = 1)
 
-    model <- c(Perr_y = Perr_y, sum(N_natural), x = -1)
+    model <- c(Perr_y = Perr_y, sum(N_natural), x = -1, y = 1)
     input <- paste0("Nage_", p_natural)
   }
 
-  Perr_y <- func(Nage)
+  Perr_y <- func(Nage, x = -1, y = 1)
 
   response <- paste0("Perr_y_", p_smolt)
-  terms <- c(response, input, "x")
+  terms <- c(response, input, "x", "y")
 
   out <- list(
     func = func,
@@ -368,7 +368,7 @@ predict.RelSmolt <- function(object, newdata, ...) {
 
   vars <- names(newdata)
 
-  do_hatchery <- length(names(object$model)) == 4
+  do_hatchery <- length(names(object$model)) == 5 # Perr_y, Nage, Nage, x, y
   vars_Rel <- names(object$model)[-1]
 
   val <- sapply(1:nrow(newdata), function(i) {
@@ -380,7 +380,8 @@ predict.RelSmolt <- function(object, newdata, ...) {
       Nage <- matrix(Esc_NOs, ncol = 1)
     }
     x <- newdata[i, "x"]
-    object$func(Nage = Nage, x = x)
+    y <- newdata[i, "y"]
+    object$func(Nage = Nage, x = x, y = y)
   })
 
   return(val)
@@ -400,7 +401,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 }
 
 # Natural mortality in the marine environment of natural origin smolts, increased due to fitness loss
-.SAR_fitness <- function(x = -1,
+.SAR_fitness <- function(x = -1, y,
                          fitness_type = c("Ford", "none"), # Spawning (natural production)
                          rel_loss = 1, p_naturalsmolt = 1) {
 
@@ -440,11 +441,11 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
   formals(func)$rel_loss <- rel_loss
   formals(func)$fitness_type <- fitness_type
 
-  model <- data.frame(M = 1, N = seq(0, 10), x = -1)
+  model <- data.frame(M = 1, N = seq(0, 10), x = -1, y = 1)
 
   response <- paste0("M_", p_smolt)
   input <- paste0("N_", p_smolt)
-  terms <- c(response, input, "x")
+  terms <- c(response, input, "x", "y")
 
   out <- list(
     func = func,
@@ -463,7 +464,7 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
 #' @export
 predict.SARfitness <- function(object, newdata, ...) {
   if (missing(newdata)) return(object$fitted.values)
-  val <- sapply(newdata[, "x"], object$func)
+  val <- sapply(1:nrow(newdata), function(i) object$func(x = newdata[i, "x"], y = newdata[i, "y"]))
   return(val)
 }
 
