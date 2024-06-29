@@ -66,10 +66,10 @@ Harvest <- new(
   vulT = c(1, 1, 1)
 )
 
-# Escapement of 1000 natural and hatchery fish each for the first generation
+# Return of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
 HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears, 2))
-HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/(1 - Harvest@u_terminal)/SAR
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
 
 Historical <- new(
   "Historical",
@@ -83,6 +83,8 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical)
 
 # run salmonMSE
+MOM <- SOM2MOM(SOM)
+H <- MSEtool::SimulateMOM(MOM, parallel = FALSE)
 SMSE <- salmonMSE(SOM)
 class?SMSE # Definitions of arrays
 

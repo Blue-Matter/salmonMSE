@@ -114,7 +114,9 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   broodtake <- calc_broodtake(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
 
   if (output == "hatchery") {
-    fry <- sum(broodtake$NOB + broodtake$HOB * fec_brood * s_prespawn * p_female)
+    egg_NOB <- sum(broodtake$NOB * fec_brood * s_prespawn * p_female)
+    egg_HOB <- sum(broodtake$HOB * fec_brood * s_prespawn * p_female)
+    fry <- egg_NOB + egg_HOB
     smolt <- fry * s_egg
     return(smolt)
 
