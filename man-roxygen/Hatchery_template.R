@@ -16,7 +16,7 @@
 #' @slot Mocean_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
 #'  Natural mortality of immature hatchery origin fish.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mocean_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
-#' @slot gamma Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.
+#' @slot gamma Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).
 #' @slot pmax_NOB Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.
 #' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.
 #' @slot phatchery Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds

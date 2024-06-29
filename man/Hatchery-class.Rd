@@ -38,7 +38,7 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 Natural mortality of immature hatchery origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mocean_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
-\item{\code{gamma}}{Numeric. The relative fecundity of hatchery origin spawners relative to natural origin spawners.}
+\item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).}
 
 \item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.}
 

@@ -3,7 +3,7 @@
 # (b) smolt hatchery production
 # (c) smolt natural production
 calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
-                           fec_brood, gamma, s_prespawn) {
+                           fec_brood, s_prespawn) {
 
   NOR_escapement <- Nage[, 1]
   if (ncol(Nage) > 1) {
@@ -12,7 +12,7 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
     opt <- try(
       uniroot(.broodtake_func, c(1e-8, pmax_NOB),
               NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-              fec = fec_brood, gamma = gamma, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB),
+              fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB),
       silent = TRUE
     )
     if (is.character(opt)) {
@@ -23,7 +23,7 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
 
     output <- .broodtake_func(
       ptake_NOB, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-      fec = fec_brood, gamma = gamma, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, opt = FALSE
+      fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, opt = FALSE
     )
 
     NOB <- output$NOB
@@ -111,7 +111,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   output <- match.arg(output)
 
   Nage[is.na(Nage)] <- 0
-  broodtake <- calc_broodtake(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, gamma, s_prespawn)
+  broodtake <- calc_broodtake(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
 
   if (output == "hatchery") {
     fry <- sum(broodtake$NOB + broodtake$HOB * fec_brood * s_prespawn * p_female)
