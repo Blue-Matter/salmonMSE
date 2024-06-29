@@ -182,8 +182,7 @@ SOM2MOM <- function(SOM) {
 
     # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
-      p_smolt = 1, p_natural = 3, p_hatchery = 6, # NOTE: what to do if no hatchery?? p_hatchery needs to be undefined
-      output = "natural",
+      p_smolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production

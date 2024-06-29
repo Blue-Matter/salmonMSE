@@ -50,7 +50,11 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
 calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   spawners <- list()
   spawners$NOS <- escapement[, 1] - broodtake$NOB
-  if (length(escapement) > 1) spawners$HOS <- escapement[, 2] * (1 - phatchery) * (1 - premove_HOS)
+  if (ncol(escapement) > 1) {
+    spawners$HOS <- escapement[, 2] * (1 - phatchery) * (1 - premove_HOS)
+  } else {
+    spawners$HOS <- rep(0, length(spawners$NOS))
+  }
   return(spawners)
 }
 
@@ -121,7 +125,15 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     NOS <- spawners$NOS
     HOS <- spawners$HOS
-    HOS_effective <- spawners$HOS * gamma
+    if (sum(HOS)) {
+      HOS_effective <- spawners$HOS * gamma
+    } else {
+      HOS_effective <- rep(0, length(HOS))
+    }
+
+    pNOB <- sum(broodtake$NOB)/sum(broodtake$NOB, broodtake$HOB)
+    pHOSeff <- sum(HOS_effective)/sum(NOS, HOS_effective)
+    pHOScensus <- sum(HOS)/sum(NOS, HOS)
 
     # Fry production in the absence of fitness effects
     fry_NOS <- sum(NOS * p_female * fec)
@@ -146,10 +158,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     }
 
     # Predicted fry and smolts from projected SRR parameters and fitness
-    if (egg_local > 0 && fitness_type == "Ford" && x > 0) {
-      pNOB <- sum(broodtake$NOB)/sum(broodtake$NOB, broodtake$HOB)
-      pHOSeff <- sum(HOS_effective)/sum(NOS, HOS_effective)
-      pHOScensus <- sum(HOS)/sum(NOS, HOS)
+    if (x > 0 && egg_local > 0 && fitness_type == "Ford") {
 
       # Get pbar from salmonMSE_env
       if (nrow(salmonMSE_env$Ford)) {
@@ -185,8 +194,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       fry_HOS_out <- fry_HOS * fitness_loss[1]
 
       # Update smolt SRR with fitness
-      alpha_fitness <- alpha_proj * fitness_loss[2]
-      beta_fitness <- beta_proj / fitness_loss[2]
+      alpha_proj2 <- alpha_proj * fitness_loss[2]
+      beta_proj2 <- beta_proj / fitness_loss[2]
 
       # Save pbar for next generation
       df_Ford <- data.frame(
@@ -198,13 +207,11 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       )
       salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
 
-    } else { #if (fitness_type == "none") {
-      alpha_fitness <- alpha_proj
-      beta_fitness <- beta_proj
+    } else {
+      alpha_proj2 <- alpha_proj
+      beta_proj2 <- beta_proj
 
       fitness <- 1
-      pNOB <- 1
-      pHOSeff <- 0
 
       fry_NOS_out <- fry_NOS
       fry_HOS_out <- fry_HOS
@@ -212,11 +219,11 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     total_fry_out <- fry_NOS_out + fry_HOS_out
     if (SRrel == "BH") {
-      smolt_NOS_proj <- alpha_proj * fry_NOS_out/(1 + beta_proj * total_fry_out)
-      smolt_HOS_proj <- alpha_proj * fry_HOS_out/(1 + beta_proj * total_fry_out)
+      smolt_NOS_proj <- alpha_proj2 * fry_NOS_out/(1 + beta_proj2 * total_fry_out)
+      smolt_HOS_proj <- alpha_proj2 * fry_HOS_out/(1 + beta_proj2 * total_fry_out)
     } else {
-      smolt_NOS_proj <- alpha_proj * fry_NOS_out * exp(-beta_proj * total_fry_out)
-      smolt_HOS_proj <- alpha_proj * fry_HOS_out * exp(-beta_proj * total_fry_out)
+      smolt_NOS_proj <- alpha_proj2 * fry_NOS_out * exp(-beta_proj2 * total_fry_out)
+      smolt_HOS_proj <- alpha_proj2 * fry_HOS_out * exp(-beta_proj2 * total_fry_out)
     }
     total_smolt <- smolt_NOS_proj + smolt_HOS_proj
     Perr_y <- total_smolt/smolt_NOS_SRR
@@ -320,16 +327,22 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   }
 
   N_natural <- rep(1, maxage) %>% structure(names = paste0("Nage_", p_natural, 1:maxage))
-  N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
-  Nage <- cbind(N_natural, N_hatchery)
+
+  if (!is.na(p_hatchery)) {
+    N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
+    Nage <- cbind(N_natural, N_hatchery)
+    model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1)
+    input <- paste0("Nage_", c(p_natural, p_hatchery))
+  } else {
+    Nage <- matrix(N_natural, ncol = 1)
+
+    model <- c(Perr_y = Perr_y, sum(N_natural), x = -1)
+    input <- paste0("Nage_", p_natural)
+  }
 
   Perr_y <- func(Nage)
 
-  #model <- c(Perr_y = Perr_y, N_natural, N_hatchery, x = -1) %>% t() %>% as.data.frame()
-  model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1)
-
   response <- paste0("Perr_y_", p_smolt)
-  input <- paste0("Nage_", c(p_natural, p_hatchery))
   terms <- c(response, input, "x")
 
   out <- list(
@@ -354,12 +367,18 @@ predict.RelSmolt <- function(object, newdata, ...) {
   if (missing(newdata)) return(object$fitted.values)
 
   vars <- names(newdata)
+
+  do_hatchery <- length(names(object$model)) == 4
   vars_Rel <- names(object$model)[-1]
 
   val <- sapply(1:nrow(newdata), function(i) {
     Esc_NOS <- newdata[i, grepl(vars_Rel[1], vars)] %>% as.numeric()
-    Esc_HOS <- newdata[i, grepl(vars_Rel[2], vars)] %>% as.numeric()
-    Nage <- cbind(Esc_NOS, Esc_HOS)[-1, ]
+    if (do_hatchery) {
+      Esc_HOS <- newdata[i, grepl(vars_Rel[2], vars)] %>% as.numeric()
+      Nage <- cbind(Esc_NOS, Esc_HOS)[-1, ]
+    } else {
+      Nage <- matrix(Esc_NOs, ncol = 1)
+    }
     x <- newdata[i, "x"]
     object$func(Nage = Nage, x = x)
   })
