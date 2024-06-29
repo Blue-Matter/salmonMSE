@@ -183,10 +183,10 @@ specify the immature abundance of age 1 fish at the beginning of year 1
 and age 2 fish at the start of year 2. Since we model ocean survival
 during age 2, abundance of the cohort doesn’t change.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Escapement of 1000 natural and hatchery fish each for the first generation</span></span>
+<code class="sourceCode R"><span><span class="co"># Return of 1000 natural and hatchery fish each for the first generation</span></span>
 <span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Bio</span><span class="op">@</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">Harvest</span><span class="op">@</span><span class="va">u_terminal</span><span class="op">)</span><span class="op">/</span><span class="va">SAR</span></span>
+<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
 <span></span>
 <span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
