@@ -350,13 +350,13 @@ where $p^\textrm{HOScensus} = \textrm{HOS}/(\textrm{HOS} + \textrm{NOS})$.
 
 The first term is the proportion of natural spawners in the current generation $g$. 
 
-The fraction in the second term discounts the proportion of the current generation to those whose parents were both natural spawners. 
-Assuming non-assortative mating, the denominator in the second term is the composition of animals whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
+The ratio comprising the second term discounts the proportion of the current generation to include natural spawners whose parents were both natural spawners.
+Assuming non-assortative mating, the three terms in the denominator gives the composition of generation $g$  whose parents who are both natural origin, mixed origin (one parent in natural origin and the other is hatchery origin), and both hatchery origin.
 
 To generalize for mixed-brood year return, we calculate the probability weighted across brood-years and age class fecundity:
 
 $$
-p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times \dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
+p^\textrm{WILD}_y = \sum_a \dfrac{\textrm{NOS}_{y,a}}{\sum_{a'}(\textrm{NOS}_{y,a'} + \textrm{HOS}_{y,a'})} \times \dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
 {(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2 + 2 \gamma \times (\sum_{a'}p^\textrm{NOScensus}_{y-a,a'})(\sum_{a'}p^\textrm{HOScensus}_{y-a,a'}) +
 \gamma^2 (\sum_{a'}p^\textrm{HOScensus}_{y-a,a'})^2}
 $$
@@ -367,7 +367,10 @@ $p^\textrm{NOScensus}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\
 
 $p^\textrm{HOScensus}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{HOS}_{y,a}}{\sum_a{\textrm{Fec}_a (\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}$
 
-The summation across dummy age variable $a'$ calculates the total proportion of spawners by origin in year $y-a$, assuming non-assortative mating across age and origin.
+The probability of finding a wild salmon in year $y$ is the sum of probabilities of finding a wild salmon over all ages. 
+For each age $a$, the first ratio is the probability of finding a natural spawner in year $y$. 
+The second ratio is the probability of mating success from two parental natural spawners in year $y-a$ using a Punnett square, assuming non-assortative mating across age and origin.
+The summation across dummy age variable $a'$ calculates the total proportion of spawners in a given year.
 
 # Mark-selective fishing
 
