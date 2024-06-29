@@ -907,7 +907,7 @@ the composition of animals whose parents who are both natural origin,
 mixed origin (one parent in natural origin and the other is hatchery
 origin), and both hatchery origin.</p>
 <p>To generalize for mixed-brood year return, we calculate the
-probability weighted across brood-years:</p>
+probability weighted across brood-years and age class fecundity:</p>
 <p><span class="math display">\[
 p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times
 \dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
@@ -918,11 +918,11 @@ p^\textrm{WILD}_y = \sum_a p^\textrm{NOScensus}_{y,a} \times
 \]</span></p>
 <p>where</p>
 <p><span class="math inline">\(p^\textrm{NOScensus}_{y,a} =
-\dfrac{\textrm{NOS}_{y,a}}{\sum_a{\textrm{NOS}_{y,a}} +
-\sum_a\textrm{HOS}_{y,a}}\)</span></p>
+\dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\sum_a{\textrm{Fec}_a
+(\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}\)</span></p>
 <p><span class="math inline">\(p^\textrm{HOScensus}_{y,a} =
-\dfrac{\textrm{HOS}_{y,a}}{\sum_a{\textrm{NOS}_{y,a}} +
-\sum_a\textrm{HOS}_{y,a}}\)</span></p>
+\dfrac{\textrm{Fec}_a \times \textrm{HOS}_{y,a}}{\sum_a{\textrm{Fec}_a
+(\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}\)</span></p>
 <p>The summation across dummy age variable <span class="math inline">\(a'\)</span> calculates the total proportion of
 spawners by origin in year <span class="math inline">\(y-a\)</span>,
 assuming non-assortative mating across age and origin.</p>
