@@ -29,27 +29,53 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
     y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
     nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
 
-    Nage <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ])
-    V <- DataList[[p]][[1]]@Misc$FleetPars$V[x, , nyears + y]
+    Nage_p <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ])
 
-    if (!sum(Nage)) {
+    if (!sum(Nage_p)) {
       Effort <- 0
     } else if (p %in% p_preterminal) {
-      if (u_preterminal > 0) {
-        M <- DataList[[p]][[1]]@Misc$StockPars$M_ageArray[x, , nyears + y]
-        # F_preterminal
-        Effort <- get_F(
-          u = u_preterminal, M = M, N = Nage, vul = V, ret = ifelse(m > 0, m, 1), release_mort = release_mort[1]
-        )
+      odd_time_step <- y %% 2
+      Nage_PT <- sapply(p_preterminal, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
+      if (u_preterminal > 0 && odd_time_step) {
+        V <- sapply(p_preterminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y]) %>%
+          apply(1, unique)
+
+        if (m > 0) { # MSF, Specify F here, further retention and discards handled by OM
+          Effort <- get_F(
+            u = u_preterminal, M = rep(0, length(Nage_p)),
+            N = Nage_PT[, p_preterminal[2]], vul = V, ret = m,
+            release_mort = release_mort[1]
+          )
+        } else {
+          Effort <- get_F(
+            u = u_preterminal, M = rep(0, length(Nage_p)),
+            N = rowSums(Nage_PT), vul = V, ret = 1
+          )
+        }
+
       } else {
         Effort <- 0
       }
     } else if (p %in% p_terminal) {
-      if (u_terminal > 0) {
-        # F_terminal
-        Effort <- get_F(
-          u = u_terminal, M = rep(0, length(Nage)), N = Nage, vul = V, ret = ifelse(m > 0, m, 1), release_mort = release_mort[2]
-        )
+      even_time_step <- !y %% 2
+      Nage_T <- sapply(p_terminal, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
+      if (u_terminal > 0 && even_time_step) {
+        V <- sapply(p_terminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y]) %>%
+          apply(1, unique)
+
+        if (m > 0) {
+          Effort <- get_F(
+            u = u_terminal, M = rep(0, length(Nage_p)),
+            N = Nage_PT[, p_terminal[2]], vul = V, ret = m,
+            release_mort = release_mort[2]
+          )
+        } else {
+          Effort <- get_F(
+            u = u_terminal, M = rep(0, length(Nage_p)),
+            N = rowSums(Nage_T), vul = V, ret = 1
+          )
+        }
+
       } else {
         Effort <- 0
       }
