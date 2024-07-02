@@ -187,7 +187,8 @@ SOM2MOM <- function(SOM) {
     if (SOM@fitness_type != "none") {
       Rel[[2]] <- makeRel_SAR(
         p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type,
-        rel_loss = SOM@rel_loss[3], maxage = SOM@maxage
+        rel_loss = SOM@rel_loss[3], nyears = 2 * SOM@nyears,
+        Mbase = Stocks[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
       )
     }
   }

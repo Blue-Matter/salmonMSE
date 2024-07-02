@@ -402,9 +402,10 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 
 # Natural mortality in the marine environment of natural origin smolts, increased due to fitness loss
 # Only applied at the start of even time step
-.SAR_fitness <- function(x = -1, y,
+.SAR_fitness <- function(x = -1, y = 1,
                          fitness_type = c("Ford", "none"), # Spawning (natural production)
-                         rel_loss = 1, p_naturalsmolt = 1) {
+                         rel_loss = 1, p_naturalsmolt = 1,
+                         nyears, Mbase) {
 
   fitness_type <- match.arg(fitness_type)
   stopifnot(fitness_type == "Ford")
@@ -429,18 +430,17 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
     }
 
     fitness_loss <- fitness^rel_loss
-    #SAR <- 0.01
-    #SAR_loss <- SAR * fitness_loss
-    #return(-log(SAR_loss))
-    return(1/fitness_loss)
+    M <- Mbase[x, , y - nyears]
+    SAR_base <- SAR_loss <- exp(-M)
+    SAR_loss[M > .Machine$double.eps] <- SAR_base[M > .Machine$double.eps] * fitness_loss
+    return(-log(SAR_loss))
   } else {
-    #return(.Machine$double.eps)
-    return(1)
+    return(Mbase[x, , y - nyears])
   }
 }
 
 
-makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c("Ford", "none"), rel_loss, maxage) {
+makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c("Ford", "none"), rel_loss, nyears, Mbase) {
 
   fitness_type <- match.arg(fitness_type)
   stopifnot(fitness_type == "Ford")
@@ -451,6 +451,8 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
   formals(func)$p_naturalsmolt <- p_naturalsmolt
   formals(func)$rel_loss <- rel_loss
   formals(func)$fitness_type <- fitness_type
+  formals(func)$nyears <- nyears
+  formals(func)$Mbase <- Mbase
 
   model <- data.frame(M = 1, N = seq(0, 10), x = -1, y = 1)
 
@@ -466,8 +468,7 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, fitness_type = c(
     terms = terms,
     type = "Natural mortality",
     Rel = "Marine survival reduced by fitness",
-    mult = TRUE,
-    age = seq(0, maxage)
+    age = seq(0, dim(Mbase)[2] - 1)
   )
   structure(out, class = "SARfitness")
 }
