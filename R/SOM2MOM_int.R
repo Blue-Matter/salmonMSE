@@ -40,10 +40,17 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     a <- SOM@kappa/SOM@phi
     if (SOM@SRrel == "BH") {
       b <- a/SOM@capacity_smolt
+      SRRpars <- data.frame(
+        a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel,
+        capacity_smolt = SOM@capacity_smolt, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
+      )
     } else {
       b <- 1/SOM@Smax
+      SRRpars <- data.frame(
+        a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel,
+        Smax = SOM@Smax, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
+      )
     }
-    SRRpars <- data.frame(a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel)
     SRRfun <- function(SB, SRRpars) {
       if (SRRpars$SRrel == "BH") {
         SRRpars$a * SB / (1 + SRRpars$b * SB)

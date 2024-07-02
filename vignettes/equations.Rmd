@@ -313,17 +313,19 @@ Fitness can reduce survival in the egg, fry, and smolt life stages:
 \end{align}
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^\prime (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^\prime (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^\prime(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^{\prime\prime} (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^{\prime\prime}  (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
 \end{align}
 
 $$
 M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS} \times (W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
 $$
 
-where $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$.
+with $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$, and density-dependent parameters $\alpha^{\prime\prime} = \frac{\kappa}{\phi} \times I_\kappa \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}$, $\beta^{\prime\prime} = \alpha^{\prime\prime}/[C_\textrm{smolt} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]$.
+
+The corresponding Ricker stock-recruit parameter $\beta^{\prime\prime} = 1/[S_\textrm{max} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]$.
 
 ## PNI
 

@@ -130,14 +130,7 @@ SOM2MOM <- function(SOM) {
 
   # Not needed if no habitat improvement and no hatchery! SRR pars in the OM should suffice in that case
   # (the escapement is the spawning output)
-  SRRpars_hist <- SRRpars_proj <- Stocks[[1]]$cpars_bio$SRR$SRRpars
-  SRRpars_proj[, "a"] <- SOM@kappa/SOM@phi * SOM@kappa_improve
-
-  if (SOM@SRrel == "BH") {
-    SRRpars_hist[, "b"] <- SRRpars_proj[, "a"]/SOM@capacity_smolt/SOM@capacity_smolt_improve
-  } else {
-    SRRpars_hist[, "b"] <- 1/SOM@Smax/SOM@capacity_smolt_improve
-  }
+  SRRpars <- Stocks[[1]]$cpars_bio$SRR$SRRpars
 
   habitat_change <- SOM@kappa_improve != 1 || SOM@capacity_smolt_improve != 1
 
@@ -185,10 +178,9 @@ SOM2MOM <- function(SOM) {
       p_smolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
-      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn, # Broodtake & hatchery production
-      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, # Spawning (natural production)
-      SRRpars_hist, SRRpars_proj, SRrel = SOM@SRrel, fitness_type = SOM@fitness_type, # Spawning (natural production)
-      fitness_args = fitness_args
+      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
+      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
+      fitness_type = SOM@fitness_type, fitness_args = fitness_args
     )
 
     # Marine survival of natural origin fish
