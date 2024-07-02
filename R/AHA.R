@@ -155,7 +155,9 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     "fitness" = "fitness",
     "SAR_loss" = "SAR_loss",
     "pNOB" = "pNOB",
-    "pHOSeff" = "pHOSeff"
+    "pHOSeff" = "pHOSeff",
+    "alpha" = "alpha",
+    "beta" = "beta"
   )
 
   out <- lapply(names(var_out), function(x) {
@@ -267,7 +269,6 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   omega2 <- omega * omega
   A <- 1 - heritability * fitness_variance/(omega2 + fitness_variance)
 
-
   egg_per_spawner <- fec_brood * surv_pre_spawn * p_female # E
   surv_egg_release <- surv_egg_subyearling * p_subyearling + surv_egg_smolt * p_yearling # F
 
@@ -332,8 +333,6 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       capacity_spawn_em, capacity_em_smolt, capacity_smolt_adult,
       egg_per_spawner, surv_egg_release, surv_release_adult[g]
     )
-
-    browser(expr = AHA_loop[[g]]$adult_NOS < 1)
   }
 
   return(AHA_loop)
@@ -467,6 +466,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   smolt_NOS <- calc_SRR(fry_NOS, total_fry, fitprod_em_smolt, fitcap_em_smolt)
   total_smolt <- smolt_HOS + smolt_NOS
 
+  SRRpar <- calc_SRRpars(fitprod_em_smolt, fitcap_em_smolt)
+
   ## Hatchery origin release
   fry_HOR <- total_brood * egg_per_spawner
   smolt_HOR <- total_brood * egg_per_spawner * surv_egg_release
@@ -497,7 +498,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     fry_NOS = fry_NOS, # Next generation
     fry_HOS = fry_HOS,
     fry_HOR = fry_HOR, # Hatchery origin release
-    smolt_NOS = smolt_HOS,
+    smolt_NOS = smolt_NOS,
     smolt_HOS = smolt_HOS,
     smolt_HOR = smolt_HOR,
     adult_HOS = adult_HOS, # Actually the return
@@ -505,7 +506,9 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     adult_HOR = adult_HOR, # Hatchery origin return
     SAR_loss = fitprod_smolt_adult,
     pNOB = pNOB,
-    pHOSeff = 1 - pNOS
+    pHOSeff = 1 - pNOS,
+    alpha = SRRpar[1],
+    beta = SRRpar[2]
   )
 
   if (fitness_type == "Ford") out$pbar <- pbar
