@@ -151,14 +151,11 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
         Ford_x <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
         if (nrow(Ford_x)) {
           pbar_prev <- filter(Ford_x, t == max(.data$t)) %>% pull(.data$pbar)
-          tprev <- max(Ford_x$t)
         } else {
           pbar_prev <- numeric(0)
-          tprev <- 0
         }
       } else {
         pbar_prev <- numeric(0)
-        tprev <- 0
       }
 
       if (nrow(salmonMSE_env$Ford) && length(pbar_prev)) {
@@ -183,7 +180,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
         df_Ford <- data.frame(
           x = x,
           p_smolt = p_smolt,
-          t = tprev + 1,
+          t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
           type = c("natural", "hatchery"),
           pbar = pbar
         )
@@ -235,19 +232,10 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
     if (x > 0) {
       # Save state variables
-      if (nrow(salmonMSE_env$N)) {
-        tprevN <- local({
-          dat <- filter(salmonMSE_env$N, x == .env$x, p_smolt == .env$p_smolt)
-          ifelse(nrow(dat), max(dat$t), 0)
-        })
-      } else {
-        tprevN <- 0
-      }
-
       df_N <- data.frame(
         x = x,
         p_smolt = p_smolt,
-        t = tprevN + 1,
+        t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         a = 1:nrow(Nage),
         Esc_NOS = Nage[, 1],
         Esc_HOS = Nage[, 2],
@@ -259,19 +247,10 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       )
       salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
 
-      if (nrow(salmonMSE_env$state)) {
-        tprevstate <- local({
-          dat <- filter(salmonMSE_env$state, x == .env$x, p_smolt == .env$p_smolt)
-          ifelse(nrow(dat), max(dat$t), 0)
-        })
-      } else {
-        tprevstate <- 0
-      }
-      if (tprevstate != tprevN) stop("Problem with saving state variables")
       df_state <- data.frame(
         x = x,
         p_smolt = p_smolt,
-        t = tprevstate + 1,
+        t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         fry_NOS = fry_NOS_out,
         fry_HOS = fry_HOS_out,
         smolt_NOS = smolt_NOS_proj,
