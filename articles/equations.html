@@ -73,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-06-29</h4>
+            <h4 data-toc-skip class="date">2024-07-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -839,7 +839,7 @@ p^\textrm{HOB}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}
 <div class="section level3">
 <h3 id="fitness-loss">Fitness loss<a class="anchor" aria-label="anchor" href="#fitness-loss"></a>
 </h3>
-<p>Fitness can reduce survival in the egg, fry, and smolt life
+<p>Fitness can reduce survival in the egg, fry, and immature life
 stages:</p>
 <p><span class="math display">\[\begin{align}
 \textrm{Fry}^\textrm{NOS}_y &amp;= \sum_a\textrm{NOS}_{y,a} \times
@@ -850,22 +850,32 @@ p^\textrm{female} \times \textrm{Fec}_a \times
 (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
 \end{align}\]</span></p>
 <p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha^\prime
+\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha^{\prime\prime}
 (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times
-\textrm{Fry}^\textrm{NOS}_y}{1 +
-\beta^\prime(\textrm{Fry}^\textrm{NOS}_y +
-\textrm{Fry}^\textrm{HOS}_y)}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha^\prime
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times
-\textrm{Fry}^\textrm{HOS}_y}{1 +
-\beta^\prime(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^{\prime\prime}
+(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;=
+\frac{\alpha^{\prime\prime}  (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}
+\times
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^{\prime\prime}
+(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
 \end{align}\]</span></p>
 <p><span class="math display">\[
-M^\textrm{SAR,NOS}_g = -\log(\textrm{SAR}^\textrm{NOS} \times
-(W^\textrm{nat.}_g)^{\ell_\textrm{smolt}})
+M^\textrm{NOS}_{y,a} = -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times
+(W^\textrm{nat.}_{y-a})^{\ell_\textrm{smolt}})
 \]</span></p>
-<p>where <span class="math inline">\(\ell_i\)</span> is the proportion
-of the fitness loss apportioned among the three life stages, <span class="math inline">\(\sum_i \ell_i = 1\)</span>.</p>
+<p>with <span class="math inline">\(\ell_i\)</span> is the proportion of
+the fitness loss apportioned among the three life stages, <span class="math inline">\(\sum_i \ell_i = 1\)</span>, and density-dependent
+parameters <span class="math inline">\(\alpha^{\prime\prime} =
+\frac{\kappa}{\phi} \times I_\kappa \times
+(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}\)</span>, <span class="math inline">\(\beta^{\prime\prime} =
+\alpha^{\prime\prime}/[C_\textrm{smolt} \times I_C \times
+(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]\)</span>.</p>
+<p>The corresponding Ricker stock-recruit parameter <span class="math inline">\(\beta^{\prime\prime} = 1/[S_\textrm{max} \times
+I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]\)</span>.</p>
+<p>In the marine environment, age-specific natural survival is reduced
+proportional to the fitness loss term and modeled as a cohort
+effect.</p>
 </div>
 <div class="section level3">
 <h3 id="pni">PNI<a class="anchor" aria-label="anchor" href="#pni"></a>
