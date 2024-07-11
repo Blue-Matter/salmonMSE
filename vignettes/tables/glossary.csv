@@ -2,6 +2,10 @@ Name,Definition,Type,Class,Slot
 \textrm{NOS},Natural origin spawners,Natural production,SMSE,NOS
 \textrm{HOS},Hatchery origin spawners,Hatchery,SMSE,HOS
 \textrm{HOS}_\textrm{eff},"Effective number of HOS, spawning output discounted by $\gamma$",Hatchery,SMSE,HOSeff
+\textrm{Fry}^\textrm{NOS},"Fry production by natural origin spawners, assumed to be equal to egg production",Natural production,SMSE,Fry_NOS
+\textrm{Fry}^\textrm{HOS},"Fry production by hatchery origin spawners, assumed to be equal to egg production",Hatchery,SMSE,Fry_HOS
+\textrm{Smolt}^\textrm{NOS},"Smolt production by natural origin spawners, density-dependent",Natural production,SMSE,Smolt_NOS
+\textrm{Smolt}^\textrm{HOS},"Smolt production by hatchery origin spawners, density-dependent",Hatchery,SMSE,Smolt_HOS
 C_\textrm{smolt},Carrying capacity of smolts (Beverton-Holt stock-recruit parameter),Natural production + Habitat,SOM,capacity_smolt
 S_\textrm{max},Spawning output that maximizes smolt production (Ricker stock-recruit parameter),Natural production + Habitat,SOM,Smax
 \kappa,"Maximum recruitment production rate (stock-recruit parameter), units of recruit per spawner",Natural production  + Habitat,SOM,kappa
