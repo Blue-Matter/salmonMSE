@@ -43,7 +43,8 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
         if (m > 0) { # MSF, Specify F here, further retention and discards handled by OM
           Effort <- get_F(
             u = u_preterminal, M = rep(0, length(Nage_p)),
-            N = Nage_PT[, p_preterminal[2]], vul = V, ret = m,
+            N = Nage_PT[, length(p_preterminal)], # Kept catch of HOS
+            vul = V, ret = m,
             release_mort = release_mort[1]
           )
         } else {
@@ -66,7 +67,8 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
         if (m > 0) {
           Effort <- get_F(
             u = u_terminal, M = rep(0, length(Nage_p)),
-            N = Nage_PT[, p_terminal[2]], vul = V, ret = m,
+            N = Nage_T[, length(p_terminal)], # Kept catch of HOS
+            vul = V, ret = m,
             release_mort = release_mort[2]
           )
         } else {
@@ -147,9 +149,10 @@ get_F <- function(u = 0, M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20
 }
 
 F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0) {
-  F_age <- vul * .F
-  Z <- ret * F_age + (1 - ret) * release_mort * F_age + M
-  catch_ret <- ret * F_age/Z * (1 - exp(-Z)) * N
+  F_ret <- vul * ret * .F
+  F_rel <- vul * (1 - ret) * release_mort * .F
+  Z <- F_ret + F_rel + M
+  catch_ret <- F_ret/Z * (1 - exp(-Z)) * N
   catch_ret[is.na(catch_ret)] <- 0
   sum(catch_ret)/sum(N) - u
 }

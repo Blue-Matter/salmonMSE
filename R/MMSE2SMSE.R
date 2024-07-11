@@ -57,20 +57,29 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
   Escapement_NOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , - 1]
 
-  # Total catch
+  # Kept catch
   KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
   KT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]
 
+  # Total discards (live + dead)
   DPT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_imm, f, mp, t1] - MMSE@Catch[, p_NOS_imm, f, mp, t1]
   DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
 
-  ExPT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_imm, f, mp, t1])
+  # Harvest rate from kept catch
   UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
   UPT_NOS[is.na(UPT_NOS)] <- 0
 
-  ExT_NOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_NOS_return, f, mp, t2])
   UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], c(1, 3), sum)
   UT_NOS[is.na(UT_NOS)] <- 0
+
+  # Exploitation rate from kept + dead discards (DD)
+  DDPT_NOS <- SOM@release_mort[1] * DPT_NOS[, ns, ]
+  ExPT_NOS[, ns, ] <- (KPT_NOS[, ns, ] + DDPT_NOS)/apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
+  ExPT_NOS[is.na(ExPT_NOS)] <- 0
+
+  DDT_NOS <- SOM@release_mort[2] * DT_NOS[, ns, ]
+  ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], c(1, 3), sum)
+  ExT_NOS[is.na(ExT_NOS)] <- 0
 
   do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
   if (do_hatchery) {
@@ -82,19 +91,29 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
     Escapement_HOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , -1]
 
+    # Kept catch
     KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
     KT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]
 
+    # Total discards (live + dead)
     DPT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_imm, f, mp, t1] - MMSE@Catch[, p_HOS_imm, f, mp, t1]
     DT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_return, f, mp, t2] - MMSE@Catch[, p_HOS_return, f, mp, t2]
 
-    ExPT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_imm, f, mp, t1])
+    # Harvest rate from kept catch
     UPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]/apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
     UPT_HOS[is.na(UPT_HOS)] <- 0
 
-    ExT_HOS[, ns, ] <- 1 - exp(-MMSE@FM[, p_HOS_return, f, mp, t1])
     UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], c(1, 3), sum)
     UT_HOS[is.na(UT_HOS)] <- 0
+
+    # Exploitation rate from kept + dead discards (DD)
+    DDPT_HOS <- SOM@release_mort[1] * DPT_HOS[, ns, ]
+    ExPT_HOS[, ns, ] <- (KPT_HOS[, ns, ] + DDPT_HOS)/apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], c(1, 3), sum)
+    ExPT_HOS[is.na(ExPT_HOS)] <- 0
+
+    DDT_HOS <- SOM@release_mort[2] * DT_HOS[, ns, ]
+    ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], c(1, 3), sum)
+    ExT_HOS[is.na(ExT_HOS)] <- 0
 
     # NOS + HOS state variables from salmonMSE
     ngen <- length(unique(salmonMSE_env$N$t))
