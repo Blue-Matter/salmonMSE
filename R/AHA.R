@@ -125,7 +125,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     rel_loss_egg = SOM@rel_loss[1],
     rel_loss_fry = SOM@rel_loss[2],
     rel_loss_smolt = SOM@rel_loss[3],
-    Zpop_start = c(SOM@pbar_start, 100),
+    Zpop_start = c(SOM@zbar_start, 100),
     fitness_variance = SOM@fitness_variance,
     selection_strength = SOM@selection_strength,
     heritability = SOM@heritability,

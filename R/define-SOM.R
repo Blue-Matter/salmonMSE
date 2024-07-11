@@ -176,7 +176,7 @@ setClass(
     fitness_type = "character",
     theta = "numeric",
     rel_loss = "numeric",
-    pbar_start = "numeric",
+    zbar_start = "numeric",
     fitness_variance = "numeric",
     selection_strength = "numeric",
     heritability = "numeric",

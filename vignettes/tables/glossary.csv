@@ -33,7 +33,7 @@ p^\textrm{NOB}_\textrm{max},"Maximum proportion of the natural origin broodtake 
 p^\textrm{hatchery},"Proportion of hatchery origin escapement to hatchery, available for broodtake",Hatchery,SOM,phatchery
 p^\textrm{HOS}_\textrm{removal},"Proportion of hatchery origin escapement removed from spawning grounds, not available for broodtake",Hatchery,SOM,premove_HOS
 \gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery,SOM,gamma
-\bar{z},Mean phenotypic value of cohort in natural and hatchery environments,Fitness,Internal state variable,-
+\bar{z},Mean phenotypic value of cohort in natural and hatchery environments,Fitness,Internal state variable and SOM,zbar_start
 \theta,Optimal phenotypic value for natural and hatchery environments,Fitness,SOM,theta
 \sigma^2,Variance of phenotypic traits in population,Fitness,SOM,fitness_variance
 \Omega,Selection strength: fitness variance relative to phenotypic variance,Fitness,SOM,selection_strength

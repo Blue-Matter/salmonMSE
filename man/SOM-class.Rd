@@ -100,7 +100,7 @@ imperfect implementation of weir removal.}
 
 \item{\code{rel_loss}}{Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.}
 
-\item{\code{pbar_start}}{Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.}
+\item{\code{zbar_start}}{Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.}
 
 \item{\code{fitness_variance}}{Numeric. The variance of the phenotype in the population. Assumed identical between the natural and hatchery environments.}
 

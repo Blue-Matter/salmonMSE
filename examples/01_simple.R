@@ -43,7 +43,7 @@ Hatchery <- new(
   rel_loss = c(0.5, 0.4, 0.1),
   fec_brood = c(0, 0, 5040),
   fitness_type = "Ford",
-  pbar_start = c(93.1, 92),
+  zbar_start = c(93.1, 92),
   fitness_variance = 10,
   selection_strength = 3,
   heritability = 0.5,

@@ -144,48 +144,22 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     if (!total_fry) return(0) # Perr_y = 0
 
     # Predicted fry and smolts from projected SRR parameters and fitness
-    if (fitness_type == "Ford") {
+    if (x > 0 && fitness_type == "Ford") {
+      # Get zbar from salmonMSE_env
+      zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
 
-      # Get pbar from salmonMSE_env
-      if (x > 0 && nrow(salmonMSE_env$Ford)) {
-        Ford_x <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
-        if (nrow(Ford_x)) {
-          pbar_prev <- filter(Ford_x, t == max(.data$t)) %>% pull(.data$pbar)
-        } else {
-          pbar_prev <- numeric(0)
-        }
-      } else {
-        pbar_prev <- numeric(0)
-      }
-
-      if (nrow(salmonMSE_env$Ford) && length(pbar_prev)) {
-        fitness_calcs <- calc_Ford_fitness(
-          pNOB, pHOSeff, pbar_prev, fitness_args$theta, fitness_args$omega2, fitness_args$fitness_variance,
-          fitness_args$A, fitness_args$fitness_floor, fitness_args$heritability
+      if (nrow(zbar_prev)) {
+        zbar <- calc_zbar(
+          NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_prev, fitness_args$zbar_start, y,
+          fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
         )
-        pbar <- fitness_calcs$pbar
-        fitness <- fitness_calcs$fitness
       } else {
-        pbar <- fitness_args$pbar_start
-        fitness <- local({
-          x <- exp(-0.5 * (pbar[1] - fitness_args$theta[1])^2/(fitness_args$omega2+fitness_args$fitness_variance))
-          max(fitness_args$fitness_floor, x)
-        })
+        zbar <- fitness_args$zbar_start
       }
 
+      # Fitness in the natural environment
+      fitness <- calc_fitness(zbar[1], fitness_args$theta[1], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor)
       fitness_loss <- fitness^fitness_args$rel_loss
-
-      if (x > 0) {
-        # Save pbar for next generation
-        df_Ford <- data.frame(
-          x = x,
-          p_smolt = p_smolt,
-          t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
-          type = c("natural", "hatchery"),
-          pbar = pbar
-        )
-        salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
-      }
 
     } else {
       fitness <- 1
@@ -231,6 +205,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     Perr_y <- total_smolt/smolt_NOS_SRR
 
     if (x > 0) {
+
       # Save state variables
       df_N <- data.frame(
         x = x,
@@ -264,6 +239,18 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
         beta = beta_proj
       )
       salmonMSE_env$state <- rbind(salmonMSE_env$state, df_state)
+
+      # Save zbar
+      if (fitness_type == "Ford") {
+        df_Ford <- data.frame(
+          x = x,
+          p_smolt = p_smolt,
+          t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+          type = c("natural", "hatchery"),
+          zbar = zbar
+        )
+        salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
+      }
     }
 
     return(Perr_y)
@@ -352,11 +339,16 @@ predict.RelSmolt <- function(object, newdata, ...) {
 
   val <- sapply(1:nrow(newdata), function(i) {
     Esc_NOS <- newdata[i, grepl(vars_Rel[1], vars)] %>% as.numeric()
+    n_age <- length(Esc_NOS)
+    a <- seq(3, n_age, 2)
+    if (sum(Esc_NOS[!a])) stop("Internal salmonMSE error: there is natural escapement in even age classes")
+
     if (do_hatchery) {
       Esc_HOS <- newdata[i, grepl(vars_Rel[2], vars)] %>% as.numeric()
-      Nage <- cbind(Esc_NOS, Esc_HOS)[-1, ]
+      if (sum(Esc_HOS[!a])) stop("Internal salmonMSE error: there is hatchery escapement in even age classes")
+      Nage <- cbind(Esc_NOS[a], Esc_HOS[a])
     } else {
-      Nage <- matrix(Esc_NOs, ncol = 1)
+      Nage <- matrix(Esc_NOS[a], ncol = 1)
     }
     x <- newdata[i, "x"]
     y <- newdata[i, "y"]

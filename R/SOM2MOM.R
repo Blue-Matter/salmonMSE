@@ -163,12 +163,12 @@ SOM2MOM <- function(SOM) {
         list(
           rel_loss = SOM@rel_loss,
           omega2 = omega2,
-          A = 1 - SOM@heritability * SOM@fitness_variance/(omega2 + SOM@fitness_variance),
+          #A = 1 - SOM@heritability * SOM@fitness_variance/(omega2 + SOM@fitness_variance),
           fitness_variance = SOM@fitness_variance,
           fitness_floor = SOM@fitness_floor,
           heritability = SOM@heritability,
           theta = SOM@theta,
-          pbar_start = SOM@pbar_start
+          zbar_start = SOM@zbar_start
         )
       })
     }

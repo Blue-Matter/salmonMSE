@@ -28,7 +28,7 @@
 #' @slot fitness_type Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
 #' @slot rel_loss Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.
-#' @slot pbar_start Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.
+#' @slot zbar_start Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.
 #' @slot fitness_variance Numeric. The variance of the phenotype in the population. Assumed identical between the natural and hatchery environments.
 #' @slot selection_strength Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.
 #' @slot heritability Numeric. The heritability of the phenotypic trait. Between 0-1.

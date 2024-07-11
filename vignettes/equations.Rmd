@@ -263,7 +263,7 @@ where $h^2$ is the heritability of $z$ and $\bar{z}^\prime_{g-1}$ is the trait v
 
 \begin{align}
 \bar{z}^\prime_{g-1} &= \dfrac{1}{\bar{W}_{g-1}}\int W_{g-1}(z)\times zf(z)dz\\
-&= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2} - \bar{z}_{g-1}\right)h^2
+&= \dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2}
 \end{align}
 
 With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^\textrm{natural}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^\textrm{hatchery}$):
