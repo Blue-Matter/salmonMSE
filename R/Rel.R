@@ -383,28 +383,25 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   stopifnot(fitness_type == "Ford")
 
   even_time_step <- !y %% 2
-
   if (even_time_step) {
-    if (nrow(salmonMSE_env$state) && x > 0) {
-      fitness_df <- filter(salmonMSE_env$state, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
+    n_age <- dim(Mbase)[2]
+    fitness_a <- rep(1, n_age)
+    for (a in seq(2, n_age, 2)) {
+      if (nrow(salmonMSE_env$state) && x > 0) {
+        fitness_y <- dplyr::filter(
+          salmonMSE_env$state,
+          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a
+        ) %>%
+          pull(.data$fitness)
 
-      if (nrow(fitness_df)) {
-        tmax <- ifelse(nrow(fitness_df), max(fitness_df$t), 1)
-        fitness <- filter(fitness_df, t == .env$tmax) %>%
-          pull(.data$fitness) %>% unique()
-        if (!length(fitness)) fitness <- 1
-      } else {
-        fitness <- 1
+        if (length(fitness_y)) fitness_a[a] <- fitness_y
       }
-
-    } else {
-      fitness <- 1
     }
 
-    fitness_loss <- fitness^rel_loss
+    fitness_loss <- fitness_a^rel_loss
     M <- Mbase[x, , y - nyears]
     SAR_base <- SAR_loss <- exp(-M)
-    SAR_loss[M > .Machine$double.eps] <- SAR_base[M > .Machine$double.eps] * fitness_loss
+    SAR_loss[M > .Machine$double.eps] <- SAR_base[M > .Machine$double.eps] * fitness_loss[M > .Machine$double.eps]
     return(-log(SAR_loss))
   } else {
     return(Mbase[x, , y - nyears])
