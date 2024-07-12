@@ -263,13 +263,7 @@ $$
 \bar{W}(z) \propto \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
 $$
 
-We follow the mean fitness of generation $g$ for the natural environment:
-
-$$
-\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
-$$
-
-The mean phenotype $\bar{z}$ is calculated iteratively, where the change from generation $g-1$ to $g$ is
+The mean phenotype $\bar{z}$ is calculated iteratively, where the change $\Delta\bar{z}$ from generation $g-1$ to $g$ is
 
 \begin{align}
 \Delta\bar{z} &= \bar{z}_g - \bar{z}_{g-1} = (\bar{z}^\prime_{g-1} - \bar{z}_{g-1})h^2\\
@@ -283,31 +277,45 @@ where $h^2$ is the heritability of $z$ and $\bar{z}^\prime_{g-1}$ is the trait v
 &= \dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2}
 \end{align}
 
-With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average between the mean trait value of natural origin spawners in the natural environment (with optimum value $\theta^\textrm{natural}$) and that of hatchery origin spawners in the hatchery environment (with optimum value $\theta^\textrm{hatchery}$):
+Let $\bar{z}^\prime_{g-1}(\theta)$ be a function that returns the mean trait value after selection in an environment with optimum value $\theta$.
+With a hatchery program, the mean trait value of the progeny in the natural environment is a weighted average of the mean trait value in natural and hatchery origin spawners, with selection in the natural environment, i.e., with optimum trait value $\theta^\textrm{natural}$:
 
-$$
-\bar{z}^\textrm{natural}_g = (1 - p^\textrm{HOSeff}_{g-1}) \times \bar{z}^{\prime\textrm{natural}}_{g-1} + p^\textrm{HOSeff}_{g-1} \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
-$$
+\begin{align}
+\bar{z}^\textrm{natural}_g = & (1 - p^\textrm{HOSeff}_{g-1}) \times \left(\bar{z}^\textrm{natural}_{g-1} + [\bar{z}^{\prime\textrm{natural}}_{g-1}(\theta^\textrm{natural}) - \bar{z}^\textrm{natural}_{g-1}] h^2\right) +\\
+& p^\textrm{HOSeff}_{g-1} \times \left(\bar{z}^\textrm{hatchery}_{g-1} + [\bar{z}^{\prime\textrm{hatchery}}_{g-1}(\theta^\textrm{natural}) - \bar{z}^\textrm{hatchery}_{g-1}] h^2\right)
+\end{align}
 
-where $p^\textrm{HOSeff} = \gamma\times\textrm{HOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$. 
+where $p^\textrm{HOSeff} = \gamma\times\textrm{HOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})$.
 
-Similarly, the mean trait value in the hatchery environment $\bar{z}^\textrm{hatchery}_g$ is a weighted average of the mean trait value of the natural origin broodtake in the natural environment and that of the hatchery origin broodtake in the hatchery environment:
+Similarly, the mean trait value in the hatchery environment $\bar{z}^\textrm{hatchery}_g$ is a weighted average of the mean trait value of the natural and hatchery broodtake, with selection in the hatchery environment, i.e., with optimum trait value $\theta^\textrm{hatchery}$:
 
-$$
-\bar{z}^\textrm{hatchery}_g = p^\textrm{NOB}_{g-1} \times \bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOB}_{g-1}) \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
-$$
+\begin{align}
+\bar{z}^\textrm{hatchery}_g = & p^\textrm{NOB}_{g-1} \times \left(\bar{z}^\textrm{natural}_{g-1} + [\bar{z}^{\prime\textrm{natural}}_{g-1}(\theta^\textrm{hatchery}) - \bar{z}^\textrm{natural}_{g-1}] h^2\right) +\\
+& (1 - p^\textrm{NOB}_{g-1}) \times \left(\bar{z}^\textrm{hatchery}_{g-1} + [\bar{z}^{\prime\textrm{hatchery}}_{g-1}(\theta^\textrm{hatchery}) - \bar{z}^\textrm{hatchery}_{g-1}] h^2\right)
+\end{align}
 
 where $p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})$.
 
 The fitness variance $\omega^2$ and phenotype variance $\sigma^2$ are assumed constant between the two environments. The fitness variance is parameterized relative to the variance of the phenotype, i.e., $\omega = \Omega \sigma$ where $\Omega$ is the "selection strength".
 
+The mean fitness of generation $g$ in the natural environment is then:
+
+$$
+\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
+$$
+
 ## Mixed brood-year return
 
-If a mixed-brood year return in year $y$ across several ages $a$ produces the smolt cohort in year $y+1$, then the mean trait value in that cohort is calculated from a weighted average by brood year and age class fecundity:
+If a mixed-brood year return in year $y$ across several ages $a$ produces the smolt cohort in year $y+1$, then the mean trait value in the progeny is calculated from a weighted average by brood year and age class fecundity:
 
 \begin{align}
-\bar{z}^\textrm{natural}_{y+1} &= \sum_a p^\textrm{NOS}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOSeff}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}\\
-\bar{z}^\textrm{hatchery}_{y+1} &= \sum_a p^\textrm{NOB}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOB}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}
+\bar{z}^\textrm{natural}_{y+1} = & \sum_a p^\textrm{NOS}_{y,a} \times \left(\bar{z}^\textrm{natural}_{y-a+1} + [\bar{z}^{\prime\textrm{natural}}_{y-a+1}(\theta^\textrm{natural}) - \bar{z}^\textrm{natural}_{y-a+1}] h^2\right) +\\
+& \sum_a p^\textrm{HOSeff}_{y,a} \times \left(\bar{z}^\textrm{hatchery}_{y-a+1} + [\bar{z}^{\prime\textrm{hatchery}}_{y-a+1}(\theta^\textrm{natural}) - \bar{z}^\textrm{hatchery}_{y-a+1}] h^2\right)
+\end{align}
+
+\begin{align}
+\bar{z}^\textrm{hatchery}_{y+1} = & \sum_a p^\textrm{NOB}_{y,a} \times \left(\bar{z}^\textrm{natural}_{y-a+1} + [\bar{z}^{\prime\textrm{natural}}_{y-a+1}(\theta^\textrm{hatchery}) - \bar{z}^\textrm{natural}_{y-a+1}] h^2\right) +\\
+& \sum_a p^\textrm{HOB}_{y,a} \times \left(\bar{z}^\textrm{hatchery}_{y-a+1} + [\bar{z}^{\prime\textrm{hatchery}}_{y-a+1}(\theta^\textrm{hatchery}) - \bar{z}^\textrm{hatchery}_{y-a+1}] h^2\right)
 \end{align}
 
 where
