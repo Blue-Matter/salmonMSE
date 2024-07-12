@@ -1,198 +1,108 @@
 
-## Internal functions to predict either:
-# (b) smolt hatchery production
-# (c) smolt natural production
-calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
-                           fec_brood, s_prespawn) {
-
-  NOR_escapement <- Nage[, 1]
-  if (ncol(Nage) > 1) {
-    HOR_escapement <- Nage[, 2]
-
-    opt <- try(
-      uniroot(.broodtake_func, c(1e-8, pmax_NOB),
-              NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-              fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB),
-      silent = TRUE
-    )
-    if (is.character(opt)) {
-      ptake_NOB <- pmax_NOB
-    } else {
-      ptake_NOB <- opt$root
-    }
-
-    output <- .broodtake_func(
-      ptake_NOB, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-      fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, opt = FALSE
-    )
-
-    NOB <- output$NOB
-    HOB <- output$HOB
-  } else {
-
-    NOBopt <- try(
-      uniroot(.egg_func, c(1e-8, pmax_NOB), N = NOR_escapement, gamma = 1, fec = fec_brood, p_female = p_female,
-              s_prespawn = s_prespawn, val = egg_local),
-      silent = TRUE
-    )
-    if (is.character(NOBopt)) {
-      ptake_NOB <- pmax_NOB
-    } else {
-      ptake_NOB <- NOBopt$root
-    }
-    NOB <- ptake_NOB * NOR_escapement
-    HOB <- rep(0, length(NOB))
-  }
-
-  list(NOB = NOB, HOB = HOB)
-}
-
-calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
-  spawners <- list()
-  spawners$NOS <- escapement[, 1] - broodtake$NOB
-  if (ncol(escapement) > 1) {
-    spawners$HOS <- escapement[, 2] * (1 - phatchery) * (1 - premove_HOS)
-  } else {
-    spawners$HOS <- rep(0, length(spawners$NOS))
-  }
-  return(spawners)
-}
-
-
-.egg_func <- function(ptake, N, gamma = 1, fec, p_female, s_prespawn, val = 0) {
-  sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
-}
-
-.broodtake_func <- function(ptake_NOB, NOR_escapement, HOR_escapement, phatchery, p_female, fec, gamma,
-                            egg_target, s_prespawn, ptarget_NOB, opt = TRUE) {
-
-  NOB <- ptake_NOB * NOR_escapement
-  egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
-  egg_HOB <- egg_target - egg_NOB
-
-  if (egg_HOB < 0) {
-    ptake_HOB <- 0
-  } else {
-    # solve for the required HOB
-    HOBopt <- try(
-      uniroot(.egg_func, c(1e-8, 1), N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female,
-              s_prespawn = s_prespawn, val = egg_HOB),
-      silent = TRUE
-    )
-    if (is.character(HOBopt)) {
-      ptake_HOB <- 1
-    } else {
-      ptake_HOB <- HOBopt$root
-    }
-  }
-
-  HOB <- ptake_HOB * HOR_escapement * phatchery
-  egg_HOB_actual <- .egg_func(
-    ptake_HOB, N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
-  )
-
-  if (opt) {
-    obj <- log(sum(NOB)/sum(NOB + HOB)) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
-    return(obj)
-  } else {
-    output <- list(egg_NOB = egg_NOB, egg_HOB = egg_HOB_actual, ptake_HOB = ptake_HOB, NOB = NOB, HOB = HOB)
-    return(output)
-  }
-}
-
 
 .smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
-                        ptarget_NOB, pmax_NOB, egg_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
+                        ptarget_NOB, pmax_NOB, egg_local, fec_brood,
+                        s_yearling, s_subyearling, p_yearling,
+                        phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, SRRpars, # Spawning (natural production)
                         fitness_type = c("Ford", "none"), # Hatchery production that affects natural production
                         fitness_args, p_smolt) {
 
   output <- match.arg(output)
-
+  fitness_type <- match.arg(fitness_type)
   Nage[is.na(Nage)] <- 0
+
+  # Hatchery
   broodtake <- calc_broodtake(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
 
+  egg_NOB <- sum(broodtake$NOB * fec_brood * s_prespawn * p_female)
+  egg_HOB <- sum(broodtake$HOB * fec_brood * s_prespawn * p_female)
+
+  hatchery_production <- calc_yearling(egg_NOB + egg_HOB, s_yearling, s_subyearling, p_yearling)
+  yearling <- hatchery_production[1]
+  subyearling <- hatchery_production[2]
+
+  # Spawners
+  spawners <- calc_spawners(broodtake, Nage, phatchery, premove_HOS)
+
+  NOS <- spawners$NOS
+  HOS <- spawners$HOS
+  if (sum(HOS)) {
+    HOS_effective <- spawners$HOS * gamma
+  } else {
+    HOS_effective <- rep(0, length(HOS))
+  }
+
+  # Spawners weighted by fecundity
+  pNOB <- sum(fec_brood * broodtake$NOB)/sum(fec_brood * broodtake$NOB, fec_brood * broodtake$HOB)
+  pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec *HOS_effective)
+  pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
+
+  # Natural fry production in the absence of fitness effects
+  fry_NOS <- sum(NOS * p_female * fec)
+  fry_HOS <- sum(HOS_effective * p_female * fec)
+
+  total_fry <- fry_NOS + fry_HOS
+  if (!total_fry && output == "natural") return(0) # Perr_y = 0
+
+  # Fitness
+  if (x > 0 && fitness_type == "Ford") {
+    # Get zbar from salmonMSE_env
+    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
+
+    if (nrow(zbar_prev)) {
+      zbar <- calc_zbar(
+        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_prev, fitness_args$zbar_start, y,
+        fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
+      )
+    } else {
+      zbar <- fitness_args$zbar_start
+    }
+
+    # Fitness in the natural environment
+    fitness <- calc_fitness(zbar[1], fitness_args$theta[1], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor)
+    fitness_loss <- fitness^fitness_args$rel_loss
+
+  } else {
+    fitness <- 1
+    fitness_loss <- c(1, 1, 1)
+  }
+
+  # Natural fry production after fitness loss
+  fry_NOS_out <- fry_NOS * fitness_loss[1]
+  fry_HOS_out <- fry_HOS * fitness_loss[1]
+  total_fry_out <- fry_NOS_out + fry_HOS_out + subyearling
+
+  # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
+  xx <- max(x, 1)
+  SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
+  alpha_hist <- SRRpars[xx, "a"]
+  beta_hist <- SRRpars[xx, "b"]
+
+  alpha_proj <- alpha_hist * SRRpars[xx, "kappa_improve"] * fitness_loss[2]
+  if (SRrel == "BH") {
+    beta_proj <- alpha_proj/(SRRpars[xx, "capacity_smolt"] * SRRpars[xx, "capacity_smolt_improve"] * fitness_loss[2])
+  } else {
+    beta_proj <- SRRpars[xx, "b"]/SRRpars[xx, "capacity_smolt_improve"]/fitness_loss[2]
+  }
+
+  if (SRrel == "BH") {
+    smolt_NOS_proj <- alpha_proj * fry_NOS_out/(1 + beta_proj * total_fry_out)
+    smolt_HOS_proj <- alpha_proj * fry_HOS_out/(1 + beta_proj * total_fry_out)
+    smolt_subyearling <- alpha_proj * subyearling/(1 + beta_proj * total_fry_out)
+  } else {
+    smolt_NOS_proj <- alpha_proj * fry_NOS_out * exp(-beta_proj * total_fry_out)
+    smolt_HOS_proj <- alpha_proj * fry_HOS_out * exp(-beta_proj * total_fry_out)
+    smolt_subyearling <- alpha_proj * subyearling * exp(-beta_proj * total_fry_out)
+  }
+  total_smolt <- smolt_NOS_proj + smolt_HOS_proj
+  smolt_rel <- yearling + smolt_subyearling
+
   if (output == "hatchery") {
-    egg_NOB <- sum(broodtake$NOB * fec_brood * s_prespawn * p_female)
-    egg_HOB <- sum(broodtake$HOB * fec_brood * s_prespawn * p_female)
-    fry <- egg_NOB + egg_HOB
-    smolt <- fry * s_egg
-    return(smolt)
+    # Return total hatchery smolt releases after density-dependent survival of subyearlings
+    return(smolt_rel)
 
-  } else if (output == "natural") {
-    fitness_type <- match.arg(fitness_type)
-    spawners <- calc_spawners(broodtake, Nage, phatchery, premove_HOS)
-
-    NOS <- spawners$NOS
-    HOS <- spawners$HOS
-    if (sum(HOS)) {
-      HOS_effective <- spawners$HOS * gamma
-    } else {
-      HOS_effective <- rep(0, length(HOS))
-    }
-
-    # Weighted by fecundity
-    pNOB <- sum(fec_brood * broodtake$NOB)/sum(fec_brood * broodtake$NOB, fec_brood * broodtake$HOB)
-    pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec *HOS_effective)
-    pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
-
-    # Fry production in the absence of fitness effects
-    fry_NOS <- sum(NOS * p_female * fec)
-    fry_HOS <- sum(HOS_effective * p_female * fec)
-
-    total_fry <- fry_NOS + fry_HOS
-
-    if (!total_fry) return(0) # Perr_y = 0
-
-    # Predicted fry and smolts from projected SRR parameters and fitness
-    if (x > 0 && fitness_type == "Ford") {
-      # Get zbar from salmonMSE_env
-      zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
-
-      if (nrow(zbar_prev)) {
-        zbar <- calc_zbar(
-          NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_prev, fitness_args$zbar_start, y,
-          fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
-        )
-      } else {
-        zbar <- fitness_args$zbar_start
-      }
-
-      # Fitness in the natural environment
-      fitness <- calc_fitness(zbar[1], fitness_args$theta[1], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor)
-      fitness_loss <- fitness^fitness_args$rel_loss
-
-    } else {
-      fitness <- 1
-      fitness_loss <- c(1, 1, 1)
-    }
-
-    # Fry production after fitness loss
-    fry_NOS_out <- fry_NOS * fitness_loss[1]
-    fry_HOS_out <- fry_HOS * fitness_loss[1]
-    total_fry_out <- fry_NOS_out + fry_HOS_out
-
-    # Smolt production after fitness loss
-    xx <- max(x, 1)
-    SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
-    alpha_hist <- SRRpars[xx, "a"]
-    beta_hist <- SRRpars[xx, "b"]
-
-    alpha_proj <- alpha_hist * SRRpars[xx, "kappa_improve"] * fitness_loss[2]
-    if (SRrel == "BH") {
-      beta_proj <- alpha_proj/(SRRpars[xx, "capacity_smolt"] * SRRpars[xx, "capacity_smolt_improve"] * fitness_loss[2])
-    } else {
-      beta_proj <- SRRpars[xx, "b"]/SRRpars[xx, "capacity_smolt_improve"]/fitness_loss[2]
-    }
-
-    if (SRrel == "BH") {
-      smolt_NOS_proj <- alpha_proj * fry_NOS_out/(1 + beta_proj * total_fry_out)
-      smolt_HOS_proj <- alpha_proj * fry_HOS_out/(1 + beta_proj * total_fry_out)
-    } else {
-      smolt_NOS_proj <- alpha_proj * fry_NOS_out * exp(-beta_proj * total_fry_out)
-      smolt_HOS_proj <- alpha_proj * fry_HOS_out * exp(-beta_proj * total_fry_out)
-    }
-    total_smolt <- smolt_NOS_proj + smolt_HOS_proj
+  } else {
 
     # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production or habitat improvement)
     fry_openMSE <- sum(Nage[, 1] * p_female * fec)
@@ -206,7 +116,6 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     Perr_y <- total_smolt/smolt_NOS_SRR
 
     if (x > 0) {
-
       # Save state variables
       df_N <- data.frame(
         x = x,
@@ -237,7 +146,10 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
         pHOScensus = as.numeric(pHOScensus),
         Perr_y = Perr_y,
         alpha = alpha_proj,
-        beta = beta_proj
+        beta = beta_proj,
+        yearling = yearling,
+        subyearling = subyearling,
+        smolt_rel = smolt_rel
       )
       salmonMSE_env$state <- rbind(salmonMSE_env$state, df_state)
 
@@ -260,7 +172,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
 makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
                           output = c("natural", "hatchery"),
-                          ptarget_NOB, pmax_NOB, egg_local, fec_brood, s_egg, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
+                          ptarget_NOB, pmax_NOB, egg_local, fec_brood,
+                          s_yearling, s_subyearling, p_yearling, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                           p_female, fec, gamma, SRRpars,  # Spawning (natural production)
                           fitness_type = c("Ford", "none"), fitness_args) {
 
@@ -272,28 +185,27 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   formals(func)$pmax_NOB <- pmax_NOB
   formals(func)$egg_local <- egg_local
   formals(func)$fec_brood <- fec_brood
-  formals(func)$s_egg <- s_egg
+
+  formals(func)$s_yearling <- s_yearling
+  formals(func)$s_subyearling <- s_subyearling
+  formals(func)$p_yearling <- p_yearling
+
   formals(func)$phatchery <- phatchery
   formals(func)$s_prespawn <- s_prespawn
   formals(func)$p_female <- p_female
   formals(func)$output <- output
   formals(func)$gamma <- gamma
 
+  formals(func)$premove_HOS <- premove_HOS
+  formals(func)$fec <- fec
+
+  formals(func)$SRRpars <- SRRpars
+  formals(func)$fitness_type <- fitness_type
+
+  formals(func)$fitness_args <- fitness_args
+  formals(func)$p_smolt <- p_smolt
+
   maxage <- length(fec)
-
-  if (output == "natural") {
-    formals(func)$premove_HOS <- premove_HOS
-    formals(func)$fec <- fec
-
-    formals(func)$SRRpars <- SRRpars
-    formals(func)$fitness_type <- fitness_type
-
-    if (fitness_type != "none") {
-      formals(func)$fitness_args <- fitness_args
-      formals(func)$p_smolt <- p_smolt
-    }
-  }
-
   N_natural <- rep(1, maxage) %>% structure(names = paste0("Nage_", p_natural, 1:maxage))
 
   if (!is.na(p_hatchery)) {

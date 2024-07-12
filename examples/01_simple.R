@@ -27,12 +27,11 @@ Bio <- new(
 
 Hatchery <- new(
   "Hatchery",
-  n_yearling = 0,                   # Management lever. No hatchery if both this line and next line are zero
-  n_subyearling = 2e6,              # Management lever. No hatchery if both this line and previous line are zero
-  #n_subyearling = 0,
+  n_yearling = 2e6,                   # Management lever. No hatchery if both this line and next line are zero
+  n_subyearling = 0,              # Management lever. No hatchery if both this line and previous line are zero
   s_prespawn = 1,                   # Survival prior to spawning
-  s_egg_smolt = 1e-6,               # Survival of eggs in hatchery
-  s_egg_subyearling = 0.92,
+  s_egg_smolt = 0.92,               # Survival of eggs in hatchery
+  s_egg_subyearling = 1,
   Mocean_HOS = Bio@Mocean_NOS,
   gamma = 0.8,
   pmax_NOB = 0.7,

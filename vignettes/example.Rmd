@@ -55,7 +55,7 @@ Habitat <- new(
 ```
 
 The hatchery dynamics are the most complex. 
-We have a management target to release 2 million subyearlings. 
+We have a management target to release 2 million yearlings. 
 
 After specifying the survival of broodtake (`s_prespawn`) and the eggs in the hatchery, the model calculates the required number of eggs annually for the target releases.
 The natural broodtake (NOB) and hatchery broodtake (HOB) are taken to reach the target egg production and maintain `NOB/(NOB + HOB) = ptarget_NOB`.
@@ -67,11 +67,11 @@ We also need to specify the relative fecundity of HOS compared to NOS, and the f
 ```{r, eval = FALSE}
 Hatchery <- new(
   "Hatchery",
-  n_yearling = 0,                   # Management lever. No hatchery if both this line and next line are zero
-  n_subyearling = 2e6,              # Management lever. No hatchery if both this line and previous line are zero
-  s_prespawn = 1,                   # Survival prior to spawning
-  s_egg_smolt = 1e-6,               # Survival of eggs in hatchery to yearling
-  s_egg_subyearling = 0.92,         # Survival of eggs in hatchery to subyearling
+  n_yearling = 2e6,               # Management lever. No hatchery if both this line and next line are zero
+  n_subyearling = 0,              # Management lever. No hatchery if both this line and previous line are zero
+  s_prespawn = 1,                 # Survival prior to spawning
+  s_egg_smolt = 0.92,             # Survival of eggs in hatchery
+  s_egg_subyearling = 1,
   Mocean_HOS = Bio@Mocean_NOS,
   gamma = 0.8,
   pmax_NOB = 0.7,

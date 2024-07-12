@@ -143,13 +143,11 @@ SOM2MOM <- function(SOM) {
     egg_subyearling <- ifelse(SOM@n_subyearling > 0, SOM@n_subyearling/SOM@s_egg_subyearling, 0)
     egg_local <- egg_yearling + egg_subyearling
 
-    # Survival of eggs in the hatchery
     p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
-    s_egg_hatchery <- SOM@s_egg_subyearling * (1 - p_yearling) + SOM@s_egg_smolt * p_yearling
 
   } else {
     egg_local <- 0
-    s_egg_hatchery <- NA
+    p_yearling <- NA
   }
 
   if (do_hatchery || habitat_change) {
@@ -177,7 +175,8 @@ SOM2MOM <- function(SOM) {
     Rel[[1]] <- makeRel_smolt(
       p_smolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
-      egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
+      egg_local = egg_local, fec_brood = SOM@fec_brood,
+      s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
       fitness_type = SOM@fitness_type, fitness_args = fitness_args
@@ -199,9 +198,11 @@ SOM2MOM <- function(SOM) {
     Rel[[nRel + 1]] <- makeRel_smolt(
       p_smolt = 4, p_natural = 3, p_hatchery = 6, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
-      egg_local = egg_local, fec_brood = SOM@fec_brood, s_egg = s_egg_hatchery,
+      egg_local = egg_local, fec_brood = SOM@fec_brood,
+      s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
-      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma
+      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
+      fitness_type = SOM@fitness_type, fitness_args = fitness_args
     )
   }
 
