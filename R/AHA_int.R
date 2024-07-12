@@ -84,3 +84,11 @@ catch_fn <- function(return_size, u, surv_passage = c(1, 1, 1, 1), nfishery = 4)
 
   return(list(catch = catch, N = N))
 }
+
+
+# Withler et al. 2018, page 27
+calc_pwild <- function(pHOS_cur, pHOS_prev, gamma) {
+  num <- (1 - pHOS_prev)^2
+  denom <- num + 2 * gamma * pHOS_prev * (1 - pHOS_prev) + gamma * gamma * pHOS_prev^2
+  (1 - pHOS_cur) * num/denom
+}

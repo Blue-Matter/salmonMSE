@@ -148,13 +148,12 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     pHOScensus <- get_salmonMSE_var(state, var = "pHOScensus")
 
     PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOSeff) # Withler et al. 2018, page 17
-    p_wild[, ns, y_spawn] <- sapply(1:ncol(pHOScensus), function(t) {
-      if (t == 1) {
-        rep(NA_real_, nrow(pHOScensus))
-      } else {
-        calc_pwild(pHOScensus[, t], pHOScensus[, t-1], SOM@gamma)
-      }
-    })
+
+    NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@maxage, SOM@proyears))
+    NOS_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "NOS")
+    HOScensus_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "HOS")
+
+    p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@fec, SOM@gamma)
 
   } else {
     # If no hatchery, the NOS escapement is also the NOS, fry_NOS is the spawning output
@@ -222,17 +221,54 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
 #' @importFrom dplyr filter summarise
 #' @importFrom reshape2 acast
-get_salmonMSE_var <- function(N, var = "fry_NOS", p_smolt = 1) {
+get_salmonMSE_var <- function(d, var = "fry_NOS", p_smolt = 1) {
   x <- t <- NULL
-  filter(N, .data$p_smolt == .env$p_smolt) %>%
+  dplyr::filter(d, .data$p_smolt == .env$p_smolt) %>%
     summarise(value = sum(.data[[var]]), .by = c(x, t)) %>%
     reshape2::acast(list("x", "t"), value.var = "value")
 }
 
-
-# Withler et al. 2018, page 27
-calc_pwild <- function(pHOS_cur, pHOS_prev, gamma) {
-  num <- (1 - pHOS_prev)^2
-  denom <- num + 2 * gamma * pHOS_prev * (1 - pHOS_prev) + gamma * gamma * pHOS_prev^2
-  (1 - pHOS_cur) * num/denom
+get_salmonMSE_agevar <- function(d, var = "fry_NOS", p_smolt = 1) {
+  dplyr::filter(d, .data$p_smolt == .env$p_smolt) %>%
+    reshape2::acast(list("x", "a", "t"), value.var = var)
 }
+
+calc_pwild_age <- function(NOS_a, HOS_a, fec, gamma) {
+
+  nsim <- dim(NOS_a)[1]
+  maxage <- dim(NOS_a)[2]
+  proyears <- dim(NOS_a)[3]
+
+  fec <- matrix(fec, nsim, maxage, byrow = TRUE)
+
+  prob <- array(NA_real_, c(nsim, proyears))
+
+  for (y in 1:proyears) {
+    if (sum(NOS_a[, , y], HOS_a[, , y])) {
+      pNOS_y <- matrix(1, nsim, maxage)
+      pnatural_b <- phetero_b <- phatch_b <- matrix(0, nsim, maxage)
+
+      pNOS_y[] <- NOS_a[, , y]/rowSums(NOS_a[, , y] + HOS_a[, , y])
+
+      for (a in 1:maxage) {
+        pNOS_b <- matrix(1, nsim, maxage)
+        pHOS_b <- matrix(0, nsim, maxage)
+
+        b <- y - a # brood_year
+        if (b > 0) {
+          pNOS_b[] <- NOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
+          pHOS_b[] <- HOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
+        }
+        pnatural_b[, a] <- rowSums(pNOS_b, na.rm = TRUE)^2
+        phetero_b[, a] <- 2 * gamma * rowSums(pNOS_b, na.rm = TRUE) * rowSums(pHOS_b, na.rm = TRUE)
+        phatch_b[, a] <- gamma^2 * rowSums(pHOS_b, na.rm = TRUE)^2
+      }
+      denom <- pnatural_b + phetero_b + phatch_b
+
+      prob[, y] <- rowSums(pNOS_y * pnatural_b/denom, na.rm = TRUE)
+    }
+  }
+
+  return(prob)
+}
+
