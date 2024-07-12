@@ -98,6 +98,22 @@ knitr::include_graphics("../man/figures/SRR.png")
 
 # Hatchery production
 
+Hatchery production is controlled by several sets of variables specified by the analyst.
+
+The first consideration is to specify the target number of annual releases of sub-yearlings $n^\textrm{subyearling}$ and yearlings $n^\textrm{yearling}$. 
+Going backwards, the corresponding number of eggs needed to reach the target number depends on the egg survival to those life stages.
+Finally, the corresponding number of broodtake is dependent on the brood fecundity and hatchery survival of broodtake.
+
+Additional considerations are the composition (natural vs. hatchery origin) of the broodtake. 
+To minimize genetic drift of the population due to hatchery production, it is desirable to maintain a high proportion of natural origin broodtake.
+This is controlled by $p^\textrm{NOB}_\textrm{target}$, the desired proportion of natural broodtake relative to all broodtake, but can be exceeded if there is insufficient escapement of natural origin fish.
+
+Second, it is also desirable to maintain high spawning of natural origin fish. 
+This is controlled by $p^\textrm{NOB}_\textrm{max}$, the maximum allowable proportion of the natural origin escapement to be used as broodtake. 
+This value is never exceeded.
+
+The following equations then generate the annual broodtake and hatchery production from the state variables given these constraints.
+
 ## Broodtake
 
 The annual target egg production for the hatchery is calculated from the target releases as
@@ -108,7 +124,7 @@ $$
 
 where $s$ is the corresponding survival term from the egg life stage.
 
-Given the escapement in year $y$, the proportion of the escapement is taken as broodtake $p^\textrm{broodtake}$:
+From the escapement in year $y$, some proportion $p^\textrm{broodtake}$ is used as broodtake:
 
 \begin{align}
 \textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a}\\
@@ -117,14 +133,16 @@ Given the escapement in year $y$, the proportion of the escapement is taken as b
 
 The proportion of the available hatchery fish for broodtake is controlled by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
 
-The realized hatchery egg production in year $y$ is
+The realized hatchery egg production is
 
 \begin{align}
 \textrm{Egg}_\textrm{y}^\textrm{NOB} &= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
 \textrm{Egg}_\textrm{y}^\textrm{HOB} &= \sum_a \textrm{HOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a
 \end{align}
 
-The proportion taken as broodtake is solved annually to satisfy the following conditions:
+where egg production is subject to a survival term $s^\textrm{prespawn}$ for the broodtake.
+
+The proportion $p^\textrm{broodtake}$ is solved annually to satisfy the following conditions:
 
 $\dfrac{\sum_a\textrm{NOB}_{y,a}}{\sum_a\textrm{NOB}_{y,a} + \sum_a\textrm{HOB}_{y,a}} = p^\textrm{NOB}_\textrm{target}$
 
@@ -134,11 +152,10 @@ $0 < p^\textrm{broodtake,NOB} < p^\textrm{NOB}_\textrm{max}$
 
 $\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} = \textrm{Egg}_\textrm{broodtake}$
 
-The NOB target ratio $p^\textrm{NOB}_\textrm{target}$ ensures that there is a sufficiently high proportion of natural origin fish in the broodtake, while the maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ ensures that there remains sufficiently high abundance of natural origin spawners. 
+The target ratio $p^\textrm{NOB}_\textrm{target}$ ensures that there is a sufficiently high proportion of natural origin fish in the broodtake. 
+The maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ ensures that there is high abundance of natural origin spawners. 
 
-Egg production is subject to a survival term $s^\textrm{prespawn}$.
-
-The total egg production in a given year can fail to reach the target because there is insufficient natural origin escapement. 
+The total egg production in a given year can fail to reach the target if there is insufficient natural origin escapement. 
 In this case, the NOB take is set to the maximum removal rate ($p^\textrm{broodtake,NOB} = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB.
 
 ## Smolt releases
