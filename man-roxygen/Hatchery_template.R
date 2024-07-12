@@ -25,12 +25,12 @@
 #'  ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
 #'  imperfect implementation of weir removal.
 #' @slot fec_brood Vector of length `maxage`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery.
-#' @slot fitness_type Character. Fitness function for hatchery origin spawners. Either "Ford" or "none".
+#' @slot fitness_type Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
 #' @slot rel_loss Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.
-#' @slot zbar_start Vector length 2. The mean phenotype value in the the natural and hatchery population at the start of the projection.
-#' @slot fitness_variance Numeric. The variance of the phenotype in the population. Assumed identical between the natural and hatchery environments.
+#' @slot zbar_start Vector length 2. The mean phenotype value in the natural and hatchery populations at the start of the projection.
+#' @slot fitness_variance Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments.
 #' @slot selection_strength Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.
 #' @slot heritability Numeric. The heritability of the phenotypic trait. Between 0-1.
-#' @slot fitness_floor Numeric. The minimum fitness value in the natural environment.
+#' @slot fitness_floor Numeric. The minimum fitness value in the natural and hatchery environments.
 

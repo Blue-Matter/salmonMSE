@@ -98,7 +98,7 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{ExT_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Terminal fishery exploitation rate of hatchery origin spawners.}
 
-\item{\code{fitness}}{Array \verb{[nsim, nstocks, proyears]}. Fitness of the natural spawning population.}
+\item{\code{fitness}}{Array \verb{[nsim, nstocks, 2, proyears]}. Fitness of the population in the natural (1) and hatchery (2) environments.}
 
 \item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence, index of gene flow from hatchery to the natural environment.}
 

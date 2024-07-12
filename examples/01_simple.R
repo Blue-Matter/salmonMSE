@@ -27,10 +27,10 @@ Bio <- new(
 
 Hatchery <- new(
   "Hatchery",
-  n_yearling = 2e6,                   # Management lever. No hatchery if both this line and next line are zero
+  n_yearling = 2e6,               # Management lever. No hatchery if both this line and next line are zero
   n_subyearling = 0,              # Management lever. No hatchery if both this line and previous line are zero
-  s_prespawn = 1,                   # Survival prior to spawning
-  s_egg_smolt = 0.92,               # Survival of eggs in hatchery
+  s_prespawn = 1,                 # Survival prior to spawning
+  s_egg_smolt = 0.92,             # Survival of eggs in hatchery
   s_egg_subyearling = 1,
   Mocean_HOS = Bio@Mocean_NOS,
   gamma = 0.8,
@@ -41,7 +41,7 @@ Hatchery <- new(
   theta = c(100, 80),
   rel_loss = c(0.5, 0.4, 0.1),
   fec_brood = c(0, 0, 5040),
-  fitness_type = "Ford",
+  fitness_type = c("Ford", "none"),
   zbar_start = c(93.1, 92),
   fitness_variance = 10,
   selection_strength = 3,

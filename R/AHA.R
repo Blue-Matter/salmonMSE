@@ -28,6 +28,10 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     stop("Need to specify SOM@capacity_smolt")
   }
 
+  if (SOM@fitness_type[2] != "none") {
+    warning("Only fitness dynamics in the natural environment will be modeled.")
+  }
+
   age_mature <- SOM@p_mature[1, , 1] > 0
   age_mature <- which(age_mature)[1]
   message("Age of maturity assumed to be: ", age_mature)
@@ -120,7 +124,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     p_HOS_goal = 0, # Not used
     p_NOB_goal = SOM@ptarget_NOB,
     SAR_vary = "none",
-    fitness_type = SOM@fitness_type, # Fitness
+    fitness_type = SOM@fitness_type[1], # Fitness
     theta = SOM@theta,
     rel_loss_egg = SOM@rel_loss[1],
     rel_loss_fry = SOM@rel_loss[2],

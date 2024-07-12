@@ -153,15 +153,15 @@ SOM2MOM <- function(SOM) {
   if (do_hatchery || habitat_change) {
     fitness_args <- list()
 
-    if (do_hatchery && SOM@fitness_type == "Ford") {
+    if (do_hatchery && any(SOM@fitness_type == "Ford")) {
       fitness_args <- local({
         omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
         omega2 <- omega * omega
 
         list(
+          fitness_type = SOM@fitness_type,
           rel_loss = SOM@rel_loss,
           omega2 = omega2,
-          #A = 1 - SOM@heritability * SOM@fitness_variance/(omega2 + SOM@fitness_variance),
           fitness_variance = SOM@fitness_variance,
           fitness_floor = SOM@fitness_floor,
           heritability = SOM@heritability,
@@ -179,15 +179,25 @@ SOM2MOM <- function(SOM) {
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
-      fitness_type = SOM@fitness_type, fitness_args = fitness_args
+      fitness_args = fitness_args
     )
 
     # Marine survival of natural origin fish
-    if (SOM@fitness_type != "none") {
+    if (SOM@fitness_type[1] != "none") {
       Rel[[2]] <- makeRel_SAR(
-        p_smolt = 1, p_naturalsmolt = 1, fitness_type = SOM@fitness_type,
+        p_smolt = 1, p_naturalsmolt = 1, envir = "natural",
         rel_loss = SOM@rel_loss[3], nyears = 2 * SOM@nyears,
         Mbase = Stocks[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+      )
+    }
+
+    # Marine survival of hatchery origin fish
+    if (SOM@fitness_type[2] != "none") {
+      nRel <- length(Rel)
+      Rel[[nRel + 1]] <- makeRel_SAR(
+        p_smolt = 4, p_naturalsmolt = 1, envir = "hatchery",
+        rel_loss = SOM@rel_loss[3], nyears = 2 * SOM@nyears,
+        Mbase = Stocks[[4]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
       )
     }
   }
@@ -202,7 +212,7 @@ SOM2MOM <- function(SOM) {
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
       p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
-      fitness_type = SOM@fitness_type, fitness_args = fitness_args
+      fitness_args = fitness_args
     )
   }
 
@@ -214,7 +224,6 @@ SOM2MOM <- function(SOM) {
 
 check_SOM <- function(SOM) {
 
-  slot(SOM, "fitness_type") <- match.arg(slot(SOM, "fitness_type"), choices = c("Ford", "none"))
   slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
 
   # Length 1
@@ -224,14 +233,14 @@ check_SOM <- function(SOM) {
                 "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
                 "u_preterminal", "u_terminal", "m",
-                "fitness_type", "fitness_variance", "selection_strength", "heritability", "fitness_floor")
+                "fitness_variance", "selection_strength", "heritability", "fitness_floor")
   lapply(var_len1, function(i) {
     v <- slot(SOM, i)
     if (length(v) != 1) stop("Slot ", i, " must be a single numeric")
   })
 
   # Length 2
-  var_len2 <- "release_mort"
+  var_len2 <- c("release_mort", "fitness_type")
   lapply(var_len2, function(i) {
     v <- slot(SOM, i)
     if (length(v) != 2) stop("Slot ", i, " must be a vector of length 2")

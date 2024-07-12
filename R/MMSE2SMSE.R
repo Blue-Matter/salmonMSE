@@ -25,7 +25,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
-  fitness <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  fitness <- array(NA_real_, c(SOM@nsim, ns, 2, SOM@proyears))
 
   Mocean_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   PNI <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
@@ -133,7 +133,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     NOB[, ns, y_spawn] <- get_salmonMSE_var(N, var = "NOB")
     HOB[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOB")
 
-    fitness[, ns, y_spawn] <- get_salmonMSE_var(state, var = "fitness") # Lag by generation?
+    fitness[, ns, 1, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_natural")
+    fitness[, ns, 2, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_hatchery")
 
     # Smolt releases and SAR loss from openMSE
     p_smolt_rel <- 4

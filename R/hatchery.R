@@ -132,3 +132,19 @@ calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling) {
     return(c(yearling, subyearling))
   }
 }
+
+calc_smolt <- function(N1, N2 = N1, kappa, capacity, Smax, phi, kappa_improve = 1, capacity_improve = 1, fitness_loss = 1,
+                       SRrel = c("BH", "Ricker")) {
+  SRrel <- match.arg(SRrel)
+
+  a <- kappa/phi * kappa_improve * fitness_loss
+  if (SRrel == "BH") {
+    b <- a/(capacity * capacity_improve * fitness_loss)
+    smolt <- a * N1 / (1 + b * N2)
+  } else {
+    b <- 1/(Smax * capacity_improve * fitness_loss)
+    smolt <- a * N1 * exp(-b * N2)
+  }
+  return(smolt)
+}
+
