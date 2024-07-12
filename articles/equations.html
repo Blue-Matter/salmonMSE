@@ -5,64 +5,50 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="salmonMSE">
 <title>Dynamics equations • salmonMSE</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Dynamics equations">
-<meta property="og:description" content="salmonMSE">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Dynamics equations">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction</a>
-    <a class="dropdown-item" href="../articles/example.html">Simple example</a>
-    <a class="dropdown-item" href="../articles/model.html">Implementation</a>
-    <a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
+    <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
+    <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
+    <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
+  </ul>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/Blue-Matter/salmonMSE/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Blue-Matter/salmonMSE/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -71,11 +57,12 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Dynamics equations</h1>
+
+      <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-07-03</h4>
+            <h4 data-toc-skip class="date">2024-07-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/HEAD/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
     </div>
 
@@ -91,10 +78,10 @@ stages as described below.</p>
 either the input (SOM) or output (SMSE) objects in salmonMSE.</em></p>
 <table class="table">
 <colgroup>
-<col width="16%">
-<col width="47%">
+<col width="15%">
+<col width="45%">
+<col width="13%">
 <col width="14%">
-<col width="11%">
 <col width="10%">
 </colgroup>
 <thead><tr class="header">
@@ -106,30 +93,62 @@ either the input (SOM) or output (SMSE) objects in salmonMSE.</em></p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{NOS}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOS</mtext><annotation encoding="application/x-tex">\textrm{NOS}</annotation></semantics></math></td>
 <td align="left">Natural origin spawners</td>
 <td align="left">Natural production</td>
 <td align="left">SMSE</td>
 <td align="left">NOS</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{HOS}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HOS</mtext><annotation encoding="application/x-tex">\textrm{HOS}</annotation></semantics></math></td>
 <td align="left">Hatchery origin spawners</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">HOS</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{HOS}_\textrm{eff}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">HOS</mtext><mtext mathvariant="normal">eff</mtext></msub><annotation encoding="application/x-tex">\textrm{HOS}_\textrm{eff}</annotation></semantics></math></td>
 <td align="left">Effective number of HOS, spawning output discounted by
-<span class="math inline">\(\gamma\)</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>
 </td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">HOSeff</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(C_\textrm{smolt}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Fry</mtext><mtext mathvariant="normal">NOS</mtext></msup><annotation encoding="application/x-tex">\textrm{Fry}^\textrm{NOS}</annotation></semantics></math></td>
+<td align="left">Fry production by natural origin spawners, assumed to
+be equal to egg production</td>
+<td align="left">Natural production</td>
+<td align="left">SMSE</td>
+<td align="left">Fry_NOS</td>
+</tr>
+<tr class="odd">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Fry</mtext><mtext mathvariant="normal">HOS</mtext></msup><annotation encoding="application/x-tex">\textrm{Fry}^\textrm{HOS}</annotation></semantics></math></td>
+<td align="left">Fry production by hatchery origin spawners, assumed to
+be equal to egg production</td>
+<td align="left">Hatchery</td>
+<td align="left">SMSE</td>
+<td align="left">Fry_HOS</td>
+</tr>
+<tr class="even">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Smolt</mtext><mtext mathvariant="normal">NOS</mtext></msup><annotation encoding="application/x-tex">\textrm{Smolt}^\textrm{NOS}</annotation></semantics></math></td>
+<td align="left">Smolt production by natural origin spawners,
+density-dependent</td>
+<td align="left">Natural production</td>
+<td align="left">SMSE</td>
+<td align="left">Smolt_NOS</td>
+</tr>
+<tr class="odd">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Smolt</mtext><mtext mathvariant="normal">HOS</mtext></msup><annotation encoding="application/x-tex">\textrm{Smolt}^\textrm{HOS}</annotation></semantics></math></td>
+<td align="left">Smolt production by hatchery origin spawners,
+density-dependent</td>
+<td align="left">Hatchery</td>
+<td align="left">SMSE</td>
+<td align="left">Smolt_HOS</td>
+</tr>
+<tr class="even">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mtext mathvariant="normal">smolt</mtext></msub><annotation encoding="application/x-tex">C_\textrm{smolt}</annotation></semantics></math></td>
 <td align="left">Carrying capacity of smolts (Beverton-Holt
 stock-recruit parameter)</td>
 <td align="left">Natural production + Habitat</td>
@@ -137,7 +156,7 @@ stock-recruit parameter)</td>
 <td align="left">capacity_smolt</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(S_\textrm{max}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><annotation encoding="application/x-tex">S_\textrm{max}</annotation></semantics></math></td>
 <td align="left">Spawning output that maximizes smolt production (Ricker
 stock-recruit parameter)</td>
 <td align="left">Natural production + Habitat</td>
@@ -145,7 +164,7 @@ stock-recruit parameter)</td>
 <td align="left">Smax</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\kappa\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>κ</mi><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></td>
 <td align="left">Maximum recruitment production rate (stock-recruit
 parameter), units of recruit per spawner</td>
 <td align="left">Natural production + Habitat</td>
@@ -153,7 +172,7 @@ parameter), units of recruit per spawner</td>
 <td align="left">kappa</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\phi\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math></td>
 <td align="left">Unfished egg production rate, units of egg per
 smolt</td>
 <td align="left">Natural production</td>
@@ -161,63 +180,63 @@ smolt</td>
 <td align="left">phi</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(r\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math></td>
 <td align="left">Maturity at age, i.e., recruitment rate</td>
 <td align="left">Natural production</td>
 <td align="left">SOM</td>
 <td align="left">p_mature</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(u^\textrm{PT}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>u</mi><mtext mathvariant="normal">PT</mtext></msup><annotation encoding="application/x-tex">u^\textrm{PT}</annotation></semantics></math></td>
 <td align="left">Pre-terminal fishery harvest rate</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">u_preterminal</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(u^\textrm{T}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>u</mi><mtext mathvariant="normal">T</mtext></msup><annotation encoding="application/x-tex">u^\textrm{T}</annotation></semantics></math></td>
 <td align="left">Terminal fishery harvest rate</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">u_terminal</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(m\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
 <td align="left">Mark rate of hatchery fish</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">m</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\delta\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math></td>
 <td align="left">Mortality from catch and release (proportion)</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">release_mort</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(v\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math></td>
 <td align="left">Relative vulnerability by age to the fishery</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">vulPT, vulT</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{Fec}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Fec</mtext><annotation encoding="application/x-tex">\textrm{Fec}</annotation></semantics></math></td>
 <td align="left">Fecundity of spawners (eggs per female)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM</td>
 <td align="left">fec</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{Fec}^\textrm{brood}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Fec</mtext><mtext mathvariant="normal">brood</mtext></msup><annotation encoding="application/x-tex">\textrm{Fec}^\textrm{brood}</annotation></semantics></math></td>
 <td align="left">Fecundity of broodtake (eggs per female)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM</td>
 <td align="left">fec_brood</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(p^\textrm{female}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><annotation encoding="application/x-tex">p^\textrm{female}</annotation></semantics></math></td>
 <td align="left">Proportion of female spawners in broodtake and
 spawners</td>
 <td align="left">Natural production + Hatchery</td>
@@ -225,14 +244,14 @@ spawners</td>
 <td align="left">p_female</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{SAR}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">SAR</mtext><annotation encoding="application/x-tex">\textrm{SAR}</annotation></semantics></math></td>
 <td align="left">Smolt-to-adult recruit survival</td>
 <td align="left">Natural production + Hatchery</td>
 <td align="left">-</td>
 <td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(M\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math></td>
 <td align="left">Instantaneous natural mortality in the marine
 environment</td>
 <td align="left">Natural production + Hatchery</td>
@@ -240,28 +259,28 @@ environment</td>
 <td align="left">Mocean_NOS, Mocean_HOS</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{NOB}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOB</mtext><annotation encoding="application/x-tex">\textrm{NOB}</annotation></semantics></math></td>
 <td align="left">Natural origin broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">NOB</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{HOB}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HOB</mtext><annotation encoding="application/x-tex">\textrm{HOB}</annotation></semantics></math></td>
 <td align="left">Hatchery origin broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">HOB</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(s_\textrm{yearling}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">s_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Survival of hatchery eggs to yearling life stage</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">s_egg_smolt</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(s_\textrm{subyearling}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">subyearling</mtext></msub><annotation encoding="application/x-tex">s_\textrm{subyearling}</annotation></semantics></math></td>
 <td align="left">Survival of hatchery eggs to subyearling life
 stage</td>
 <td align="left">Hatchery</td>
@@ -269,7 +288,7 @@ stage</td>
 <td align="left">s_egg_subyearling</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(p_\textrm{yearling}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">p_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery releases as yearling
 (vs. subyearling)</td>
 <td align="left">Hatchery</td>
@@ -277,28 +296,28 @@ stage</td>
 <td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(s_\textrm{prespawn}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">prespawn</mtext></msub><annotation encoding="application/x-tex">s_\textrm{prespawn}</annotation></semantics></math></td>
 <td align="left">Survival of adult broodtake in hatchery</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">s_prespawn</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(n_\textrm{yearling}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">n_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Target number of hatchery releases as yearlings</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">n_yearling</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(n_\textrm{subyearling}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">subyearling</mtext></msub><annotation encoding="application/x-tex">n_\textrm{subyearling}</annotation></semantics></math></td>
 <td align="left">Target number of hatchery releases as subyearlings</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">n_subyearling</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(p_\textrm{NOB}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">NOB</mtext></msub><annotation encoding="application/x-tex">p_\textrm{NOB}</annotation></semantics></math></td>
 <td align="left">Proportion of the total broodtake of natural origin
 (vs. hatchery origin)</td>
 <td align="left">Hatchery</td>
@@ -306,7 +325,7 @@ stage</td>
 <td align="left">-</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(p_\textrm{HOB}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOB</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOB}</annotation></semantics></math></td>
 <td align="left">Proportion of the total broodtake of hatchery origin
 (vs. natural origin)</td>
 <td align="left">Hatchery</td>
@@ -314,7 +333,7 @@ stage</td>
 <td align="left">-</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(p^\textrm{NOB}_\textrm{max}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{max}</annotation></semantics></math></td>
 <td align="left">Maximum proportion of the natural origin broodtake from
 the escapement, i.e., NOB/NOS ratio</td>
 <td align="left">Hatchery</td>
@@ -322,21 +341,21 @@ the escapement, i.e., NOB/NOS ratio</td>
 <td align="left">pmax_NOB</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{NOR}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOR</mtext><annotation encoding="application/x-tex">\textrm{NOR}</annotation></semantics></math></td>
 <td align="left">Natural origin return</td>
 <td align="left">Natural production</td>
 <td align="left">SMSE</td>
 <td align="left">Return_NOS</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\textrm{HOR}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HOR</mtext><annotation encoding="application/x-tex">\textrm{HOR}</annotation></semantics></math></td>
 <td align="left">Hachery origin return</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">Return_HOS</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(p^\textrm{hatchery}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin escapement to hatchery,
 available for broodtake</td>
 <td align="left">Hatchery</td>
@@ -344,7 +363,7 @@ available for broodtake</td>
 <td align="left">phatchery</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(p^\textrm{HOS}_\textrm{removal}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{HOS}_\textrm{removal}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin escapement removed from
 spawning grounds, not available for broodtake</td>
 <td align="left">Hatchery</td>
@@ -352,7 +371,7 @@ spawning grounds, not available for broodtake</td>
 <td align="left">premove_HOS</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\gamma\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></td>
 <td align="left">Reduced reproductive success of HOS (relative to
 NOS)</td>
 <td align="left">Hatchery</td>
@@ -360,15 +379,15 @@ NOS)</td>
 <td align="left">gamma</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\bar{z}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math></td>
 <td align="left">Mean phenotypic value of cohort in natural and hatchery
 environments</td>
 <td align="left">Fitness</td>
-<td align="left">Internal state variable</td>
-<td align="left">-</td>
+<td align="left">Internal state variable and SOM</td>
+<td align="left">zbar_start</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\theta\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math></td>
 <td align="left">Optimal phenotypic value for natural and hatchery
 environments</td>
 <td align="left">Fitness</td>
@@ -376,14 +395,14 @@ environments</td>
 <td align="left">theta</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\sigma^2\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></td>
 <td align="left">Variance of phenotypic traits in population</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">fitness_variance</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\Omega\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math></td>
 <td align="left">Selection strength: fitness variance relative to
 phenotypic variance</td>
 <td align="left">Fitness</td>
@@ -391,14 +410,14 @@ phenotypic variance</td>
 <td align="left">selection_strength</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(h^2\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>h</mi><mn>2</mn></msup><annotation encoding="application/x-tex">h^2</annotation></semantics></math></td>
 <td align="left">Heritability of phenotypic traits</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">heritability</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\bar{W}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>W</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{W}</annotation></semantics></math></td>
 <td align="left">Population fitness in the natural or hatchery
 environment</td>
 <td align="left">Fitness</td>
@@ -406,7 +425,7 @@ environment</td>
 <td align="left">fitness</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(\ell_i\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>i</mi></msub><annotation encoding="application/x-tex">\ell_i</annotation></semantics></math></td>
 <td align="left">Relative fitness loss at the i-th life stage (egg, fry,
 smolt)</td>
 <td align="left">Fitness</td>
@@ -414,14 +433,14 @@ smolt)</td>
 <td align="left">rel_loss</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{PNI}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">PNI</mtext><annotation encoding="application/x-tex">\textrm{PNI}</annotation></semantics></math></td>
 <td align="left">Proportionate natural influence</td>
 <td align="left">Fitness</td>
 <td align="left">SMSE</td>
 <td align="left">PNI</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(m\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
 <td align="left">Mark rate of hatchery fish (affects fishery retention
 of hatchery fish relative to natural fish)</td>
 <td align="left">Harvest</td>
@@ -429,7 +448,7 @@ of hatchery fish relative to natural fish)</td>
 <td align="left">m</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(p_\textrm{NOS}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">NOS</mtext></msub><annotation encoding="application/x-tex">p_\textrm{NOS}</annotation></semantics></math></td>
 <td align="left">Proportion of natural origin spawners (vs. effective
 HOS)</td>
 <td align="left">Population dynamics</td>
@@ -437,7 +456,7 @@ HOS)</td>
 <td align="left">-</td>
 </tr>
 <tr class="odd">
-<td align="left"><span class="math inline">\(p_\textrm{HOSeff}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOSeff</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOSeff}</annotation></semantics></math></td>
 <td align="left">Proportion of effective hatchery origin spawners
 (vs. NOS)</td>
 <td align="left">Population dynamics</td>
@@ -445,7 +464,7 @@ HOS)</td>
 <td align="left">NOS, HOS_effective</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(p_\textrm{HOScensus}\)</span></td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOScensus</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOScensus}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin spawners (vs. NOS)</td>
 <td align="left">Population dynamics</td>
 <td align="left">SMSE</td>
@@ -462,53 +481,57 @@ effects from the hatchery improvement.</p>
 <div class="section level3">
 <h3 id="fry">Fry<a class="anchor" aria-label="anchor" href="#fry"></a>
 </h3>
-<p>From the spawners (NOS and HOS) of age <span class="math inline">\(a\)</span> in year <span class="math inline">\(y\)</span>, the corresponding fry production of
-the subsequent generation is calculated as:</p>
-<p><span class="math display">\[\begin{align}
-\textrm{Fry}^\textrm{NOS}_y &amp;= \sum_a\textrm{NOS}_{y,a} \times
-p^\textrm{female} \times \textrm{Fec}_a\\
-\textrm{Fry}^\textrm{HOS}_y &amp;= \sum_a\textrm{HOS}_{\textrm{eff}y,a}
-\times p^\textrm{female} \times \textrm{Fec}_a
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(\textrm{HOS}_{\textrm{eff}} =
-\gamma \times \textrm{HOS}\)</span> and the superscript denotes the
-parentage of the progeny.</p>
+<p>From the spawners (NOS and HOS) of age
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>,
+the corresponding fry production of the subsequent generation is
+calculated as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOS</mtext><mrow><mtext mathvariant="normal">eff</mtext><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Fry}^\textrm{NOS}_y &amp;= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
+\textrm{Fry}^\textrm{HOS}_y &amp;= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">HOS</mtext><mtext mathvariant="normal">eff</mtext></msub><mo>=</mo><mi>γ</mi><mo>×</mo><mtext mathvariant="normal">HOS</mtext></mrow><annotation encoding="application/x-tex">\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}</annotation></semantics></math>
+and the superscript denotes the parentage of the progeny.</p>
 </div>
 <div class="section level3">
 <h3 id="smolts">Smolts<a class="anchor" aria-label="anchor" href="#smolts"></a>
 </h3>
 <p>Survival to the smolt stage is density-dependent. With the
 Beverton-Holt stock-recruit relationship, smolt production is</p>
-<p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha \times
-\textrm{Fry}^\textrm{NOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y +
-\textrm{Fry}^\textrm{HOS}_y)}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha \times
-\textrm{Fry}^\textrm{HOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y +
-\textrm{Fry}^\textrm{HOS}_y)}
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(\alpha = \kappa/\phi\)</span> and
-<span class="math inline">\(\beta =
-\alpha/{C_\textrm{smolt}}\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mi>α</mi><mi>/</mi><msub><mi>C</mi><mtext mathvariant="normal">smolt</mtext></msub></mrow><annotation encoding="application/x-tex">\beta = \alpha/{C_\textrm{smolt}}</annotation></semantics></math>.</p>
 <p>With the Ricker stock-recruit relationship, smolt production is</p>
-<p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \alpha \times
-\textrm{Fry}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y
-+ \textrm{Fry}^\textrm{HOS}_y])\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \alpha \times
-\textrm{Fry}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y
-+ \textrm{Fry}^\textrm{HOS}_y])
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(\alpha = \kappa/\phi\)</span> and
-<span class="math inline">\(\beta = 1/{S_\textrm{max}}\)</span>, and the
-unfished egg per smolt <span class="math inline">\(\phi =
-\sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times
-r_a \times p^\textrm{female} \times \textrm{Fec}_a\)</span>, with <span class="math inline">\(r_a\)</span> as the maturity at age.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \alpha \times 
+\textrm{Fry}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \alpha \times 
+\textrm{Fry}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub></mrow><annotation encoding="application/x-tex">\beta = 1/{S_\textrm{max}}</annotation></semantics></math>,
+and the unfished egg per smolt
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mi>i</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>r</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>a</mi></msub><annotation encoding="application/x-tex">r_a</annotation></semantics></math>
+as the maturity at age.</p>
 <p>If there is knife-edge maturity, i.e., all fish mature at the same
-age, then the equation simplifies to <span class="math inline">\(\phi =
-\textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}\)</span>, with
-<span class="math inline">\(\textrm{SAR}\)</span> as the marine
-survival.</p>
+age, then the equation simplifies to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><mtext mathvariant="normal">SAR</mtext><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><mtext mathvariant="normal">Fec</mtext></mrow><annotation encoding="application/x-tex">\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">SAR</mtext><annotation encoding="application/x-tex">\textrm{SAR}</annotation></semantics></math>
+as the marine survival.</p>
 </div>
 </div>
 <div class="section level2">
@@ -516,214 +539,231 @@ survival.</p>
 </h2>
 <p>Habitat improvement can improve either the productivity parameter,
 capacity parameter, or both.</p>
-<p>Base terms <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are used in the historical period
-of the model, e.g., conditioning from data. In the projection, the stock
-recruit parameters <span class="math inline">\(\alpha^\prime\)</span>
-and <span class="math inline">\(\beta^\prime\)</span> are updated with
-the improvement parameters, <span class="math inline">\(I_\kappa\)</span> or <span class="math inline">\(I_C\)</span>, as specified in the operating
-model.</p>
+<p>Base terms
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+are used in the historical period of the model, e.g., conditioning from
+data. In the projection, the stock recruit parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>α</mi><mi>′</mi></msup><annotation encoding="application/x-tex">\alpha^\prime</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>β</mi><mi>′</mi></msup><annotation encoding="application/x-tex">\beta^\prime</annotation></semantics></math>
+are updated with the improvement parameters,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>κ</mi></msub><annotation encoding="application/x-tex">I_\kappa</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>C</mi></msub><annotation encoding="application/x-tex">I_C</annotation></semantics></math>,
+as specified in the operating model.</p>
 <p>The corresponding parameters in the projection is:</p>
-<p><span class="math display">\[\begin{align}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>α</mi><mi>′</mi></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mi>κ</mi><mi>ϕ</mi></mfrac><mo>×</mo><msub><mi>I</mi><mi>κ</mi></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>β</mi><mi>′</mi></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mfrac displaystyle="true"><msup><mi>α</mi><mi>′</mi></msup><mrow><msub><mi>C</mi><mtext mathvariant="normal">smolt</mtext></msub><mo>×</mo><msub><mi>I</mi><mi>C</mi></msub></mrow></mfrac></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">Beverton-Holt</mtext></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mfrac displaystyle="true"><mn>1</mn><mrow><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><mo>×</mo><msub><mi>I</mi><mi>C</mi></msub></mrow></mfrac></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">Ricker</mtext></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"></mtd></mtr></mtable></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \alpha^\prime &amp;= \dfrac{\kappa}{\phi}\times I_\kappa\\
-\beta^\prime &amp;=
+\beta^\prime &amp;= 
 \begin{cases}
-\dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C} &amp;
-\textrm{Beverton-Holt}\\
+\dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C} &amp; \textrm{Beverton-Holt}\\
 \dfrac{1}{S_\textrm{max} \times I_C} &amp; \textrm{Ricker}\\
 \end{cases}
-\end{align}\]</span></p>
+\end{align}</annotation></semantics></math></p>
 <p><img src="../reference/figures/SRR.png"><!-- --></p>
 <p><em>Comparison of the change in two density-dependent stock-recruit
 functions if the improvement parameter is applied to either the
 compensation ratio (kappa) or capacity parameter. The base value of
 kappa is 3, Beverton-Holt capacity is 1000, and Ricker Smax is 500. The
 dotted line is the one-to-one unfished replacement line (corresponding
-to <span class="math inline">\(1/\phi\)</span>).</em></p>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">1/\phi</annotation></semantics></math>).</em></p>
 </div>
 <div class="section level2">
 <h2 id="hatchery-production">Hatchery production<a class="anchor" aria-label="anchor" href="#hatchery-production"></a>
 </h2>
+<p>Hatchery production is controlled by several sets of variables
+specified by the analyst.</p>
+<p>The first consideration is to specify the target number of annual
+releases of sub-yearlings
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mtext mathvariant="normal">subyearling</mtext></msup><annotation encoding="application/x-tex">n^\textrm{subyearling}</annotation></semantics></math>
+and yearlings
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msup><annotation encoding="application/x-tex">n^\textrm{yearling}</annotation></semantics></math>.
+Going backwards, the corresponding number of eggs needed to reach the
+target number depends on the egg survival to those life stages. Finally,
+the corresponding number of broodtake is dependent on the brood
+fecundity and hatchery survival of broodtake.</p>
+<p>Additional considerations are the composition (natural vs. hatchery
+origin) of the broodtake. To minimize genetic drift of the population
+due to hatchery production, it is desirable to maintain a high
+proportion of natural origin broodtake. This is controlled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{target}</annotation></semantics></math>,
+the desired proportion of natural broodtake relative to all broodtake,
+but can be exceeded if there is insufficient escapement of natural
+origin fish.</p>
+<p>Second, it is also desirable to maintain high spawning of natural
+origin fish. This is controlled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{max}</annotation></semantics></math>,
+the maximum allowable proportion of the natural origin escapement to be
+used as broodtake. This value is never exceeded.</p>
+<p>The following equations then generate the annual broodtake and
+hatchery production from the state variables given these
+constraints.</p>
 <div class="section level3">
 <h3 id="broodtake">Broodtake<a class="anchor" aria-label="anchor" href="#broodtake"></a>
 </h3>
 <p>The annual target egg production for the hatchery is calculated from
 the target releases as</p>
-<p><span class="math display">\[
-\textrm{Egg}_\textrm{broodtake} =
-\dfrac{n^\textrm{yearling}}{s^\textrm{yearling}} +
-\dfrac{n^\textrm{subyearling}}{s^\textrm{subyearling}}
-\]</span></p>
-<p>where <span class="math inline">\(s\)</span> is the corresponding
-survival term from the egg life stage.</p>
-<p>Given the escapement in year <span class="math inline">\(y\)</span>,
-the proportion of the escapement is taken as broodtake <span class="math inline">\(p^\textrm{broodtake}\)</span>:</p>
-<p><span class="math display">\[\begin{align}
-\textrm{NOB}_{y,a} &amp;= p^\textrm{broodtake,NOB}_y \times
-\textrm{NOR}^\textrm{escapement}_{y,a}\\
-\textrm{HOB}_{y,a} &amp;= p^\textrm{broodtake,HOB}_y \times
-p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a}
-\end{align}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">broodtake</mtext></msub><mo>=</mo><mfrac displaystyle="true"><msup><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msup><msup><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msup></mfrac><mo>+</mo><mfrac displaystyle="true"><msup><mi>n</mi><mtext mathvariant="normal">subyearling</mtext></msup><msup><mi>s</mi><mtext mathvariant="normal">subyearling</mtext></msup></mfrac></mrow><annotation encoding="application/x-tex">
+\textrm{Egg}_\textrm{broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{subyearling}}
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+is the corresponding survival term from the egg life stage.</p>
+<p>From the escapement in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>,
+some proportion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">broodtake</mtext></msup><annotation encoding="application/x-tex">p^\textrm{broodtake}</annotation></semantics></math>
+is used as broodtake:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msubsup><mo>×</mo><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,HOB</mtext></msubsup><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{NOB}_{y,a} &amp;= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a}\\
+\textrm{HOB}_{y,a} &amp;= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a}
+\end{align}</annotation></semantics></math></p>
 <p>The proportion of the available hatchery fish for broodtake is
-controlled by <span class="math inline">\(p^\textrm{hatchery}\)</span>,
+controlled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math>,
 which can include fish swimming back to the hatchery or removed from
 spawning grounds.</p>
-<p>The realized hatchery egg production in year <span class="math inline">\(y\)</span> is</p>
-<p><span class="math display">\[\begin{align}
-\textrm{Egg}_\textrm{y}^\textrm{NOB} &amp;= \sum_a \textrm{NOB}_{y,a}
-\times s^\textrm{prespawn} \times p^\textrm{female} \times
-\textrm{Fec}^\textrm{brood}_a\\
-\textrm{Egg}_\textrm{y}^\textrm{HOB} &amp;= \sum_a \textrm{HOB}_{y,a}
-\times s^\textrm{prespawn} \times p^\textrm{female} \times
-\textrm{Fec}^\textrm{brood}_a
-\end{align}\]</span></p>
-<p>The proportion taken as broodtake is solved annually to satisfy the
-following conditions:</p>
-<p><span class="math inline">\(\dfrac{\sum_a\textrm{NOB}_{y,a}}{\sum_a\textrm{NOB}_{y,a}
-+ \sum_a\textrm{HOB}_{y,a}} =
-p^\textrm{NOB}_\textrm{target}\)</span></p>
-<p><span class="math inline">\(0 &lt; p^\textrm{broodtake,HOB} &lt;
-1\)</span></p>
-<p><span class="math inline">\(0 &lt; p^\textrm{broodtake,NOB} &lt;
-p^\textrm{NOB}_\textrm{max}\)</span></p>
-<p><span class="math inline">\(\textrm{Egg}_\textrm{y}^\textrm{NOB} +
-\textrm{Egg}_\textrm{y}^\textrm{HOB} =
-\textrm{Egg}_\textrm{broodtake}\)</span></p>
-<p>The NOB target ratio <span class="math inline">\(p^\textrm{NOB}_\textrm{target}\)</span> ensures
-that there is a sufficiently high proportion of natural origin fish in
-the broodtake, while the maximum removal rate of natural origin fish
-<span class="math inline">\(p^\textrm{NOB}_\textrm{max}\)</span> ensures
-that there remains sufficiently high abundance of natural origin
-spawners.</p>
-<p>Egg production is subject to a survival term <span class="math inline">\(s^\textrm{prespawn}\)</span>.</p>
+<p>The realized hatchery egg production is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">NOB</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>s</mi><mtext mathvariant="normal">prespawn</mtext></msup><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">HOB</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>s</mi><mtext mathvariant="normal">prespawn</mtext></msup><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Egg}_\textrm{y}^\textrm{NOB} &amp;= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{HOB} &amp;= \sum_a \textrm{HOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a
+\end{align}</annotation></semantics></math></p>
+<p>where egg production is subject to a survival term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>s</mi><mtext mathvariant="normal">prespawn</mtext></msup><annotation encoding="application/x-tex">s^\textrm{prespawn}</annotation></semantics></math>
+for the broodtake.</p>
+<p>The proportion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">broodtake</mtext></msup><annotation encoding="application/x-tex">p^\textrm{broodtake}</annotation></semantics></math>
+is solved annually to satisfy the following conditions:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac displaystyle="true"><mrow><msub><mo>∑</mo><mi>a</mi></msub><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow></mfrac><mo>=</mo><msubsup><mi>p</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">NOB</mtext></msubsup></mrow><annotation encoding="application/x-tex">\dfrac{\sum_a\textrm{NOB}_{y,a}}{\sum_a\textrm{NOB}_{y,a} + \sum_a\textrm{HOB}_{y,a}} = p^\textrm{NOB}_\textrm{target}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><msup><mi>p</mi><mtext mathvariant="normal">broodtake,HOB</mtext></msup><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 &lt; p^\textrm{broodtake,HOB} &lt; 1</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><msup><mi>p</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msup><mo>&lt;</mo><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup></mrow><annotation encoding="application/x-tex">0 &lt; p^\textrm{broodtake,NOB} &lt; p^\textrm{NOB}_\textrm{max}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">HOB</mtext></msubsup><mo>=</mo><msub><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">broodtake</mtext></msub></mrow><annotation encoding="application/x-tex">\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} = \textrm{Egg}_\textrm{broodtake}</annotation></semantics></math></p>
+<p>The target ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{target}</annotation></semantics></math>
+ensures that there is a sufficiently high proportion of natural origin
+fish in the broodtake. The maximum removal rate of natural origin fish
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{max}</annotation></semantics></math>
+ensures that there is high abundance of natural origin spawners.</p>
 <p>The total egg production in a given year can fail to reach the target
-because there is insufficient natural origin escapement. In this case,
-the NOB take is set to the maximum removal rate (<span class="math inline">\(p^\textrm{broodtake,NOB} =
-p^\textrm{NOB}_\textrm{max}\)</span>), and the remaining deficit in egg
-production is met using HOB.</p>
+if there is insufficient natural origin escapement. In this case, the
+NOB take is set to the maximum removal rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>p</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msup><mo>=</mo><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup></mrow><annotation encoding="application/x-tex">p^\textrm{broodtake,NOB} = p^\textrm{NOB}_\textrm{max}</annotation></semantics></math>),
+and the remaining deficit in egg production is met using HOB.</p>
 </div>
 <div class="section level3">
 <h3 id="smolt-releases">Smolt releases<a class="anchor" aria-label="anchor" href="#smolt-releases"></a>
 </h3>
 <p>From the total broodtake, the smolt releases is calculated as</p>
-<p><span class="math display">\[
-\textrm{Smolt}^\textrm{Rel}_{y+1} =
-(\textrm{Egg}_\textrm{y}^\textrm{NOB} +
-\textrm{Egg}_\textrm{y}^\textrm{HOB}) s^\textrm{hatchery}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">y</mtext><mtext mathvariant="normal">HOB</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>s</mi><mtext mathvariant="normal">hatchery</mtext></msup></mrow><annotation encoding="application/x-tex">
+\textrm{Smolt}^\textrm{Rel}_{y+1} = (\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB}) s^\textrm{hatchery}
+</annotation></semantics></math></p>
 <p>where the survival of hatchery from egg to smolt is a weighted
 average from the proportion of yearling and subyearling releases:</p>
-<p><span class="math inline">\(s^\textrm{hatchery} =
-s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling}
-p^\textrm{yearling}\)</span></p>
-<p><span class="math inline">\(p^\textrm{yearling} =
-n^\textrm{yearling}/(n^\textrm{subyearling} +
-n^\textrm{yearling})\)</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>s</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo>=</mo><msup><mi>s</mi><mtext mathvariant="normal">subyearling</mtext></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>p</mi><mtext mathvariant="normal">yearling</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msup><msup><mi>p</mi><mtext mathvariant="normal">yearling</mtext></msup></mrow><annotation encoding="application/x-tex">s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>p</mi><mtext mathvariant="normal">yearling</mtext></msup><mo>=</mo><msup><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>n</mi><mtext mathvariant="normal">subyearling</mtext></msup><mo>+</mo><msup><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})</annotation></semantics></math></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="pre-terminal-fishery">Pre-terminal fishery<a class="anchor" aria-label="anchor" href="#pre-terminal-fishery"></a>
 </h2>
-<p>Let <span class="math inline">\(N^\textrm{juv}_{y,a}\)</span> be the
-juvenile abundance in the population and <span class="math inline">\(N^\textrm{juv,NOS}_{y,a=1} =
-\textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y\)</span>
-and <span class="math inline">\(N^\textrm{juv,HOS}_{y,a=1} =
-\textrm{Smolt}^\textrm{Rel}\)</span>. The superscript for the smolt
-variable corresponds to the parentage while the superscript for <span class="math inline">\(N\)</span> denotes the origin of the current
-cohort.</p>
-<p>Harvest <span class="math inline">\(u^\textrm{PT}\)</span> in the
-pre-terminal (<span class="math inline">\(\textrm{PT}\)</span>) fishery,
-assuming no mark-selective fishing, is modeled as a seasonal process.
-The kept catch <span class="math inline">\(K\)</span> is</p>
-<p><span class="math display">\[\begin{align}
-K^\textrm{NOS,PT}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{PT}_a
-F^\textrm{PT}_y)\right)N^\textrm{juv,NOS}_{y,a}\\
-K^\textrm{HOS,PT}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{PT}_a
-F^\textrm{PT}_y)\right)N^\textrm{juv,HOS}_{y,a}\\
-\end{align}\]</span></p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv</mtext></msubsup><annotation encoding="application/x-tex">N^\textrm{juv}_{y,a}</annotation></semantics></math>
+be the juvenile abundance in the population and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup><mo>=</mo><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><annotation encoding="application/x-tex">N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup><mo>=</mo><msup><mtext mathvariant="normal">Smolt</mtext><mtext mathvariant="normal">Rel</mtext></msup></mrow><annotation encoding="application/x-tex">N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}</annotation></semantics></math>.
+The superscript for the smolt variable corresponds to the parentage
+while the superscript for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+denotes the origin of the current cohort.</p>
+<p>Harvest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>u</mi><mtext mathvariant="normal">PT</mtext></msup><annotation encoding="application/x-tex">u^\textrm{PT}</annotation></semantics></math>
+in the pre-terminal
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">PT</mtext><annotation encoding="application/x-tex">\textrm{PT}</annotation></semantics></math>)
+fishery, assuming no mark-selective fishing, is modeled as a seasonal
+process. The kept catch
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+K^\textrm{NOS,PT}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,NOS}_{y,a}\\
+K^\textrm{HOS,PT}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,HOS}_{y,a}\\
+\end{align}</annotation></semantics></math></p>
 <p>The instantaneous fishing mortality is solved to meet the following
 condition</p>
-<p><span class="math display">\[
-u^\textrm{PT} = \dfrac{\sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a
-K^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a} + \sum_a
-N^\textrm{juv,HOS}_{y,a}}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>u</mi><mtext mathvariant="normal">PT</mtext></msup><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,PT</mtext></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+u^\textrm{PT} = \dfrac{\sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a} + \sum_a N^\textrm{juv,HOS}_{y,a}}
+</annotation></semantics></math></p>
 </div>
 <div class="section level2">
 <h2 id="recruitment-and-maturity">Recruitment and maturity<a class="anchor" aria-label="anchor" href="#recruitment-and-maturity"></a>
 </h2>
 <p>The recruitment is calculated from the survival of juvenile fish
 after pre-terminal harvest and maturation:</p>
-<p><span class="math display">\[\begin{align}
-\textrm{NOR}_{y,a} &amp;=
-N^\textrm{juv,NOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}\\
-\textrm{HOR}_{y,a} &amp;=
-N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
-\end{align}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>r</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>r</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{NOR}_{y,a} &amp;= N^\textrm{juv,NOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}\\
+\textrm{HOR}_{y,a} &amp;= N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
+\end{align}</annotation></semantics></math></p>
 <p>The juvenile abundance in the following year consists of fish that
-did not mature and subsequently survived ocean mortality <span class="math inline">\(M\)</span>:</p>
-<p><span class="math display">\[\begin{align}
-N^\textrm{juv,NOS}_{y+1,a+1} &amp;=
-N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y +
-M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
-N^\textrm{juv,HOS}_{y+1,a+1} &amp;=
-N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y +
-M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
-\end{align}\]</span></p>
+did not mature and subsequently survived ocean mortality
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo>+</mo><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>r</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo>+</mo><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>r</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+N^\textrm{juv,NOS}_{y+1,a+1} &amp;= N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
+N^\textrm{juv,HOS}_{y+1,a+1} &amp;= N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
+\end{align}</annotation></semantics></math></p>
 <div class="section level3">
 <h3 id="terminal-fishery">Terminal fishery<a class="anchor" aria-label="anchor" href="#terminal-fishery"></a>
 </h3>
 <p>Assuming no mark-selective fishing, the retained catch of the
-terminal (<span class="math inline">\(\textrm{T}\)</span>) fishery is
-calculated from the harvest rate similarly as with the pre-terminal
-fishery:</p>
-<p><span class="math display">\[\begin{align}
-K^\textrm{NOS,T}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{T}_a
-F^\textrm{T}_y)\right)\textrm{NOR}_{y,a}\\
-K^\textrm{HOS,T}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{T}_a
-F^\textrm{T}_y)\right)\textrm{HOR}_{y,a}\\
-\end{align}\]</span></p>
+terminal
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">T</mtext><annotation encoding="application/x-tex">\textrm{T}</annotation></semantics></math>)
+fishery is calculated from the harvest rate similarly as with the
+pre-terminal fishery:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+K^\textrm{NOS,T}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{NOR}_{y,a}\\
+K^\textrm{HOS,T}_{y,a} &amp;= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{HOR}_{y,a}\\
+\end{align}</annotation></semantics></math></p>
 <p>subject to</p>
-<p><span class="math display">\[
-u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a
-K^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{NOR}_{y,a} + \sum_a
-\textrm{HOR}_{y,a}}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>u</mi><mtext mathvariant="normal">T</mtext></msup><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,T</mtext></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{NOR}_{y,a} + \sum_a \textrm{HOR}_{y,a}}
+</annotation></semantics></math></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="escapement-and-spawners">Escapement and spawners<a class="anchor" aria-label="anchor" href="#escapement-and-spawners"></a>
 </h2>
 <p>The escapement consists of the survivors of the terminal fishery:</p>
-<p><span class="math display">\[\begin{align}
-\textrm{NOR}^\textrm{escapement}_{y,a} &amp;=
-\textrm{NOR}_{y,a}\exp(-v_aF^\textrm{T}_y)\\
-\textrm{HOR}^\textrm{escapement}_{y,a} &amp;=
-\textrm{HOR}_{y,a}\exp(-v_aF^\textrm{T}_y)
-\end{align}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{NOR}^\textrm{escapement}_{y,a} &amp;= \textrm{NOR}_{y,a}\exp(-v_aF^\textrm{T}_y)\\
+\textrm{HOR}^\textrm{escapement}_{y,a} &amp;= \textrm{HOR}_{y,a}\exp(-v_aF^\textrm{T}_y)
+\end{align}</annotation></semantics></math></p>
 <p>The abundance of natural origin spawners consists of the escapement
 reduced by the broodtake.</p>
-<p><span class="math display">\[
-\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y)
-\textrm{NOR}^\textrm{escapement}_{y,a}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup></mrow><annotation encoding="application/x-tex">
+\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a}
+</annotation></semantics></math></p>
 <p>The hatchery origin spawners is the escapement, reduced by the
-proportion <span class="math inline">\(p^\textrm{hatchery}\)</span>
+proportion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math>
 returning to the hatchery, either by swim-in facilities or direct
-removal. A second removal term <span class="math inline">\(p^\textrm{HOS}_\textrm{removal}\)</span> removes
-fish from the spawning grounds, these animals are not available for
-broodtake.</p>
-<p><span class="math display">\[
-\textrm{HOS}_{y,a} = \textrm{HOR}^\textrm{escapement}_{y,a} (1 -
-p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
-\]</span></p>
+removal. A second removal term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{HOS}_\textrm{removal}</annotation></semantics></math>
+removes fish from the spawning grounds, these animals are not available
+for broodtake.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\textrm{HOS}_{y,a} = \textrm{HOR}^\textrm{escapement}_{y,a} (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
+</annotation></semantics></math></p>
 </div>
 <div class="section level2">
 <h2 id="fitness-effects-on-survival">Fitness effects on survival<a class="anchor" aria-label="anchor" href="#fitness-effects-on-survival"></a>
 </h2>
 <p>Reproductive success of first generation hatchery fish has been
 observed to be lower than their natural counterparts, and is accounted
-for in the <span class="math inline">\(\gamma\)</span> parameter (see
-review in <a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html" class="external-link">Withler
+for in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>
+parameter (see review in <a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html" class="external-link">Withler
 et al. 2018</a>).</p>
 <p>Through genetic and epigenetic factors, survival of hatchery
 juveniles in the hatchery environment selects for fish with a phenotype
@@ -735,144 +775,146 @@ evolutionary time scale, i.e., over a number of generations, when
 hatchery fish are allowed to spawn.</p>
 <p>As described in <a href="https://doi.org/10.1046/j.1523-1739.2002.00257.x" class="external-link">Ford 2002</a>
 and derived in <a href="https://doi.org/10.1111/j.1558-5646.1976.tb00911.x" class="external-link">Lande
-1976</a>, the fitness loss function <span class="math inline">\(W\)</span> for an individual with phenotypic trait
-value <span class="math inline">\(z\)</span> in a given environment
-is</p>
-<p><span class="math display">\[
+1976</a>, the fitness loss function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+for an individual with phenotypic trait value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+in a given environment is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>ω</mi><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 W(z) = \exp\left(\dfrac{-(z-\theta)^2}{2\omega^2}\right)
-\]</span></p>
-<p>where <span class="math inline">\(\theta\)</span> is the optimum for
-that environment and <span class="math inline">\(\omega^2\)</span> is
-the fitness variance.</p>
-<p>If the phenotypic trait value <span class="math inline">\(z\)</span>
-in the population is a random normal variable with mean <span class="math inline">\(\bar{z}\)</span> and variance <span class="math inline">\(\sigma^2\)</span>, then the mean fitness of the
-population in generation <span class="math inline">\(g\)</span> is <span class="math inline">\(\bar{W}(z) = \int W(z) f(z) dz\)</span>, where
-<span class="math inline">\(f(z)\)</span> is the Gaussian probability
-density function. The solution is proportional to</p>
-<p><span class="math display">\[
-\bar{W}(z) \propto
-\exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
-\]</span></p>
-<p>We follow the mean fitness of generation <span class="math inline">\(g\)</span> for the natural environment:</p>
-<p><span class="math display">\[
-\bar{W}^\textrm{natural}_g =
-\exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
-\]</span></p>
-<p>The mean phenotype <span class="math inline">\(\bar{z}\)</span> is
-calculated iteratively, where the change from generation <span class="math inline">\(g-1\)</span> to <span class="math inline">\(g\)</span> is</p>
-<p><span class="math display">\[\begin{align}
-\Delta\bar{z} &amp;= \bar{z}_g - \bar{z}_{g-1} = (\bar{z}^\prime_{g-1} -
-\bar{z}_{g-1})h^2\\
-\bar{z}_g &amp;= \bar{z}_{g-1} + (\bar{z}^\prime_{g-1} -
-\bar{z}_{g-1})h^2\\
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(h^2\)</span> is the heritability of
-<span class="math inline">\(z\)</span> and <span class="math inline">\(\bar{z}^\prime_{g-1}\)</span> is the trait value
-after applying the fitness function, defined as:</p>
-<p><span class="math display">\[\begin{align}
-\bar{z}^\prime_{g-1} &amp;= \dfrac{1}{\bar{W}_{g-1}}\int
-W_{g-1}(z)\times zf(z)dz\\
-&amp;= \left(\dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 +
-\sigma^2} - \bar{z}_{g-1}\right)h^2
-\end{align}\]</span></p>
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+is the optimum for that environment and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ω</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\omega^2</annotation></semantics></math>
+is the fitness variance.</p>
+<p>If the phenotypic trait value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+in the population is a random normal variable with mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math>
+and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>,
+then the mean fitness of the population in generation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>W</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>∫</mo><mi>W</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">\bar{W}(z) = \int W(z) f(z) dz</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(z)</annotation></semantics></math>
+is the Gaussian probability density function. The solution is
+proportional to</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>W</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>z</mi><mo accent="true">‾</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ω</mi><mo>+</mo><mi>σ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\bar{W}(z) \propto \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
+</annotation></semantics></math></p>
+<p>We follow the mean fitness of generation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+for the natural environment:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>W</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>−</mo><msup><mi>θ</mi><mtext mathvariant="normal">natural</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ω</mi><mo>+</mo><mi>σ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
+</annotation></semantics></math></p>
+<p>The mean phenotype
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math>
+is calculated iteratively, where the change from generation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">g-1</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>Δ</mi><mover><mi>z</mi><mo accent="true">‾</mo></mover></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi></msub><mo>−</mo><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mi>′</mi></msubsup><mo>−</mo><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>h</mi><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mi>′</mi></msubsup><mo>−</mo><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>h</mi><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\Delta\bar{z} &amp;= \bar{z}_g - \bar{z}_{g-1} = (\bar{z}^\prime_{g-1} - \bar{z}_{g-1})h^2\\
+\bar{z}_g &amp;= \bar{z}_{g-1} + (\bar{z}^\prime_{g-1} - \bar{z}_{g-1})h^2\\
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>h</mi><mn>2</mn></msup><annotation encoding="application/x-tex">h^2</annotation></semantics></math>
+is the heritability of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mi>′</mi></msubsup><annotation encoding="application/x-tex">\bar{z}^\prime_{g-1}</annotation></semantics></math>
+is the trait value after applying the fitness function, defined as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mi>′</mi></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mn>1</mn><msub><mover><mi>W</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub></mfrac><mo>∫</mo><msub><mi>W</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><mi>z</mi><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>z</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mrow><msub><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><msup><mi>ω</mi><mn>2</mn></msup><mo>+</mo><mi>θ</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow><mrow><msup><mi>ω</mi><mn>2</mn></msup><mo>+</mo><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\bar{z}^\prime_{g-1} &amp;= \dfrac{1}{\bar{W}_{g-1}}\int W_{g-1}(z)\times zf(z)dz\\
+&amp;= \dfrac{\bar{z}_{g-1}\omega^2 + \theta \sigma^2}{\omega^2 + \sigma^2}
+\end{align}</annotation></semantics></math></p>
 <p>With a hatchery program, the mean trait value of the progeny in the
 natural environment is a weighted average between the mean trait value
 of natural origin spawners in the natural environment (with optimum
-value <span class="math inline">\(\theta^\textrm{natural}\)</span>) and
-that of hatchery origin spawners in the hatchery environment (with
-optimum value <span class="math inline">\(\theta^\textrm{hatchery}\)</span>):</p>
-<p><span class="math display">\[
-\bar{z}^\textrm{natural}_g = (1 - p^\textrm{HOSeff}_{g-1}) \times
-\bar{z}^{\prime\textrm{natural}}_{g-1} + p^\textrm{HOSeff}_{g-1} \times
-\bar{z}^{\prime\textrm{hatchery}}_{g-1}
-\]</span></p>
-<p>where <span class="math inline">\(p^\textrm{HOSeff} =
-\gamma\times\textrm{HOS}/(\textrm{NOS} +
-\gamma\times\textrm{HOS})\)</span>.</p>
-<p>Similarly, the mean trait value in the hatchery environment <span class="math inline">\(\bar{z}^\textrm{hatchery}_g\)</span> is a weighted
-average of the mean trait value of the natural origin broodtake in the
-natural environment and that of the hatchery origin broodtake in the
-hatchery environment:</p>
-<p><span class="math display">\[
-\bar{z}^\textrm{hatchery}_g = p^\textrm{NOB}_{g-1} \times
-\bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOB}_{g-1})
-\times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
-\]</span></p>
-<p>where <span class="math inline">\(p^\textrm{NOB} =
-\textrm{NOB}/(\textrm{NOB} + \textrm{HOB})\)</span>.</p>
-<p>The fitness variance <span class="math inline">\(\omega^2\)</span>
-and phenotype variance <span class="math inline">\(\sigma^2\)</span> are
-assumed constant between the two environments. The fitness variance is
-parameterized relative to the variance of the phenotype, i.e., <span class="math inline">\(\omega = \Omega \sigma\)</span> where <span class="math inline">\(\Omega\)</span> is the “selection strength”.</p>
+value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>θ</mi><mtext mathvariant="normal">natural</mtext></msup><annotation encoding="application/x-tex">\theta^\textrm{natural}</annotation></semantics></math>)
+and that of hatchery origin spawners in the hatchery environment (with
+optimum value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>θ</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">\theta^\textrm{hatchery}</annotation></semantics></math>):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOSeff</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>′</mi><mtext mathvariant="normal">natural</mtext></mrow></msubsup><mo>+</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOSeff</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>′</mi><mtext mathvariant="normal">hatchery</mtext></mrow></msubsup></mrow><annotation encoding="application/x-tex">
+\bar{z}^\textrm{natural}_g = (1 - p^\textrm{HOSeff}_{g-1}) \times \bar{z}^{\prime\textrm{natural}}_{g-1} + p^\textrm{HOSeff}_{g-1} \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>p</mi><mtext mathvariant="normal">HOSeff</mtext></msup><mo>=</mo><mi>γ</mi><mo>×</mo><mtext mathvariant="normal">HOS</mtext><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">NOS</mtext><mo>+</mo><mi>γ</mi><mo>×</mo><mtext mathvariant="normal">HOS</mtext><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p^\textrm{HOSeff} = \gamma\times\textrm{HOS}/(\textrm{NOS} + \gamma\times\textrm{HOS})</annotation></semantics></math>.</p>
+<p>Similarly, the mean trait value in the hatchery environment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">hatchery</mtext></msubsup><annotation encoding="application/x-tex">\bar{z}^\textrm{hatchery}_g</annotation></semantics></math>
+is a weighted average of the mean trait value of the natural origin
+broodtake in the natural environment and that of the hatchery origin
+broodtake in the hatchery environment:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">hatchery</mtext></msubsup><mo>=</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOB</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>′</mi><mtext mathvariant="normal">natural</mtext></mrow></msubsup><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOB</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mrow><mi>′</mi><mtext mathvariant="normal">hatchery</mtext></mrow></msubsup></mrow><annotation encoding="application/x-tex">
+\bar{z}^\textrm{hatchery}_g = p^\textrm{NOB}_{g-1} \times \bar{z}^{\prime\textrm{natural}}_{g-1} + (1 - p^\textrm{NOB}_{g-1}) \times \bar{z}^{\prime\textrm{hatchery}}_{g-1}
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>p</mi><mtext mathvariant="normal">NOB</mtext></msup><mo>=</mo><mtext mathvariant="normal">NOB</mtext><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">NOB</mtext><mo>+</mo><mtext mathvariant="normal">HOB</mtext><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})</annotation></semantics></math>.</p>
+<p>The fitness variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ω</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\omega^2</annotation></semantics></math>
+and phenotype variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>
+are assumed constant between the two environments. The fitness variance
+is parameterized relative to the variance of the phenotype, i.e.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ω</mi><mo>=</mo><mi>Ω</mi><mi>σ</mi></mrow><annotation encoding="application/x-tex">\omega = \Omega \sigma</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math>
+is the “selection strength”.</p>
 <div class="section level3">
 <h3 id="mixed-brood-year-return">Mixed brood-year return<a class="anchor" aria-label="anchor" href="#mixed-brood-year-return"></a>
 </h3>
-<p>If a mixed-brood year return in year <span class="math inline">\(y\)</span> across several ages <span class="math inline">\(a\)</span> produces the smolt cohort in year <span class="math inline">\(y+1\)</span>, then the mean trait value in that
-cohort is calculated from a weighted average by brood year and age class
-fecundity:</p>
-<p><span class="math display">\[\begin{align}
-\bar{z}^\textrm{natural}_{y+1} &amp;= \sum_a p^\textrm{NOS}_{y,a} \times
-\bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOSeff}_{y,a}
-\times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}\\
-\bar{z}^\textrm{hatchery}_{y+1} &amp;= \sum_a p^\textrm{NOB}_{y,a}
-\times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a
-p^\textrm{HOB}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}
-\end{align}\]</span></p>
+<p>If a mixed-brood year return in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+across several ages
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+produces the smolt cohort in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">y+1</annotation></semantics></math>,
+then the mean trait value in that cohort is calculated from a weighted
+average by brood year and age class fecundity:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">natural</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mrow><mi>′</mi><mtext mathvariant="normal">natural</mtext></mrow></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOSeff</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mrow><mi>′</mi><mtext mathvariant="normal">hatchery</mtext></mrow></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">hatchery</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOB</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mrow><mi>′</mi><mtext mathvariant="normal">natural</mtext></mrow></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOB</mtext></msubsup><mo>×</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mrow><mi>′</mi><mtext mathvariant="normal">hatchery</mtext></mrow></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\bar{z}^\textrm{natural}_{y+1} &amp;= \sum_a p^\textrm{NOS}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOSeff}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}\\
+\bar{z}^\textrm{hatchery}_{y+1} &amp;= \sum_a p^\textrm{NOB}_{y,a} \times \bar{z}^{\prime\textrm{natural}}_{y-a} + \sum_a p^\textrm{HOB}_{y,a} \times  \bar{z}^{\prime\textrm{hatchery}}_{y-a}
+\end{align}</annotation></semantics></math></p>
 <p>where</p>
-<p><span class="math inline">\(p^\textrm{NOS}_{y,a} =
-\dfrac{\textrm{Fec}_a \times
-\textrm{NOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma
-\times \textrm{HOS}_{y,a})}\)</span></p>
-<p><span class="math inline">\(p^\textrm{HOSeff}_{y,a} =
-\dfrac{\textrm{Fec}_a \times \gamma \times
-\textrm{HOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma
-\times \textrm{HOS}_{y,a})}\)</span></p>
-<p><span class="math inline">\(p^\textrm{NOB}_{y,a} =
-\dfrac{\textrm{Fec}^\textrm{brood}_a \times
-\textrm{NOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a}
-+ \textrm{HOB}_{y,a})}\)</span></p>
-<p><span class="math inline">\(p^\textrm{HOB}_{y,a} =
-\dfrac{\textrm{Fec}^\textrm{brood}_a \times
-\textrm{HOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a}
-+ \textrm{HOB}_{y,a})}\)</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><mi>γ</mi><mo>×</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{NOS}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma \times \textrm{HOS}_{y,a})}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOSeff</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><mi>γ</mi><mo>×</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><mi>γ</mi><mo>×</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{HOSeff}_{y,a} = \dfrac{\textrm{Fec}_a \times \gamma \times \textrm{HOS}_{y,a}}{\sum_a\textrm{Fec}_a(\textrm{NOS}_{y,a} + \gamma \times \textrm{HOS}_{y,a})}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOB</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup><mo>×</mo><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{NOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{NOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a})}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOB</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup><mo>×</mo><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mtext mathvariant="normal">Fec</mtext><mi>a</mi><mtext mathvariant="normal">brood</mtext></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>+</mo><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{HOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{HOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a})}</annotation></semantics></math></p>
 </div>
 <div class="section level3">
 <h3 id="fitness-loss">Fitness loss<a class="anchor" aria-label="anchor" href="#fitness-loss"></a>
 </h3>
 <p>Fitness can reduce survival in the egg, fry, and immature life
 stages:</p>
-<p><span class="math display">\[\begin{align}
-\textrm{Fry}^\textrm{NOS}_y &amp;= \sum_a\textrm{NOS}_{y,a} \times
-p^\textrm{female} \times \textrm{Fec}_a \times
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
-\textrm{Fry}^\textrm{HOS}_y &amp;= \sum_a\textrm{HOS}_{\textrm{eff}y,a}
-\times p^\textrm{female} \times \textrm{Fec}_a \times
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
-\end{align}\]</span></p>
-<p><span class="math display">\[\begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha^{\prime\prime}
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times
-\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^{\prime\prime}
-(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;=
-\frac{\alpha^{\prime\prime}  (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}
-\times
-\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^{\prime\prime}
-(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
-\end{align}\]</span></p>
-<p><span class="math display">\[
-M^\textrm{NOS}_{y,a} = -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times
-(W^\textrm{nat.}_{y-a})^{\ell_\textrm{smolt}})
-\]</span></p>
-<p>with <span class="math inline">\(\ell_i\)</span> is the proportion of
-the fitness loss apportioned among the three life stages, <span class="math inline">\(\sum_i \ell_i = 1\)</span>, and density-dependent
-parameters <span class="math inline">\(\alpha^{\prime\prime} =
-\frac{\kappa}{\phi} \times I_\kappa \times
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}\)</span>, <span class="math inline">\(\beta^{\prime\prime} =
-\alpha^{\prime\prime}/[C_\textrm{smolt} \times I_C \times
-(W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]\)</span>.</p>
-<p>The corresponding Ricker stock-recruit parameter <span class="math inline">\(\beta^{\prime\prime} = 1/[S_\textrm{max} \times
-I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">egg</mtext></msub></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOS</mtext><mrow><mtext mathvariant="normal">eff</mtext><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">egg</mtext></msub></msup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Fry}^\textrm{NOS}_y &amp;= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_y &amp;= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
+\end{align}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>α</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><msup><mi>β</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>α</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><msup><mi>β</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha^{\prime\prime} (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha^{\prime\prime}  (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\end{align}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>=</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">base,NOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">smolt</mtext></msub></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+M^\textrm{NOS}_{y,a} = -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times (W^\textrm{nat.}_{y-a})^{\ell_\textrm{smolt}})
+</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>i</mi></msub><annotation encoding="application/x-tex">\ell_i</annotation></semantics></math>
+is the proportion of the fitness loss apportioned among the three life
+stages,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mo>ℓ</mo><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\sum_i \ell_i = 1</annotation></semantics></math>,
+and density-dependent parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>α</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mo>=</mo><mfrac><mi>κ</mi><mi>ϕ</mi></mfrac><mo>×</mo><msub><mi>I</mi><mi>κ</mi></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup></mrow><annotation encoding="application/x-tex">\alpha^{\prime\prime} = \frac{\kappa}{\phi} \times I_\kappa \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>β</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mo>=</mo><msup><mi>α</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>C</mi><mtext mathvariant="normal">smolt</mtext></msub><mo>×</mo><msub><mi>I</mi><mi>C</mi></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\beta^{\prime\prime} = \alpha^{\prime\prime}/[C_\textrm{smolt} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]</annotation></semantics></math>.</p>
+<p>The corresponding Ricker stock-recruit parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>β</mi><mrow><mi>′</mi><mi>′</mi></mrow></msup><mo>=</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><mo>×</mo><msub><mi>I</mi><mi>C</mi></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\beta^{\prime\prime} = 1/[S_\textrm{max} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]</annotation></semantics></math>.</p>
 <p>In the marine environment, age-specific natural survival is reduced
 proportional to the fitness loss term and modeled as a cohort
 effect.</p>
@@ -882,12 +924,13 @@ effect.</p>
 </h3>
 <p>PNI (proportionate natural influence) is an approximation of the rate
 of gene flow from the hatchery to the natural environment, calculated
-for the progeny in year <span class="math inline">\(y+1\)</span> from
-the parental composition of year <span class="math inline">\(y\)</span>:</p>
-<p><span class="math display">\[
-\textrm{PNI}_{y+1} = \dfrac{\sum_a p^{\textrm{NOB}}_{y,a}}{\sum_a
-p^{\textrm{NOB}}_{y,a} + \sum_a p^{\textrm{HOSeff}}_{y,a}}
-\]</span></p>
+for the progeny in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">y+1</annotation></semantics></math>
+from the parental composition of year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">PNI</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOB</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOB</mtext></msubsup><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOSeff</mtext></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+\textrm{PNI}_{y+1} = \dfrac{\sum_a p^{\textrm{NOB}}_{y,a}}{\sum_a p^{\textrm{NOB}}_{y,a} + \sum_a p^{\textrm{HOSeff}}_{y,a}}
+</annotation></semantics></math></p>
 <p>Generally, a combination of minimizing hatchery releases, increasing
 natural broodtake, and reducing the number hatchery origin spawners
 maintains high PNI, i.e., low rate of gene flow from the hatchery to
@@ -899,116 +942,119 @@ natural environment.</p>
 <p>With single brood-year returns, the proportion of wild salmon,
 natural origin spawners whose parents were also natural spawners, can be
 calculated as</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mi>g</mi><mtext mathvariant="normal">WILD</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>g</mi><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><mfrac displaystyle="true"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>2</mn><mi>γ</mi><mo>×</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>γ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>p</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 p^\textrm{WILD}_g = (1 - p^\textrm{HOScensus}_g) \times
 \dfrac{(1 - p^\textrm{HOScensus}_{g-1})^2}
-{(1 - p^\textrm{HOScensus}_{g-1})^2 + 2 \gamma \times
-p^\textrm{HOScensus}_{g-1}(1 - p^\textrm{HOScensus}_{g-1}) +
+{(1 - p^\textrm{HOScensus}_{g-1})^2 + 2 \gamma \times p^\textrm{HOScensus}_{g-1}(1 - p^\textrm{HOScensus}_{g-1}) +
 \gamma^2 (p^\textrm{HOScensus}_{g-1})^2}
-\]</span></p>
-<p>where <span class="math inline">\(p^\textrm{HOScensus} =
-\textrm{HOS}/(\textrm{HOS} + \textrm{NOS})\)</span>.</p>
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>p</mi><mtext mathvariant="normal">HOScensus</mtext></msup><mo>=</mo><mtext mathvariant="normal">HOS</mtext><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">HOS</mtext><mo>+</mo><mtext mathvariant="normal">NOS</mtext><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p^\textrm{HOScensus} = \textrm{HOS}/(\textrm{HOS} + \textrm{NOS})</annotation></semantics></math>.</p>
 <p>The first term is the proportion of natural spawners in the current
-generation <span class="math inline">\(g\)</span>.</p>
+generation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>.</p>
 <p>The ratio comprising the second term discounts the proportion of the
 current generation to include natural spawners whose parents were both
 natural spawners. Assuming non-assortative mating, the three terms in
-the denominator gives the composition of generation <span class="math inline">\(g\)</span> whose parents who are both natural
-origin, mixed origin (one parent in natural origin and the other is
-hatchery origin), and both hatchery origin.</p>
+the denominator gives the composition of generation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+whose parents who are both natural origin, mixed origin (one parent in
+natural origin and the other is hatchery origin), and both hatchery
+origin.</p>
 <p>To generalize for mixed-brood year return, we calculate the
 probability weighted across brood-years and age class fecundity:</p>
-<p><span class="math display">\[
-p^\textrm{WILD}_y = \sum_a
-\dfrac{\textrm{NOS}_{y,a}}{\sum_{a'}(\textrm{NOS}_{y,a'} +
-\textrm{HOS}_{y,a'})} \times \dfrac{(\sum_{a'}
-p^\textrm{NOScensus}_{y-a,a'})^2}
-{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2 + 2 \gamma \times
-(\sum_{a'}p^\textrm{NOScensus}_{y-a,a'})(\sum_{a'}p^\textrm{HOScensus}_{y-a,a'})
-+
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">WILD</mtext></msubsup><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><mfrac displaystyle="true"><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mrow><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow></msub><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><mfrac displaystyle="true"><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow><mtext mathvariant="normal">NOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow><mtext mathvariant="normal">NOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>2</mn><mi>γ</mi><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow><mtext mathvariant="normal">NOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>γ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>a</mi><mi>′</mi></mrow></munder><msubsup><mi>p</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi><mo>,</mo><mi>a</mi><mi>′</mi></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+p^\textrm{WILD}_y = \sum_a \dfrac{\textrm{NOS}_{y,a}}{\sum_{a'}(\textrm{NOS}_{y,a'} + \textrm{HOS}_{y,a'})} \times \dfrac{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2}
+{(\sum_{a'} p^\textrm{NOScensus}_{y-a,a'})^2 + 2 \gamma \times (\sum_{a'}p^\textrm{NOScensus}_{y-a,a'})(\sum_{a'}p^\textrm{HOScensus}_{y-a,a'}) +
 \gamma^2 (\sum_{a'}p^\textrm{HOScensus}_{y-a,a'})^2}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>where</p>
-<p><span class="math inline">\(p^\textrm{NOScensus}_{y,a} =
-\dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\sum_a{\textrm{Fec}_a
-(\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}\)</span></p>
-<p><span class="math inline">\(p^\textrm{HOScensus}_{y,a} =
-\dfrac{\textrm{Fec}_a \times \textrm{HOS}_{y,a}}{\sum_a{\textrm{Fec}_a
-(\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}\)</span></p>
-<p>The probability of finding a wild salmon in year <span class="math inline">\(y\)</span> is the sum of probabilities of finding
-a wild salmon over all ages. For each age <span class="math inline">\(a\)</span>, the first ratio is the probability of
-finding a natural spawner in year <span class="math inline">\(y\)</span>. The second ratio is the probability of
-mating success from two parental natural spawners in year <span class="math inline">\(y-a\)</span> using a Punnett square, assuming
-non-assortative mating across age and origin. The summation across dummy
-age variable <span class="math inline">\(a'\)</span> calculates the
-total proportion of spawners in a given year.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOScensus</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{NOScensus}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{NOS}_{y,a}}{\sum_a{\textrm{Fec}_a (\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>p</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOScensus</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo>×</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><msub><mo>∑</mo><mi>a</mi></msub><mrow><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">p^\textrm{HOScensus}_{y,a} = \dfrac{\textrm{Fec}_a \times \textrm{HOS}_{y,a}}{\sum_a{\textrm{Fec}_a (\textrm{NOS}_{y,a}} + \textrm{HOS}_{y,a})}</annotation></semantics></math></p>
+<p>The probability of finding a wild salmon in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+is the sum of probabilities of finding a wild salmon over all ages. For
+each age
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>,
+the first ratio is the probability of finding a natural spawner in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>.
+The second ratio is the probability of mating success from two parental
+natural spawners in year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><annotation encoding="application/x-tex">y-a</annotation></semantics></math>
+using a Punnett square, assuming non-assortative mating across age and
+origin. The summation across dummy age variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">a'</annotation></semantics></math>
+calculates the total proportion of spawners in a given year.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="mark-selective-fishing">Mark-selective fishing<a class="anchor" aria-label="anchor" href="#mark-selective-fishing"></a>
 </h2>
-<p>If the mark rate <span class="math inline">\(m\)</span> of hatchery
-fish is greater than zero, then mark-selective fishing is implemented
-for both the pre-terminal and terminal fisheries. The mark rate is a
-proxy for retention and the harvest rate <span class="math inline">\(u^\textrm{harvest}\)</span> corresponds to the
-ratio of the kept catch and abundance. The exploitation rate <span class="math inline">\(u^\textrm{exploit}\)</span> is calculated from
-kept catch and dead releases. Exploitation rates differ between hatchery
-and natural origin fish because there is no retention of the latter.</p>
+<p>If the mark rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+of hatchery fish is greater than zero, then mark-selective fishing is
+implemented for both the pre-terminal and terminal fisheries. The mark
+rate is a proxy for retention and the harvest rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>u</mi><mtext mathvariant="normal">harvest</mtext></msup><annotation encoding="application/x-tex">u^\textrm{harvest}</annotation></semantics></math>
+corresponds to the ratio of the kept catch and abundance. The
+exploitation rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>u</mi><mtext mathvariant="normal">exploit</mtext></msup><annotation encoding="application/x-tex">u^\textrm{exploit}</annotation></semantics></math>
+is calculated from kept catch and dead releases. Exploitation rates
+differ between hatchery and natural origin fish because there is no
+retention of the latter.</p>
 <p>Let the instantaneous fishing mortality for kept catch and released
 catch be</p>
-<p><span class="math display">\[\begin{align}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">kept</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>m</mi><mi>E</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>δ</mi><mi>E</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 F^\textrm{kept} &amp;= mE\\
 F^\textrm{rel.} &amp;= (1 - m)\delta E
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(\delta\)</span> is the proportion
-of released fish that die.</p>
-<p><span class="math inline">\(E\)</span> is an index of fishing effort,
-also referred to as the encounter rate by the fishery, that links
-together <span class="math inline">\(F^\textrm{kept}\)</span> and <span class="math inline">\(F^\textrm{rel.}\)</span>. Intuitively, fishing
-effort can increase in a mark-selective fishery compared to a
-non-selective fishery. For example, if the mark rate is 20 percent, then
-the fishing effort could be 500 percent higher than in a non-selective
-fishery in order to attain the kept quota or bag limit. Additional catch
-and release mortality then occurs for un-marked fish, according to <span class="math inline">\(\delta\)</span>.</p>
-<p>In the pre-terminal (<span class="math inline">\(\textrm{PT}\)</span>) fishery, <span class="math inline">\(E\)</span> is solved to satisfy the following
-equation for hatchery fish:</p>
-<p><span class="math display">\[
-u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a
-N^\textrm{juv,HOS}_{y,a}}
-\]</span></p>
-<p>where the kept catch <span class="math inline">\(K\)</span> is</p>
-<p><span class="math inline">\(K^\textrm{HOS,PT}_{y,a} =
-\dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y +
-F^\textrm{rel,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} +
-F^\textrm{rel,PT}])\right)N^\textrm{juv,HOS}_{y,a}\)</span>.</p>
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
+is the proportion of released fish that die.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+is an index of fishing effort, also referred to as the encounter rate by
+the fishery, that links together
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">kept</mtext></msup><annotation encoding="application/x-tex">F^\textrm{kept}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel.}</annotation></semantics></math>.
+Intuitively, fishing effort can increase in a mark-selective fishery
+compared to a non-selective fishery. For example, if the mark rate is 20
+percent, then the fishing effort could be 500 percent higher than in a
+non-selective fishery in order to attain the kept quota or bag limit.
+Additional catch and release mortality then occurs for un-marked fish,
+according to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>.</p>
+<p>In the pre-terminal
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">PT</mtext><annotation encoding="application/x-tex">\textrm{PT}</annotation></semantics></math>)
+fishery,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+is solved to satisfy the following equation for hatchery fish:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>u</mi><mtext mathvariant="normal">harvest,HOS,PT</mtext></msup><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}
+</annotation></semantics></math></p>
+<p>where the kept catch
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+is</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mrow><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,PT</mtext></msubsup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,PT</mtext></msup><mo>+</mo><msup><mi>F</mi><mtext mathvariant="normal">rel,PT</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mrow><annotation encoding="application/x-tex">K^\textrm{HOS,PT}_{y,a} = \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y + F^\textrm{rel,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} + F^\textrm{rel,PT}])\right)N^\textrm{juv,HOS}_{y,a}</annotation></semantics></math>.</p>
 <p>The exploitation rate for natural origin fish is calculated from dead
 discards. The exploitation rate for hatchery origin fish is calculated
 from kept catch and dead discards:</p>
-<p><span class="math display">\[\begin{align}
-u^\textrm{exploit,NOS,PT}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a
-F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a
-N^\textrm{juv,NOS}_{y,a}}\\
-u^\textrm{exploit,HOS,PT}_y &amp;= \dfrac{\sum_a (1 -
-\exp(-v_a[F^\textrm{kept,PT}_y +
-F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a
-N^\textrm{juv,HOS}_{y,a}}
-\end{align}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mi>y</mi><mtext mathvariant="normal">exploit,NOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NOS</mtext></msubsup></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mi>y</mi><mtext mathvariant="normal">exploit,HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,PT</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+u^\textrm{exploit,NOS,PT}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a}}\\
+u^\textrm{exploit,HOS,PT}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}
+\end{align}</annotation></semantics></math></p>
 <p>Similarly, in the terminal fishery, the fishing effort satisfies the
 equation</p>
-<p><span class="math display">\[
-u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a
-\textrm{HOR}_{y,a}}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>u</mi><mtext mathvariant="normal">harvest,HOS,T</mtext></msup><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}
+</annotation></semantics></math></p>
 <p>with the corresponding exploitation rates:</p>
-<p><span class="math display">\[\begin{align}
-u^\textrm{exploit,HOS,T}_y &amp;= \dfrac{\sum_a (1 -
-\exp(-v_a[F^\textrm{kept,T}_y +
-F^\textrm{rel.,T}_y]))\textrm{HOR}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}\\
-u^\textrm{exploit,NOS,T}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a
-F^\textrm{rel,T}_y))^\textrm{NOR}_{y,a}}{\sum_a \textrm{NOR}_{y,a}}
-\end{align}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mi>y</mi><mtext mathvariant="normal">exploit,HOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,T</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,T</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mi>y</mi><mtext mathvariant="normal">exploit,NOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOR</mtext></msubsup></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+u^\textrm{exploit,HOS,T}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,T}_y + F^\textrm{rel.,T}_y]))\textrm{HOR}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}\\
+u^\textrm{exploit,NOS,T}_y &amp;= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel,T}_y))^\textrm{NOR}_{y,a}}{\sum_a \textrm{NOR}_{y,a}}
+\end{align}</annotation></semantics></math></p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -1019,15 +1065,15 @@ F^\textrm{rel,T}_y))^\textrm{NOR}_{y,a}}{\sum_a \textrm{NOR}_{y,a}}
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
