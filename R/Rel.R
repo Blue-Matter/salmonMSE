@@ -131,9 +131,10 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
       HOS_effective <- rep(0, length(HOS))
     }
 
-    pNOB <- sum(broodtake$NOB)/sum(broodtake$NOB, broodtake$HOB)
-    pHOSeff <- sum(HOS_effective)/sum(NOS, HOS_effective)
-    pHOScensus <- sum(HOS)/sum(NOS, HOS)
+    # Weighted by fecundity
+    pNOB <- sum(fec_brood * broodtake$NOB)/sum(fec_brood * broodtake$NOB, fec_brood * broodtake$HOB)
+    pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec *HOS_effective)
+    pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
     # Fry production in the absence of fitness effects
     fry_NOS <- sum(NOS * p_female * fec)
