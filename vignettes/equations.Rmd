@@ -347,6 +347,8 @@ $p^\textrm{NOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{NOB}
 
 $p^\textrm{HOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{HOB}_{y,a}}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a})}$
 
+Effective proportions, i.e., weighting by age-class fecundity, accounts for older age classes that are more fecund and more likely to contribute to the production of next cohort.
+
 ## Fitness loss
 
 Fitness can reduce survival in the egg, fry, and immature life stages:
@@ -428,6 +430,8 @@ The probability of finding a wild salmon in year $y$ is the sum of probabilities
 For each age $a$, the first ratio is the probability of finding a natural spawner in year $y$. 
 The second ratio is the probability of mating success from two parental natural spawners in year $y-a$ using a Punnett square, assuming non-assortative mating across age and origin.
 The summation across dummy age variable $a'$ calculates the total proportion of spawners in a given year.
+
+Effective proportions, i.e., weighting by age-class fecundity, in the parental composition accounts for older age classes that are more fecund and more likely to contribute to the production of offspring.
 
 # Mark-selective fishing
 
