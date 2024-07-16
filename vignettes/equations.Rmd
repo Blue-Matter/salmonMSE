@@ -34,29 +34,35 @@ knitr::kable(param)
 
 First, we consider natural production in the absence of fitness effects from the hatchery improvement.
 
-## Fry
+## Egg production
 
-From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding fry production of the subsequent generation is calculated as:
+From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding egg production of the subsequent generation is calculated as:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
-\textrm{Fry}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\textrm{Egg}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
+\textrm{Egg}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
 \end{align}
 
 where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the superscript denotes the parentage of the progeny.
 
+## Fry
+
+Fry production is assumed to be equal to egg production, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_y = \textrm{Egg}^\textrm{HOS}_y$.
+
 ## Smolts
 
-Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-recruit relationship, smolt production is
+Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{NOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
+\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{HOS}_y}{1 + \beta(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}
 \end{align}
 
 where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{smolt}}$, the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
+
+The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total number of fry, as well as subyearling hatchery releases (see [Hatchery](#hatchery-production) section), in the system.
 
 If there is knife-edge maturity, i.e., all fish mature at the same age, then the equation simplifies to $\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}$, with $\textrm{SAR}$ as the marine survival (between 0-1).
 
@@ -64,9 +70,9 @@ If there is knife-edge maturity, i.e., all fish mature at the same age, then the
 >
 >\begin{align}
 >\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])\\
+>\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])\\
 >\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])
+>\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])
 >\end{align}
 >
 >where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$.
@@ -100,7 +106,7 @@ knitr::include_graphics("../man/figures/SRR.png")
 
 Hatchery production is controlled by several sets of variables specified by the analyst.
 
-The first consideration is to specify the target number of annual releases of sub-yearlings $n^\textrm{subyearling}$ and yearlings $n^\textrm{yearling}$. 
+The first consideration is to specify the target number of annual releases of sub-yearlings $n^\textrm{subyearling}_\textrm{target}$ and yearlings $n^\textrm{yearling}_\textrm{target}$. 
 Going backwards, the corresponding number of eggs needed to reach the target number depends on the egg survival to those life stages.
 Finally, the corresponding number of broodtake is dependent on the brood fecundity and hatchery survival of broodtake.
 
@@ -119,7 +125,7 @@ The following equations then generate the annual broodtake and hatchery producti
 The annual target egg production for the hatchery is calculated from the target releases as
 
 $$
-\textrm{Egg}_\textrm{broodtake} = \dfrac{n^\textrm{yearling}}{s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}}{s^\textrm{subyearling}}
+\textrm{Egg}_\textrm{target,broodtake} = \dfrac{n^\textrm{yearling}_\textrm{target}}{s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}_\textrm{target}}{s^\textrm{subyearling}}
 $$
 
 where $s$ is the corresponding survival term from the egg life stage.
@@ -142,13 +148,13 @@ The realized hatchery egg production is
 
 where egg production is subject to a survival term $s^\textrm{prespawn}$ for the broodtake.
 
-The proportion $p^\textrm{broodtake}$ is solved annually to satisfy the following conditions:
+The proportion $p^\textrm{broodtake}_y$ is solved annually to satisfy the following conditions:
 
 $\dfrac{\sum_a\textrm{NOB}_{y,a}}{\sum_a\textrm{NOB}_{y,a} + \sum_a\textrm{HOB}_{y,a}} = p^\textrm{NOB}_\textrm{target}$
 
-$0 < p^\textrm{broodtake,HOB} < 1$
+$0 < p^\textrm{broodtake,HOB}_y < 1$
 
-$0 < p^\textrm{broodtake,NOB} < p^\textrm{NOB}_\textrm{max}$
+$0 < p^\textrm{broodtake,NOB}_y < p^\textrm{NOB}_\textrm{max}$
 
 $\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} = \textrm{Egg}_\textrm{broodtake}$
 
@@ -156,21 +162,34 @@ The target ratio $p^\textrm{NOB}_\textrm{target}$ ensures that there is a suffic
 The maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ ensures that there is high abundance of natural origin spawners. 
 
 The total egg production in a given year can fail to reach the target if there is insufficient natural origin escapement. 
-In this case, the NOB take is set to the maximum removal rate ($p^\textrm{broodtake,NOB} = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB.
+In this case, the NOB take is set to the maximum removal rate ($p^\textrm{broodtake,NOB}_y = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB.
 
 ## Smolt releases
+
+After the total hatchery egg production is calculated, the production of yearlings and subyearlings is calculated to ensure the annual ratio is equal to the target ratio. To do so, the parameter $p^\textrm{egg,yearling}_y$ is solved subject to the following conditions:
+
+$\textrm{Egg}_\textrm{brood,y} = \textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB}$
+
+$n^\textrm{yearling}_{y+1} = p^\textrm{egg,yearling}_y \times \textrm{Egg}_\textrm{brood,y} \times s^\textrm{yearling}$
+
+$n^\textrm{subyearling}_{y+1} = (1 - p^\textrm{egg,yearling}_y) \times \textrm{Egg}_\textrm{brood,y} \times s^\textrm{subyearling}$
+
+$\frac{n^\textrm{yearling}_y}{n^\textrm{subyearling}_y + n^\textrm{yearling}_y} = \frac{n^\textrm{yearling}_\textrm{target}}{n^\textrm{subyearling}_\textrm{target} + n^\textrm{yearling}_\textrm{target}}$
 
 From the total broodtake, the smolt releases is calculated as
 
 $$
-\textrm{Smolt}^\textrm{Rel}_{y+1} = (\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB}) s^\textrm{hatchery}
+\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \frac{\alpha \times n^\textrm{subyearling}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1})}
 $$
 
-where the survival of hatchery from egg to smolt is a weighted average from the proportion of yearling and subyearling releases:
+or 
 
-$s^\textrm{hatchery} = s^\textrm{subyearling} (1 - p^\textrm{yearling}) + s^\textrm{yearling} p^\textrm{yearling}$
+$$
+\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \alpha \times n^\textrm{subyearling}_{y+1} \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1}))
+$$
 
-$p^\textrm{yearling} = n^\textrm{yearling}/(n^\textrm{subyearling} + n^\textrm{yearling})$
+Subyearlings are subject to density-dependent survival in competition with natural production of fry.
+
 
 # Pre-terminal fishery
 
@@ -333,15 +352,15 @@ $p^\textrm{HOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times \textrm{HOB}
 Fitness can reduce survival in the egg, fry, and immature life stages:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
-\textrm{Fry}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
+\textrm{Fry}^\textrm{NOS}_{y+1} &= \textrm{Egg}^\textrm{NOS}_y \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_{y+1} &= \textrm{Egg}^\textrm{HOS}_y \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
 \end{align}
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^{\prime\prime} (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{NOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^{\prime\prime}  (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
-\textrm{Fry}^\textrm{HOS}_y}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^{\prime\prime} \times 
+\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1})}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^{\prime\prime} \times 
+\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1})}
 \end{align}
 
 $$
@@ -355,10 +374,10 @@ In the marine environment, age-specific natural survival is reduced proportional
 >With the Ricker density-dependent survival,
 >
 >\begin{align}
->\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha^{\prime\prime} (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
->\textrm{Fry}^\textrm{NOS}_y \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])\\
->\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha^{\prime\prime} (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}} \times 
->\textrm{Fry}^\textrm{HOS}_y \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y])
+>\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha^{\prime\prime} \times 
+>\textrm{Fry}^\textrm{NOS}_{y+1} \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
+>\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha^{\prime\prime} \times 
+>\textrm{Fry}^\textrm{HOS}_{y+1} \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
 >\end{align}
 >
 >with $\beta^{\prime\prime} = 1/[S_\textrm{max} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]$.
