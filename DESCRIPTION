@@ -1,22 +1,21 @@
 Package: salmonMSE
-Title: Salmonid management strategy evaluation
+Title: Salmonid Management Strategy Evaluation
 Version: 0.0.0.9000
 Authors@R: 
     person("Quang", "Huynh", , "quang@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7835-4376"))
-Date: 2024-02-28
+Date: 2024-08-08
 Maintainer: Quang Huynh <quang@bluematterscience.com>
 Description: Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and
   habitat actions. The backend utilizes 'openMSE', but typical users of salmonMSE will not need to see the internal conversion.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
-Imports: MSEtool, dplyr, methods, reshape2, rlang, stats, utils
-Suggests: 
-    testthat (>= 3.0.0)
+Imports: abind, MSEtool, RTMB, dplyr, methods, reshape2, rlang, stats, utils
+Suggests: rstan, testthat (>= 3.0.0), tmbstan
 Encoding: UTF-8
 LazyData: yes
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 URL: https://docs.salmonmse.com/
 BugReports: https://github.com/Blue-Matter/salmonMSE/issues
