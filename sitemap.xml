@@ -10,6 +10,7 @@
 <url><loc>https://docs.salmonmse.com/index.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/AHA.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Bio-class.html</loc></url>
+<url><loc>https://docs.salmonmse.com/reference/CM2SOM.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Habitat-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Harvest-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Harvest_MMP.html</loc></url>
@@ -19,6 +20,7 @@
 <url><loc>https://docs.salmonmse.com/reference/SOM-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/calc_SRR.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/calc_SRRpars.html</loc></url>
+<url><loc>https://docs.salmonmse.com/reference/fit_CM.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/get_F.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/index.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/make_Harvest_MMP.html</loc></url>
