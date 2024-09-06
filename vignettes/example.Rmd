@@ -20,6 +20,8 @@ The historical spool-up is not informed by an estimation model. The model is use
 
 We create several S4 objects, the `Bio` object contains the natural biological dynamics, including the maturity ogive `p_mature`, fecundity, as well as the density-dependent survival of smolts through the capacity and compensation ratio parameters (`capacity_smolt` and `kappa`, respectively).
 
+The first example will be deterministic. With salmonMSE, we must run at minimum 2 simulation replicates, but we will run 3 simulations where the biological parameters, as well as the results, are identical among simulations.
+
 To accommodate the life stage within the age structured model, we model ocean survival as an equivalent instantaneous rate `Mocean_NOS` where all mortality occurs in the age class prior to maturation, i.e., age 2.
 
 ```{r, eval = FALSE}
@@ -54,20 +56,24 @@ Habitat <- new(
 )
 ```
 
-The hatchery dynamics are the most complex. 
-We have a management target to release 2 million yearlings. 
+Next, we work on the hatchery dynamics.
 
-After specifying the survival of broodtake (`s_prespawn`) and the eggs in the hatchery, the model calculates the required number of eggs annually for the target releases.
-The natural broodtake (NOB) and hatchery broodtake (HOB) are taken to reach the target egg production and maintain `NOB/(NOB + HOB) = ptarget_NOB`.
+Below, we have a management target to release 10,000 yearlings annually. 
+In comparsion, the carrying capacity of the natural environment is 17,250 smolts.
+
+However, we place some additional constraints are placed which may prevent us from realizing the target releases. 
+Users also specify the survival of broodtake (`s_prespawn`), eggs in the hatchery (`s_egg_smolt` and `s_egg_subyearling`), the target proportion of natural spawners in the broodtake (`ptarget_NOB`), and the maximum proportion of natural spawners to be used as broodtake (`pmax_NOB`).
+
+In each time step of the projection, the model calculates the required number of eggs annually for the target releases. The natural broodtake (NOB) and hatchery broodtake (HOB) are removed from the escapement to reach the target egg production and maintain `NOB/(NOB + HOB) = ptarget_NOB`.
 The proportion of NOB to the natural origin escapement cannot exceed `pmax_NOB`. 
 If the target egg production cannot be reached, then the NOB is taken in accordance with `pmax_NOB` and HOB is taken (up to the total hatchery origin escapement returned to the hatchery) to meet the target egg production.
 
-We also need to specify the relative fecundity of HOS compared to NOS, and the fitness dynamics.
+We also need to specify the relative spawning success of HOS, and various parameters that control fitness of hatchery fish in the natural environment.
 
 ```{r, eval = FALSE}
 Hatchery <- new(
   "Hatchery",
-  n_yearling = 2e6,               # Management lever. No hatchery if both this line and next line are zero
+  n_yearling = 10000,             # Management lever. No hatchery if both this line and next line are zero
   n_subyearling = 0,              # Management lever. No hatchery if both this line and previous line are zero
   s_prespawn = 1,                 # Survival prior to spawning
   s_egg_smolt = 0.92,             # Survival of eggs in hatchery
@@ -131,7 +137,7 @@ SMSE <- salmonMSE(SOM)
 ```
 
 With a simple salmon model, we can run AHA and compare the trajectory of the population. 
-As we can see, the number of NOS in both models stabilizes to the equilibrium value after approximately 15 generations.
+As we can see, the number of NOS in both models is slowly equilibriating to approximately 70.
 
 ```{r, eval = FALSE}
 SAHA <- AHA(SOM, ngen = 20)
@@ -144,3 +150,83 @@ SMSE@NOS[, 1, ]
 ```{r, eval = TRUE, echo = FALSE}
 knitr::include_graphics("../man/figures/example-NOS.png")
 ```
+
+*Comparison of the abundance of NOS between AHA (by generation) and salmonMSE (by year) given identical biological parameters, hatchery releases, and terminal fishery harvest rate in the simple example.*
+
+## Stochastic simulations
+
+Let's repeat the simple example with stochasticity on the compensation ratio.
+To do this, we sample the compensation ratio parameter from a distribution and we run 100 simulations.
+This incorporates our uncertainty in our understanding of the productivity of the natural environment.
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::include_graphics("../man/figures/example-kappa.png")
+```
+
+*Histogram of the compensation ratio (kappa) values sampled for our stochastic operating model.*
+
+```{r, eval = FALSE, echo = TRUE}
+SAR <- 0.01
+
+nsim <- 100
+
+# Sample the compensation ratio
+set.seed(100)
+kappa_mean <- 3
+kappa_sd <- 0.3
+kappa <- rlnorm(nsim, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
+
+Bio_stochastic <- new(
+  "Bio",
+  nsim = nsim,
+  maxage = 3,
+  p_mature = c(0, 0, 1),
+  SRrel = "BH",
+  capacity_smolt = 17250,
+  kappa = kappa,
+  Mocean_NOS = c(0, -log(SAR), 0),
+  fec = c(0, 0, 5040),
+  p_female = 0.49
+)
+
+SOM_stochastic <- new(
+  "SOM",
+  nyears = 2, proyears = 50,
+  Bio_stochastic, Habitat, Hatchery, Harvest, Historical
+)
+
+SMSE_stochastic <- salmonMSE(SOM_stochastic)
+```
+
+We expect a distribution in the state variables during the projection. 
+Let's take a look at PNI, where we can plot the median and 95 percent range in values annually from the projection:
+
+```{r, eval = FALSE, echo = TRUE}
+plot_statevar_ts(SMSE_stochastic. "PNI", quant = TRUE)
+```
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::include_graphics("../man/figures/example-PNI-ts.png")
+```
+
+Here is the distribution of PNI in the last projection year:
+
+```{r, eval = FALSE, echo = TRUE}
+plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
+```
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::include_graphics("../man/figures/example-PNI-hist.png")
+```
+
+From such models, we can develop performance metrics that make probabilistic statements about the system dynamics for each set of management actions. 
+For example, we calculate the long-term probability that PNI is at least 0.75:
+
+```{r, eval = FALSE, echo = TRUE}
+mean(SMSE_stochastic@PNI[, 1, 49] >= 0.75)
+```
+
+```{r, eval = TRUE, echo = FALSE}
+0.63
+```
+

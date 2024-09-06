@@ -27,7 +27,7 @@ Bio <- new(
 
 Hatchery <- new(
   "Hatchery",
-  n_yearling = 2e6,               # Management lever. No hatchery if both this line and next line are zero
+  n_yearling = 10000,             # Management lever. No hatchery if both this line and next line are zero
   n_subyearling = 0,              # Management lever. No hatchery if both this line and previous line are zero
   s_prespawn = 1,                 # Survival prior to spawning
   s_egg_smolt = 0.92,             # Survival of eggs in hatchery
@@ -82,14 +82,14 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical)
 
 # run salmonMSE
-MOM <- SOM2MOM(SOM)
-H <- MSEtool::SimulateMOM(MOM, parallel = FALSE)
-MMSE <- salmonMSE(SOM, convert = FALSE)
+#MOM <- SOM2MOM(SOM)
+#H <- MSEtool::SimulateMOM(MOM, parallel = FALSE)
+#MMSE <- salmonMSE(SOM, convert = FALSE)
 
-N <- apply(MMSE@N, c(1, 2, 3, 5), sum)
-N[1, 1, , ]
+#N <- apply(MMSE@N, c(1, 2, 3, 5), sum)
+#N[1, 1, , ]
 
-MMSE@Misc$MICE$M_ageArray[1, 1, , 1, ]
+#MMSE@Misc$MICE$M_ageArray[1, 1, , 1, ]
 
 SMSE <- salmonMSE(SOM)
 class?SMSE # Definitions of arrays
@@ -102,23 +102,74 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
   y[y < 1e-8] <- NA
   if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
   par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
-  matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1)
+  matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+          panel.first = graphics::grid())
   if (!missing(yline)) abline(h = yline, lty = 2)
   matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
-          ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1)
+          ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+          panel.first = graphics::grid())
   if (!missing(yline)) abline(h = yline, lty = 2)
 }
 
 compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
 
 png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
-compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.9731)
+compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 20])
 dev.off()
 
 
 
-#
+# Stochastic example
+SAR <- 0.01
+nsim <- 100
 
+set.seed(100)
+kappa_mean <- 3
+kappa_sd <- 0.3
+kappa <- rlnorm(nsim, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
+Bio_stochastic <- new(
+  "Bio",
+  nsim = nsim,
+  maxage = 3,
+  p_mature = c(0, 0, 1),
+  SRrel = "BH",
+  capacity_smolt = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
+  kappa = kappa,                  # Productivity in recruits per spawner
+  Mocean_NOS = c(0, -log(SAR), 0),
+  fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
+  p_female = 0.49
+  #strays = 0
+)
+
+
+png("man/figures/example-kappa.png", height = 4, width = 6, res = 300, units = 'in')
+par(mar = c(5, 4, 1, 1))
+hist(kappa, main = NULL)
+dev.off()
+
+par(mfrow = c(1, 1))
+
+SOM_stochastic <- new("SOM",
+                      nyears = 2,
+                      proyears = 50,
+                      Bio_stochastic, Habitat, Hatchery, Harvest, Historical)
+
+SMSE_stochastic <- salmonMSE(SOM_stochastic)
+saveRDS(SMSE_stochastic, "examples/SMSE_stochastic.rds")
+
+png("man/figures/example-PNI-ts.png", height = 4, width = 6, res = 300, units = 'in')
+par(mar = c(5, 4, 1, 1))
+plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
+dev.off()
+
+png("man/figures/example-PNI-hist.png", height = 4, width = 6, res = 300, units = 'in')
+par(mar = c(5, 4, 1, 1))
+plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.9))
+dev.off()
+
+
+
+# Extra debugging stuff
 SMSE@NOB[, 1, seq(1, 49, 3)]/
   SAHA$NOB[, 1:17]
 
