@@ -202,7 +202,7 @@ We expect a distribution in the state variables during the projection.
 Let's take a look at PNI, where we can plot the median and 95 percent range in values annually from the projection:
 
 ```{r, eval = FALSE, echo = TRUE}
-plot_statevar_ts(SMSE_stochastic. "PNI", quant = TRUE)
+plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
