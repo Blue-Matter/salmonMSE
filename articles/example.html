@@ -60,7 +60,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-08-08</h4>
+            <h4 data-toc-skip class="date">2024-09-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -79,6 +79,10 @@ the natural biological dynamics, including the maturity ogive
 survival of smolts through the capacity and compensation ratio
 parameters (<code>capacity_smolt</code> and <code>kappa</code>,
 respectively).</p>
+<p>The first example will be deterministic. With salmonMSE, we must run
+at minimum 2 simulation replicates, but we will run 3 simulations where
+the biological parameters, as well as the results, are identical among
+simulations.</p>
 <p>To accommodate the life stage within the age structured model, we
 model ocean survival as an equivalent instantaneous rate
 <code>Mocean_NOS</code> where all mortality occurs in the age class
@@ -111,24 +115,34 @@ object:</p>
 <span>  capacity_smolt_improve <span class="op">=</span> <span class="fl">1</span>,    <span class="co"># Keep carrying capacity unchanged</span></span>
 <span>  kappa_improve <span class="op">=</span> <span class="fl">1</span>              <span class="co"># Keep productivity unchanged</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The hatchery dynamics are the most complex. We have a management
-target to release 2 million yearlings.</p>
-<p>After specifying the survival of broodtake (<code>s_prespawn</code>)
-and the eggs in the hatchery, the model calculates the required number
-of eggs annually for the target releases. The natural broodtake (NOB)
-and hatchery broodtake (HOB) are taken to reach the target egg
-production and maintain <code>NOB/(NOB + HOB) = ptarget_NOB</code>. The
-proportion of NOB to the natural origin escapement cannot exceed
-<code>pmax_NOB</code>. If the target egg production cannot be reached,
-then the NOB is taken in accordance with <code>pmax_NOB</code> and HOB
-is taken (up to the total hatchery origin escapement returned to the
-hatchery) to meet the target egg production.</p>
-<p>We also need to specify the relative fecundity of HOS compared to
-NOS, and the fitness dynamics.</p>
+<p>Next, we work on the hatchery dynamics.</p>
+<p>Below, we have a management target to release 10,000 yearlings
+annually. In comparsion, the carrying capacity of the natural
+environment is 17,250 smolts.</p>
+<p>However, we place some additional constraints are placed which may
+prevent us from realizing the target releases. Users also specify the
+survival of broodtake (<code>s_prespawn</code>), eggs in the hatchery
+(<code>s_egg_smolt</code> and <code>s_egg_subyearling</code>), the
+target proportion of natural spawners in the broodtake
+(<code>ptarget_NOB</code>), and the maximum proportion of natural
+spawners to be used as broodtake (<code>pmax_NOB</code>).</p>
+<p>In each time step of the projection, the model calculates the
+required number of eggs annually for the target releases. The natural
+broodtake (NOB) and hatchery broodtake (HOB) are removed from the
+escapement to reach the target egg production and maintain
+<code>NOB/(NOB + HOB) = ptarget_NOB</code>. The proportion of NOB to the
+natural origin escapement cannot exceed <code>pmax_NOB</code>. If the
+target egg production cannot be reached, then the NOB is taken in
+accordance with <code>pmax_NOB</code> and HOB is taken (up to the total
+hatchery origin escapement returned to the hatchery) to meet the target
+egg production.</p>
+<p>We also need to specify the relative spawning success of HOS, and
+various parameters that control fitness of hatchery fish in the natural
+environment.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Hatchery</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Hatchery"</span>,</span>
-<span>  n_yearling <span class="op">=</span> <span class="fl">2e6</span>,               <span class="co"># Management lever. No hatchery if both this line and next line are zero</span></span>
+<span>  n_yearling <span class="op">=</span> <span class="fl">10000</span>,             <span class="co"># Management lever. No hatchery if both this line and next line are zero</span></span>
 <span>  n_subyearling <span class="op">=</span> <span class="fl">0</span>,              <span class="co"># Management lever. No hatchery if both this line and previous line are zero</span></span>
 <span>  s_prespawn <span class="op">=</span> <span class="fl">1</span>,                 <span class="co"># Survival prior to spawning</span></span>
 <span>  s_egg_smolt <span class="op">=</span> <span class="fl">0.92</span>,             <span class="co"># Survival of eggs in hatchery</span></span>
@@ -190,9 +204,8 @@ for 50 projection years (<code>proyears</code>).</p>
 <span><span class="op">)</span></span>
 <span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
 <p>With a simple salmon model, we can run AHA and compare the trajectory
-of the population. As we can see, the number of NOS in both models
-stabilizes to the equilibrium value after approximately 15
-generations.</p>
+of the population. As we can see, the number of NOS in both models is
+slowly equilibriating to approximately 70.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SAHA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span>, ngen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span></span>
@@ -200,7 +213,71 @@ generations.</p>
 <span><span class="va">SAHA</span><span class="op">$</span><span class="va">NOS</span></span>
 <span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span></code></pre></div>
 <p><img src="../reference/figures/example-NOS.png"><!-- --></p>
-  </main>
+<p><em>Comparison of the abundance of NOS between AHA (by generation)
+and salmonMSE (by year) given identical biological parameters, hatchery
+releases, and terminal fishery harvest rate in the simple
+example.</em></p>
+<div class="section level2">
+<h2 id="stochastic-simulations">Stochastic simulations<a class="anchor" aria-label="anchor" href="#stochastic-simulations"></a>
+</h2>
+<p>Let’s repeat the simple example with stochasticity on the
+compensation ratio. To do this, we sample the compensation ratio
+parameter from a distribution and we run 100 simulations. This
+incorporates our uncertainty in our understanding of the productivity of
+the natural environment.</p>
+<p><img src="../reference/figures/example-kappa.png"><!-- --></p>
+<p><em>Histogram of the compensation ratio (kappa) values sampled for
+our stochastic operating model.</em></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
+<span></span>
+<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="co"># Sample the compensation ratio</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">kappa_mean</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
+<span><span class="va">kappa_sd</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
+<span><span class="va">kappa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">kappa_mean</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">kappa_sd</span><span class="op">^</span><span class="fl">2</span>, <span class="va">kappa_sd</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Bio_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="st">"Bio"</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim</span>,</span>
+<span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
+<span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,</span>
+<span>  kappa <span class="op">=</span> <span class="va">kappa</span>,</span>
+<span>  Mocean_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>
+<span>  p_female <span class="op">=</span> <span class="fl">0.49</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SOM_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="st">"SOM"</span>,</span>
+<span>  nyears <span class="op">=</span> <span class="fl">2</span>, proyears <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  <span class="va">Bio_stochastic</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SMSE_stochastic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM_stochastic</span><span class="op">)</span></span></code></pre></div>
+<p>We expect a distribution in the state variables during the
+projection. Let’s take a look at PNI, where we can plot the median and
+95 percent range in values annually from the projection:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">plot_statevar_ts</span>(SMSE_stochastic. <span class="st">"PNI"</span>, <span class="at">quant =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="../reference/figures/example-PNI-ts.png"><!-- --></p>
+<p>Here is the distribution of PNI in the last projection year:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_statevar_hist</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span>, <span class="st">"PNI"</span>, y <span class="op">=</span> <span class="fl">49</span><span class="op">)</span></span></code></pre></div>
+<p><img src="../reference/figures/example-PNI-hist.png"><!-- --></p>
+<p>From such models, we can develop performance metrics that make
+probabilistic statements about the system dynamics for each set of
+management actions. For example, we calculate the long-term probability
+that PNI is at least 0.75:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 0.63</span></span></code></pre>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
