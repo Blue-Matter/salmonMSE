@@ -60,7 +60,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-09-07</h4>
+            <h4 data-toc-skip class="date">2024-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -274,8 +274,18 @@ probabilistic statements about the system dynamics for each set of
 management actions. For example, we calculate the long-term probability
 that PNI is at least 0.75:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">PNI_LT</span> <span class="op">&lt;-</span> <span class="va">SMSE_stochastic</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">PNI_LT</span> <span class="op">&gt;=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 0.63</span></span></code></pre>
+<p>The quantiles can also be calculated for our performance metric from
+the stochastic replicates:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">PNI_LT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;      2.5%       50%     97.5% </span></span>
+<span><span class="co">#&gt; 0.6245215 0.7626045 0.8129543</span></span></code></pre>
+<p>Here is the relationship between the performance metrics and the
+compensation ratio:</p>
+<p><img src="../reference/figures/example-PNI-kappa.png"><!-- --></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
