@@ -28,6 +28,7 @@ plot_statevar_hist() produces a histogram across all simulations for a particula
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
+    <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
   </ul></li>
@@ -61,7 +62,8 @@ plot_statevar_hist() produces a histogram across all simulations for a particula
 <span>  xlab <span class="op">=</span> <span class="st">"Projection Year"</span>,</span>
 <span>  quant <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="va">var</span>,</span>
-<span>  <span class="va">ylim</span></span>
+<span>  <span class="va">ylim</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">plot_statevar_hist</span><span class="op">(</span><span class="va">SMSE</span>, var <span class="op">=</span> <span class="st">"PNI"</span>, s <span class="op">=</span> <span class="fl">1</span>, <span class="va">y</span>, xlab <span class="op">=</span> <span class="va">var</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -99,13 +101,21 @@ plot_statevar_hist() produces a histogram across all simulations for a particula
 <dd><p>Vector. Y-axis limits</p></dd>
 
 
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments to base plot function</p></dd>
+
+
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>Integer. Projection year for the state variable to plot the histogram</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Base graphics</p>
+    <p>Functions return the matrix of plotted values invisibly. Figure plotted from base graphics</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="plot_decision_table.html">plot_decision_table()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

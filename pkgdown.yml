@@ -2,11 +2,12 @@ pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
+  decision-table: decision-table.html
   equations: equations.html
   example: example.html
   introduction: introduction.html
   model: model.html
-last_built: 2024-09-09T18:43Z
+last_built: 2024-09-09T23:16Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles
