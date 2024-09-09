@@ -223,10 +223,26 @@ From such models, we can develop performance metrics that make probabilistic sta
 For example, we calculate the long-term probability that PNI is at least 0.75:
 
 ```{r, eval = FALSE, echo = TRUE}
-mean(SMSE_stochastic@PNI[, 1, 49] >= 0.75)
+PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
+mean(PNI_LT >= 0.75)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
 0.63
 ```
 
+The quantiles can also be calculated for our performance metric from the stochastic replicates:
+
+```{r, eval = FALSE, echo = TRUE}
+quantile(PNI_LT, c(0.025, 0.5, 0.975))
+```
+
+```{r, eval = TRUE, echo = FALSE}
+c("2.5%" = 0.6245215, "50%" = 0.7626045, "97.5%" = 0.8129543)
+```
+
+Here is the relationship between the performance metrics and the compensation ratio:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::include_graphics("../man/figures/example-PNI-kappa.png")
+```

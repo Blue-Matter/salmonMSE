@@ -167,7 +167,14 @@ par(mar = c(5, 4, 1, 1))
 plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.9))
 dev.off()
 
+PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
+mean(PNI_LT >= 0.75)
+quantile(PNI_LT, c(0.025, 0.975))
 
+png("man/figures/example-PNI-kappa.png", height = 4, width = 6, res = 300, units = 'in')
+par(mar = c(5, 4, 1, 1))
+plot(kappa, PNI_LT, xlim = c(1, 7), ylim = c(0.5, 1), panel.first = grid(), pch = 16)
+dev.off()
 
 # Extra debugging stuff
 SMSE@NOB[, 1, seq(1, 49, 3)]/
