@@ -4,13 +4,13 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Quang", "Huynh", , "quang@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7835-4376"))
-Date: 2024-08-08
+Date: 2024-09-09
 Maintainer: Quang Huynh <quang@bluematterscience.com>
 Description: Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and
   habitat actions. The backend utilizes 'openMSE', but typical users of salmonMSE will not need to see the internal conversion.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
-Imports: abind, MSEtool, RTMB, dplyr, methods, reshape2, rlang, stats, utils
+Imports: abind, MSEtool, RTMB, dplyr, ggplot2, methods, reshape2, rlang, stats, utils
 Suggests: rstan, testthat (>= 3.0.0), tmbstan
 Encoding: UTF-8
 LazyData: yes

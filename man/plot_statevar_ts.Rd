@@ -12,7 +12,8 @@ plot_statevar_ts(
   xlab = "Projection Year",
   quant = FALSE,
   ylab = var,
-  ylim
+  ylim,
+  ...
 )
 
 plot_statevar_hist(SMSE, var = "PNI", s = 1, y, xlab = var, ...)
@@ -32,10 +33,12 @@ plot_statevar_hist(SMSE, var = "PNI", s = 1, y, xlab = var, ...)
 
 \item{ylim}{Vector. Y-axis limits}
 
+\item{...}{Additional arguments to base plot function}
+
 \item{y}{Integer. Projection year for the state variable to plot the histogram}
 }
 \value{
-Base graphics
+Functions return the matrix of plotted values invisibly. Figure plotted from base graphics
 }
 \description{
 Various functions that plot the state variables from salmonMSE projections:
@@ -43,4 +46,7 @@ Various functions that plot the state variables from salmonMSE projections:
 \item \code{plot_statevar_ts()} produces a time series for all simulations, or with confidence intervals
 \item \code{plot_statevar_hist()} produces a histogram across all simulations for a particular year
 }
+}
+\seealso{
+\code{\link[=plot_decision_table]{plot_decision_table()}}
 }
