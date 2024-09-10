@@ -58,6 +58,7 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, xlab = var, ...) {
 #'
 #' Generates a coloured table of a performance metric across two axes, which may be a population dynamics variable
 #' (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
+#' See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
 #'
 #' @param x Atomic, vector of values for the x axis (same length as z). Will be converted to factors
 #' @param y Atomic, vector of values for the y axis (same length as z). Will be converted to factors
@@ -93,6 +94,7 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab) {
 #'
 #' Generates a tradeoff figure, a comparison between two performance metrics, across two variables which may represent
 #' a population dynamics variable (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
+#' See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
 #'
 #' @param pm1 Numeric, vector of values for the first performance metric on the x-axis
 #' @param pm2 Numeric, vector of values for the second performance metric on the y-axis (same length as pm1)

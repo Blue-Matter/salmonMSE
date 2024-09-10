@@ -29,6 +29,7 @@ ggplot object
 \description{
 Generates a tradeoff figure, a comparison between two performance metrics, across two variables which may represent
 a population dynamics variable (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
+See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
 }
 \seealso{
 \code{\link[=plot_statevar_ts]{plot_statevar_ts()}} \code{\link[=plot_decision_table]{plot_decision_table()}}
