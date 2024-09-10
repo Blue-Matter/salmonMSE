@@ -204,14 +204,15 @@ library(tidyverse)
 library(reshape2)
 
 PNI_ts <- lapply(1:nrow(df), function(x) {
-  plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE) %>%
+  plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
     reshape2::melt() %>%
     mutate(kappa = df$kappa[x], hatch = df$hatch[x])
 }) %>%
   bind_rows() %>%
   rename(Year = Var2) %>%
   dplyr::filter(!is.na(value)) %>%
-  tidyr::pivot_wider(names_from = Var1)
+  tidyr::pivot_wider(names_from = Var1) %>%
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000)))
 
 g <- ggplot(PNI_ts, aes(Year)) +
   geom_line(aes(y = `50%`, colour = factor(kappa))) +

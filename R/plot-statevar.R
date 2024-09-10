@@ -11,6 +11,7 @@
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options.
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
+#' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
 #' @param quant Logical, whether to plot individual simulations (FALSE) or the median with 95 percent confidence intervals (TRUE)
 #' @param ylab Character. Name of the state variable for the figure
 #' @param ylim Vector. Y-axis limits
@@ -20,7 +21,7 @@
 #' @importFrom stats quantile
 #' @seealso [plot_decision_table()]
 #' @export
-plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
+plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
   x <- slot(SMSE, var)[, s, ]
 
   if (!quant) {
@@ -29,17 +30,19 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, xlab = "Projection Year",
     xplot <- apply(x, 2, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
   }
 
-  ind <- colSums(xplot, na.rm = TRUE) > 0
-  Year <- 1:SMSE@proyears
+  if (figure) {
+    ind <- colSums(xplot, na.rm = TRUE) > 0
+    Year <- 1:SMSE@proyears
 
-  if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
+    if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
 
-  if (!quant) {
-    matplot(Year[ind], t(xplot[, ind]), type = 'l', col = "grey40", ylim = ylim, lty = 1,
-            xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
-  } else {
-    matplot(Year[ind], t(xplot[, ind]), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
-            xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
+    if (!quant) {
+      matplot(Year[ind], t(xplot[, ind]), type = 'l', col = "grey40", ylim = ylim, lty = 1,
+              xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
+    } else {
+      matplot(Year[ind], t(xplot[, ind]), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
+              xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
+    }
   }
   invisible(xplot)
 }
@@ -48,9 +51,9 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, xlab = "Projection Year",
 #' @param y Integer. Projection year for the state variable to plot the histogram
 #' @param ... Additional arguments to base plot function
 #' @importFrom graphics hist
-plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, xlab = var, ...) {
+plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...) {
   x <- slot(SMSE, var)[, s, y]
-  hist(x, xlab = xlab, main = NULL, ...)
+  if (figure) hist(x, xlab = xlab, main = NULL, ...)
   invisible(x)
 }
 

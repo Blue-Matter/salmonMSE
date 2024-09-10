@@ -9,6 +9,7 @@ plot_statevar_ts(
   SMSE,
   var = "PNI",
   s = 1,
+  figure = TRUE,
   xlab = "Projection Year",
   quant = FALSE,
   ylab = var,
@@ -16,7 +17,7 @@ plot_statevar_ts(
   ...
 )
 
-plot_statevar_hist(SMSE, var = "PNI", s = 1, y, xlab = var, ...)
+plot_statevar_hist(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...)
 }
 \arguments{
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -24,6 +25,8 @@ plot_statevar_hist(SMSE, var = "PNI", s = 1, y, xlab = var, ...)
 \item{var}{Character. Slot for the state variable in \code{SMSE} object. See \code{slotNames(SMSE)} for options.}
 
 \item{s}{Integer. Population index for multi-population model (e.g., \code{s = 1} is the first population in the model)}
+
+\item{figure}{Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)}
 
 \item{xlab}{Character. Name of time variable for the figure}
 

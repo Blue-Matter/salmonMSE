@@ -122,7 +122,7 @@ ggsave("man/figures/tradeoff_plot.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(df), function(x) {
-  out <- plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE) %>%
+  out <- plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
     reshape2::melt() %>%
     mutate(kappa = df$kappa[x], hatch = df$hatch[x])
   out
@@ -130,7 +130,8 @@ PNI_ts <- lapply(1:nrow(df), function(x) {
   bind_rows() %>%
   rename(Year = Var2) %>%
   dplyr::filter(!is.na(value)) %>%
-  tidyr::pivot_wider(names_from = Var1)
+  tidyr::pivot_wider(names_from = Var1) %>%
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000)))
 
 g <- ggplot(PNI_ts, aes(Year)) +
   geom_line(aes(y = `50%`, colour = factor(kappa))) +
@@ -139,6 +140,39 @@ g <- ggplot(PNI_ts, aes(Year)) +
   labs(x = "Projection Year", y = "PNI", colour = "Compensation\nratio", fill = "Compensation\nratio") +
   theme(legend.position = "bottom")
 ggsave("man/figures/PNI_ts.png", g, height = 3, width = 6)
+
+# Spawners
+plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median) {
+  Year <- 1:SMSE@proyears
+  Fitness <- apply(SMSE@fitness[, s, 1, ], 2, FUN)
+  PNI <- apply(SMSE@PNI[, s, ], 2, FUN)
+  pHOSeff <- apply(SMSE@HOS_effective[, s, ]/(SMSE@HOS_effective[, s, ] + SMSE@NOS[, s, ]), 2, FUN)
+  pWILD <- apply(SMSE@p_wild[, s, ], 2, FUN)
+
+  plot(Year[!is.na(Fitness)], Fitness[!is.na(Fitness)],
+       xlab = "Projection Year", ylab = "Value",
+       typ = "o", ylim = c(0, 1), panel.first = graphics::grid())
+  lines(Year[!is.na(PNI)], PNI[!is.na(PNI)], typ = "o", col = 2)
+  lines(Year[!is.na(pHOSeff)], pHOSeff[!is.na(pHOSeff)], typ = "o", col = 3)
+  lines(Year[!is.na(pWILD)], pWILD[!is.na(pWILD)], typ = "o", col = 4)
+
+  invisible(
+    data.frame(
+      Year = Year,
+      Fitness = Fitness,
+      PNI = PNI,
+      pHOSeff = pHOSeff,
+      pWILD = pWILD
+    )
+  )
+}
+
+plot_spawners(SMSE_list[[1]], FUN = median)
+plot_spawners(SMSE_list[[1]], FUN = mean)
+
+
+
+
 
 
 
