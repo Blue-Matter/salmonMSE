@@ -147,14 +147,14 @@ Currently models only a preterminal fishery.
 coefficient and annual deviations from this vector.</p></li>
 <li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
 <li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
-<li><p><code>hatchrelease</code> Vector length <code>Ldyr</code>, number of hatchery juvenile fish released</p></li>
-<li><p><code>cwtExp</code> Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, <code>cwtExp = 10</code> means that
-the observed values is ten times greater than the predicted value</p></li>
-<li><p><code>covariate1</code> Matrix <code>Ldyr, ncov1</code> of linear covariates that predict natural mortality for age 1.</p></li>
-<li><p><code>covariate</code> Matrix <code>Ldyr, ncov</code> of linear covariates that predict natural mortality for ages 2+.</p></li>
+<li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code>, number of hatchery juvenile fish released</p></li>
+<li><p><code>cwtExp</code> <em>Optional</em>. Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, <code>cwtExp = 10</code> means that
+the observed values is ten times greater than the predicted value. Default is 1.</p></li>
+<li><p><code>covariate1</code> <em>Optional</em>. Matrix <code>Ldyr, ncov1</code> of linear covariates that predict natural mortality for age 1.</p></li>
+<li><p><code>covariate</code> <em>Optional</em>. Matrix <code>Ldyr, ncov</code> of linear covariates that predict natural mortality for ages 2+.</p></li>
 <li><p><code>so_mu</code> Numeric, the prior mean for unfished spawners in logspace</p></li>
 <li><p><code>so_sd</code> Numeric, the prior standard deviation for unfished spawners in logspace</p></li>
-<li><p><code>so_min</code> Numeric, lower bound for the estimate of unfished spawners. Optional.</p></li>
+<li><p><code>so_min</code> <em>Optional</em>. Numeric, lower bound for the estimate of unfished spawners.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="start">start<a class="anchor" aria-label="anchor" href="#start"></a></h2>
