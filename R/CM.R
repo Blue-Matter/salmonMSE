@@ -45,13 +45,13 @@
 #' - `obsescape` Vector length `Ldyr`, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
-#' - `cwtExp` Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, `cwtExp = 10` means that
-#' the observed values is ten times greater than the predicted value
-#' - `covariate1` Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
-#' - `covariate` Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
+#' - `cwtExp` *Optional*. Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, `cwtExp = 10` means that
+#' the observed values is ten times greater than the predicted value. Default is 1.
+#' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
+#' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
 #' - `so_mu` Numeric, the prior mean for unfished spawners in logspace
 #' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace
-#' - `so_min` Numeric, lower bound for the estimate of unfished spawners. Optional.
+#' - `so_min` *Optional*. Numeric, lower bound for the estimate of unfished spawners.
 #' @section start:
 #' Starting values for parameters can be provided through a named list:
 #'
@@ -96,6 +96,10 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
   p <- make_CMpars(start, data)
 
   f <- function(p) .CM(p, d = data)
+
+  map <- list()
+  if (!length(data$covariate1)) map$b1 <- factor(NA)
+  if (!length(data$covariate)) map$b <- factor(NA)
 
   obj <- RTMB::MakeADFun(func = f, parameters = p, silent = silent, ...)
 

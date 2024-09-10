@@ -63,9 +63,18 @@
   # Loop over years ----
   for (t in 1:d$Ldyr) {
     # First year ocean M
-    mo[t, 1] <- d$mobase[1] + p$moadd + sum(d$covariate1[t, ] * p$b1) + p$wto[t]
+    if (length(d$covariate1)) {
+      mo[t, 1] <- d$mobase[1] + p$moadd + p$wto[t] + sum(d$covariate1[t, ] * p$b1)
+    } else {
+      mo[t, 1] <- d$mobase[1] + p$moadd + p$wto[t]
+    }
+
     # M's for older ages
-    mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)] + sum(d$covariate[t, ] * p$b)
+    if (length(d$covariate)) {
+      mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)] + sum(d$covariate[t, ] * p$b)
+    } else {
+      mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)]
+    }
 
     Ncwt[t, 1] <- d$cwtrelease[t] * d$hatchsurv
 
@@ -212,8 +221,20 @@ make_CMpars <- function(p, d) {
   if (is.null(p$wto_sd)) p$wto_sd <- 1
   if (is.null(p$fanomaly_sd)) p$fanomaly_sd <- 1
 
-  if (is.null(p$b1)) p$b1 <- rep(0, ncol(d$covariate1))
-  if (is.null(p$b)) p$b <- rep(0, ncol(d$covariate))
+  if (is.null(p$b1)) {
+    if (length(d$covariate1)) {
+      p$b1 <- rep(0, ncol(d$covariate1))
+    } else {
+      p$b1 <- 0
+    }
+  }
+  if (is.null(p$b)) {
+    if (length(d$covariate)) {
+      p$b <- rep(0, ncol(d$covariate))
+    } else {
+      p$b <- 0
+    }
+  }
 
   return(p)
 }
@@ -274,6 +295,19 @@ check_data <- function(data) {
   }
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
+
+  if (!is.null(data$covariate1)) {
+    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix")
+  }
+
+  if (!is.null(data$covariate1)) {
+    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
+  }
+
+  if (!is.null(data$covariate)) {
+    if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
+  }
+
 
   if (is.null(data$so_mu)) stop("data$so_mu should be a numeric")
   if (is.null(data$so_sd)) stop("data$so_sd should be a numeric")
