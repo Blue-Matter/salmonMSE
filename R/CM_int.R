@@ -26,13 +26,13 @@ CM_int <- function(p, d) {
   lo <- lhist <- numeric(d$Nages)
   lo[1] <- lhist[1] <- 1
   for (a in 2:d$Nages) {
-    lo[a] <- lo[a-1] * exp(-d$mobase[a-1]) * (1 - d$bmatt[a-1]) # unfished survivorship recursion
-    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - d$vul[a-1] * d$fhist) * (1 - d$bmatt[a-1]) # historical survivorship
+    lo[a] <- lo[a-1] * exp(-d$mobase[a-1]) * (1 - d$bmatt[a-1]) # unfished juvenile survival
+    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - d$vulPT[a-1] * d$finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
   }
 
   epro <- d$ssum * sum(lo * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
   spro <- d$ssum * sum(lo * d$bmatt)                             # unfished spawners per smolt
-  sprhist <- d$ssum * sum(lhist * exp(-d$vul * d$fhist) * d$bmatt)   # historcial spawners per recruit (pr)
+  sprhist <- d$ssum * sum(lhist * exp(-d$vulPT * d$finitPT) * d$bmatt * exp(d$vulT * d$finitT))   # historcial spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
   rhist <- spawnhist/sprhist # historical recruitment
@@ -54,9 +54,10 @@ CM_int <- function(p, d) {
   # predicted spawners
   # predicted cwt catches for year
   # predicted cwt spawners for the year
-  sfish <- cyear <- syear <- ccwt <- scwt <- matrix(NA_real_, d$Ldyr, d$Nages)
-  cyear <- syear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
-  spawners <- tcatch <- egg <- megg <- logpredesc <- moplot <- ft <- numeric(d$Ldyr)
+  survPT <- ccwtPT <- survT <- ccwtT <- scwt <- matrix(NA_real_, d$Ldyr, d$Nages)
+  cyearPT <- cyearT <- recr <- syear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
+
+  spawners <- catchPT <- catchT <- egg <- megg <- logpredesc <- moplot <- FPT <- FT <- numeric(d$Ldyr)
   matt <- matrix(0, d$Ldyr, d$Nages)
   matt[, d$Nages] <- 1
 
@@ -69,6 +70,10 @@ CM_int <- function(p, d) {
   if (d$lht==2) {  #in case spring run type where age of ocean entry=2, not 1
     N[2, 1, ] <- N[1, 1, ]
   }
+
+  # Initialize F
+  FPT[] <- p$FbasePT * d$RelRegFPT + p$fanomalyPT
+  FT[] <- p$FbaseT * d$RelRegFT + p$fanomalyT
 
   # Loop over years ----
   for (t in 1:d$Ldyr) {
@@ -88,56 +93,82 @@ CM_int <- function(p, d) {
 
     Ncwt[t, 1] <- d$cwtrelease[t] * d$hatchsurv
 
-    ft[t] <- p$Fbase * d$RelRegF[t] + p$fanomaly[t]
-
     matt[t, 2:(d$Nages-1)] <- plogis(p$logit_matt[t, ])
-    sfish[t, ] <- exp(-d$vul * ft[t])  # set age-specific survival rates through fishing
 
-    cyear[t, , ] <- N[t, , ] * (1 - sfish[t, ]) # predict catch at age for the year
-    syear[t, , ] <- d$ssum * N[t, , ] * sfish[t, ] * matt[t, ] # predict spawners at age for the year
+    # set age-specific survival rates through fishing
+    survPT[t, ] <- exp(-d$vulPT * FPT[t])
+    survT[t, ] <- exp(-d$vulT * FT[t])
 
-    ccwt[t, ] <- Ncwt[t, ] * (1 - sfish[t, ])
-    scwt[t, ] <- d$ssum * Ncwt[t, ] * sfish[t, ] * matt[t, ]
+    # predict preterminal catch at age for the year
+    cyearPT[t, , ] <- N[t, , ] * (1 - survPT[t, ])
+    ccwtPT[t, ] <- Ncwt[t, ] * (1 - survPT[t, ])
 
+    # predict recruitment at age for the year
+    recr[t, , ] <- N[t, , ] * survPT[t, ] * matt[t, ]
+
+    # predict terminal catch at age for the year
+    cyearT[t, , ] <- recr[t, , ] * (1 - survT[t, ])
+    ccwtT[t, ] <- Ncwt[t, ] * (1 - survT[t, ])
+
+    # predict spawners at age for the year
+    syear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
+    scwt[t, ] <- d$ssum * Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
+
+    # predict egg production for the year
     sp_t <- syear[t, , 1] + d$gamma * syear[t, , 2]
-
     egg[t] <- sum(sp_t * d$fec * d$propwildspawn[t])
 
     # survive fish over the year, removing maturing fish that will spawn
-    N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * sfish[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
-    Ncwt[t+1, 2:d$Nages] <- Ncwt[t, 2:d$Nages - 1] * sfish[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
+    N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
+    Ncwt[t+1, 2:d$Nages] <- Ncwt[t, 2:d$Nages - 1] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
 
     megg[t] <- memin + mden * egg[t] + p$wt[t]
     N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p$wt[t])
     N[t + d$lht, 1, 2] <- d$hatchsurv * d$hatchrelease[t+1]
 
+    # total spawners
     spawners[t] <- sum(syear[t, , ])
     logpredesc[t] <- log(spawners[t] + tiny)
 
-    tcatch[t] <- sum(cyear[t, , ]) # add up total catch for the year
+    catchPT[t] <- sum(cyearPT[t, , ]) # add up total catch for the year
+    catchT[t] <- sum(cyearT[t, , ]) # add up total catch for the year
     moplot[t] <- mo[t, 1] + moaddcwt # for plotting first year ocean M, including hatchery survival
   }
 
   # Convert predicted cwt catches and escapement from calendar year to brood year for likelihoods
   # data are in brood year format
-  cbrood <- ebrood <- matrix(tiny, d$Ldyr, d$Nages)
+  cbroodPT <- cbroodT <- ebrood <- matrix(tiny, d$Ldyr, d$Nages)
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {
       if (t+a-1 <= d$Ldyr) {
-        cbrood[t, a] <- ccwt[t+a-1, a] + tiny
+        cbroodPT[t, a] <- ccwtPT[t+a-1, a] + tiny
+        cbroodT[t, a] <- ccwtT[t+a-1, a] + tiny
         ebrood[t, a] <- scwt[t+a-1, a] + tiny
       }
     }
   }
 
-  cbrood2 <- cbrood * d$cwtExp
-  ebrood2 <- ebrood * d$cwtExp
-
   # Log prior for parameters
   logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE) # prior on so in log space as it is poorly determined from data
   logprior_wt <- dnorm(p$wt, 0, p$wt_sd, log = TRUE)
   logprior_wto <- dnorm(p$wto, 0, p$wto_sd, log = TRUE)
-  logprior_f <- dnorm(p$fanomaly, 0, p$fanomaly_sd, log = TRUE)
+
+  if (sum(d$cwtcatPT)) {
+    logprior_fanomPT <- dnorm(p$fanomalyPT, 0, p$fanomalyPT_sd, log = TRUE)
+    logprior_fanomPT_sd <- dgamma(p$fanomalyPT_sd, 2, scale = 0.2, log = TRUE)
+  } else if (is_ad) {
+    logprior_fanomPT <- logprior_fanomPT_sd <- advector(0)
+  } else {
+    logprior_fanomPT <- logprior_fanomPT_sd <- 0
+  }
+  if (sum(d$cwtcatT)) {
+    logprior_fanomT <- dnorm(p$fanomalyT, 0, p$fanomalyT_sd, log = TRUE)
+    logprior_fanomT_sd <- dgamma(p$fanomalyT_sd, 2, scale = 0.2, log = TRUE)
+  } else if (is_ad) {
+    logprior_fanomT <- logprior_fanomT_sd <- advector(0)
+  } else {
+    logprior_fanomT <- logprior_fanomT_sd <- 0
+  }
 
   #convert base maturity rates to logit for calculation of time-varying rates
   #no time variation for first and last age
@@ -146,7 +177,7 @@ CM_int <- function(p, d) {
     dnorm(p$logit_matt[, a-1], logit_bmatt[a-1], p$sd_matt[a-1], log = TRUE)
   })
 
-  logprior <- sum(logprior_so, logprior_wt, logprior_wto, logprior_f, logprior_matt)
+  logprior <- sum(logprior_so, logprior_wt, logprior_wto, logprior_fanomPT, logprior_fanomT, logprior_matt)
 
   # Log prior for hyperparameters ----
   # Gamma mean=shape/rate, variance=shape/rate^2 (scale = 1/rate)
@@ -156,16 +187,30 @@ CM_int <- function(p, d) {
       dgamma(p$sd_matt, 2, scale = 0.2, log = TRUE),
       dgamma(p$wt_sd, 2, scale = 0.2, log = TRUE),
       dgamma(p$wto_sd, 2, scale = 0.2, log = TRUE),
-      dgamma(p$fanomaly_sd, 2, scale = 0.2, log = TRUE),
       dgamma(p$lnS_sd, 2, scale = 0.2, log = TRUE)
-    )
+    ) +
+    logprior_fanomPT_sd + logprior_fanomT_sd
 
   # Log likelihood
-  loglike_esc <- dnorm(logobsesc, logpredesc, p$lnS_sd, log = TRUE) # likelihood for spawner predictions
-  loglike_cwtcat <- dpois(d$cwtcat, cbrood2, log = TRUE)
-  loglike_cwtesc <- dpois(d$cwtesc, ebrood2, log = TRUE)
+  loglike_esc <- dnorm(logobsesc, logpredesc, p$lnS_sd, log = TRUE)
+  loglike_cwtesc <- dpois(d$cwtesc, ebrood * d$cwtExp, log = TRUE)
 
-  loglike <- sum(loglike_esc, loglike_cwtcat, loglike_cwtesc)
+  if (sum(d$cwtcatPT)) {
+    loglike_cwtcatPT <- dpois(d$cwtcatPT, cbroodPT * d$cwtExp, log = TRUE)
+  } else if (is_ad) {
+    loglike_cwtcatPT <- advector(0)
+  } else {
+    loglike_cwtcatPT <- 0
+  }
+  if (sum(d$cwtcatT)) {
+    loglike_cwtcatT <- dpois(d$cwtcatT, cbroodPT * d$cwtExp, log = TRUE)
+  } else if (is_ad) {
+    loglike_cwtcatT <- advector(0)
+  } else {
+    loglike_cwtcatT <- 0
+  }
+
+  loglike <- sum(loglike_esc, loglike_cwtcatPT, loglike_cwtcatT, loglike_cwtesc)
 
   # Objective function
   fn <- -1 * (logprior + loglike)
@@ -180,31 +225,39 @@ CM_int <- function(p, d) {
   REPORT(alpha)
   REPORT(beta)
 
-  REPORT(sfish)
-  REPORT(cyear)
+  REPORT(survPT)
+  REPORT(survT)
+  REPORT(cyearPT)
+  REPORT(cyearT)
+  REPORT(recr)
   REPORT(syear)
-  REPORT(ccwt)
+  REPORT(ccwtPT)
+  REPORT(ccwtT)
   REPORT(scwt)
 
   REPORT(spawners)
-  REPORT(tcatch)
+  REPORT(catchPT)
+  REPORT(catchT)
   REPORT(egg)
   REPORT(megg)
   REPORT(mo)
   REPORT(moplot)
-  REPORT(ft)
+  REPORT(FPT)
+  REPORT(FT)
 
   REPORT(matt)
   REPORT(N)
   REPORT(Ncwt)
 
-  REPORT(cbrood)
+  REPORT(cbroodPT)
+  REPORT(cbroodT)
   REPORT(ebrood)
 
   REPORT(epro)
 
   REPORT(loglike_esc)
-  REPORT(loglike_cwtcat)
+  REPORT(loglike_cwtcatPT)
+  REPORT(loglike_cwtcatT)
   REPORT(loglike_cwtesc)
 
   REPORT(loglike)
@@ -222,16 +275,19 @@ make_CMpars <- function(p, d) {
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p$wt)) p$wt <- rep(0, d$Ldyr)
   if (is.null(p$wto)) p$wto <- rep(0, d$Ldyr)
-  if (is.null(p$fanomaly)) p$fanomaly <- rep(0, d$Ldyr)
+  if (is.null(p$fanomalyPT)) p$fanomalyPT <- rep(0, d$Ldyr)
+  if (is.null(p$fanomalyT)) p$fanomalyT <- rep(0, d$Ldyr)
   if (is.null(p$lnS_sd)) p$lnS_sd <- 0.1
 
-  if (is.null(p$Fbase)) p$Fbase <- 1
+  if (is.null(p$FbasePT)) p$FbasePT <- 1
+  if (is.null(p$FbaseT)) p$FbaseT <- 1
   if (is.null(p$logit_matt)) p$logit_matt <- matrix(0.1, d$Ldyr, d$Nages - 2)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
 
   if (is.null(p$wt_sd)) p$wt_sd <- 1
   if (is.null(p$wto_sd)) p$wto_sd <- 1
-  if (is.null(p$fanomaly_sd)) p$fanomaly_sd <- 1
+  if (is.null(p$fanomalyPT_sd)) p$fanomalyPT_sd <- 1
+  if (is.null(p$fanomalyT_sd)) p$fanomalyT_sd <- 1
 
   if (is.null(p$b1)) {
     if (length(d$covariate1)) {
@@ -261,7 +317,8 @@ check_data <- function(data) {
   if (is.null(data$gamma)) data$gamma <- 1
   if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
 
-  if (is.null(data$fhist)) stop("data$fhist should be a numeric")
+  if (is.null(data$finitPT)) data$finitPT <- 0
+  if (is.null(data$finitT)) data$finitT <- 0
 
   if (is.null(data$bmatt) || length(data$bmatt) != data$Nages) {
     stop("data$bmatt should be a vector length Nages")
@@ -271,8 +328,39 @@ check_data <- function(data) {
     stop("data$fec should be a vector length Nages")
   }
 
-  if (is.null(data$vul) || length(data$vul) != data$Nages) {
-    stop("data$vul should be a vector length Nages")
+  if (is.null(data$cwtcatPT) || !is.matrix(data$cwtcatPT)) {
+    stop("data$cwtcatPT should be a matrix: Ldyr (by brood year) x Nages")
+  }
+  if (is.null(data$cwtcatT) || !is.matrix(data$cwtcatT)) {
+    stop("data$cwtcatT should be a matrix: Ldyr (by brood year) x Nages")
+  }
+
+  FPT <- sum(data$cwtcatPT)
+  FT <- sum(data$cwtcatT)
+  if (!FPT && !FT) stop("No CWT preterminal or terminal catch found")
+
+  if (FPT) {
+    if (is.null(data$vulPT) || length(data$vulPT) != data$Nages) {
+      stop("data$vulPT should be a vector length Nages")
+    }
+    if (is.null(data$RelRegFPT) || length(data$RelRegFPT) != data$Ldyr) {
+      stop("data$RelRegFPT should be a vector length Ldyr")
+    }
+  } else {
+    data$vulPT <- rep(0, data$Nages)
+    data$RelRegFPT <- rep(0, data$Ldyr)
+  }
+
+  if (FT) {
+    if (is.null(data$vulT) || length(data$vulT) != data$Nages) {
+      stop("data$vulT should be a vector length Nages")
+    }
+    if (is.null(data$RelRegFT) || length(data$RelRegT) != data$Ldyr) {
+      stop("data$RelRegFT should be a vector length Ldyr")
+    }
+  } else {
+    data$vulT <- rep(0, data$Nages)
+    data$RelRegFT <- rep(0, data$Ldyr)
   }
 
   if (is.null(data$mobase) || length(data$mobase) != data$Nages) {
@@ -281,18 +369,6 @@ check_data <- function(data) {
 
   if (is.null(data$cwtrelease) || length(data$cwtrelease) != data$Ldyr) {
     stop("data$cwtrelease should be a vector length Ldyr")
-  }
-
-  if (is.null(data$cwtesc) || !is.matrix(data$cwtesc)) {
-    stop("data$cwtesc should be a matrix: Ldyr (by brood year) x Nages")
-  }
-
-  if (is.null(data$cwtcat) || !is.matrix(data$cwtcat)) {
-    stop("data$cwtcat should be a matrix: Ldyr (by brood year) x Nages")
-  }
-
-  if (is.null(data$RelRegF) || length(data$RelRegF) != data$Ldyr) {
-    stop("data$RelRegF should be a vector length Ldyr")
   }
 
   if (is.null(data$obsescape) || length(data$obsescape) != data$Ldyr) {
@@ -321,11 +397,94 @@ check_data <- function(data) {
     if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
   }
 
-
   if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
   if (is.null(data$so_sd)) data$so_sd <- 0.5
 
   return(data)
+}
+
+
+make_map <- function(p, d) {
+  map <- list()
+
+  FPT <- sum(d$cwtcatPT)
+  FT <- sum(d$cwtcatT)
+
+  if (!FPT) {
+    map$FbasePT <- factor(NA)
+    map$fanomalyPT <- factor(rep(NA, d$Ldyr))
+    map$fanomalyPT_sd <- factor(NA)
+  }
+
+  if (!FT) {
+    map$FbaseT <- factor(NA)
+    map$fanomalyT <- factor(rep(NA, d$Ldyr))
+    map$fanomalyT_sd <- factor(NA)
+  }
+
+  if (!length(d$covariate1)) map$b1 <- factor(NA)
+  if (!length(d$covariate)) map$b <- factor(NA)
+  return(map)
+}
+
+make_bounds <- function(par_names, data, lower_b1, upper_b1, lower_b, upper_b) {
+
+  lower <- structure(rep(-Inf, length(par_names)), names = par_names)
+  upper <- structure(rep(Inf, length(par_names)), names = par_names)
+
+  if ("cr" %in% names(lower)) {
+    lower["cr"] <- 1
+    if (!is.null(data$maxcr)) upper["cr"] <- data$maxcr
+  }
+
+  if ("log_so" %in% names(lower)) {
+    if (!is.null(data$so_min)) {
+      lower["log_so"] <- data$so_min
+    } else {
+      lower["log_so"] <- log(2 * max(data$obsescape))
+    }
+  }
+
+  if ("moadd" %in% names(lower)) lower["moadd"] <- -2/3 * data$mobase[1]
+  if ("FbasePT" %in% names(lower)) lower["FbasePT"] <- 1e-8
+  if ("FbaseT" %in% names(lower)) lower["FbaseT"] <- 1e-8
+
+  if ("b1" %in% names(lower)) {
+    if (!missing(lower_b1)) lower[names(lower) == "b1"] <- lower_b1
+    if (!missing(upper_b1)) upper[names(upper) == "b1"] <- upper_b1
+  }
+
+  if ("b" %in% names(lower)) {
+    if (!missing(lower_b)) lower[names(lower) == "b"] <- lower_b
+    if (!missing(upper_b)) upper[names(upper) == "b"] <- upper_b
+  }
+
+  if ("lnS_sd" %in% names(lower)) lower["lnS_sd"] <- 1e-8
+  if ("wt_sd" %in% names(lower)) lower["wt_sd"] <- 1e-8
+  if ("wto_sd" %in% names(lower)) lower["wto_sd"] <- 1e-8
+  if ("fanomalyPT_sd" %in% names(lower)) lower["fanomalyPT_sd"] <- 1e-8
+  if ("fanomalyT_sd" %in% names(lower)) lower["fanomalyT_sd"] <- 1e-8
+
+  if ("sd_matt" %in% names(lower)) lower[names(lower) == "sd_matt"] <- 1e-8
+
+  if ("wt" %in% names(lower)) {
+    lower[names(lower) == "wt"] <- -3
+    upper[names(upper) == "wt"] <- 3
+  }
+  if ("wto" %in% names(lower)) {
+    lower[names(lower) == "wto"] <- -3
+    upper[names(upper) == "wto"] <- 3
+  }
+  if ("fanomalyPT" %in% names(lower)) {
+    lower[names(lower) == "fanomalyPT"] <- -3
+    upper[names(upper) == "fanomalyPT"] <- 3
+  }
+  if ("fanomalyT" %in% names(lower)) {
+    lower[names(lower) == "fanomalyT"] <- -3
+    upper[names(upper) == "fanomalyT"] <- 3
+  }
+
+  list(lower = lower, upper = upper)
 }
 
 get_report <- function(stanfit, fit, sims) {
