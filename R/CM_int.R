@@ -55,7 +55,7 @@ CM_int <- function(p, d) {
   # predicted cwt catches for year
   # predicted cwt spawners for the year
   sfish <- cyear <- syear <- ccwt <- scwt <- matrix(NA_real_, d$Ldyr, d$Nages)
-
+  cyear <- syear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
   spawners <- tcatch <- egg <- megg <- logpredesc <- moplot <- ft <- numeric(d$Ldyr)
   matt <- matrix(0, d$Ldyr, d$Nages)
   matt[, d$Nages] <- 1
@@ -93,13 +93,15 @@ CM_int <- function(p, d) {
     matt[t, 2:(d$Nages-1)] <- plogis(p$logit_matt[t, ])
     sfish[t, ] <- exp(-d$vul * ft[t])  # set age-specific survival rates through fishing
 
-    cyear[t, ] <- rowSums(N[t, , ]) * (1 - sfish[t, ]) # predict catch at age for the year
-    syear[t, ] <- d$ssum * rowSums(N[t, , ]) * sfish[t, ] * matt[t, ] # predict spawners at age for the year
+    cyear[t, , ] <- N[t, , ] * (1 - sfish[t, ]) # predict catch at age for the year
+    syear[t, , ] <- d$ssum * N[t, , ] * sfish[t, ] * matt[t, ] # predict spawners at age for the year
 
     ccwt[t, ] <- Ncwt[t, ] * (1 - sfish[t, ])
     scwt[t, ] <- d$ssum * Ncwt[t, ] * sfish[t, ] * matt[t, ]
 
-    egg[t] <- sum(syear[t, ] * d$fec * d$propwildspawn[t])
+    sp_t <- syear[t, , 1] + d$gamma * syear[t, , 2]
+
+    egg[t] <- sum(sp_t * d$fec * d$propwildspawn[t])
 
     # survive fish over the year, removing maturing fish that will spawn
     N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * sfish[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
@@ -256,6 +258,7 @@ check_data <- function(data) {
   if (is.null(data$lht)) data$lht <- 1
 
   if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
+  if (is.null(data$gamma)) stop("data$gamma should be a numeric")
   if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
 
   if (is.null(data$fhist)) stop("data$fhist should be a numeric")

@@ -31,6 +31,7 @@
 #' - `Ldyr` Integer, number of years in the model
 #' - `lht` Integer, life history type. Should be 1 for now
 #' - `hatchsurv` Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
+#' - `gamma` *Optional*. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 #' - `ssum` Numeric, proportion of spawners that is female
 #' - `fhist` Numeric, historical fishing mortality for calculating the spawners at age in the first year of the model
 #' - `bmatt` Vector length `Nages`. Proportion maturity at age, base values for calculating the unfished replacement line
@@ -226,7 +227,7 @@ CM2SOM <- function(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40) {
   Hatchery <- new(
     "Hatchery",
     Mocean_HOS = expand_array(mo, proyears),
-    gamma = 1 #data$gamma
+    gamma = data$gamma
   )
 
   Harvest <- new(

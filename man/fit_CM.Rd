@@ -62,6 +62,7 @@ Data should passed through a named list with the following:
 \item \code{Ldyr} Integer, number of years in the model
 \item \code{lht} Integer, life history type. Should be 1 for now
 \item \code{hatchsurv} Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
+\item \code{gamma} \emph{Optional}. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 \item \code{ssum} Numeric, proportion of spawners that is female
 \item \code{fhist} Numeric, historical fishing mortality for calculating the spawners at age in the first year of the model
 \item \code{bmatt} Vector length \code{Nages}. Proportion maturity at age, base values for calculating the unfished replacement line
