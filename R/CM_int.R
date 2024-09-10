@@ -1,5 +1,15 @@
 
-.CM <- function(p, d) {
+#' Estimation function for conditioning model
+#'
+#' Population dynamics model of an age structured salmon population. Used with RTMB to estimate historical reconstruction from data.
+#'
+#' @param p List of parameter variables. See [fit_CM()].
+#' @param d List of data variables. See [fit_CM()].
+#' @keywords internal
+#' @return Numeric, objective function value (log-posterior)
+#' @author Q. Huynh with Stan code provided by J. Korman and C. Walters
+#' @export
+CM_int <- function(p, d) {
 
   # Dispatch method for AD variables ----
   is_ad <- any(sapply(p, inherits, "advector"))

@@ -95,7 +95,7 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
 
   p <- make_CMpars(start, data)
 
-  f <- function(p) .CM(p, d = data)
+  f <- function(p) salmonMSE::CM_int(p, d = data)
 
   map <- list()
   if (!length(data$covariate1)) map$b1 <- factor(NA)
