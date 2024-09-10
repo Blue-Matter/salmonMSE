@@ -48,7 +48,7 @@ sample_CM(fit, ...)
 }
 \description{
 Bayesian stock reconstruction model of natural and hatchery origin fish,
-fitted to coded wire tag data, observed escapement, and hatchery releases.
+fitted to coded wire tag data, observed escapement, and hatchery releases (\href{https://publications.gc.ca/site/eng/9.940685/publication.html}{Korman and Walters 2024}).
 Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 assumed between age 1 vs. ages 2+).
 Currently models only a preterminal fishery.
@@ -77,7 +77,7 @@ coefficient and annual deviations from this vector.
 \item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
-\item \code{cwtExp} \emph{Optional}. Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, \code{cwtExp = 10} means that
+\item \code{cwtExp} Numeric, the inverse of the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, \code{cwtExp = 10} means that
 the observed values is ten times greater than the predicted value. Default is 1.
 \item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
@@ -121,12 +121,16 @@ a linear system of covariates \eqn{X} and coefficients \eqn{b}:
 \deqn{
 M_{y,a} =
 \begin{cases}
-M^\textrm{base}_a + M^\textrm{add} + \sum_j b^1_j X^1_{y,j} & \quad a = 1
+M^\textrm{base}_a + M^\textrm{add} + \sum_j b^1_j X^1_{y,j} & \quad a = 1\\
 M^\textrm{base}_a + \sum_j b_j X_{y,j} & \quad a = 2, \ldots, A
 \end{cases}
 }
 }
 
+\references{
+Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
+Sciences 62: vi + 60 p.
+}
 \seealso{
 \code{\link[=CM2SOM]{CM2SOM()}}
 }

@@ -4,7 +4,7 @@
 #' Fit conditioning model to historical data
 #'
 #' Bayesian stock reconstruction model of natural and hatchery origin fish,
-#' fitted to coded wire tag data, observed escapement, and hatchery releases.
+#' fitted to coded wire tag data, observed escapement, and hatchery releases ([Korman and Walters 2024](https://publications.gc.ca/site/eng/9.940685/publication.html)).
 #' Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 #' assumed between age 1 vs. ages 2+).
 #' Currently models only a preterminal fishery.
@@ -46,7 +46,7 @@
 #' - `obsescape` Vector length `Ldyr`, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
-#' - `cwtExp` *Optional*. Numeric, coefficient for scaling down the CWT predictions to match the observations. For example, `cwtExp = 10` means that
+#' - `cwtExp` Numeric, the inverse of the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, `cwtExp = 10` means that
 #' the observed values is ten times greater than the predicted value. Default is 1.
 #' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
@@ -83,11 +83,14 @@
 #' \deqn{
 #' M_{y,a} =
 #' \begin{cases}
-#' M^\textrm{base}_a + M^\textrm{add} + \sum_j b^1_j X^1_{y,j} & \quad a = 1
+#' M^\textrm{base}_a + M^\textrm{add} + \sum_j b^1_j X^1_{y,j} & \quad a = 1\\
 #' M^\textrm{base}_a + \sum_j b_j X_{y,j} & \quad a = 2, \ldots, A
 #' \end{cases}
 #' }
 #' @author Q. Huynh with Stan code provided by J. Korman and C. Walters
+#' @references
+#' Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
+#' Sciences 62: vi + 60 p.
 #' @seealso [CM2SOM()]
 #' @export
 fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, do_fit = TRUE, silent = TRUE, ...) {
