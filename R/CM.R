@@ -203,14 +203,14 @@ CM2SOM <- function(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40) {
     kappa = as.numeric(pars$cr[sims]),
     Smax = 1/SRbeta,
     phi = phi,
-    Mocean_NOS = expand_array(mo, proyears),
+    Mjuv_NOS = expand_array(mo, proyears),
     fec = data$fec,
     p_female = data$ssum
   )
 
   Hatchery <- new(
     "Hatchery",
-    Mocean_HOS = expand_array(mo, proyears),
+    Mjuv_HOS = expand_array(mo, proyears),
     gamma = data$gamma
   )
 

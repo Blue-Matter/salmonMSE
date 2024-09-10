@@ -11,10 +11,10 @@
 #' @slot Smax Vector length `nsim`. The spawning output that maximizes smolt production in the Ricker stock-recruit function. **Units of egg production.**
 #' @slot phi Optional parameter, vector length `nsim`. Unfished egg production rate per smolt.
 #'  The `alpha` parameter of the stock-recruit function will be the ratio of `kappa` and `phi`. In stage-based models,
-#'  the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mocean_NOS` corresponding
+#'  the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS` corresponding
 #'  to the first year.
-#' @slot Mocean_NOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
+#' @slot Mjuv_NOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
 #'  Natural mortality of immature natural origin fish.
-#'  To replicate the SAR parameter of a stage-specific model, set `Mocean_NOS[a] = -log(SAR)` where `a` is the age class prior to maturation (and zero for all other ages).
+#'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_NOS[a] = -log(SAR)` where `a` is the age class prior to maturation (and zero for all other ages).
 #' @slot fec Vector by age (length `maxage`). Female fecundity of natural origin spawners.
 #' @slot p_female Numeric. The proportion of females in the spawning population.

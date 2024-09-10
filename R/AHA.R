@@ -49,13 +49,13 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   }
   SOM@fec_brood <- fec_brood
 
-  message("SAR calculated from survival from Mocean to age ", age_mature)
+  message("SAR calculated from survival from Mjuv to age ", age_mature)
 
   surv_NOS <- surv_HOS <- matrix(1, SOM@nsim, age_mature)
   for (a in 2:age_mature) {
-    surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Mocean_NOS[, a-1, 1])
+    surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Mjuv_NOS[, a-1, 1])
     if (do_hatchery) {
-      surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Mocean_HOS[, a-1, 1])
+      surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Mjuv_HOS[, a-1, 1])
     }
   }
 

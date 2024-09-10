@@ -126,9 +126,9 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
     if (NOS) {
-      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mocean_NOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mjuv_NOS
     } else {
-      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mocean_HOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mjuv_HOS
     }
   } else if (stage == "return") {
     cpars_bio$M_ageArray[, n_age, ] <- 0.1 # Return does not experience M, n_age should be an empty age class

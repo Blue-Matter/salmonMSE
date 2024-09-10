@@ -35,12 +35,12 @@ In stage-based models, equivalent to the product of smolt productivity (smolts p
 
 \item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished egg production rate per smolt.
 The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mocean_NOS} corresponding
+the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS} corresponding
 to the first year.}
 
-\item{\code{Mocean_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
 Natural mortality of immature natural origin fish.
-To replicate the SAR parameter of a stage-specific model, set \code{Mocean_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
+To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{fec}}{Vector by age (length \code{maxage}). Female fecundity of natural origin spawners.}
 

@@ -254,10 +254,10 @@ check_SOM <- function(SOM) {
   })
 
   # Length maxage to full array
-  var_dyn <- c("p_mature", "Mocean_NOS", "Mocean_HOS")
+  var_dyn <- c("p_mature", "Mjuv_NOS", "Mjuv_HOS")
   do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
   for(i in var_dyn) {
-    if (i != "Mocean_HOS" || do_hatchery) {
+    if (i != "Mjuv_HOS" || do_hatchery) {
       if (is.array(slot(SOM, i))) {
 
         dim_check <- all(dim(slot(SOM, i)) == c(SOM@nsim, SOM@maxage, SOM@nyears + SOM@proyears))
@@ -292,7 +292,7 @@ check_SOM <- function(SOM) {
           NPR <- matrix(NA_real_, SOM@nsim, SOM@maxage)
           NPR[, 1] <- 1
           for (a in 2:SOM@maxage) {
-            NPR[, a] <- NPR[, a-1] * exp(-SOM@Mocean_NOS[, a-1, 1]) * (1 - SOM@p_mature[, a-1, 1])
+            NPR[, a] <- NPR[, a-1] * exp(-SOM@Mjuv_NOS[, a-1, 1]) * (1 - SOM@p_mature[, a-1, 1])
           }
           EPR <- NPR * SOM@p_mature[, , 1]
           colSums(t(EPR) * SOM@p_female * SOM@fec)
@@ -349,10 +349,10 @@ check_SOM <- function(SOM) {
     HistN <- array(0, c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
     HistN[, 1, , ] <- 1000
     for (y in 2:SOM@nyears) {
-      ZNOS <- SOM@Mocean_NOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 1]
+      ZNOS <- SOM@Mjuv_NOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 1]
       HistN[, 2:SOM@maxage, y, 1] <- HistN[, 2:SOM@maxage - 1, y-1, 1] * exp(-ZNOS)
 
-      ZHOS <- SOM@Mocean_HOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 2]
+      ZHOS <- SOM@Mjuv_HOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 2]
       HistN[, 2:SOM@maxage, y, 2] <- HistN[, 2:SOM@maxage - 1, y-1, 2] * exp(-ZHOS)
     }
     slot(SOM, "HistN") <- HistN

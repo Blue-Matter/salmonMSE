@@ -27,7 +27,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
   fitness <- array(NA_real_, c(SOM@nsim, ns, 2, SOM@proyears))
 
-  Mocean_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
+  Mjuv_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   PNI <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
   p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
 
@@ -142,7 +142,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     Smolt_Rel[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     p_smolt <- 1
-    Mocean_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
+    Mjuv_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
 
     pNOB <- get_salmonMSE_var(state, var = "pNOB")
     pHOSeff <- get_salmonMSE_var(state, var = "pHOSeff")
@@ -211,7 +211,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     fitness = fitness,
     PNI = PNI,
     p_wild = p_wild,
-    Mocean_loss = Mocean_loss
+    Mjuv_loss = Mjuv_loss
   )
   if (!missing(Harvest_MMP)) SMSE@Misc$Harvest_MMP <- Harvest_MMP
   if (!missing(Ford) && nrow(Ford)) SMSE@Misc$Ford <- salmonMSE_env$Ford

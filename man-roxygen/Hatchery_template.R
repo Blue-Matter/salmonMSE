@@ -13,9 +13,9 @@
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`.
 #' @slot s_egg_subyearling Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`.
-#' @slot Mocean_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
+#' @slot Mjuv_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
 #'  Natural mortality of immature hatchery origin fish.
-#'  To replicate the SAR parameter of a stage-specific model, set `Mocean_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
+#'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
 #' @slot gamma Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).
 #' @slot pmax_NOB Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.
 #' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.

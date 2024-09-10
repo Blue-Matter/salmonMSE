@@ -13,7 +13,7 @@ Bio <- new(
   SRrel = "BH",
   capacity_smolt = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
   kappa = 3,                  # Productivity in recruits per spawner
-  Mocean_NOS = c(0, -log(SAR), 0),
+  Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49
   #strays = 0
@@ -27,7 +27,7 @@ Hatchery <- new(
   s_prespawn = 1,                   # Survival prior to spawning
   s_egg_smolt = 1e-6,               # Survival of eggs in hatchery
   s_egg_subyearling = 0.92,
-  Mocean_HOS = Bio@Mocean_NOS,
+  Mjuv_HOS = Bio@Mjuv_NOS,
   gamma = 0.8,
   pmax_NOB = 0.7,
   ptarget_NOB = 0.51,
@@ -161,7 +161,7 @@ surv <- SMSE@Return_NOS[, 1, 3, seq(4, 49, 3)]/(SMSE@Smolt_NOS[, 1, seq(2, 49, 3
 
 plot(surv[1, ], typ = 'o', ylim = c(0.009, 0.01))
 
-exp(-SMSE@Mocean_loss[, 1, 2, ])[1, ] %>% plot(typ = 'o', ylim = c(0.009, 0.01))
+exp(-SMSE@Mjuv_loss[, 1, 2, ])[1, ] %>% plot(typ = 'o', ylim = c(0.009, 0.01))
 SMSE@fitness[, 1, ]
 SAHA$fitness
 

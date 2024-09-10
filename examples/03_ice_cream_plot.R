@@ -23,7 +23,7 @@ wrapper <- function(x, df) {
     SRrel = "BH",
     capacity_smolt = 17250,
     kappa = kappa,
-    Mocean_NOS = c(0, -log(SAR), 0),
+    Mjuv_NOS = c(0, -log(SAR), 0),
     fec = c(0, 0, 5040),
     p_female = 0.49
   )
@@ -35,7 +35,7 @@ wrapper <- function(x, df) {
     s_prespawn = 1,
     s_egg_smolt = 0.92,
     s_egg_subyearling = 1,
-    Mocean_HOS = Bio@Mocean_NOS,
+    Mjuv_HOS = Bio@Mjuv_NOS,
     gamma = 0.8,
     pmax_NOB = 0.7,
     ptarget_NOB = 0.51,

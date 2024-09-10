@@ -36,14 +36,14 @@ setClass(
     Name = "character",
     nsim = "numeric",
     maxage = "numeric",
-    p_mature = "num.array",         # Age at which adults mature and return
+    p_mature = "num.array",
     SRrel = "character",
-    capacity_smolt = "numeric",   # Beverton-Holt asymptote. Not unfished capacity!!
+    capacity_smolt = "numeric",
     kappa = "numeric",
     Smax = "numeric",
     phi = "numeric",
-    Mocean_NOS = "num.array",     # Future feature to allow for time-varying (PDO forcing)
-    fec = "numeric",              # Spawning fecundity of NOS and HOS
+    Mjuv_NOS = "num.array",
+    fec = "numeric",
     p_female = "numeric"
     #strays = 0
   )
@@ -166,7 +166,7 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
-    Mocean_HOS = "num.array",         # Future feature to allow for time-varying (PDO forcing)
+    Mjuv_HOS = "num.array",
     gamma = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
@@ -289,7 +289,7 @@ setMethod("initialize", "SOM",
 #' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence, index of gene flow from hatchery to the natural environment.
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
-#' @slot Mocean_loss Array `[nsim, nstocks, nage, proyears]`. Realized natural mortality in the marine environment due to fitness loss.
+#' @slot Mjuv_loss Array `[nsim, nstocks, nage, proyears]`. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.
 #' @slot Misc List. Miscellaneous output
 #'
 #' @details
@@ -359,7 +359,7 @@ setClass(
     ExPT_HOS = "array",
     ExT_HOS = "array",
     fitness = "array",
-    Mocean_loss = "array",
+    Mjuv_loss = "array",
     PNI = "array",
     p_wild = "array",
     Misc = "list"

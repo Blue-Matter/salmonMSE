@@ -217,12 +217,14 @@ The recruitment is calculated from the survival of juvenile fish after pre-termi
 \textrm{HOR}_{y,a} &= N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
 \end{align}
 
-The juvenile abundance in the following year consists of fish that did not mature and subsequently survived ocean mortality $M$:
+The juvenile abundance in the following year consists of fish that did not mature and subsequently survived natural mortality $M$:
 
 \begin{align}
 N^\textrm{juv,NOS}_{y+1,a+1} &= N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
 N^\textrm{juv,HOS}_{y+1,a+1} &= N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
 \end{align}
+
+Natural mortality is specified by age class. Accordingly, this mortality corresponds to either the freshwater or marine survival depending on age class. 
 
 ## Terminal fishery
 
