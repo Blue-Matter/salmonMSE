@@ -111,11 +111,11 @@ CM_int <- function(p, d) {
     N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p$wt[t])
     N[t + d$lht, 1, 2] <- d$hatchsurv * d$hatchrelease[t+1]
 
-    spawners[t] <- sum(syear[t, ])
+    spawners[t] <- sum(syear[t, , ])
     logpredesc[t] <- log(spawners[t] + tiny)
 
-    tcatch[t] <- sum(cyear[t, ]) # add up total catch for the year
-    moplot[t] <- mo[t, 1] + moaddcwt # for plotting first year ocean M
+    tcatch[t] <- sum(cyear[t, , ]) # add up total catch for the year
+    moplot[t] <- mo[t, 1] + moaddcwt # for plotting first year ocean M, including hatchery survival
   }
 
   # Convert predicted cwt catches and escapement from calendar year to brood year for likelihoods
