@@ -46,18 +46,19 @@
 #' - `obsescape` Vector length `Ldyr`, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
-#' - `cwtExp` Numeric, the inverse of the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, `cwtExp = 10` means that
-#' the observed values is ten times greater than the predicted value. Default is 1.
+#' - `cwtExp` Numeric, the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, `cwtExp = 0.1`
+#' reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 #' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
-#' - `so_mu` Numeric, the prior mean for unfished spawners in logspace
-#' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace
-#' - `so_min` *Optional*. Numeric, lower bound for the estimate of unfished spawners.
+#' - `so_mu` Numeric, the prior mean for unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
+#' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
+#' - `so_min` Numeric, lower bound for the estimate of unfished spawners. Default is `log(2 * max(data$obsescape))`.
+#' - `maxcr` *Optional*. Upper bound to the compensation ratio parameter (the minimum value is always 1).
 #' @section start:
 #' Starting values for parameters can be provided through a named list:
 #'
 #' - `cr` Numeric, compensation ratio. Default is 3.
-#' - `log_so` Numeric, unfished spawners in logspace. Default is 2.
+#' - `log_so` Numeric, unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `moadd` Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
 #' - `wt` Vector `Ldyr`. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
 #' Estimated with normal prior with mean zero and standard deviation `p$wt_sd`. Default is zero.
@@ -70,7 +71,7 @@
 #' - `wt_sd` Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `wto_sd` Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `fanomaly_sd` Numeric, lognormal standard deviation of `fanomaly`. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
-#' - `logit_matt` Matrix `Ldyr, Nages-2` maturity at age in logit space. Age-1 maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
+#' - `logit_matt` Matrix `Ldyr, Nages-2` maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
 #' - `sd_matt` Vector `Nages-2`. Logit standard deviation of maturity (`logit_matt`) by age class. Default is 0.5.
 #' - `b1` Vector `ncov1` of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 #' - `b` Vector `ncov` of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.
@@ -99,7 +100,7 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
 
   p <- make_CMpars(start, data)
 
-  f <- function(p) salmonMSE::CM_int(p, d = data)
+  f <- function(p) salmonMSE::CM_int(p, d = data) # :: is needed for parallel MCMC sampling
 
   map <- list()
   if (!length(data$covariate1)) map$b1 <- factor(NA)
@@ -111,13 +112,13 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
   upper <- structure(rep(Inf, length(obj$par)), names = names(obj$par))
 
   lower["cr"] <- 1
-  if (is.null(data$maxcr)) {
-    upper["cr"] <- 10
-  } else {
-    upper["cr"] <- data$maxcr
-  }
+  if (!is.null(data$maxcr)) upper["cr"] <- data$maxcr
 
-  if (!is.null(data$so_min)) lower["log_so"] <- data$so_min
+  if (!is.null(data$so_min)) {
+    lower["log_so"] <- data$so_min
+  } else {
+    lower["log_so"] <- log(2 * max(data$obsescape))
+  }
 
   lower["moadd"] <- -2/3 * data$mobase[1]
   lower["Fbase"] <- 1e-8

@@ -38,7 +38,7 @@ CM_int <- function(p, d) {
   rhist <- spawnhist/sprhist # historical recruitment
 
   # Transformed parameters ----
-  so <- exp(p$log_so) * 10000
+  so <- exp(p$log_so)
   ro <- so/spro            # unfished recruitment ro
   eo <- ro * epro          # unfished total egg production
   mden <- p$cr/eo          # Ricker b parameter for egg-smolt relationship
@@ -130,8 +130,8 @@ CM_int <- function(p, d) {
     }
   }
 
-  cbrood2 <- cbrood/d$cwtExp
-  ebrood2 <- ebrood/d$cwtExp
+  cbrood2 <- cbrood * d$cwtExp
+  ebrood2 <- ebrood * d$cwtExp
 
   # Log prior for parameters
   logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE) # prior on so in log space as it is poorly determined from data
@@ -218,7 +218,7 @@ CM_int <- function(p, d) {
 # Make list of starting values
 make_CMpars <- function(p, d) {
   if (is.null(p$cr)) p$cr <- 3
-  if (is.null(p$log_so)) p$log_so <- 2
+  if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape))
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p$wt)) p$wt <- rep(0, d$Ldyr)
   if (is.null(p$wto)) p$wto <- rep(0, d$Ldyr)
@@ -258,7 +258,7 @@ check_data <- function(data) {
   if (is.null(data$lht)) data$lht <- 1
 
   if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
-  if (is.null(data$gamma)) stop("data$gamma should be a numeric")
+  if (is.null(data$gamma)) data$gamma <- 1
   if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
 
   if (is.null(data$fhist)) stop("data$fhist should be a numeric")
@@ -322,8 +322,8 @@ check_data <- function(data) {
   }
 
 
-  if (is.null(data$so_mu)) stop("data$so_mu should be a numeric")
-  if (is.null(data$so_sd)) stop("data$so_sd should be a numeric")
+  if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
+  if (is.null(data$so_sd)) data$so_sd <- 0.5
 
   return(data)
 }

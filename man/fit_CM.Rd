@@ -77,13 +77,14 @@ coefficient and annual deviations from this vector.
 \item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
-\item \code{cwtExp} Numeric, the inverse of the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, \code{cwtExp = 10} means that
-the observed values is ten times greater than the predicted value. Default is 1.
+\item \code{cwtExp} Numeric, the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, \code{cwtExp = 0.1}
+reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 \item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
-\item \code{so_mu} Numeric, the prior mean for unfished spawners in logspace
-\item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace
-\item \code{so_min} \emph{Optional}. Numeric, lower bound for the estimate of unfished spawners.
+\item \code{so_mu} Numeric, the prior mean for unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
+\item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
+\item \code{so_min} Numeric, lower bound for the estimate of unfished spawners. Default is \code{log(2 * max(data$obsescape))}.
+\item \code{maxcr} \emph{Optional}. Upper bound to the compensation ratio parameter (the minimum value is always 1).
 }
 }
 
@@ -92,7 +93,7 @@ the observed values is ten times greater than the predicted value. Default is 1.
 Starting values for parameters can be provided through a named list:
 \itemize{
 \item \code{cr} Numeric, compensation ratio. Default is 3.
-\item \code{log_so} Numeric, unfished spawners in logspace. Default is 2.
+\item \code{log_so} Numeric, unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{moadd} Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
 \item \code{wt} Vector \code{Ldyr}. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
 Estimated with normal prior with mean zero and standard deviation \code{p$wt_sd}. Default is zero.
@@ -105,7 +106,7 @@ Estimated with normal prior with mean zero and standard deviation \code{p$fanoma
 \item \code{wt_sd} Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{wto_sd} Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{fanomaly_sd} Numeric, lognormal standard deviation of \code{fanomaly}. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
-\item \code{logit_matt} Matrix \verb{Ldyr, Nages-2} maturity at age in logit space. Age-1 maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
+\item \code{logit_matt} Matrix \verb{Ldyr, Nages-2} maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
 \item \code{sd_matt} Vector \code{Nages-2}. Logit standard deviation of maturity (\code{logit_matt}) by age class. Default is 0.5.
 \item \code{b1} Vector \code{ncov1} of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 \item \code{b} Vector \code{ncov} of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.
