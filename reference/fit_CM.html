@@ -3,12 +3,12 @@
 fitted to coded wire tag data, observed escapement, and hatchery releases (Korman and Walters 2024).
 Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 assumed between age 1 vs. ages 2+).
-Currently models only a preterminal fishery.
+The model includes either a preterminal fishery, terminal fishery, or both (see Data and start sections of the documentation).
 fit_CM() generates the RTMB model from data which can then be passed to sample_CM() to run the MCMC in Stan."><meta property="og:description" content="Bayesian stock reconstruction model of natural and hatchery origin fish,
 fitted to coded wire tag data, observed escapement, and hatchery releases (Korman and Walters 2024).
 Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 assumed between age 1 vs. ages 2+).
-Currently models only a preterminal fishery.
+The model includes either a preterminal fishery, terminal fishery, or both (see Data and start sections of the documentation).
 fit_CM() generates the RTMB model from data which can then be passed to sample_CM() to run the MCMC in Stan."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -55,7 +55,7 @@ fit_CM() generates the RTMB model from data which can then be passed to sample_C
 fitted to coded wire tag data, observed escapement, and hatchery releases (<a href="https://publications.gc.ca/site/eng/9.940685/publication.html" class="external-link">Korman and Walters 2024</a>).
 Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 assumed between age 1 vs. ages 2+).
-Currently models only a preterminal fishery.
+The model includes either a preterminal fishery, terminal fishery, or both (see Data and start sections of the documentation).
 <code>fit_CM()</code> generates the RTMB model from data which can then be passed to <code>sample_CM()</code> to run the MCMC in Stan.</p>
     </div>
 
@@ -70,6 +70,7 @@ Currently models only a preterminal fishery.
 <span>  <span class="va">upper_b</span>,</span>
 <span>  do_fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">1e+05</span>, iter.max <span class="op">=</span> <span class="fl">1e+05</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -112,6 +113,10 @@ Currently models only a preterminal fishery.
 <dd><p>Logical, whether to silence output from RTMB to the console.</p></dd>
 
 
+<dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
+<dd><p>List, <code>control</code> argument to pass to <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>For <code>fit_CM</code>, arguments to <code><a href="https://rdrr.io/pkg/RTMB/man/TMB-interface.html" class="external-link">RTMB::MakeADFun()</a></code>. For <code>sample_CM</code>, arguments to <code><a href="https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html" class="external-link">rstan::sampling()</a></code></p></dd>
 
@@ -123,7 +128,8 @@ Currently models only a preterminal fishery.
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
 
-<ul><li><p><code>fit_CM()</code> returns a list containing the RTMB model, nlminb output, standard errors, and parameter bounds</p></li>
+<ul><li><p><code>fit_CM()</code> returns a named list containing the RTMB model (<code>obj</code>), nlminb output (<code>opt</code>), standard errors (<code>SD</code>),
+and parameter bounds (<code>lower</code> and <code>upper</code>)</p></li>
 <li><p><code>sample_CM()</code> returns a <code>stanfit</code> object containing the MCMC chains</p></li>
 </ul></div>
     <div class="section level2">
@@ -136,16 +142,23 @@ Currently models only a preterminal fishery.
 <li><p><code>hatchsurv</code> Numeric, survival of hatchery releases into the smolt life stage. Density-independent.</p></li>
 <li><p><code>gamma</code> <em>Optional</em>. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.</p></li>
 <li><p><code>ssum</code> Numeric, proportion of spawners that is female</p></li>
-<li><p><code>fhist</code> Numeric, historical fishing mortality for calculating the spawners at age in the first year of the model</p></li>
-<li><p><code>bmatt</code> Vector length <code>Nages</code>. Proportion maturity at age, base values for calculating the unfished replacement line</p></li>
+<li><p><code>finitPT</code> Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
+<li><p><code>finitT</code> Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
+<li><p><code>bmatt</code> Vector length <code>Nages</code>. Proportion maturity at age, base values for calculating the unfished replacement line.</p></li>
 <li><p><code>fec</code> Vector length <code>Nages</code>. Fecundity, egg production at age</p></li>
-<li><p><code>vul</code> Vector length <code>Nages</code>. Vulnerability at age to the preterminal fishery</p></li>
-<li><p><code>mobase</code>. Vector length <code>Nages</code>. Natural mortality at age, base values for calculating the unfished replacement line</p></li>
+<li><p><code>vulPT</code> Vector length <code>Nages</code>. Vulnerability at age to the preterminal fishery</p></li>
+<li><p><code>vulT</code> Vector length <code>Nages</code>. Vulnerability at age to the terminal fishery</p></li>
+<li><p><code>mobase</code>. Vector length <code>Nages</code>. Natural mortality at age, base values for calculating the unfished replacement line and the
+the equilibrium spawners at age.</p></li>
 <li><p><code>cwtrelease</code> Vector length <code>Ldyr</code>, coded wire tag (CWT) releases</p></li>
 <li><p><code>cwtesc</code> Matrix <code>[Ldyr, Nages]</code>. CWT escapement <strong>by brood year and age</strong>. Poisson likelhood.</p></li>
-<li><p><code>cwtcat</code> Matrix <code>[Ldyr, Nages]</code>. CWT catch, <strong>by brood year and age</strong>. Poisson likelhood.</p></li>
-<li><p><code>RelRegF</code> Vector <code>Ldyr</code>. Trend in relative regional fishing mortality. Fishing mortality is estimated by estimating a scaling
+<li><p><code>cwtcatPT</code> Matrix <code>[Ldyr, Nages]</code>. CWT preterminal catch, <strong>by brood year and age</strong>. Poisson likelhood. Set all values to zero to turn off
+parameters related to the preterminal fishery.</p></li>
+<li><p><code>cwtcatT</code> Matrix <code>[Ldyr, Nages]</code>. CWT terminal catch, <strong>by brood year and age</strong>. Poisson likelhood. Set all values to zero to turn off
+parameters related to the terminal fishery.</p></li>
+<li><p><code>RelRegFPT</code> Vector <code>Ldyr</code>. Trend in relative regional preterminal fishing mortality. Fishing mortality is estimated by estimating a scaling
 coefficient and annual deviations from this vector.</p></li>
+<li><p><code>RelRegFT</code> Vector <code>Ldyr</code>. Trend in relative regional terminal fishing mortality.</p></li>
 <li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
 <li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
 <li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code>, number of hatchery juvenile fish released</p></li>
@@ -169,13 +182,17 @@ reduces the CWT predictions by 0.1 for the likelihood. Default is 1.</p></li>
 Estimated with normal prior with mean zero and standard deviation <code>p$wt_sd</code>. Default is zero.</p></li>
 <li><p><code>wto</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality for age 2+ juveniles (marine life stage).
 Estimated with normal prior with mean zero and standard deviation <code>p$wto_sd</code>. Default is zero.</p></li>
-<li><p><code>Fbase</code> Numeric, scaling coefficient to estimate fishing mortality from <code>data$RelRegF</code>. Default is 1.</p></li>
-<li><p><code>fanomaly</code> Vector <code>Ldyr</code>. Annual deviates from <code>Fbase * data$RelRegF</code> to estimate fishing mortality.
+<li><p><code>FbasePT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFPT</code>. Default is 1.</p></li>
+<li><p><code>FbaseT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFT</code>. Default is 1.</p></li>
+<li><p><code>fanomalyPT</code> Vector <code>Ldyr</code>. Annual deviates from <code>FbasePT * data$RelRegFPT</code> to estimate preterminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation <code>p$fanomaly_sd</code>. Default is zero.</p></li>
+<li><p><code>fanomalyT</code> Vector <code>Ldyr</code>. Annual deviates from <code>FbaseT * data$RelRegFT</code> to estimate terminal fishing mortality.
+Estimated with normal prior with mean zero and standard deviation <code>p$fanomalyPT_sd</code>. Default is zero.</p></li>
 <li><p><code>lnS_sd</code> Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>wt_sd</code> Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>wto_sd</code> Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
-<li><p><code>fanomaly_sd</code> Numeric, lognormal standard deviation of <code>fanomaly</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
+<li><p><code>fanomalyPT_sd</code> Numeric, lognormal standard deviation of <code>fanomalyPT</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
+<li><p><code>fanomalyT_sd</code> Numeric, lognormal standard deviation of <code>fanomalyT</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>logit_matt</code> Matrix <code>Ldyr, Nages-2</code> maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.</p></li>
 <li><p><code>sd_matt</code> Vector <code>Nages-2</code>. Logit standard deviation of maturity (<code>logit_matt</code>) by age class. Default is 0.5.</p></li>
 <li><p><code>b1</code> Vector <code>ncov1</code> of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.</p></li>
