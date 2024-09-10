@@ -14,6 +14,7 @@ fit_CM(
   upper_b,
   do_fit = TRUE,
   silent = TRUE,
+  control = list(eval.max = 1e+05, iter.max = 1e+05),
   ...
 )
 
@@ -36,13 +37,16 @@ sample_CM(fit, ...)
 
 \item{silent}{Logical, whether to silence output from RTMB to the console.}
 
+\item{control}{List, \code{control} argument to pass to \code{\link[stats:nlminb]{stats::nlminb()}}.}
+
 \item{...}{For \code{fit_CM}, arguments to \code{\link[RTMB:TMB-interface]{RTMB::MakeADFun()}}. For \code{sample_CM}, arguments to \code{rstan::sampling()}}
 
 \item{fit}{List of output from \code{fit_CM()}}
 }
 \value{
 \itemize{
-\item \code{fit_CM()} returns a list containing the RTMB model, nlminb output, standard errors, and parameter bounds
+\item \code{fit_CM()} returns a named list containing the RTMB model (\code{obj}), nlminb output (\code{opt}), standard errors (\code{SD}),
+and parameter bounds (\code{lower} and \code{upper})
 \item \code{sample_CM()} returns a \code{stanfit} object containing the MCMC chains
 }
 }

@@ -18,11 +18,13 @@
 #' @param upper_b Upper bound of coefficients for linear covariates that predict natural mortality for age 2+. See details.
 #' @param do_fit Logical, whether to do the fit and estimate the Hessian.
 #' @param silent Logical, whether to silence output from RTMB to the console.
+#' @param control List, `control` argument to pass to [`stats::nlminb()`].
 #' @param ... For `fit_CM`, arguments to [`RTMB::MakeADFun()`]. For `sample_CM`, arguments to `rstan::sampling()`
 #' @import RTMB
 #' @importFrom stats nlminb
 #' @returns
-#' - `fit_CM()` returns a list containing the RTMB model, nlminb output, standard errors, and parameter bounds
+#' - `fit_CM()` returns a named list containing the RTMB model (`obj`), nlminb output (`opt`), standard errors (`SD`),
+#' and parameter bounds (`lower` and `upper`)
 #' - `sample_CM()` returns a `stanfit` object containing the MCMC chains
 #'
 #' @section Data:
@@ -94,7 +96,8 @@
 #' Sciences 62: vi + 60 p.
 #' @seealso [CM2SOM()]
 #' @export
-fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, do_fit = TRUE, silent = TRUE, ...) {
+fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, do_fit = TRUE, silent = TRUE,
+                   control = list(eval.max = 1e5, iter.max = 1e5), ...) {
 
   data <- check_data(data)
 
@@ -142,7 +145,7 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
   if (do_fit) {
     opt <- nlminb(
       obj$par, obj$fn, obj$gr,
-      lower = lower, upper = upper, control = list(eval.max = 1e5, iter.max = 1e5)
+      lower = lower, upper = upper, control = control
     )
     SD <- RTMB::sdreport(obj)
   } else {
