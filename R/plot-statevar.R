@@ -8,6 +8,7 @@
 #' - `plot_statevar_hist()` produces a histogram across all simulations for a particular year
 #' - `plot_spawners()` produces a summary barplot of spawners, including NOS, HOS, and wild spawners
 #' - `plot_fitness()` produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
+#' - `plot_fishery()` produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options.
@@ -40,10 +41,10 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 
     if (!quant) {
       matplot(Year[ind], t(xplot[, ind]), type = 'l', col = "grey40", ylim = ylim, lty = 1,
-              xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
+              xlab = "Projection Year", ylab = ylab, ...)
     } else {
       matplot(Year[ind], t(xplot[, ind]), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
-              xlab = "Projection Year", ylab = ylab, panel.first = graphics::grid(), ...)
+              xlab = "Projection Year", ylab = ylab, ...)
     }
   }
   invisible(xplot)
@@ -100,7 +101,7 @@ plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE,
     }
     plot(Year, Spawners, xlim = range(Year) + c(-1, 0),
          xlab = "Projection Year", ylab = ifelse(prop, "Proportion", "Spawners"),
-         typ = "n", ylim = ylim, panel.first = graphics::grid(), xaxs = "i", yaxs = "i")
+         typ = "n", ylim = ylim, xaxs = "i", yaxs = "i")
     barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year), add = TRUE, xpd = FALSE)
     box()
   }
@@ -125,7 +126,7 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
     if (missing(ylim)) ylim <- c(0, 1)
     matplot(Year, x, type = "n", pch = 16,
             xlab = "Projection Year", ylab = "Value",
-            ylim = ylim, panel.first = graphics::grid())
+            ylim = ylim)
 
     col <- 1:ncol(x)
     for (i in 1:ncol(x)) {
@@ -133,6 +134,57 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
       lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i])
     }
     legend("bottomleft", legend = colnames(x), col = col, pch = 1, lwd = 1, bty = "n")
+  }
+
+  invisible(x)
+}
+
+
+#' @name plot_statevar_ts
+#' @param type Character the fishery state variable to plot
+#' @export
+plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), FUN = median, figure = TRUE, ylim, ylab, ...) {
+  type <- match.arg(type)
+
+  var <- switch(
+    type,
+    "catch" = "K",
+    "exploit" = "Ex",
+    "harvest" = "U"
+  )
+
+  var_vec <- outer(paste0(c("PT", "T"), "_"), c("NOS", "HOS"), FUN = "paste0") %>%
+    as.character()
+
+  x <- sapply(var_vec, function(i) {
+    plot_statevar_ts(SMSE, var = paste0(var, i), s = s, figure = FALSE, quant = FALSE)
+  }, simplify = "array") %>%
+    apply(2:3, FUN)
+
+  if (figure) {
+    Year <- 1:SMSE@proyears
+
+    if (missing(ylim)) ylim <- c(0, 1.1) * range(x, na.rm = TRUE)
+
+    if (missing(ylab)) {
+      ylab <- switch(
+        type,
+        "catch" = "Kept catch",
+        "exploit" = "Exploitation rate",
+        "harvest" = "Harvest rate"
+      )
+    }
+
+    plot(Year, NULL, typ = 'n', col = "grey40", ylim = ylim, xlab = "Projection Year",
+         ylab = ylab, ...)
+    col <- 1:length(var_vec)
+
+    for (i in 1:length(var_vec)) {
+      x_i <- x[, i]
+      ind <- x_i > 0
+      lines(Year[ind], x_i[ind], type = 'o', pch = 1, col = col[i], lty = 1)
+    }
+    legend("topleft", legend = var_vec, col = 1:4, pch = 1, lty = 1, bty = "n")
   }
 
   invisible(x)
