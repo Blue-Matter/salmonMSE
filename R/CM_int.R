@@ -487,7 +487,7 @@ make_bounds <- function(par_names, data, lower_b1, upper_b1, lower_b, upper_b) {
   list(lower = lower, upper = upper)
 }
 
-get_report <- function(stanfit, fit, sims) {
+get_report <- function(stanfit, sims) {
   if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package is needed.")
 
   pars <- rstan::extract(stanfit)
@@ -497,6 +497,8 @@ get_report <- function(stanfit, fit, sims) {
     if (is.matrix(x)) x[sims, , drop = FALSE] else x[sims]
   })
 
+  fit <- stanfit@.MISC$CMfit
+  if (is.null(fit)) stop("CM fitted object not found in stanfit@.MISC$CMfit")
   report <- lapply(1:length(sims), function(i) {
     par_x <- lapply(pars_samp, function(x) {
       if (is.matrix(x)) x[i, ] else x[i]

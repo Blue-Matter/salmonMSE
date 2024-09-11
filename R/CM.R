@@ -138,7 +138,9 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
 #' @export
 sample_CM <- function(fit, ...) {
   if (!requireNamespace("tmbstan", quietly = TRUE)) stop("tmbstan package is needed.")
-  tmbstan::tmbstan(fit$obj, lower = fit$lower, upper = fit$upper, ...)
+  samp <- tmbstan::tmbstan(fit$obj, lower = fit$lower, upper = fit$upper, ...)
+  samp@.MISC$CMfit <- fit
+  return(samp)
 }
 
 
@@ -148,7 +150,6 @@ sample_CM <- function(fit, ...) {
 #' Management actions for habitat, hatchery production, and harvest still need to be specified in the operating model.
 #'
 #' @param stanfit Output from [`sample_CM()`]
-#' @param fit Output from [`fit_CM()`]
 #' @param sims Optional, a vector of integers indicating the MCMC iterations to convert to operating model simulations. Otherwise,
 #' use argument `nsim` in order to sample a subset of the MCMC.
 #' @param nsim Integer, total number of simulations in the operating model. Only used if `sims` is missing.
@@ -156,7 +157,7 @@ sample_CM <- function(fit, ...) {
 #' @param proyears Integer, the number of projection years in the operating model
 #' @return \linkS4class{SOM} object.
 #' @export
-CM2SOM <- function(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40) {
+CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package is needed.")
   pars <- rstan::extract(stanfit)
@@ -168,6 +169,8 @@ CM2SOM <- function(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40) {
     sims <- sample(nsim_stan, nsim)
   }
 
+  fit <- stanfit@.MISC$CMfit
+  if (is.null(fit)) stop("CM fitted object not found in stanfit@.MISC$CMfit")
   report <- get_report(stanfit, fit, sims)
   data <- get_CMdata(fit)
   nsim_om <- length(sims)

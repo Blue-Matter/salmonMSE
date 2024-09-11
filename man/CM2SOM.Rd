@@ -4,12 +4,10 @@
 \alias{CM2SOM}
 \title{Convert conditioning model to operating model}
 \usage{
-CM2SOM(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40)
+CM2SOM(stanfit, sims, nsim = 2, seed = 1, proyears = 40)
 }
 \arguments{
 \item{stanfit}{Output from \code{\link[=sample_CM]{sample_CM()}}}
-
-\item{fit}{Output from \code{\link[=fit_CM]{fit_CM()}}}
 
 \item{sims}{Optional, a vector of integers indicating the MCMC iterations to convert to operating model simulations. Otherwise,
 use argument \code{nsim} in order to sample a subset of the MCMC.}
