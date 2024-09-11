@@ -184,15 +184,16 @@ CM2SOM <- function(stanfit, fit, sims, nsim = 2, seed = 1, proyears = 40) {
     aperm(c(4, 2, 1, 3))
   Spawner <- sapply(1:2, function(i) {
     sapply(1:nsim_om, function(x) {
-      esc <- report[[x]]$N[1:nyears, , i] * report[[x]]$sfish * report[[x]]$matt
+      esc <- report[[x]]$recr[, , i] * report[[x]]$survT
       spawn <- esc * data$propwildspawn
       return(spawn)
     }, simplify = "array")
   }, simplify = "array") %>%
     aperm(c(3:1, 4))
-  FPT <- sapply(1:2, function(...) sapply(report, getElement, "ft"), simplify = "array") %>%
+  FPT <- sapply(1:2, function(...) sapply(report, getElement, "FPT"), simplify = "array") %>%
     aperm(c(2, 1, 3))
-  FT <- array(0, c(nsim_om, nyears, 2))
+  FT <- sapply(1:2, function(...) sapply(report, getElement, "FT"), simplify = "array") %>%
+    aperm(c(2, 1, 3))
 
   Bio <- new(
     "Bio",
