@@ -6,6 +6,8 @@
 #'
 #' - `plot_statevar_ts()` produces a time series for all simulations, or with confidence intervals
 #' - `plot_statevar_hist()` produces a histogram across all simulations for a particular year
+#' - `plot_spawners()` produces a summary barplot of spawners, including NOS, HOS, and wild spawners
+#' - `plot_fitness()` produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options.
@@ -54,6 +56,79 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...) {
   x <- slot(SMSE, var)[, s, y]
   if (figure) hist(x, xlab = xlab, main = NULL, ...)
+  invisible(x)
+}
+
+#' @name plot_statevar_ts
+#' @param prop Logical, whether to plot proportions or absolute numbers
+#' @param FUN Summarizing function across simulations, typically [median()] or [mean()]
+#' @importFrom graphics barplot box
+#' @importFrom stats median
+#' @export
+plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim) {
+  Year <- 1:SMSE@proyears
+
+  HOS <- apply(SMSE@HOS[, s, ], 2, FUN)
+  NOS <- apply(SMSE@NOS[, s, ], 2, FUN)
+  p_wild <- SMSE@p_wild[, s, ]
+  p_wild[is.na(p_wild)] <- 0
+
+  Spawners <- HOS + NOS
+  WILD <- apply(p_wild * SMSE@NOS[, s, ], 2, FUN)
+  NOS_notWILD <- apply((1 - p_wild) * SMSE@NOS[, s, ], 2, FUN)
+
+  x <- rbind(WILD, NOS_notWILD, HOS)
+
+  if (prop) {
+    x <- apply(x, 2, function(i) i/sum(i))
+    x[is.na(x)] <- 0
+  }
+
+  if (figure) {
+    if (missing(ylim)) {
+      if (prop) {
+        ylim <- c(0, 1)
+      } else {
+        ylim <- c(0, 1.1) * range(Spawners)
+      }
+    }
+    plot(Year, Spawners, xlim = range(Year) + c(-1, 0),
+         xlab = "Projection Year", ylab = ifelse(prop, "Proportion", "Spawners"),
+         typ = "n", ylim = ylim, panel.first = graphics::grid(), xaxs = "i", yaxs = "i")
+    barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year), add = TRUE, xpd = FALSE)
+    box()
+  }
+
+  invisible(x)
+}
+
+#' @name plot_statevar_ts
+#' @importFrom graphics legend lines
+#' @export
+plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
+  Year <- 1:SMSE@proyears
+
+  Fitness <- apply(SMSE@fitness[, s, 1, ], 2, FUN)
+  PNI <- apply(SMSE@PNI[, s, ], 2, FUN)
+  pHOSeff <- apply(SMSE@HOS_effective[, s, ]/(SMSE@HOS_effective[, s, ] + SMSE@NOS[, s, ]), 2, FUN)
+  pWILD <- apply(SMSE@p_wild[, s, ], 2, FUN)
+
+  x <- cbind(Fitness, PNI, pHOSeff, pWILD)
+
+  if (figure) {
+    if (missing(ylim)) ylim <- c(0, 1)
+    matplot(Year, x, type = "n", pch = 16,
+            xlab = "Projection Year", ylab = "Value",
+            ylim = ylim, panel.first = graphics::grid())
+
+    col <- 1:ncol(x)
+    for (i in 1:ncol(x)) {
+      x_i <- x[, i]
+      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i])
+    }
+    legend("bottomleft", legend = colnames(x), col = col, pch = 1, lwd = 1, bty = "n")
+  }
+
   invisible(x)
 }
 

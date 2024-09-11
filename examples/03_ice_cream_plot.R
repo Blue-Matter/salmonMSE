@@ -142,37 +142,46 @@ g <- ggplot(PNI_ts, aes(Year)) +
 ggsave("man/figures/PNI_ts.png", g, height = 3, width = 6)
 
 # Spawners
-plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median) {
-  Year <- 1:SMSE@proyears
-  Fitness <- apply(SMSE@fitness[, s, 1, ], 2, FUN)
-  PNI <- apply(SMSE@PNI[, s, ], 2, FUN)
-  pHOSeff <- apply(SMSE@HOS_effective[, s, ]/(SMSE@HOS_effective[, s, ] + SMSE@NOS[, s, ]), 2, FUN)
-  pWILD <- apply(SMSE@p_wild[, s, ], 2, FUN)
+Sp <- lapply(1:nrow(df), function(x) {
+  plot_spawners(SMSE_list[[x]], prop = FALSE, figure = FALSE) %>%
+    reshape2::melt() %>%
+    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
+}) %>%
+  bind_rows() %>%
+  rename(Year = Var2) %>%
+  mutate(Var1 = factor(Var1, levels = c("HOS", "NOS_notWILD", "WILD"))) %>%
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000))) %>%
+  mutate(kappa = paste("Productivity =", kappa)) %>%
+  dplyr::filter(value > 0)
 
-  plot(Year[!is.na(Fitness)], Fitness[!is.na(Fitness)],
-       xlab = "Projection Year", ylab = "Value",
-       typ = "o", ylim = c(0, 1), panel.first = graphics::grid())
-  lines(Year[!is.na(PNI)], PNI[!is.na(PNI)], typ = "o", col = 2)
-  lines(Year[!is.na(pHOSeff)], pHOSeff[!is.na(pHOSeff)], typ = "o", col = 3)
-  lines(Year[!is.na(pWILD)], pWILD[!is.na(pWILD)], typ = "o", col = 4)
+g <- ggplot(Sp, aes(Year, value, fill = Var1)) +
+  geom_area() +
+  facet_grid(vars(kappa), vars(hatch)) +
+  labs(x = "Projection Year", y = "Spawners", fill = NULL) +
+  coord_cartesian(ylim = c(0, 150), expand = FALSE) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "bottom") +
+  scale_fill_brewer(palette = "PuBuGn")
+ggsave("man/figures/spawners.png", g, height = 5, width = 6)
 
-  invisible(
-    data.frame(
-      Year = Year,
-      Fitness = Fitness,
-      PNI = PNI,
-      pHOSeff = pHOSeff,
-      pWILD = pWILD
-    )
-  )
-}
+# Fitness
+fitness <- lapply(1:nrow(df), function(x) {
+  plot_fitness(SMSE_list[[x]], figure = FALSE) %>%
+    reshape2::melt() %>%
+    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
+}) %>%
+  bind_rows() %>%
+  rename(Year = Var1) %>%
+  #mutate(Var1 = factor(Var1, levels = c("HOS", "NOS_notWILD", "WILD"))) %>%
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000))) %>%
+  mutate(kappa = paste("Productivity =", kappa)) %>%
+  dplyr::filter(value > 0)
 
-plot_spawners(SMSE_list[[1]], FUN = median)
-plot_spawners(SMSE_list[[1]], FUN = mean)
-
-
-
-
-
-
-
+g <- ggplot(fitness, aes(Year, value, colour = Var2)) +
+  geom_line() +
+  facet_grid(vars(kappa), vars(hatch)) +
+  labs(x = "Projection Year", y = "Median", colour = "Metric") +
+  coord_cartesian(ylim = c(0, 1), expand = FALSE) +
+  theme(legend.position = "bottom")
+ggsave("man/figures/fitness.png", g, height = 5, width = 6)

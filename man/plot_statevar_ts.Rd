@@ -3,6 +3,8 @@
 \name{plot_statevar_ts}
 \alias{plot_statevar_ts}
 \alias{plot_statevar_hist}
+\alias{plot_spawners}
+\alias{plot_fitness}
 \title{Plot output from salmonMSE}
 \usage{
 plot_statevar_ts(
@@ -18,6 +20,10 @@ plot_statevar_ts(
 )
 
 plot_statevar_hist(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...)
+
+plot_spawners(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim)
+
+plot_fitness(SMSE, s = 1, FUN = median, figure = TRUE, ylim)
 }
 \arguments{
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -39,6 +45,10 @@ plot_statevar_hist(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...)
 \item{...}{Additional arguments to base plot function}
 
 \item{y}{Integer. Projection year for the state variable to plot the histogram}
+
+\item{prop}{Logical, whether to plot proportions or absolute numbers}
+
+\item{FUN}{Summarizing function across simulations, typically \code{\link[=median]{median()}} or \code{\link[=mean]{mean()}}}
 }
 \value{
 Functions return the matrix of plotted values invisibly. Figure plotted from base graphics
@@ -48,6 +58,8 @@ Various functions that plot the state variables from salmonMSE projections:
 \itemize{
 \item \code{plot_statevar_ts()} produces a time series for all simulations, or with confidence intervals
 \item \code{plot_statevar_hist()} produces a histogram across all simulations for a particular year
+\item \code{plot_spawners()} produces a summary barplot of spawners, including NOS, HOS, and wild spawners
+\item \code{plot_fitness()} produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
 }
 }
 \seealso{

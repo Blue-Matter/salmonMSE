@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 The performance of alternative management actions, conditional on various states of nature, can be summarized in a decision table.
 
 This article provides an example of how a decision table can be created in salmonMSE.
+Decision tables and supporting visualizations require multiple model runs to compare management actions and states of nature.
 We extend the [simple example](../articles/example.html) of a salmon operating model that has a single brood year recruitment where all fish mature at age 3.
 
 We will explore the effect of three hatchery production options with 5000, 10000, or 15000 annual releases.
