@@ -382,3 +382,62 @@ setMethod("initialize", "SMSE",
             return(.Object)
           })
 
+
+
+
+#' @export
+setGeneric("report", function(object, ...) standardGeneric("report"))
+
+#' @name report
+#' @title Generate markdown reports
+#'
+#' @description Generate a markdown report for outcomes from a single operating model projection
+#'
+#' @param object \linkS4class{SMSE} object
+#' @param name Character string for the model name to include in the report, e.g., model run number.
+#' @param filename Character string for the name of the markdown and HTML files.
+#' @param dir The directory in which the markdown and HTML files will be saved.
+#' @param open_file Logical, whether the HTML document is opened after it is rendered.
+#' @param render_args List of arguments to pass to [rmarkdown::render()].
+#' @param ... Additional arguments (not used)
+#' @importFrom utils browseURL
+#' @aliases report,SMSE-method
+#' @export
+setMethod("report", "SMSE",
+          function(object, name = object@Name, filename = "SMSE", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
+
+            if (missing(name)) name <- substitute(object) %>% as.character()
+
+            dots <- list(...)
+            SMSE <- object # Needed for markdown file
+
+            ####### Function arguments for rmarkdown::render
+            rmd <- system.file("include", "SMSEreport.Rmd", package = "salmonMSE") %>% readLines()
+            rmd_split <- split(rmd, 1:length(rmd))
+
+            name_ind <- grep("NAME", rmd)
+            rmd_split[[name_ind]] <- paste("#", name, "{.tabset}")
+
+            stock_ind <- grep("ADD RMD BY STOCK", rmd)
+            rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames) %>% unlist()
+
+            filename_rmd <- paste0(filename, ".Rmd")
+
+            render_args$input <- file.path(dir, filename_rmd)
+            if (is.null(render_args$quiet)) render_args$quiet <- TRUE
+
+            # Generate markdown report
+            if (!dir.exists(dir)) {
+              message("Creating directory: ", dir)
+              dir.create(dir)
+            }
+            write(unlist(rmd_split), file = file.path(dir, filename_rmd))
+
+            # Rendering markdown file
+            message("Rendering markdown file: ", file.path(dir, filename_rmd))
+            output_filename <- do.call(rmarkdown::render, render_args)
+            message("Rendered file: ", output_filename)
+
+            if (open_file) browseURL(output_filename)
+            invisible(output_filename)
+          })
