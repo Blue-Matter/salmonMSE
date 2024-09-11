@@ -50,10 +50,16 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 }
 
 #' @name plot_statevar_ts
-#' @param y Integer. Projection year for the state variable to plot the histogram
+#' @param y Integer. Projection year for the state variable to plot the histogram. If missing, the last projection year is used.
 #' @param ... Additional arguments to base plot function
+#' @export
 #' @importFrom graphics hist
 plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...) {
+  if (missing(y)) {
+    xvar <- slot(SMSE, var)[, s, ] %>% colSums()
+    ymax <- max(which(!is.na(xvar) & xvar > 0))
+    y <- ymax
+  }
   x <- slot(SMSE, var)[, s, y]
   if (figure) hist(x, xlab = xlab, main = NULL, ...)
   invisible(x)

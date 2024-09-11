@@ -44,7 +44,7 @@ plot_fitness(SMSE, s = 1, FUN = median, figure = TRUE, ylim)
 
 \item{...}{Additional arguments to base plot function}
 
-\item{y}{Integer. Projection year for the state variable to plot the histogram}
+\item{y}{Integer. Projection year for the state variable to plot the histogram. If missing, the last projection year is used.}
 
 \item{prop}{Logical, whether to plot proportions or absolute numbers}
 
