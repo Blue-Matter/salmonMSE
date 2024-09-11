@@ -61,7 +61,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-09-10</h4>
+            <h4 data-toc-skip class="date">2024-09-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -86,8 +86,8 @@ the biological parameters, as well as the results, are identical among
 simulations.</p>
 <p>To accommodate the life stage within the age structured model, we
 model ocean survival as an equivalent instantaneous rate
-<code>Mocean_NOS</code> where all mortality occurs in the age class
-prior to maturation, i.e., age 2.</p>
+<code>Mjuv_NOS</code> where all mortality occurs in the age class prior
+to maturation, i.e., age 2.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.salmonmse.com/">salmonMSE</a></span><span class="op">)</span></span>
 <span></span>
@@ -102,7 +102,7 @@ prior to maturation, i.e., age 2.</p>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,           <span class="co"># Beverton-Holt asymptote. Not unfished capacity!</span></span>
 <span>  kappa <span class="op">=</span> <span class="fl">3</span>,                        <span class="co"># Productivity in recruits per spawner</span></span>
-<span>  Mocean_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,              <span class="co"># Spawning fecundity of NOS and HOS</span></span>
 <span>  p_female <span class="op">=</span> <span class="fl">0.49</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -148,7 +148,7 @@ environment.</p>
 <span>  s_prespawn <span class="op">=</span> <span class="fl">1</span>,                 <span class="co"># Survival prior to spawning</span></span>
 <span>  s_egg_smolt <span class="op">=</span> <span class="fl">0.92</span>,             <span class="co"># Survival of eggs in hatchery</span></span>
 <span>  s_egg_subyearling <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  Mocean_HOS <span class="op">=</span> <span class="va">Bio</span><span class="op">@</span><span class="va">Mocean_NOS</span>,</span>
+<span>  Mjuv_HOS <span class="op">=</span> <span class="va">Bio</span><span class="op">@</span><span class="va">Mjuv_NOS</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>  pmax_NOB <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  ptarget_NOB <span class="op">=</span> <span class="fl">0.51</span>,</span>
@@ -248,7 +248,7 @@ our stochastic operating model.</em></p>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,</span>
 <span>  kappa <span class="op">=</span> <span class="va">kappa</span>,</span>
-<span>  Mocean_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>
 <span>  p_female <span class="op">=</span> <span class="fl">0.49</span></span>
 <span><span class="op">)</span></span>

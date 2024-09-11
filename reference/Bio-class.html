@@ -92,14 +92,14 @@ In stage-based models, equivalent to the product of smolt productivity (smolts p
 <dt><code>phi</code></dt>
 <dd><p>Optional parameter, vector length <code>nsim</code>. Unfished egg production rate per smolt.
 The <code>alpha</code> parameter of the stock-recruit function will be the ratio of <code>kappa</code> and <code>phi</code>. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mocean_NOS</code> corresponding
+the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code> corresponding
 to the first year.</p></dd>
 
 
-<dt><code>Mocean_NOS</code></dt>
+<dt><code>Mjuv_NOS</code></dt>
 <dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>.
 Natural mortality of immature natural origin fish.
-To replicate the SAR parameter of a stage-specific model, set <code>Mocean_NOS[a] = -log(SAR)</code> where <code>a</code> is the age class prior to maturation (and zero for all other ages).</p></dd>
+To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] = -log(SAR)</code> where <code>a</code> is the age class prior to maturation (and zero for all other ages).</p></dd>
 
 
 <dt><code>fec</code></dt>
@@ -131,7 +131,7 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mocean_NOS[a
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:           SRrel capacity_smolt          kappa           Smax</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             phi     Mocean_NOS            fec       p_female</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             phi       Mjuv_NOS            fec       p_female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric      num.array        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Known Subclasses: "SOM"</span>

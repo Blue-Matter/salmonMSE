@@ -85,10 +85,10 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>.</p></dd>
 
 
-<dt><code>Mocean_HOS</code></dt>
+<dt><code>Mjuv_HOS</code></dt>
 <dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>.
 Natural mortality of immature hatchery origin fish.
-To replicate the SAR parameter of a stage-specific model, set <code>Mocean_HOS[a] = -log(SAR)</code> for the age class prior to maturation (and zero for all other ages).</p></dd>
+To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_HOS[a] = -log(SAR)</code> for the age class prior to maturation (and zero for all other ages).</p></dd>
 
 
 <dt><code>gamma</code></dt>
@@ -171,7 +171,7 @@ imperfect implementation of weir removal.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:          s_prespawn        s_egg_smolt  s_egg_subyearling</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          Mocean_HOS              gamma           pmax_NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Mjuv_HOS              gamma           pmax_NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
