@@ -251,12 +251,12 @@ CM_int <- function(p, d) {
       dgamma(p$sd_matt, 2, scale = 0.2, log = TRUE),
       dgamma(p$wt_sd, 2, scale = 0.2, log = TRUE),
       dgamma(p$wto_sd, 2, scale = 0.2, log = TRUE),
-      dgamma(p$lnS_sd, 2, scale = 0.2, log = TRUE)
+      dgamma(p$lnE_sd, 2, scale = 0.2, log = TRUE)
     ) +
     logprior_fanomPT_sd + logprior_fanomT_sd
 
   # Log likelihood
-  loglike_esc <- dnorm(logobsesc, logpredesc, p$lnS_sd, log = TRUE)
+  loglike_esc <- dnorm(logobsesc, logpredesc, p$lnE_sd, log = TRUE)
   loglike_cwtesc <- dpois(d$cwtesc, ebrood * d$cwtExp, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
@@ -353,7 +353,7 @@ make_CMpars <- function(p, d) {
   if (is.null(p$wto)) p$wto <- rep(0, d$Ldyr)
   if (is.null(p$fanomalyPT)) p$fanomalyPT <- rep(0, d$Ldyr)
   if (is.null(p$fanomalyT)) p$fanomalyT <- rep(0, d$Ldyr)
-  if (is.null(p$lnS_sd)) p$lnS_sd <- 0.1
+  if (is.null(p$lnE_sd)) p$lnE_sd <- 0.1
 
   if (is.null(p$FbasePT)) p$FbasePT <- 1
   if (is.null(p$FbaseT)) p$FbaseT <- 1
@@ -547,7 +547,7 @@ make_bounds <- function(par_names, data, lower_b1, upper_b1, lower_b, upper_b) {
     if (!missing(upper_b)) upper[names(upper) == "b"] <- upper_b
   }
 
-  if ("lnS_sd" %in% names(lower)) lower["lnS_sd"] <- 1e-8
+  if ("lnE_sd" %in% names(lower)) lower["lnE_sd"] <- 1e-8
   if ("wt_sd" %in% names(lower)) lower["wt_sd"] <- 1e-8
   if ("wto_sd" %in% names(lower)) lower["wto_sd"] <- 1e-8
   if ("fanomalyPT_sd" %in% names(lower)) lower["fanomalyPT_sd"] <- 1e-8

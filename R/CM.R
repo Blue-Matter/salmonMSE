@@ -90,7 +90,7 @@
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomaly_sd`. Default is zero.
 #' - `fanomalyT` Vector `Ldyr`. Annual deviates from `FbaseT * data$RelRegFT` to estimate terminal fishing mortality.
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomalyPT_sd`. Default is zero.
-#' - `lnS_sd` Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
+#' - `lnE_sd` Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical `gamma(2, 5)` prior. Default is 0.1.
 #' - `wt_sd` Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `wto_sd` Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `fanomalyPT_sd` Numeric, lognormal standard deviation of `fanomalyPT`. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
