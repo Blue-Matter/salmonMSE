@@ -286,6 +286,9 @@ setMethod("initialize", "SOM",
 #' @slot ExPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation rate of hatchery origin spawners.
 #' @slot ExT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate of hatchery origin spawners.
 #' @slot fitness Array `[nsim, nstocks, 2, proyears]`. Fitness of the population in the natural (1) and hatchery (2) environments.
+#' @slot pNOB Array `[nsim, nstocks, proyears]`. Proportion of natural fish in the brood.
+#' @slot pHOS_census Array `[nsim, nstocks, proyears]`. Proportion of spawners of hatchery origin, weighted by age class fecundity.
+#' @slot pHOS_effective Array `[nsim, nstocks, proyears]`. Proportion of spawners of hatchery origin, discounted by `gamma`, weighted by age class fecundity.
 #' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence, index of gene flow from hatchery to the natural environment.
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
@@ -359,6 +362,9 @@ setClass(
     ExPT_HOS = "array",
     ExT_HOS = "array",
     fitness = "array",
+    pNOB = "array",
+    pHOS_census = "array",
+    pHOS_effective = "array",
     Mjuv_loss = "array",
     PNI = "array",
     p_wild = "array",

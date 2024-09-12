@@ -100,6 +100,12 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{fitness}}{Array \verb{[nsim, nstocks, 2, proyears]}. Fitness of the population in the natural (1) and hatchery (2) environments.}
 
+\item{\code{pNOB}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of natural fish in the brood.}
+
+\item{\code{pHOS_census}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of spawners of hatchery origin, weighted by age class fecundity.}
+
+\item{\code{pHOS_effective}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of spawners of hatchery origin, discounted by \code{gamma}, weighted by age class fecundity.}
+
 \item{\code{PNI}}{Array \verb{[nsim, nstocks, proyears]}. Proportionate natural influence, index of gene flow from hatchery to the natural environment.}
 
 \item{\code{p_wild}}{Array \verb{[nsim, nstocks, proyears]}. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming

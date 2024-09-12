@@ -27,9 +27,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
   fitness <- array(NA_real_, c(SOM@nsim, ns, 2, SOM@proyears))
 
+  pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
+
   Mjuv_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
-  PNI <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
-  p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
 
   # NOS state variables from MMSE object
   p_NOS_imm <- 1
@@ -144,11 +144,11 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_smolt <- 1
     Mjuv_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
 
-    pNOB <- get_salmonMSE_var(state, var = "pNOB")
-    pHOSeff <- get_salmonMSE_var(state, var = "pHOSeff")
-    pHOScensus <- get_salmonMSE_var(state, var = "pHOScensus")
+    pNOB[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pNOB")
+    pHOS_effective[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOSeff")
+    pHOS_census[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOScensus")
 
-    PNI[, ns, y_spawn] <- pNOB/(pNOB + pHOSeff) # Withler et al. 2018, page 17
+    PNI[, ns, y_spawn] <- pNOB[, ns, y_spawn]/(pNOB[, ns, y_spawn] + pHOSeff[, ns, y_spawn]) # Withler et al. 2018, page 17
 
     NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@maxage, SOM@proyears))
     NOS_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "NOS")
@@ -168,6 +168,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     Smolt_NOS[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     PNI[, ns, y_spawn] <- p_wild[, ns, y_spawn] <- 1
+    pHOS_census[, ns, y_spawn] <- pHOS_effective[, ns, y_spawn] <- 0
   }
 
   SMSE <- new(
@@ -209,6 +210,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     ExPT_HOS = ExPT_HOS,
     ExT_HOS = ExT_HOS,
     fitness = fitness,
+    pNOB = pNOB,
+    pHOS_census = pHOS_census,
+    pHOS_effective = pHOS_effective,
     PNI = PNI,
     p_wild = p_wild,
     Mjuv_loss = Mjuv_loss

@@ -117,7 +117,7 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
 
   Fitness <- apply(SMSE@fitness[, s, 1, ], 2, FUN)
   PNI <- apply(SMSE@PNI[, s, ], 2, FUN)
-  pHOSeff <- apply(SMSE@HOS_effective[, s, ]/(SMSE@HOS_effective[, s, ] + SMSE@NOS[, s, ]), 2, FUN)
+  pHOSeff <- apply(SMSE@pHOS_effective[, s, ], 2, FUN)
   pWILD <- apply(SMSE@p_wild[, s, ], 2, FUN)
 
   x <- cbind(Fitness, PNI, pHOSeff, pWILD)

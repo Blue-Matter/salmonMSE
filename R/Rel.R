@@ -33,7 +33,7 @@
 
   # Spawners weighted by fecundity
   pNOB <- sum(fec_brood * broodtake$NOB)/sum(fec_brood * broodtake$NOB, fec_brood * broodtake$HOB)
-  pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec *HOS_effective)
+  pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
   # Natural egg production in the absence of fitness effects
