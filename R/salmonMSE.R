@@ -46,7 +46,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
     salmonMSE_env$Ford <- data.frame(
       x = zbar_start$Var1,
       p_smolt = 1,
-      t = 2 * zbar_start$Var2 - 2,  # Even time steps (remember MICE predicts Perr_y for next time step)
+      t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
       type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
       zbar = zbar_start$value
     )

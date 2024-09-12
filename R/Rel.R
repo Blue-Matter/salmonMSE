@@ -5,7 +5,7 @@
                         s_yearling, s_subyearling, p_yearling,
                         phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, SRRpars, # Spawning (natural production)
-                        fitness_args, p_smolt) {
+                        fitness_args, p_naturalsmolt) {
 
   output <- match.arg(output)
   Nage[is.na(Nage)] <- 0
@@ -46,8 +46,9 @@
 
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
+    #browser(expr = x == 2)
     # Get zbar from salmonMSE_env
-    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
+    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_naturalsmolt)
 
     if (nrow(zbar_prev)) {
       maxage <- length(NOS)
@@ -146,7 +147,7 @@
     # Save state variables
     df_N <- data.frame(
       x = x,
-      p_smolt = p_smolt,
+      p_smolt = p_naturalsmolt,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       a = 1:nrow(Nage),
       Esc_NOS = Nage[, 1],
@@ -161,7 +162,7 @@
 
     df_state <- data.frame(
       x = x,
-      p_smolt = p_smolt,
+      p_smolt = p_naturalsmolt,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       Egg_NOS = Egg_NOS_out,
       Egg_HOS = Egg_HOS_out,
@@ -185,7 +186,7 @@
     if (any(fitness_args$fitness_type == "Ford")) {
       df_Ford <- data.frame(
         x = x,
-        p_smolt = p_smolt,
+        p_smolt = p_naturalsmolt,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         type = c("natural", "hatchery"),
         zbar = zbar
@@ -197,7 +198,7 @@
   return(Perr_y)
 }
 
-makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
+makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery,
                           output = c("natural", "hatchery"),
                           ptarget_NOB, pmax_NOB, egg_local, fec_brood,
                           s_yearling, s_subyearling, p_yearling, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
@@ -229,7 +230,7 @@ makeRel_smolt <- function(p_smolt = 1, p_natural, p_hatchery,
   formals(func)$SRRpars <- SRRpars
 
   formals(func)$fitness_args <- fitness_args
-  formals(func)$p_smolt <- p_smolt
+  formals(func)$p_naturalsmolt <- p_naturalsmolt
 
   maxage <- length(fec)
   N_natural <- rep(1, maxage) %>% structure(names = paste0("Nage_", p_natural, 1:maxage))

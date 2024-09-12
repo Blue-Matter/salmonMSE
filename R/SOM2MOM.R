@@ -173,7 +173,7 @@ SOM2MOM <- function(SOM) {
 
     # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
-      p_smolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
+      p_smolt = 1, p_naturalsmolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood,
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
@@ -206,7 +206,7 @@ SOM2MOM <- function(SOM) {
     nRel <- length(Rel)
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
-      p_smolt = 4, p_natural = 3, p_hatchery = 6, output = "hatchery",
+      p_smolt = 4, p_naturalsmolt = 1, p_natural = 3, p_hatchery = 6, output = "hatchery",
       ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood,
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
