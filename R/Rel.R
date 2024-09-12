@@ -36,12 +36,13 @@
   pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec *HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
-  # Natural fry production in the absence of fitness effects
-  fry_NOS <- sum(NOS * p_female * fec)
-  fry_HOS <- sum(HOS_effective * p_female * fec)
+  # Natural egg production in the absence of fitness effects
+  Egg_NOS <- sum(NOS * p_female * fec)
+  Egg_HOS <- sum(HOS_effective * p_female * fec)
 
-  total_fry <- fry_NOS + fry_HOS
-  if (!total_fry && output == "natural") return(0) # Perr_y = 0
+  total_egg <- Egg_NOS + Egg_HOS
+  if (output == "natural" && !total_egg) return(0) # Perr_y = 0
+  if (output == "hatchery" && !sum(hatchery_production)) return(0) # Perr_y = 0
 
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
@@ -78,35 +79,34 @@
 
     # Fitness in the natural and hatchery environments
     fitness <- rep(1, 2)
-    if (fitness_args$fitness_type[i] == "Ford") {
-      for (i in 1:2) {
+    for (i in 1:2) {
+      if (fitness_args$fitness_type[i] == "Ford") {
         fitness[i] <- calc_fitness(
           zbar[i], fitness_args$theta[i], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor
         )
       }
     }
-
     fitness_loss <- outer(fitness, fitness_args$rel_loss, "^")
   } else {
     fitness <- c(1, 1)
     fitness_loss <- matrix(1, 2, 3)
   }
 
-  # Natural fry production after fitness loss
-  fry_NOS_out <- fry_NOS * fitness_loss[1, 1]
-  fry_HOS_out <- fry_HOS * fitness_loss[1, 1]
+  # Natural egg production after fitness loss
+  Egg_NOS_out <- Egg_NOS * fitness_loss[1, 1]
+  Egg_HOS_out <- Egg_HOS * fitness_loss[1, 1]
 
   # Hatchery production after fitness loss
   yearling_out <- yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
   subyearling_out <- subyearling * fitness_loss[2, 1]
-  total_fry_out <- fry_NOS_out + fry_HOS_out + subyearling_out
+  total_egg_out <- Egg_NOS_out + Egg_HOS_out + subyearling_out
 
   # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
   xx <- max(x, 1)
   SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
 
   smolt_subyearling <- calc_smolt(
-    subyearling_out, total_fry_out,
+    subyearling_out, total_egg_out,
     SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[2, 2],
     SRrel
@@ -119,23 +119,23 @@
   }
 
   smolt_NOS_proj <- calc_smolt(
-    fry_NOS_out, total_fry_out,
+    Egg_NOS_out, total_egg_out,
     SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
     SRrel
   )
 
   smolt_HOS_proj <- calc_smolt(
-    fry_HOS_out, total_fry_out,
+    Egg_HOS_out, total_egg_out,
     SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
     SRrel
   )
 
   # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production or habitat improvement)
-  fry_openMSE <- sum(Nage[, 1] * p_female * fec)
+  Egg_openMSE <- sum(Nage[, 1] * p_female * fec)
   smolt_NOS_SRR <- calc_smolt(
-    fry_openMSE, fry_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+    Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRrel = SRrel
   )
 
@@ -163,8 +163,8 @@
       x = x,
       p_smolt = p_smolt,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
-      fry_NOS = fry_NOS_out,
-      fry_HOS = fry_HOS_out,
+      Egg_NOS = Egg_NOS_out,
+      Egg_HOS = Egg_HOS_out,
       smolt_NOS = smolt_NOS_proj,
       smolt_HOS = smolt_HOS_proj,
       fitness_natural = fitness[1],

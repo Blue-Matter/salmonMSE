@@ -25,7 +25,7 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
 
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from fry life stage. \strong{Units of smolts.}}
+density-dependent natural smolt production from egg production. \strong{Units of smolts.}}
 
 \item{\code{kappa}}{Vector length \code{nsim}. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
 Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per egg}.

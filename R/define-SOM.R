@@ -255,8 +255,8 @@ setMethod("initialize", "SOM",
 #' @slot nsim Integer. The number of simulations
 #' @slot nstocks Integer. The number of stocks
 #' @slot Snames Character. Stock names
-#' @slot Fry_NOS Array `[nsim, nstocks, proyears]`. Spawning output of natural origin spawners.
-#' @slot Fry_HOS Array `[nsim, nstocks, proyears]`. Spawning output of hatchery origin spawners.
+#' @slot Egg_NOS Array `[nsim, nstocks, proyears]`. Spawning output, i.e., egg production, of natural origin spawners.
+#' @slot Egg_HOS Array `[nsim, nstocks, proyears]`. Spawning output of hatchery origin spawners.
 #' @slot Smolt_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners.
 #' @slot Smolt_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners.
 #' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
@@ -328,8 +328,8 @@ setClass(
     nsim = "numeric",
     nstocks = "numeric",
     Snames = "character",
-    Fry_NOS = "array",
-    Fry_HOS = "array",
+    Egg_NOS = "array",
+    Egg_HOS = "array",
     Smolt_NOS = "array",
     Smolt_HOS = "array",
     Smolt_Rel = "array",

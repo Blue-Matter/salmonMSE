@@ -21,7 +21,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
-  Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  Egg_NOS <- Egg_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -120,13 +120,13 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     if (length(y_spawn) != ngen) warning("Number of generations in salmonMSE state variables does not match generations in openMSE")
 
     NOS[, ns, y_spawn] <- get_salmonMSE_var(N, var = "NOS")
-    Fry_NOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "fry_NOS")
+    Egg_NOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "Egg_NOS")
     Smolt_NOS[, ns, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_NOS")
 
     HOS[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOS")
     HOS_effective[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOS_effective")
 
-    Fry_HOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "fry_HOS")
+    Egg_HOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "Egg_HOS")
     Smolt_HOS[, ns, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_HOS")
 
     # Broodtake & fitness
@@ -157,14 +157,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@fec, SOM@gamma)
 
   } else {
-    # If no hatchery, the NOS escapement is also the NOS, fry_NOS is the spawning output
+    # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
     NOS[] <- apply(Escapement_NOS, c(1, 2, 4), sum)
 
     p_smolt <- 1 # MSEtool population index for immature NOS
     p_spawn <- 3 # NOS escapement
     a_smolt <- 1
 
-    Fry_NOS[, ns, y_spawn] <- MMSE@SSB[, p_spawn, mp, y_spawnOM] # -1 from 1-year lag
+    Egg_NOS[, ns, y_spawn] <- MMSE@SSB[, p_spawn, mp, y_spawnOM] # -1 from 1-year lag
     Smolt_NOS[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     PNI[, ns, y_spawn] <- p_wild[, ns, y_spawn] <- 1
@@ -178,8 +178,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     nsim = SOM@nsim,
     nstocks = ns,
     Snames = "Single CU with hatchery",
-    Fry_NOS = Fry_NOS,
-    Fry_HOS = Fry_HOS,
+    Egg_NOS = Egg_NOS,
+    Egg_HOS = Egg_HOS,
     Smolt_NOS = Smolt_NOS,
     Smolt_HOS = Smolt_HOS,
     Smolt_Rel = Smolt_Rel,
@@ -222,14 +222,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
 #' @importFrom dplyr filter summarise
 #' @importFrom reshape2 acast
-get_salmonMSE_var <- function(d, var = "fry_NOS", p_smolt = 1) {
+get_salmonMSE_var <- function(d, var = "Egg_NOS", p_smolt = 1) {
   x <- t <- NULL
   dplyr::filter(d, .data$p_smolt == .env$p_smolt) %>%
     summarise(value = sum(.data[[var]]), .by = c(x, t)) %>%
     reshape2::acast(list("x", "t"), value.var = "value")
 }
 
-get_salmonMSE_agevar <- function(d, var = "fry_NOS", p_smolt = 1) {
+get_salmonMSE_agevar <- function(d, var = "Egg_NOS", p_smolt = 1) {
   dplyr::filter(d, .data$p_smolt == .env$p_smolt) %>%
     reshape2::acast(list("x", "a", "t"), value.var = var)
 }

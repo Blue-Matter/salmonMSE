@@ -82,7 +82,6 @@ More details are also provided in the [example](example.html) article.
 # Future development
 
 Development of salmonMSE is currently in progress.
-Currently, the operating model is intended to be used for species where all fish mature at a single age and operates on a generational cycle, analogous to AHA.
-Stochasticity is incorporated in the stock-recruit relationship, which predicts density-dependent smolt production from fry, and in the SAR parameter (survival to adult return).
+Stochasticity is incorporated in the stock-recruit relationship, which predicts density-dependent smolt production from eggs, and in the SAR parameter (survival to adult return).
 Multi-stock models are not yet supported.
 

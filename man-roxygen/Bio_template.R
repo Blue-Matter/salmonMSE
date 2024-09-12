@@ -4,7 +4,7 @@
 #' @slot p_mature Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`. The proportion mature by age.
 #' @slot SRrel Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"
 #' @slot capacity_smolt Vector length `nsim`. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-#'  density-dependent natural smolt production from fry life stage. **Units of smolts.**
+#'  density-dependent natural smolt production from egg production. **Units of smolts.**
 #' @slot kappa Vector length `nsim`. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component). **Units of recruits per egg**.
 #'  In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.

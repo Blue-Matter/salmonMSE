@@ -111,7 +111,7 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
   if (!missing(yline)) abline(h = yline, lty = 2)
 }
 
-compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
+compare(SAHA$Egg_NOS, SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 150000))
 
 png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
 compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 20])
@@ -193,11 +193,11 @@ SMSE@HOS[, 1, ]
 
 SAHA$HOS
 
-SMSE@Fry_HOS[, 1, ]
-SAHA$Fry_HOS
+SMSE@Egg_HOS[, 1, ]
+SAHA$Egg_HOS
 
-SMSE@Fry_NOS[, 1, ]
-SAHA$Fry_NOS
+SMSE@Egg_NOS[, 1, ]
+SAHA$Egg_NOS
 
 SMSE@Smolt_NOS[, 1, ]
 SAHA$Smolt_NOS

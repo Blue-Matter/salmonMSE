@@ -104,73 +104,7 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
   if (!missing(yline)) abline(h = yline, lty = 2)
 }
 
-compare(SAHA$Fry_NOS, SMSE@Fry_NOS[, 1, ], "Fry_NOS", ylim = c(0, 150000))
-
-png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
+compare(SAHA$Egg_NOS, SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 150000))
 compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.9731)
-dev.off()
 
-
-
-#
-
-SMSE@NOB[, 1, seq(1, 49, 3)]/
-  SAHA$NOB[, 1:17]
-
-SMSE@HOB[, 1, seq(1, 49, 3)]/SAHA$HOB[, 1:17]
-SAHA$HOB
-
-SMSE@NOB[, 1, ] + SMSE@HOB[, 1, ]
-SAHA$NOB + SAHA$HOB
-
-SMSE@NOS[, 1, ]
-SAHA$NOS
-
-SMSE@HOS[, 1, ]
-
-SAHA$HOS
-
-SMSE@Fry_HOS[, 1, ]
-SAHA$Fry_HOS
-
-SMSE@Fry_NOS[, 1, ]
-SAHA$Fry_NOS
-
-SMSE@Smolt_NOS[, 1, ]
-SAHA$Smolt_NOS
-
-SMSE@Smolt_HOS[, 1, ]
-SAHA$Smolt_HOS
-
-Smolt_all <- SMSE@Smolt_NOS[, 1, ] + SMSE@Smolt_HOS[, 1, ]
-
-SMSE@Return_NOS[, 1, 3, ]
-SAHA$Return_NOS
-
-SMSE@Return_HOS[, 1, 3, ]
-SAHA$Return_HOS
-
-surv <- SAHA$Return_HOS[, 2:20]/SAHA$Smolt_Rel[, -1]
-surv <- SMSE@Return_HOS[, 1, 3, seq(4, 49, 3)]/SMSE@Smolt_Rel[, 1, seq(2, 49, 3)]
-
-SAHA$Smolt_NOS + SAHA$Smolt_HOS
-SMSE@Smolt_NOS[, 1, ] + SMSE@Smolt_HOS[, 1, ]
-
-surv <- SAHA$Return_NOS[, 2:20]/(SAHA$Smolt_NOS[, -1] + SAHA$Smolt_HOS[, -1])
-surv <- SMSE@Return_NOS[, 1, 3, seq(4, 49, 3)]/(SMSE@Smolt_NOS[, 1, seq(2, 49, 3)] + SMSE@Smolt_HOS[, 1, seq(2, 49, 3)])
-
-plot(surv[1, ], typ = 'o', ylim = c(0.009, 0.01))
-
-exp(-SMSE@Mjuv_loss[, 1, 2, ])[1, ] %>% plot(typ = 'o', ylim = c(0.009, 0.01))
-SMSE@fitness[, 1, ]
-SAHA$fitness
-
-SOM <- salmonMSE:::check_SOM(SOM)
-MOM <- SOM2MOM(SOM)
-
-SAHA$alpha
-salmonMSE_env$state %>% reshape2::acast(list("x", "t"), value.var = "alpha")
-
-SAHA$beta
-salmonMSE_env$state %>% reshape2::acast(list("x", "t"), value.var = "beta")
 
