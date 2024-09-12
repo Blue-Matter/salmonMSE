@@ -55,7 +55,7 @@ CM_int <- function(p, d) {
   # predicted cwt catches for year
   # predicted cwt spawners for the year
   survPT <- ccwtPT <- survT <- ccwtT <- scwt <- matrix(NA_real_, d$Ldyr, d$Nages)
-  cyearPT <- cyearT <- recr <- syear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
+  cyearPT <- cyearT <- recr <- syear <- escyear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
 
   spawners <- catchPT <- catchT <- egg <- megg <- logpredesc <- moplot <- FPT <- FT <- numeric(d$Ldyr)
   matt <- matrix(0, d$Ldyr, d$Nages)
@@ -63,6 +63,17 @@ CM_int <- function(p, d) {
 
   N <- array(0, c(d$Ldyr+1, d$Nages, 2)) # Array slice 1 = natural origin fish, 2 = hatchery fish
   Ncwt <- matrix(0, d$Ldyr+1, d$Nages)
+
+  # Initialize mean phenotype, fitness, etc.
+  brood <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
+  pNOB <- pHOSeff <- pHOScensus <- numeric(d$Ldyr)
+
+  if (d$fitness) {
+    zbar <- matrix(0, d$Ldyr, 2)
+    fitness <- matrix(1, d$Ldyr, 2)
+    omega <- sqrt(d$fitness_variance) * d$selection_strength
+    omega2 <- omega * omega
+  }
 
   # Initialize N ----
   N[1, , 1] <- rhist * lhist               # initial numbers at age year 1
@@ -110,25 +121,78 @@ CM_int <- function(p, d) {
     cyearT[t, , ] <- recr[t, , ] * (1 - survT[t, ])
     ccwtT[t, ] <- Ncwt[t, ] * (1 - survT[t, ])
 
+    # predict escapement at age for the year
+    escyear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
+
     # predict spawners at age for the year
-    syear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
+    syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ]
     scwt[t, ] <- d$ssum * Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
 
     # predict egg production for the year
-    sp_t <- syear[t, , 1] + d$gamma * syear[t, , 2]
-    egg[t] <- sum(sp_t * d$fec * d$propwildspawn[t])
+    egg[t] <- sum(d$fec * (syear[t, , 1] + d$gamma * syear[t, , 2]))
+
+    # Assume broodtake is equal between NOB and HOB
+    # predict pHOS, pNOB
+    brood[t, , ] <- (1 - d$propwildspawn[t]) * escyear[t, , ]
+
+    pNOB[t] <- sum(d$fec * brood[t, , 1])/sum(d$fec * (brood[t, , 1] + brood[t, , 2]))
+    pHOSeff[t] <- sum(d$fec * d$gamma * syear[t, , 2])/
+      sum(d$fec * (syear[t, , 1] + d$gamma * syear[t, , 2]))
+    pHOScensus[t] <- sum(d$fec * syear[t, , 2])/sum(d$fec * (syear[t, , 1] + syear[t, , 2]))
+
+    if (d$fitness) {
+      # Retrieve zbar and fitness by brood year
+      zbar_brood <- matrix(0, d$Nages, 2)
+      for (a in 1:d$Nages) {
+        tt <- t - a
+        if (syear[t, a, 1] || brood[t, a, 1]) { # NOS or NOB
+          if (tt > 0) {
+            zbar_brood[a, 1] <- zbar[tt, 1]
+          } else {
+            zbar_brood[a, 1] <- d$zbar_start[1]
+          }
+        }
+        if (syear[t, a, 2] || brood[t, a, 2]) { # HOS_eff or HOB
+          if (tt > 0) {
+            zbar_brood[a, 2] <- zbar[tt, 2]
+          } else {
+            zbar_brood[a, 2] <- d$zbar_start[2]
+          }
+        }
+        if (tt > 0) {
+          surv_fitness <- exp(-mo[t, a]) * fitness[tt, 1]^d$rel_loss[3]
+          mo[t, a] <- -log(surv_fitness)
+        }
+      }
+
+      zbar[t, ] <- calc_zbar(
+        syear[t, , 1], d$gamma * syear[t, , 2], brood[t, , 1], brood[t, , 2],
+        d$fec, d$fec, zbar_brood,
+        d$omega2, d$theta, d$fitness_variance, d$heritability
+      )
+      fitness[t, ] <- calc_fitness(zbar[t, ], d$theta, omega2, d$fitness_variance, d$fitness_floor)
+    }
 
     # survive fish over the year, removing maturing fish that will spawn
     N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
     Ncwt[t+1, 2:d$Nages] <- Ncwt[t, 2:d$Nages - 1] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
 
-    megg[t] <- memin + mden * egg[t] + p$wt[t]
-    N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p$wt[t])
+    if (d$fitness) {
+      egg_fitness <- egg[t] * fitness[t, 1]^d$rel_loss[1]
+      alpha_fitness <- alpha * fitness[t, 1]^d$rel_loss[2]
+      beta_fitness <- beta/fitness[t, 1]^d$rel_loss[2]
+
+      megg[t] <- memin + mden * egg_fitness + p$wt[t]
+      N[t + d$lht, 1, 1] <- alpha_fitness * egg_fitness * exp(-beta_fitness * egg_fitness) * exp(-p$wt[t])
+    } else {
+      megg[t] <- memin + mden * egg[t] + p$wt[t]
+      N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p$wt[t])
+    }
     N[t + d$lht, 1, 2] <- d$hatchsurv * d$hatchrelease[t+1]
 
-    # total spawners
+    # total spawners and escapement
     spawners[t] <- sum(syear[t, , ])
-    logpredesc[t] <- log(spawners[t] + tiny)
+    logpredesc[t] <- log(sum(escyear[t, , ]) + tiny)
 
     catchPT[t] <- sum(cyearPT[t, , ]) # add up total catch for the year
     catchT[t] <- sum(cyearT[t, , ]) # add up total catch for the year
@@ -231,11 +295,13 @@ CM_int <- function(p, d) {
   REPORT(cyearT)
   REPORT(recr)
   REPORT(syear)
+  REPORT(escyear)
   REPORT(ccwtPT)
   REPORT(ccwtT)
   REPORT(scwt)
 
   REPORT(spawners)
+  REPORT(logpredesc)
   REPORT(catchPT)
   REPORT(catchT)
   REPORT(egg)
@@ -254,6 +320,16 @@ CM_int <- function(p, d) {
   REPORT(ebrood)
 
   REPORT(epro)
+
+  REPORT(brood)
+  REPORT(pNOB)
+  REPORT(pHOSeff)
+  REPORT(pHOScensus)
+
+  if (d$fitness) {
+    REPORT(fitness)
+    REPORT(zbar)
+  }
 
   REPORT(loglike_esc)
   REPORT(loglike_cwtcatPT)
@@ -399,6 +475,18 @@ check_data <- function(data) {
 
   if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
   if (is.null(data$so_sd)) data$so_sd <- 0.5
+
+  if (is.null(data$fitness)) data$fitness <- FALSE
+
+  if (data$fitness) {
+    if (is.null(data$theta)) data$theta <- c(100, 80)
+    if (is.null(data$rel_loss)) data$rel_loss <- c(0.3, 0.2, 0.5)
+    if (is.null(data$zbar_start)) data$zbar_start <- c(100, 100)
+    if (is.null(data$fitness_variance)) data$fitness_variance <- 10
+    if (is.null(data$selection_strength)) data$selection_strength <- 3
+    if (is.null(data$heritability)) data$heritability <- 0.5
+    if (is.null(data$fitness_floor)) data$fitness_floor <- 0.5
+  }
 
   return(data)
 }

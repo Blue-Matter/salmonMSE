@@ -96,6 +96,7 @@
   fry_NOS_out <- fry_NOS * fitness_loss[1, 1]
   fry_HOS_out <- fry_HOS * fitness_loss[1, 1]
 
+  # Hatchery production after fitness loss
   yearling_out <- yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
   subyearling_out <- subyearling * fitness_loss[2, 1]
   total_fry_out <- fry_NOS_out + fry_HOS_out + subyearling_out

@@ -96,6 +96,16 @@ reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 \item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
 \item \code{so_min} Numeric, lower bound for the estimate of unfished spawners. Default is \code{log(2 * max(data$obsescape))}.
 \item \code{maxcr} \emph{Optional}. Upper bound to the compensation ratio parameter (the minimum value is always 1).
+\item \code{fitness} Logical, whether to calculate fitness effects on survival. Default is \code{FALSE}.
+\item \code{theta} Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
+\href{https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival}{online article} for more information.
+\item \code{rel_loss} Vector length 3, the loss in fitness apportioned between the egg, fry (both prior to density-dependence), and smolt (after density-dependence) life stage. The three values should sum to 1.
+\item \code{zbar_start} Vector length 2, the mean phenotype of the spawners and broodtake in the natural and hatchery environment, respectively, at the start of the model. Default values of 100 and 100, implying maximum fitness at
+for the natural environment at the start of the model.
+\item \code{fitness_variance} Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments. Default is 10.
+\item \code{selection_strength} Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation. Default is 3.
+\item \code{heritability} Numeric. The heritability of the phenotypic trait. Between 0-1. Default is 0.5.
+\item \code{fitness_floor} Numeric. The minimum fitness value in the natural and hatchery environments. Default is 0.5.
 }
 }
 
