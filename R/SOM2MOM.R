@@ -165,8 +165,8 @@ SOM2MOM <- function(SOM) {
           fitness_variance = SOM@fitness_variance,
           fitness_floor = SOM@fitness_floor,
           heritability = SOM@heritability,
-          theta = SOM@theta,
-          zbar_start = SOM@zbar_start
+          #zbar_start = SOM@zbar_start
+          theta = SOM@theta
         )
       })
     }
@@ -278,6 +278,21 @@ check_SOM <- function(SOM) {
     }
   }
 
+  # Length 2 to nsim x maxage x 2
+  if (do_hatchery) {
+    if (!is.array(SOM@zbar_start)) {
+      if (length(SOM@zbar_start) != 2) stop("Slot zbar_start should be length 2 or an array [nsim x nage x 2]")
+      SOM@zbar_start <- array(SOM@zbar_start, c(2, SOM@nsim, SOM@maxage)) %>%
+        aperm(c(2, 3, 1))
+    }
+    if (is.array(SOM@zbar_start)) {
+      dim_check <- all(dim(SOM@zbar_start) == c(SOM@nsim, SOM@maxage, 2))
+      if (!dim_check) {
+        stop("Slot ", i, " must be an array of dimension ", paste(c(SOM@nsim, SOM@maxage, 2), collapse = ", "))
+      }
+    }
+  }
+
   # Length nsim
   if (SOM@SRrel == "BH") {
     var_stochastic <- c("capacity_smolt", "kappa", "phi")
@@ -305,8 +320,6 @@ check_SOM <- function(SOM) {
   }
 
   # Various hist objects
-
-
   var_F <- c("HistFPT", "HistFT")
   for(i in var_F) {
     if (!length(slot(SOM, i))) slot(SOM, i) <- rep(0, SOM@nyears)

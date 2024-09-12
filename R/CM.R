@@ -249,7 +249,11 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Hatchery@fitness_type <- "Ford"
     Hatchery@theta <- data$theta
     Hatchery@rel_loss <- data$rel_loss
-    Hatchery@zbar_start <- data$zbar_start
+
+    zbar <- sapply(report, getElement, "zbar", simplify = "array") %>%
+      aperm(c(3, 1, 2))
+    Hatchery@zbar_start <- zbar[, nyears - seq(1, data$Nages) + 1, ]
+
     Hatchery@fitness_variance <- data$fitness_variance
     Hatchery@selection_strength <- data$selection_strength
     Hatchery@heritability <- data$heritability

@@ -57,13 +57,13 @@
         if (NOS[a] || broodtake$NOB[a]) {
           zbar1 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "natural") %>%
             pull(.data$zbar)
-          if (!length(zbar1)) zbar1 <- fitness_args$zbar_start[1]
+          if (!length(zbar1)) stop("Cannot find zbar") # zbar1 <- fitness_args$zbar_start[1]
           zbar_brood[a, 1] <- zbar1
         }
         if (HOS_effective[a] || broodtake$HOB[a]) {
           zbar2 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "hatchery") %>%
             pull(.data$zbar)
-          if (!length(zbar2)) zbar2 <- fitness_args$zbar_start[2]
+          if (!length(zbar2)) stop("Cannot find zbar") # zbar2 <- fitness_args$zbar_start[2]
           zbar_brood[a, 2] <- zbar2
         }
       }

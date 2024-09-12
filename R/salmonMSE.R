@@ -20,6 +20,8 @@
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
   if (!silent) message("Converting salmon operating model to MOM..")
+
+  SOM <- check_SOM(SOM)
   MOM <- SOM2MOM(SOM)
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u_terminal, SOM@u_preterminal, SOM@m, SOM@release_mort)
@@ -37,6 +39,19 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   }
 
   if (!silent) message("Running forward projections..")
+
+  # Initialize zbar in data frame
+  if (any(SOM@fitness_type == "Ford")) {
+    zbar_start <- reshape2::melt(SOM@zbar_start)
+    salmonMSE_env$Ford <- data.frame(
+      x = zbar_start$Var1,
+      p_smolt = 1,
+      t = 2 * zbar_start$Var2 - 2,  # Even time steps (remember MICE predicts Perr_y for next time step)
+      type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
+      zbar = zbar_start$value
+    )
+  }
+
   M <- ProjectMOM(H, MPs = "Harvest_MMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
                   dropHist = TRUE, extended = FALSE)
   M@multiHist <- H
