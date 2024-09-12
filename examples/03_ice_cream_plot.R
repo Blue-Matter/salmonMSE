@@ -152,7 +152,8 @@ Sp <- lapply(1:nrow(df), function(x) {
   mutate(Var1 = factor(Var1, levels = c("HOS", "NOS_notWILD", "WILD"))) %>%
   mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000))) %>%
   mutate(kappa = paste("Productivity =", kappa)) %>%
-  dplyr::filter(value > 0)
+  dplyr::filter(value > 0) %>%
+  mutate(p = value/sum(value), .by = c(Year, kappa, hatch))
 
 g <- ggplot(Sp, aes(Year, value, fill = Var1)) +
   geom_area() +
@@ -164,6 +165,17 @@ g <- ggplot(Sp, aes(Year, value, fill = Var1)) +
         legend.position = "bottom") +
   scale_fill_brewer(palette = "PuBuGn")
 ggsave("man/figures/spawners.png", g, height = 5, width = 6)
+
+g <- ggplot(Sp, aes(Year, p, fill = Var1)) +
+  geom_area() +
+  facet_grid(vars(kappa), vars(hatch)) +
+  labs(x = "Projection Year", y = "Spawners", fill = NULL) +
+  coord_cartesian(ylim = c(0, 1), expand = FALSE) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "bottom") +
+  scale_fill_brewer(palette = "PuBuGn")
+ggsave("man/figures/spawners_prop.png", g, height = 5, width = 6)
 
 # Fitness
 fitness <- lapply(1:nrow(df), function(x) {
