@@ -144,8 +144,8 @@ However, smolt production occurs in the year after spawning. Therefore,
 we advance the age structure of the escapement one extra year in openMSE
 in order to ensure smolt production occurs in the correct time step. In
 the reporting array, the escapement, abundance of spawners, broodtake,
-and the spawning output (fry production) are adjusted back to the
-appropriate biological year.</p></li>
+and the egg production are adjusted back to the appropriate biological
+year.</p></li>
 <li><p>In the absence of a hatchery, the escapement is the number of
 spawners. In such a scenario, the spawning output and the smolt
 production can be calculated entirely within openMSE. With a hatchery,
@@ -154,7 +154,7 @@ the spawning grounds. openMSE sees none of the hatchery dynamics.
 Instead, a MICE function created by salmonMSE will read in the natural
 and hatchery escapement from openMSE, calculate the broodtake, removal
 of hatchery fish from spawning grounds, calculate fitness, adjust the
-stock-recruit parameters, apply fitness to the fry and smolt production,
+stock-recruit parameters, apply fitness to the egg and smolt production,
 and return the natural smolt production as a “recruitment deviation” to
 openMSE. This is a multiplicative term that adjusts the natural smolt
 production that would have been created if there were no hatchery (note
@@ -192,7 +192,7 @@ levers.</em></p>
 </h2>
 <p>The following figure illustrates the age structure of a salmon that
 matures at age 3. In the matrix, the abundance of age zero and age 1
-represent the abundance of fry and smolts, respectively. At age 2, the
+represent the abundance of egg and smolts, respectively. At age 2, the
 abundance may represent juvenile fish in the marine life stage (although
 it may occur over the course of ages 1 and 2) that is vulnerable to the
 pre-terminal fishery. With maturity at age 3, the abundance at the
@@ -211,7 +211,7 @@ density-dependent survival must occur within the same time step as the
 spawning. As a result, we must advance the age class with an additional
 placeholder age class after maturity into the following year that
 spawning actually occurs. However, we can then calculate the necessary
-hatchery and spawning dynamics, including fry production, in salmonMSE
+hatchery and spawning dynamics, including egg production, in salmonMSE
 and merely pass the smolt production back to openMSE. The result is that
 the age structure ‘catches up’ with the generational life cycle, as
 shown below.</p>

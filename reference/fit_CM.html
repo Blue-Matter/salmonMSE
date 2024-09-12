@@ -170,6 +170,16 @@ reduces the CWT predictions by 0.1 for the likelihood. Default is 1.</p></li>
 <li><p><code>so_sd</code> Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.</p></li>
 <li><p><code>so_min</code> Numeric, lower bound for the estimate of unfished spawners. Default is <code>log(2 * max(data$obsescape))</code>.</p></li>
 <li><p><code>maxcr</code> <em>Optional</em>. Upper bound to the compensation ratio parameter (the minimum value is always 1).</p></li>
+<li><p><code>fitness</code> Logical, whether to calculate fitness effects on survival. Default is <code>FALSE</code>.</p></li>
+<li><p><code>theta</code> Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
+<a href="https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival">online article</a> for more information.</p></li>
+<li><p><code>rel_loss</code> Vector length 3, the loss in fitness apportioned between the egg, fry (both prior to density-dependence), and smolt (after density-dependence) life stage. The three values should sum to 1.</p></li>
+<li><p><code>zbar_start</code> Vector length 2, the mean phenotype of the spawners and broodtake in the natural and hatchery environment, respectively, at the start of the model. Default values of 100 and 100, implying maximum fitness at
+for the natural environment at the start of the model.</p></li>
+<li><p><code>fitness_variance</code> Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments. Default is 10.</p></li>
+<li><p><code>selection_strength</code> Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation. Default is 3.</p></li>
+<li><p><code>heritability</code> Numeric. The heritability of the phenotypic trait. Between 0-1. Default is 0.5.</p></li>
+<li><p><code>fitness_floor</code> Numeric. The minimum fitness value in the natural and hatchery environments. Default is 0.5.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="start">start<a class="anchor" aria-label="anchor" href="#start"></a></h2>
@@ -188,7 +198,7 @@ Estimated with normal prior with mean zero and standard deviation <code>p$wto_sd
 Estimated with normal prior with mean zero and standard deviation <code>p$fanomaly_sd</code>. Default is zero.</p></li>
 <li><p><code>fanomalyT</code> Vector <code>Ldyr</code>. Annual deviates from <code>FbaseT * data$RelRegFT</code> to estimate terminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation <code>p$fanomalyPT_sd</code>. Default is zero.</p></li>
-<li><p><code>lnS_sd</code> Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
+<li><p><code>lnE_sd</code> Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 0.1.</p></li>
 <li><p><code>wt_sd</code> Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>wto_sd</code> Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>fanomalyPT_sd</code> Numeric, lognormal standard deviation of <code>fanomalyPT</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>

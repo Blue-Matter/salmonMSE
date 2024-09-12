@@ -85,11 +85,11 @@
 <dd><p>Character. Stock names</p></dd>
 
 
-<dt><code>Fry_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Spawning output of natural origin spawners.</p></dd>
+<dt><code>Egg_NOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Spawning output, i.e., egg production, of natural origin spawners.</p></dd>
 
 
-<dt><code>Fry_HOS</code></dt>
+<dt><code>Egg_HOS</code></dt>
 <dd><p>Array <code>[nsim, nstocks, proyears]</code>. Spawning output of hatchery origin spawners.</p></dd>
 
 
@@ -209,6 +209,18 @@
 <dd><p>Array <code>[nsim, nstocks, 2, proyears]</code>. Fitness of the population in the natural (1) and hatchery (2) environments.</p></dd>
 
 
+<dt><code>pNOB</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of natural fish in the brood.</p></dd>
+
+
+<dt><code>pHOS_census</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of spawners of hatchery origin, weighted by age class fecundity.</p></dd>
+
+
+<dt><code>pHOS_effective</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportion of spawners of hatchery origin, discounted by <code>gamma</code>, weighted by age class fecundity.</p></dd>
+
+
 <dt><code>PNI</code></dt>
 <dd><p>Array <code>[nsim, nstocks, proyears]</code>. Proportionate natural influence, index of gene flow from hatchery to the natural environment.</p></dd>
 
@@ -249,7 +261,7 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name         nyears       proyears           nsim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         nstocks         Snames        Fry_NOS        Fry_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         nstocks         Snames        Egg_NOS        Egg_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric      character          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Smolt_NOS      Smolt_HOS      Smolt_Rel     Return_NOS</span>
@@ -273,11 +285,11 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:        ExPT_NOS        ExT_NOS       ExPT_HOS        ExT_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         fitness      Mjuv_loss            PNI         p_wild</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         fitness           pNOB    pHOS_census pHOS_effective</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Mjuv_loss            PNI         p_wild           Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array           list</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
