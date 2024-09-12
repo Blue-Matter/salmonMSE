@@ -182,8 +182,9 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   fit <- stanfit@.MISC$CMfit
   if (is.null(fit)) stop("CM fitted object not found in stanfit@.MISC$CMfit")
-  report <- get_report(stanfit, fit, sims)
   data <- get_CMdata(fit)
+
+  report <- get_report(stanfit, sims)
   nsim_om <- length(sims)
   nyears <- data$Ldyr
 
@@ -243,6 +244,19 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     HistFPT = FPT,
     HistFT = FT
   )
+
+  if (data$fitness) {
+    Hatchery@fitness_type <- "Ford"
+    Hatchery@theta <- data$theta
+    Hatchery@rel_loss <- data$rel_loss
+    Hatchery@zbar_start <- data$zbar_start
+    Hatchery@fitness_variance <- data$fitness_variance
+    Hatchery@selection_strength <- data$selection_strength
+    Hatchery@heritability <- data$heritability
+    Hatchery@fitness_floor <- data$fitness_floor
+  } else {
+    Hatchery@fitness_type <- "none"
+  }
 
   SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest, Historical, nyears = nyears, proyears = proyears)
 

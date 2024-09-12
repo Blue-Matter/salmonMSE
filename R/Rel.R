@@ -54,13 +54,13 @@
 
       # Trait value by brood year
       for (a in 1:maxage) {
-        if (NOS[a] || NOB[a]) {
+        if (NOS[a] || broodtake$NOB[a]) {
           zbar1 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "natural") %>%
             pull(.data$zbar)
           if (!length(zbar1)) zbar1 <- fitness_args$zbar_start[1]
           zbar_brood[a, 1] <- zbar1
         }
-        if (HOS_effective[a] || HOB[a]) {
+        if (HOS_effective[a] || broodtake$HOB[a]) {
           zbar2 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "hatchery") %>%
             pull(.data$zbar)
           if (!length(zbar2)) zbar2 <- fitness_args$zbar_start[2]
@@ -69,7 +69,7 @@
       }
 
       zbar <- calc_zbar(
-        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_brood, y,
+        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_brood,
         fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
       )
     } else {

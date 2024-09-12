@@ -145,32 +145,22 @@ CM_int <- function(p, d) {
       zbar_brood <- matrix(0, d$Nages, 2)
       for (a in 1:d$Nages) {
         tt <- t - a
-        if (syear[t, a, 1] || brood[t, a, 1]) { # NOS or NOB
-          if (tt > 0) {
-            zbar_brood[a, 1] <- zbar[tt, 1]
-          } else {
-            zbar_brood[a, 1] <- d$zbar_start[1]
-          }
-        }
-        if (syear[t, a, 2] || brood[t, a, 2]) { # HOS_eff or HOB
-          if (tt > 0) {
-            zbar_brood[a, 2] <- zbar[tt, 2]
-          } else {
-            zbar_brood[a, 2] <- d$zbar_start[2]
-          }
-        }
         if (tt > 0) {
-          surv_fitness <- exp(-mo[t, a]) * fitness[tt, 1]^d$rel_loss[3]
-          mo[t, a] <- -log(surv_fitness)
+          zbar_brood[a, ] <- zbar[tt, ]
+          if (a < d$Nages) {
+            surv_fitness <- exp(-mo[t, a]) * fitness[tt, 1]^d$rel_loss[3]
+            mo[t, a] <- -log(surv_fitness)
+          }
+        } else {
+          zbar_brood[a, ] <- d$zbar_start
         }
       }
-
       zbar[t, ] <- calc_zbar(
         syear[t, , 1], d$gamma * syear[t, , 2], brood[t, , 1], brood[t, , 2],
         d$fec, d$fec, zbar_brood,
-        d$omega2, d$theta, d$fitness_variance, d$heritability
+        omega2, d$theta, d$fitness_variance, d$heritability
       )
-      fitness[t, ] <- calc_fitness(zbar[t, ], d$theta, omega2, d$fitness_variance, d$fitness_floor)
+      fitness[t, ] <- exp(-0.5 * (zbar[t, ] - d$theta)^2/(omega2 + d$fitness_variance)) # fitness_floor not used here!
     }
 
     # survive fish over the year, removing maturing fish that will spawn
