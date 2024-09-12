@@ -49,8 +49,27 @@
     zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_smolt)
 
     if (nrow(zbar_prev)) {
+      maxage <- length(NOS)
+      zbar_brood <- matrix(0, maxage, 2) # Column 1 = natural environment, 2 = hatchery environment
+
+      # Trait value by brood year
+      for (a in 1:maxage) {
+        if (NOS[a] || NOB[a]) {
+          zbar1 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "natural") %>%
+            pull(.data$zbar)
+          if (!length(zbar1)) zbar1 <- fitness_args$zbar_start[1]
+          zbar_brood[a, 1] <- zbar1
+        }
+        if (HOS_effective[a] || HOB[a]) {
+          zbar2 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "hatchery") %>%
+            pull(.data$zbar)
+          if (!length(zbar2)) zbar2 <- fitness_args$zbar_start[2]
+          zbar_brood[a, 2] <- zbar2
+        }
+      }
+
       zbar <- calc_zbar(
-        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_prev, fitness_args$zbar_start, y,
+        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_brood, y,
         fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
       )
     } else {
@@ -59,13 +78,14 @@
 
     # Fitness in the natural and hatchery environments
     fitness <- rep(1, 2)
-    for (i in 1:2) {
-      if (fitness_args$fitness_type[i] == "Ford") {
+    if (fitness_args$fitness_type[i] == "Ford") {
+      for (i in 1:2) {
         fitness[i] <- calc_fitness(
           zbar[i], fitness_args$theta[i], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor
         )
       }
     }
+
     fitness_loss <- outer(fitness, fitness_args$rel_loss, "^")
   } else {
     fitness <- c(1, 1)
