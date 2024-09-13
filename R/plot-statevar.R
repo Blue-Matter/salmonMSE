@@ -99,11 +99,12 @@ plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE,
         ylim <- c(0, 1.1) * range(Spawners)
       }
     }
+    col <- c("#004533", "#76A6D0", "#FFF7FD") #grDevices::hcl.colors(3, palette = "PuBuGn")
     plot(Year, Spawners, xlim = range(Year) + c(-1, 0),
          xlab = "Projection Year", ylab = ifelse(prop, "Proportion", "Spawners"),
          typ = "n", ylim = ylim, xaxs = "i", yaxs = "i")
-    barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year), add = TRUE, xpd = FALSE)
-    box()
+    barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year),
+            col = col, border = "grey40", add = TRUE, xpd = FALSE)
   }
 
   invisible(x)
@@ -124,16 +125,16 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
 
   if (figure) {
     if (missing(ylim)) ylim <- c(0, 1)
-    matplot(Year, x, type = "n", pch = 16,
-            xlab = "Projection Year", ylab = "Value",
+    matplot(Year, x, type = "n", xlab = "Projection Year", ylab = "Value",
             ylim = ylim)
 
     col <- 1:ncol(x)
+    pch <- c(1, 4, 16, 18)
     for (i in 1:ncol(x)) {
       x_i <- x[, i]
-      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i])
+      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i], pch = pch[i])
     }
-    legend("bottomleft", legend = colnames(x), col = col, pch = 1, lwd = 1, bty = "n")
+    legend("bottomleft", legend = colnames(x), col = col, pch = pch, lwd = 1, bty = "n")
   }
 
   invisible(x)
