@@ -1,0 +1,123 @@
+
+---
+title: "salmonMSE conditioning model"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    highlight: rstudio
+    df_print: paged
+---
+
+<style type="text/css">
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+</style>
+
+```{r setup, include = FALSE, echo = FALSE}
+library(tidyverse)
+library(salmonMSE)
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = FALSE, message = FALSE,
+  fig.width = 6, fig.height = 4.5, out.width = "650px", comment = "#>"
+)
+theme_set(theme_bw())
+```
+
+# NAME {.tabset}
+
+## Summary
+
+```{r}
+data.frame(
+  Parameter = c("Historical years", "Age classes", "MCMC iterations"),
+  Value = c(d$Ldyr, d$Nages, length(report))
+)
+```
+
+## Estimates
+
+```{r}
+pars_core <- c("cr", "log_so", "moadd", "FbasePT", "FbaseT", "lp")
+stan_trace(samp, pars_core)
+```
+
+```{r}
+pars_var <- c("lnE_sd", "wt_sd", "wto_sd", "fanomalyPT_sd", "fanomalyT_sd", "sd_matt")
+stan_trace(samp, pars_var)
+```
+
+```{r}
+pars_cov <- c("b1", "b")
+stan_trace(samp, pars_cov)
+```
+
+```{r}
+pairs_panel(samp, pars_core)
+```
+
+```{r}
+pairs_panel(samp, pars_var)
+```
+
+```{r}
+pairs_panel(samp, pars_cov)
+```
+
+<!-- Plot deviation parameters -->
+
+## Fits
+
+```{r}
+CM_fit_esc(report, d, year)
+```
+
+```{r}
+CM_esc(report, d, year1)
+```
+
+```{r}
+CM_catch(report, d, PT = TRUE, year1)
+```
+
+```{r}
+CM_catch(report, d, PT = FALSE, year1)
+```
+
+## State variables
+
+```{r}
+CM_maturity(report, d, year)
+```
+
+```{r, fig.cap="Stock recruit relationship"}
+CM_SRR(report)
+```
+
+```{r M}
+CM_M(report, year1)
+```
+
+```{r}
+CM_F(report, PT = TRUE, year1)
+```
+
+```{r}
+CM_F(report, PT = FALSE, year1)
+```
+
+```{r}
+CM_Njuv(report, year1, ci = FALSE) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+CM_Njuv(report, year1, ci = TRUE) +
+  theme(legend.position = "bottom")
+```
+
+## About
+
+This report was generated on: `r Sys.time()`<br />
+salmonMSE version `r packageVersion("salmonMSE")`<br />
+`r R.version.string`
