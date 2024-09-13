@@ -148,7 +148,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     pHOS_effective[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOSeff")
     pHOS_census[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOScensus")
 
-    PNI[, ns, y_spawn] <- pNOB[, ns, y_spawn]/(pNOB[, ns, y_spawn] + pHOSeff[, ns, y_spawn]) # Withler et al. 2018, page 17
+    PNI[, ns, y_spawn] <- pNOB[, ns, y_spawn]/(pNOB[, ns, y_spawn] + pHOS_effective[, ns, y_spawn]) # Withler et al. 2018, page 17
 
     NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@maxage, SOM@proyears))
     NOS_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "NOS")

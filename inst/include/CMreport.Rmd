@@ -1,0 +1,142 @@
+
+---
+title: "salmonMSE conditioning model"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    highlight: rstudio
+    df_print: paged
+---
+
+<style type="text/css">
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+</style>
+
+```{r setup, include = FALSE, echo = FALSE}
+library(tidyverse)
+library(salmonMSE)
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = FALSE, message = FALSE,
+  fig.width = 6, fig.height = 4.5, out.width = "650px", comment = "#>"
+)
+theme_set(theme_bw())
+```
+
+# NAME {.tabset}
+
+## Summary
+
+```{r}
+data.frame(
+  Parameter = c("Historical years", "Age classes", "MCMC iterations"),
+  Value = c(d$Ldyr, d$Nages, length(report))
+)
+```
+
+```{r}
+df_pars <- rstan::summary(stanfit)$summary %>%
+  round(3) %>%
+  as.data.frame()
+df_pars[, c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
+```
+
+## Estimates
+
+```{r trace-cr, fig.cap="MCMC wormplots of productivity parameters, scaling parameters and the log-posterior."}
+pars_core <- c("cr", "log_so", "moadd", "FbasePT", "FbaseT", "lp")
+stan_trace(stanfit, pars_core)
+```
+
+```{r trace-cov, fig.cap="MCMC wormplots of coefficients for mortality covariates."}
+pars_cov <- c("^b")
+stan_trace(stanfit, pars_cov)
+```
+
+```{r trace-var, fig.cap="MCMC wormplots of variance parameters."}
+pars_var <- c("lnE_sd", "wt_sd", "wto_sd", "fanomalyPT_sd", "fanomalyT_sd", "sd_matt")
+stan_trace(stanfit, pars_var)
+```
+
+```{r pairs-cr, fig.cap="Marginal posterior distributions and correlations of productivity parameters, scaling parameters and the log-posterior."}
+pairs_panel(stanfit, pars_core)
+```
+
+```{r pairs-cov, fig.cap="Marginal posterior distributions and correlations of coefficients for mortality covariates."}
+pairs_panel(stanfit, pars_cov)
+```
+
+```{r pairs-var, fig.cap="Marginal posterior distributions and correlations of variance parameters."}
+pairs_panel(stanfit, pars_var)
+```
+
+```{r matt, fig.cap="Posterior estimates of maturity (medians and 95% prediction interval)."}
+CM_maturity(report, d, year1)
+```
+
+```{r wt, fig.cap="Posterior estimates of egg mortality deviates from the stock-recruit relationship (medians and 95% prediction interval)."}
+CM_wt(stanfit, year1)
+```
+
+```{r wto, fig.cap="Posterior estimates of age 1 mortality deviates (medians and 95% prediction interval)."}
+CM_wto(stanfit, year1)
+```
+
+## Fits
+
+```{r fit-esc, fig.cap="Observed total escapement (points) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_esc(report, d, year)
+```
+
+```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_CWTesc(report, d, year1)
+```
+
+```{r fit-cwt-catpt, fig.cap="Observed coded wire tag preterminal catch at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_CWTcatch(report, d, PT = TRUE, year1)
+```
+
+```{r fit-cwt-catt, fig.cap="Observed coded wire tag terminal catch at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_CWTcatch(report, d, PT = FALSE, year1)
+```
+
+## State variables
+
+```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Points show annual smolt production (medians)."}
+CM_SRR(report)
+```
+
+```{r M, fig.cap="Natural mortality at age (medians and 95% prediction interval)."}
+CM_M(report, year1)
+```
+
+```{r Msurv, fig.cap="Natural survival at age (medians and 95% prediction interval)."}
+CM_surv(report, year1)
+```
+
+```{r FPT, fig.cap="Preterminal fishing mortality (medians and 95% prediction interval)."}
+CM_F(report, PT = TRUE, year1)
+```
+
+```{r FT, fig.cap="Terminal fishing mortality (medians and 95% prediction interval)."}
+CM_F(report, PT = FALSE, year1)
+```
+
+```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval)."}
+CM_Njuv(report, year1, ci = FALSE)
+```
+
+```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
+CM_recr(report, year1, ci = TRUE)
+```
+
+```{r esc, fig.cap="Escapement at age (medians and 95% prediction interval)."}
+CM_esc(report, year1)
+```
+
+## About
+
+This report was generated on: `r Sys.time()`<br />
+salmonMSE version `r packageVersion("salmonMSE")`<br />
+`r R.version.string`

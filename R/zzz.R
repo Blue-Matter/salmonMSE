@@ -5,6 +5,13 @@
   salmonMSE_env$state <- data.frame()
 }
 
+if(getRversion() >= "2.15.1") {
+  utils::globalVariables(
+    c(".", "2.5%", "50%", "97.5%", "Age", "Chain", "Iteration", "Origin",
+      "Var1", "Var2", "Var3", "Var4", "Year", "value", "variable")
+  )
+}
+
 #' @importFrom graphics grid matplot abline par
 plot.default <- function(..., zero_line = FALSE) {
   if (zero_line) {

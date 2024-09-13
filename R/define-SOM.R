@@ -408,6 +408,7 @@ setGeneric("report", function(object, ...) standardGeneric("report"))
 #' @param ... Additional arguments (not used)
 #' @importFrom utils browseURL
 #' @aliases report,SMSE-method
+#' @importFrom rmarkdown render
 #' @export
 setMethod("report", "SMSE",
           function(object, name = object@Name, filename = "SMSE", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
