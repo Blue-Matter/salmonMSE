@@ -2,7 +2,7 @@
 
 #' All-H Analyzer
 #'
-#' Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA
+#' Wrapper function for an implementation of All-H Analyzer ([AHA](https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/)) in R. Can be used to compare outputs between AHA
 #' and salmonMSE.
 #'
 #' @param SOM An object of class \linkS4class{SOM}
@@ -10,6 +10,7 @@
 #' @param silent Logical, indicates whether to silence messages to the R console
 #' @return A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
 #'
+#' @references Hatchery Scientific Review Group. 2020. All-H Analyzer Tool Guide and Documentation. May 2020.
 #' @export
 AHA <- function(SOM, ngen = 100, silent = FALSE) {
   SOM <- check_SOM(SOM)

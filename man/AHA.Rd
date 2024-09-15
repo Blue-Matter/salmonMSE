@@ -17,6 +17,9 @@ AHA(SOM, ngen = 100, silent = FALSE)
 A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
 }
 \description{
-Wrapper function for an implementation of All-H Analyzer (AHA) in R. Can be used to compare outputs between AHA
+Wrapper function for an implementation of All-H Analyzer (\href{https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/}{AHA}) in R. Can be used to compare outputs between AHA
 and salmonMSE.
+}
+\references{
+Hatchery Scientific Review Group. 2020. All-H Analyzer Tool Guide and Documentation. May 2020.
 }
