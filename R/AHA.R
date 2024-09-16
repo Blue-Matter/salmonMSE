@@ -103,7 +103,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     p_female = SOM@p_female,
     surv_ocean = SAR_NOS[x],
     surv_passage_juv = 1,
-    surv_passage_adult = 1,
+    surv_passage_adult = SOM@s_enroute,
     u_HOR = c(u_HOR, 0, 0, 0),
     u_NOR = c(u_NOR, 0, 0, 0),
     surv_pre_spawn = SOM@s_prespawn,

@@ -44,7 +44,8 @@ setClass(
     phi = "numeric",
     Mjuv_NOS = "num.array",
     fec = "numeric",
-    p_female = "numeric"
+    p_female = "numeric",
+    s_enroute = "numeric"
     #strays = 0
   )
 )

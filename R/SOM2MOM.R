@@ -150,7 +150,7 @@ SOM2MOM <- function(SOM) {
     p_yearling <- NA
   }
 
-  if (do_hatchery || habitat_change) {
+  if (do_hatchery || habitat_change || SOM@s_enroute < 1) {
     fitness_args <- list()
 
     if (do_hatchery && any(SOM@fitness_type == "Ford")) {
@@ -174,7 +174,7 @@ SOM2MOM <- function(SOM) {
     # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
       p_smolt = 1, p_naturalsmolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
-      ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
+      s_enroute = SOM@s_enroute, ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood,
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
@@ -207,7 +207,7 @@ SOM2MOM <- function(SOM) {
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
       p_smolt = 4, p_naturalsmolt = 1, p_natural = 3, p_hatchery = 6, output = "hatchery",
-      ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
+      s_enroute = SOM@s_enroute, ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
       egg_local = egg_local, fec_brood = SOM@fec_brood,
       s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
       phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
@@ -227,7 +227,7 @@ check_SOM <- function(SOM) {
   slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
 
   # Length 1
-  var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female",
+  var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female", "s_enroute",
                 "capacity_smolt_improve", "kappa_improve",
                 "n_yearling", "n_subyearling",
                 "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",

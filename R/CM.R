@@ -221,7 +221,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     phi = phi,
     Mjuv_NOS = expand_array(mo, proyears),
     fec = data$fec,
-    p_female = data$ssum
+    p_female = data$ssum,
+    s_enroute = 1
   )
 
   Hatchery <- new(

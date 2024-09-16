@@ -1,7 +1,7 @@
 
 
 .smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
-                        ptarget_NOB, pmax_NOB, egg_local, fec_brood,
+                        s_enroute, ptarget_NOB, pmax_NOB, egg_local, fec_brood,
                         s_yearling, s_subyearling, p_yearling,
                         phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                         p_female, fec, gamma, SRRpars, # Spawning (natural production)
@@ -11,7 +11,8 @@
   Nage[is.na(Nage)] <- 0
 
   # Hatchery
-  broodtake <- calc_broodtake(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
+  Nage_enroute <- Nage * s_enroute
+  broodtake <- calc_broodtake(Nage_enroute, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
 
   egg_NOB <- sum(broodtake$NOB * fec_brood * s_prespawn * p_female)
   egg_HOB <- sum(broodtake$HOB * fec_brood * s_prespawn * p_female)
@@ -21,7 +22,7 @@
   subyearling <- hatchery_production[2]
 
   # Spawners
-  spawners <- calc_spawners(broodtake, Nage, phatchery, premove_HOS)
+  spawners <- calc_spawners(broodtake, Nage_enroute, phatchery, premove_HOS)
 
   NOS <- spawners$NOS
   HOS <- spawners$HOS
@@ -133,7 +134,8 @@
     SRrel
   )
 
-  # Predicted smolts from historical SRR parameters and openMSE setup (if there were no hatchery production or habitat improvement)
+  # Predicted smolts from historical SRR parameters and openMSE setup
+  # if there were no hatchery production, habitat improvement, or enroute mortality
   Egg_openMSE <- sum(Nage[, 1] * p_female * fec)
   smolt_NOS_SRR <- calc_smolt(
     Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
@@ -199,7 +201,7 @@
 }
 
 makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery,
-                          output = c("natural", "hatchery"),
+                          output = c("natural", "hatchery"), s_enroute,
                           ptarget_NOB, pmax_NOB, egg_local, fec_brood,
                           s_yearling, s_subyearling, p_yearling, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
                           p_female, fec, gamma, SRRpars,  # Spawning (natural production)
@@ -208,6 +210,9 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
   output <- match.arg(output)
 
   func <- .smolt_func
+
+  formals(func)$output <- output
+  formals(func)$s_enroute <- s_enroute
 
   formals(func)$ptarget_NOB <- ptarget_NOB
   formals(func)$pmax_NOB <- pmax_NOB
@@ -219,13 +224,11 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
   formals(func)$p_yearling <- p_yearling
 
   formals(func)$phatchery <- phatchery
+  formals(func)$premove_HOS <- premove_HOS
   formals(func)$s_prespawn <- s_prespawn
   formals(func)$p_female <- p_female
-  formals(func)$output <- output
-  formals(func)$gamma <- gamma
-
-  formals(func)$premove_HOS <- premove_HOS
   formals(func)$fec <- fec
+  formals(func)$gamma <- gamma
 
   formals(func)$SRRpars <- SRRpars
 

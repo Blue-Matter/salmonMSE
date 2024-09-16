@@ -13,7 +13,7 @@ class?SOM # Definition of inputs
 SAR <- 0.01
 Bio <- new(
   "Bio",
-  nsim = 3,
+  nsim = 100,
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
@@ -21,7 +21,8 @@ Bio <- new(
   kappa = 3,                  # Productivity in recruits per spawner
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
-  p_female = 0.49
+  p_female = 0.49,
+  s_enroute = 1,
   #strays = 0
 )
 
@@ -147,8 +148,6 @@ par(mar = c(5, 4, 1, 1))
 hist(kappa, main = NULL)
 dev.off()
 
-par(mfrow = c(1, 1))
-
 SOM_stochastic <- new("SOM",
                       nyears = 2,
                       proyears = 50,
@@ -156,6 +155,8 @@ SOM_stochastic <- new("SOM",
 
 SMSE_stochastic <- salmonMSE(SOM_stochastic)
 saveRDS(SMSE_stochastic, "examples/SMSE_stochastic.rds")
+
+report(SMSE_stochastic, dir = "scratch")
 
 png("man/figures/example-PNI-ts.png", height = 4, width = 6, res = 300, units = 'in')
 par(mar = c(5, 4, 1, 1))

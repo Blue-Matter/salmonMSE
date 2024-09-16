@@ -18,3 +18,4 @@
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_NOS[a] = -log(SAR)` where `a` is the age class prior to maturation (and zero for all other ages).
 #' @slot fec Vector by age (length `maxage`). Female fecundity of natural origin spawners.
 #' @slot p_female Numeric. The proportion of females in the spawning population.
+#' @slot s_enroute Numeric. Survival of escapement to the spawning grounds (for spawning and for broodtake).

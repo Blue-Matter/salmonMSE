@@ -40,7 +40,8 @@ Bio <- new(
   kappa = 3,                        # Productivity in recruits per spawner
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),              # Spawning fecundity of NOS and HOS
-  p_female = 0.49
+  p_female = 0.49,
+  s_enroute = 1
 )
 ```
 

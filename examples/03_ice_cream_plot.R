@@ -25,7 +25,8 @@ wrapper <- function(x, df) {
     kappa = kappa,
     Mjuv_NOS = c(0, -log(SAR), 0),
     fec = c(0, 0, 5040),
-    p_female = 0.49
+    p_female = 0.49,
+    s_enroute = 1
   )
 
   Hatchery <- new(
