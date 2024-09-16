@@ -49,7 +49,7 @@
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
     #browser(expr = x == 2)
     # Get zbar from salmonMSE_env
-    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, p_smolt == .env$p_naturalsmolt)
+    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
 
     if (nrow(zbar_prev)) {
       maxage <- length(NOS)
