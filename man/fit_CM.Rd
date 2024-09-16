@@ -92,6 +92,7 @@ coefficient and annual deviations from this vector.
 reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 \item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
+\item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
 \item \code{so_min} Numeric, lower bound for the estimate of unfished spawners. Default is \code{log(2 * max(data$obsescape))}.

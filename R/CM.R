@@ -59,6 +59,7 @@
 #' reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 #' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
+#' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.
 #' - `so_mu` Numeric, the prior mean for unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
 #' - `so_min` Numeric, lower bound for the estimate of unfished spawners. Default is `log(2 * max(data$obsescape))`.
@@ -222,7 +223,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Mjuv_NOS = expand_array(mo, proyears),
     fec = data$fec,
     p_female = data$ssum,
-    s_enroute = 1
+    s_enroute = data$s_enroute
   )
 
   Hatchery <- new(

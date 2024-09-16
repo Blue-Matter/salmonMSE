@@ -54,7 +54,7 @@ CM_int <- function(p, d) {
   # predicted spawners
   # predicted cwt catches for year
   # predicted cwt spawners for the year
-  survPT <- ccwtPT <- survT <- ccwtT <- scwt <- matrix(NA_real_, d$Ldyr, d$Nages)
+  survPT <- ccwtPT <- survT <- ccwtT <- ecwt <- matrix(NA_real_, d$Ldyr, d$Nages)
   cyearPT <- cyearT <- recr <- syear <- escyear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
 
   spawners <- catchPT <- catchT <- egg <- megg <- logpredesc <- moplot <- FPT <- FT <- numeric(d$Ldyr)
@@ -123,10 +123,10 @@ CM_int <- function(p, d) {
 
     # predict escapement at age for the year
     escyear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
+    ecwt[t, ] <- d$ssum * Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
 
     # predict spawners at age for the year
-    syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ]
-    scwt[t, ] <- d$ssum * Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
+    syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ] * d$s_enroute
 
     # predict egg production for the year
     egg[t] <- sum(d$fec * (syear[t, , 1] + d$gamma * syear[t, , 2]))
@@ -197,7 +197,7 @@ CM_int <- function(p, d) {
       if (t+a-1 <= d$Ldyr) {
         cbroodPT[t, a] <- ccwtPT[t+a-1, a] + tiny
         cbroodT[t, a] <- ccwtT[t+a-1, a] + tiny
-        ebrood[t, a] <- scwt[t+a-1, a] + tiny
+        ebrood[t, a] <- ecwt[t+a-1, a] + tiny
       }
     }
   }
@@ -288,7 +288,7 @@ CM_int <- function(p, d) {
   REPORT(escyear)
   REPORT(ccwtPT)
   REPORT(ccwtT)
-  REPORT(scwt)
+  REPORT(ecwt)
 
   REPORT(spawners)
   REPORT(logpredesc)
@@ -452,16 +452,14 @@ check_data <- function(data) {
   if (is.null(data$cwtExp)) data$cwtExp <- 1
 
   if (!is.null(data$covariate1)) {
-    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix")
-  }
-
-  if (!is.null(data$covariate1)) {
     if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
   }
 
   if (!is.null(data$covariate)) {
     if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
   }
+
+  if (is.null(data$s_enroute)) data$s_enroute <- 1
 
   if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
   if (is.null(data$so_sd)) data$so_sd <- 0.5
