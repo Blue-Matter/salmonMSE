@@ -346,13 +346,13 @@ check_SOM <- function(SOM) {
   if (length(slot(SOM, "HistSpawner"))) {
     dim_i <- dim(slot(SOM, "HistSpawner"))
     if (is.null(dim_i)) {
-      stop("Slot ", i, " must be an array of dimension ",
+      stop("Slot HistSpawner must be an array of dimension ",
            paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
     } else {
       dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
       if (!dim_check) {
-        stop("Slot ", i, " must be an array of dimension ",
-             paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+        stop("Slot HistSpawner must be an array of dimension ",
+             paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
       }
     }
   }
@@ -372,22 +372,12 @@ check_SOM <- function(SOM) {
   }
   dim_i <- dim(slot(SOM, "HistN"))
   if (is.null(dim_i)) {
-    stop("Slot ", i, " must be an array of dimension ",
+    stop("Slot HistN must be an array of dimension ",
          paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
   } else {
     dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
     if (!dim_check) {
-      stop("Slot ", i, " must be an array of dimension ",
-           paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
-    }
-  }
-  if (is.null(dim_i)) {
-    stop("Slot ", i, " must be an array of dimension ",
-         paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-  } else {
-    dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
-    if (!dim_check) {
-      stop("Slot ", i, " must be an array of dimension ",
+      stop("Slot HistN must be an array of dimension ",
            paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
     }
   }
