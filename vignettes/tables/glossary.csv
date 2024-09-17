@@ -20,7 +20,8 @@ v,Relative vulnerability by age to the fishery,Harvest,SOM,"vulPT, vulT"
 \textrm{Fec}^\textrm{brood},Fecundity of broodtake (eggs per female),Natural production,SOM,fec_brood
 p^\textrm{female},Proportion of female spawners in broodtake and spawners,Natural production + Hatchery,SOM,p_female
 \textrm{SAR},Smolt-to-adult recruit survival,Natural production + Hatchery,-,-
-M,Instantaneous natural mortality of juvenile, corresponding to either the freshwater or marine environment by age class,Natural production + Hatchery,SOM,"Mjuv_NOS, Mjuv_HOS"
+M,"Instantaneous natural mortality of juvenile, corresponding to either the freshwater or marine environment by age class"",Natural production + Hatchhery,SOM,"Mjuv_NOS, Mjuv_HOS"
+s_\textrm{enroute},Survival of escapement to spawning grounds and hatchery,Natural production,SOM,s_enroute
 \textrm{NOB},Natural origin broodtake,Hatchery,SMSE,NOB
 \textrm{HOB},Hatchery origin broodtake,Hatchery,SMSE,HOB
 s_\textrm{yearling},Survival of hatchery eggs to yearling life stage,Hatchery,SOM,s_egg_smolt

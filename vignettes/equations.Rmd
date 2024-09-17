@@ -133,8 +133,8 @@ where $s$ is the corresponding survival term from the egg life stage.
 From the escapement in year $y$, some proportion $p^\textrm{broodtake}$ is used as broodtake:
 
 \begin{align}
-\textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a}\\
-\textrm{HOB}_{y,a} &= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a}
+\textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}\\
+\textrm{HOB}_{y,a} &= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
 \end{align}
 
 The proportion of the available hatchery fish for broodtake is controlled by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
@@ -250,18 +250,17 @@ The escapement consists of the survivors of the terminal fishery:
 \textrm{HOR}^\textrm{escapement}_{y,a} &= \textrm{HOR}_{y,a}\exp(-v_aF^\textrm{T}_y)
 \end{align}
 
-The abundance of natural origin spawners consists of the escapement reduced by the broodtake. 
+The abundance of natural origin spawners consists of the escapement that survive migration to the spawning ground ($s_\textrm{enroute}$) and are not removed for brood: 
 
 $$
-\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a}
+\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
 $$
 
-The hatchery origin spawners is the escapement, reduced by the proportion $p^\textrm{hatchery}$ returning to the hatchery, either by swim-in facilities or direct removal. A second removal term $p^\textrm{HOS}_\textrm{removal}$ removes fish from the spawning grounds, these animals are not available for broodtake.
+The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or direct removal through proportion $p^\textrm{hatchery}$), and are not removed from the spawning round (through proportion $p^\textrm{HOS}_\textrm{removal}$, these animals are not available for brood).
 
 $$
-\textrm{HOS}_{y,a} = \textrm{HOR}^\textrm{escapement}_{y,a} (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal})
+\textrm{HOS}_{y,a} = (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal}) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
 $$
-
 
 # Fitness effects on survival
 
