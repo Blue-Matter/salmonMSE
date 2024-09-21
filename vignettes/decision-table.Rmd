@@ -35,20 +35,20 @@ library(salmonMSE)
 
 # Data frame of the factorial combinations of compensation ratio (kappa)
 # and hatchery production
-df <- expand.grid(
+Design <- expand.grid(
   kappa = c(3, 6, 9),
   hatch = c(5, 10, 15) * 1000
 )
 
 # Wrapper function that runs a salmonMSE projection for each row of
 # parameters in the data frame
-wrapper <- function(x, df) {
+wrapper <- function(x, Design) {
 
   SAR <- 0.01
   nsim <- 100
 
   set.seed(100)
-  kappa_mean <- df$kappa[x]
+  kappa_mean <- Design$kappa[x]
   kappa_sd <- 0.3
   kappa <- rlnorm(nsim, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
 
@@ -68,7 +68,7 @@ wrapper <- function(x, df) {
 
   Hatchery <- new(
     "Hatchery",
-    n_yearling = df$hatch[x],
+    n_yearling = Design$hatch[x],
     n_subyearling = 0,
     s_prespawn = 1,
     s_egg_smolt = 0.92,
@@ -130,12 +130,12 @@ wrapper <- function(x, df) {
 
 # Run simulation with parallel processing (one core per set of parameters)
 library(snowfall)
-sfInit(parallel = TRUE, cpus = nrow(df))
+sfInit(parallel = TRUE, cpus = nrow(Design))
 sfLibrary(salmonMSE)
-sfExport("df")
+sfExport("Design")
 
-SMSE_list <- sfLapply(1:nrow(df), wrapper, df = df)
-# SMSE_list <- lapply(1:nrow(df), wrapper, df = df) # Non-parallel version
+SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
+# SMSE_list <- lapply(1:nrow(Design), wrapper, Design = Design) # Non-parallel version
 ```
 
 We now have a list of SMSE objects.
@@ -145,14 +145,14 @@ Next, we need to define performance metrics that describe the outcomes of the va
 We will look a biological metric (PNI_75, the probability that PNI is at least 0.75 at the end of the projection) and a fishery metric, the average catch, also at the end of the projection.
 
 ```{r, echo = TRUE, eval = FALSE}
-pm_fn <- function(x, SMSE_list, df) {
-  out <- df[x, ]
+pm_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
   out$PNI_75 <- mean(SMSE_list[[x]]@PNI[, 1, 49] >= 0.75)
   out$Catch <- mean(SMSE_list[[x]]@KT_NOS[, 1, 49] + SMSE_list[[x]]@KT_NOS[, 1, 49])
   return(out)
 }
 
-pm <- do.call(rbind, lapply(1:nrow(df), pm_fn, SMSE_list, df = df))
+pm <- do.call(rbind, lapply(1:nrow(Design), pm_fn, SMSE_list, Design = Design))
 ```
 
 
@@ -199,16 +199,16 @@ knitr::include_graphics("../man/figures/tradeoff_plot.png")
 In this figure, we see that the state of nature, i.e., compensation ratio, indicated by colours, strongly determines catch levels.
 The level of hatchery production determines the composition hatchery and natural spawners (inferred by PNI_75), but does not substantially affect catch (consider the various shapes within each band of colours).
 
-Finally, here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
+Here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
 
 ```{r, echo = TRUE, eval = FALSE}
 library(tidyverse)
 library(reshape2)
 
-PNI_ts <- lapply(1:nrow(df), function(x) {
+PNI_ts <- lapply(1:nrow(Design), function(x) {
   plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
     reshape2::melt() %>%
-    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
+    mutate(kappa = Design$kappa[x], hatch = Design$hatch[x])
 }) %>%
   bind_rows() %>%
   rename(Year = Var2) %>%
@@ -228,3 +228,26 @@ g
 ```{r, echo = FALSE, eval = TRUE}
 knitr::include_graphics("../man/figures/PNI_ts.png")
 ```
+
+Several comparison figures are available to plot the natural production (i.e., number of spawners) and the fitness metrics related to hatchery production:
+
+```{r, echo = TRUE, eval = FALSE}
+Design_txt <- Design
+Design_txt[, 1] <- paste("Productivity =", Design[, 1])
+Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
+                          levels = paste("Hatchery production", c(5000, 10000, 15000)))
+
+compare_spawners(SMSE_list, Design_txt) +
+  coord_cartesian(ylim = c(0, 150), expand = FALSE)
+
+compare_fitness(SMSE_list, Design_txt)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+knitr::include_graphics("../man/figures/compare_spawners.png")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+knitr::include_graphics("../man/figures/compare_fitness.png")
+```
+

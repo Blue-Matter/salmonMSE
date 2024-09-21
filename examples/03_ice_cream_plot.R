@@ -1,17 +1,17 @@
 
 
-df <- expand.grid(
+Design <- expand.grid(
   kappa = c(3, 6, 9),
   hatch = c(5, 10, 15) * 1000
 )
 
-wrapper <- function(x, df) {
+wrapper <- function(x, Design) {
 
   SAR <- 0.01
   nsim <- 100
 
   set.seed(100)
-  kappa_mean <- df$kappa[x]
+  kappa_mean <- Design$kappa[x]
   kappa_sd <- 0.3
   kappa <- rlnorm(nsim, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
 
@@ -31,7 +31,7 @@ wrapper <- function(x, df) {
 
   Hatchery <- new(
     "Hatchery",
-    n_yearling = df$hatch[x],
+    n_yearling = Design$hatch[x],
     n_subyearling = 0,
     s_prespawn = 1,
     s_egg_smolt = 0.92,
@@ -91,24 +91,24 @@ wrapper <- function(x, df) {
 }
 
 library(snowfall)
-sfInit(parallel = TRUE, cpus = nrow(df))
+sfInit(parallel = TRUE, cpus = nrow(Design))
 sfLibrary(salmonMSE)
-sfExport("df")
+sfExport("Design")
 
-SMSE_list <- sfLapply(1:nrow(df), wrapper, df = df)
+SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
 
 saveRDS(SMSE_list, file = "examples/SMSE_list.rds")
 sfStop()
 
 # Make ice cream plot
-pm_fn <- function(x, SMSE_list, df, val = 0.75) {
-  out <- df[x, ]
+pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
+  out <- Design[x, ]
   out$PNI_75 <- mean(SMSE_list[[x]]@PNI[, 1, 49] >= val)
   out$Catch <- mean(SMSE_list[[x]]@KT_NOS[, 1, 49] + SMSE_list[[x]]@KT_NOS[, 1, 49])
   return(out)
 }
 
-pm <- lapply(1:nrow(df), pm_fn, SMSE_list, df = df) %>%
+pm <- lapply(1:nrow(Design), pm_fn, SMSE_list, Design = Design) %>%
   bind_rows()
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_75, title = "Probability PNI > 0.75",
@@ -122,10 +122,10 @@ g <- plot_tradeoff(pm$PNI_75, pm$Catch, factor(pm$kappa), factor(pm$hatch), "PNI
 ggsave("man/figures/tradeoff_plot.png", g, height = 3, width = 4.5)
 
 # Make time series
-PNI_ts <- lapply(1:nrow(df), function(x) {
+PNI_ts <- lapply(1:nrow(Design), function(x) {
   out <- plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
     reshape2::melt() %>%
-    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
+    mutate(kappa = Design$kappa[x], hatch = Design$hatch[x])
   out
 }) %>%
   bind_rows() %>%
@@ -143,58 +143,17 @@ g <- ggplot(PNI_ts, aes(Year)) +
 ggsave("man/figures/PNI_ts.png", g, height = 3, width = 6)
 
 # Spawners
-Sp <- lapply(1:nrow(df), function(x) {
-  plot_spawners(SMSE_list[[x]], prop = FALSE, figure = FALSE) %>%
-    reshape2::melt() %>%
-    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
-}) %>%
-  bind_rows() %>%
-  rename(Year = Var2) %>%
-  mutate(Var1 = factor(Var1, levels = c("HOS", "NOS_notWILD", "WILD"))) %>%
-  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000))) %>%
-  mutate(kappa = paste("Productivity =", kappa)) %>%
-  dplyr::filter(value > 0) %>%
-  mutate(p = value/sum(value), .by = c(Year, kappa, hatch))
+Design_txt <- Design
+Design_txt[, 1] <- paste("Productivity =", Design[, 1])
+Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
+                          levels = paste("Hatchery production", c(5000, 10000, 15000)))
 
-g <- ggplot(Sp, aes(Year, value, fill = Var1)) +
-  geom_area() +
-  facet_grid(vars(kappa), vars(hatch)) +
-  labs(x = "Projection Year", y = "Spawners", fill = NULL) +
-  coord_cartesian(ylim = c(0, 150), expand = FALSE) +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "bottom") +
-  scale_fill_brewer(palette = "PuBuGn")
-ggsave("man/figures/spawners.png", g, height = 5, width = 6)
+g <- compare_spawners(SMSE_list, Design_txt) +
+  coord_cartesian(ylim = c(0, 150), expand = FALSE)
+ggsave("man/figures/compare_spawners.png", g, height = 5, width = 6)
 
-g <- ggplot(Sp, aes(Year, p, fill = Var1)) +
-  geom_area() +
-  facet_grid(vars(kappa), vars(hatch)) +
-  labs(x = "Projection Year", y = "Spawners", fill = NULL) +
-  coord_cartesian(ylim = c(0, 1), expand = FALSE) +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "bottom") +
-  scale_fill_brewer(palette = "PuBuGn")
-ggsave("man/figures/spawners_prop.png", g, height = 5, width = 6)
+g <- compare_spawners(SMSE_list, Design_txt, prop = TRUE)
 
 # Fitness
-fitness <- lapply(1:nrow(df), function(x) {
-  plot_fitness(SMSE_list[[x]], figure = FALSE) %>%
-    reshape2::melt() %>%
-    mutate(kappa = df$kappa[x], hatch = df$hatch[x])
-}) %>%
-  bind_rows() %>%
-  rename(Year = Var1) %>%
-  #mutate(Var1 = factor(Var1, levels = c("HOS", "NOS_notWILD", "WILD"))) %>%
-  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000))) %>%
-  mutate(kappa = paste("Productivity =", kappa)) %>%
-  dplyr::filter(value > 0)
-
-g <- ggplot(fitness, aes(Year, value, colour = Var2)) +
-  geom_line() +
-  facet_grid(vars(kappa), vars(hatch)) +
-  labs(x = "Projection Year", y = "Median", colour = "Metric") +
-  coord_cartesian(ylim = c(0, 1), expand = FALSE) +
-  theme(legend.position = "bottom")
-ggsave("man/figures/fitness.png", g, height = 5, width = 6)
+g <- compare_fitness(SMSE_list, Design_txt)
+ggsave("man/figures/compare_fitness.png", g, height = 5, width = 6)
