@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   decision-table: decision-table.html
@@ -7,7 +7,7 @@ articles:
   example: example.html
   introduction: introduction.html
   model: model.html
-last_built: 2024-09-17T02:29Z
+last_built: 2024-09-21T00:05Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles
