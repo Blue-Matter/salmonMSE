@@ -13,3 +13,4 @@
 LICENSE
 ^tests$
 ^examples$
+^man/figures$
