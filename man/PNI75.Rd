@@ -2,12 +2,12 @@
 % Please edit documentation in R/pm.R
 \name{PNI75}
 \alias{PNI75}
-\alias{WILD80}
+\alias{WILD50}
 \title{Example performance metrics}
 \usage{
 PNI75(SMSE, Ref = 0.75, Yrs = NULL)
 
-WILD80(SMSE, Ref = 0.8, Yrs = NULL)
+WILD50(SMSE, Ref = 0.5, Yrs = NULL)
 }
 \arguments{
 \item{SMSE}{SMSE object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -26,6 +26,6 @@ Functions that evaluate return probabilities of outcomes from the simulations.
 \details{
 \itemize{
 \item \code{PNI75} calculates the probability that PNI exceeds 0.75
-\item \code{WILD80} calculates the probability that at least 80 percent of natural spawners are wild
+\item \code{WILD50} calculates the probability that at least 50 percent of natural spawners are wild
 }
 }
