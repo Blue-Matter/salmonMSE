@@ -112,8 +112,8 @@ Used to report variables to \link{salmonMSE_env}.}
 \value{
 \itemize{
 \item \code{smolt_func()} returns a numeric for the ratio of the realized smolt production vs. the hypothetical value if there were no
-hatchery, en route mortality, or habitat effects
-\item \code{makeRel_smolt} returns a list that is passed to openMSE as a intra-stock relationship
+hatchery, en route mortality, or habitat improvement
+\item \code{makeRel_smolt} returns a list that is passed to openMSE as a inter-population relationship
 }
 }
 \description{

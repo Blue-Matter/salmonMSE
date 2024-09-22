@@ -357,12 +357,28 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   val
 }
 
-# Natural mortality in the marine environment of natural origin smolts, increased due to fitness loss
-# Only applied at the start of even time step
-.SAR_fitness <- function(x = -1, y = 1,
-                         envir = c("natural", "hatchery"),
-                         rel_loss = 1, p_naturalsmolt = 1,
-                         nyears, Mbase) {
+#' Update natural mortality of juveniles
+#'
+#' @description Internal function that updates juvenile natural mortality in the marine environement due
+#' to fitness
+#' - `SAR_fitness()` calculates the new natural mortality value
+#' - `makeRel_SAR` generates a list for openMSE to use in the simulations
+#' @param x Integer, simulation number from openMSE
+#' @param y Integer, simulation year (including historical years)
+#' @param envir Character, whether to obtain the fitness value for the natural or hatchery environment.
+#' @param rel_loss Numeric, the loss exponent for the juveniles
+#' @param p_naturalsmolt Integer, the population index for the natural smolts in the openMSE model. Used to search for the fitness value
+#' @param nyears Integer, the number of historical years in the operating model
+#' @param Mbase Array `[nsim, n_age, proyears]` the base natural mortality value in the openMSE operating model.
+#' @returns
+#' - `smolt_func()` returns a numeric for the ratio of the realized smolt production vs. the hypothetical value if there were no
+#' hatchery, en route mortality, or habitat improvement
+#' - `makeRel_smolt` returns a list that is passed to openMSE as a inter-population relationship
+#' @keywords internal
+SAR_fitness <- function(x = -1, y = 1,
+                        envir = c("natural", "hatchery"),
+                        rel_loss = 1, p_naturalsmolt = 1,
+                        nyears, Mbase) {
 
   envir <- match.arg(envir)
 
@@ -392,19 +408,21 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
   }
 }
 
-
-makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, envir = c("natural", "hatchery"), rel_loss, nyears, Mbase) {
+#' @rdname SAR_fitness
+#' @param p_smolt Integer, the population index for the juvenile population in the openMSE model
+#' @keywords internal
+makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, envir = c("natural", "hatchery"),
+                        rel_loss, nyears, Mbase) {
 
   envir <- match.arg(envir)
 
-  func <- .SAR_fitness
+  .SAR_fitness <- SAR_fitness
 
-  #formals(func)$p_smolt <- p_smolt
-  formals(func)$p_naturalsmolt <- p_naturalsmolt
-  formals(func)$rel_loss <- rel_loss
-  formals(func)$envir <- envir
-  formals(func)$nyears <- nyears
-  formals(func)$Mbase <- Mbase
+  formals(.SAR_fitness)$p_naturalsmolt <- p_naturalsmolt
+  formals(.SAR_fitness)$rel_loss <- rel_loss
+  formals(.SAR_fitness)$envir <- envir
+  formals(.SAR_fitness)$nyears <- nyears
+  formals(.SAR_fitness)$Mbase <- Mbase
 
   model <- data.frame(M = 1, N = seq(0, 10), x = -1, y = 1)
 
@@ -413,7 +431,7 @@ makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, envir = c("natura
   terms <- c(response, input, "x", "y")
 
   out <- list(
-    func = func,
+    func = .SAR_fitness,
     model = structure(model, names = terms),
     fitted.values = model$M,
     CV = 0,
