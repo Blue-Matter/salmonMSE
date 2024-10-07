@@ -234,7 +234,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   Harvest <- new(
     "Harvest",
-    vulPT = data$vul
+    vulPT = data$vulPT,
+    vulT = data$vulT
   )
 
   Habitat <- new("Habitat")
