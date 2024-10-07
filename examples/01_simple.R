@@ -156,7 +156,7 @@ SOM_stochastic <- new("SOM",
 SMSE_stochastic <- salmonMSE(SOM_stochastic)
 saveRDS(SMSE_stochastic, "examples/SMSE_stochastic.rds")
 
-report(SMSE_stochastic, dir = "scratch")
+report(SMSE_stochastic, dir = "scratch", filename = "SMSE_stochastic")
 
 png("man/figures/example-PNI-ts.png", height = 4, width = 6, res = 300, units = 'in')
 par(mar = c(5, 4, 1, 1))

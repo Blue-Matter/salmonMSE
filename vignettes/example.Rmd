@@ -247,3 +247,9 @@ Here is the relationship between the performance metrics and the compensation ra
 ```{r, eval = TRUE, echo = FALSE}
 knitr::include_graphics("../man/figures/example-PNI-kappa.png")
 ```
+
+A summary Markdown report can be generated with the `report()` function:
+
+```{r, eval = FALSE, echo = TRUE}
+report(SMSE_stochastic)
+```
