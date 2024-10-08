@@ -22,7 +22,7 @@ Bio <- new(
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49,
-  s_enroute = 1,
+  s_enroute = 1
   #strays = 0
 )
 
