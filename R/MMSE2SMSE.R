@@ -53,6 +53,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
   y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0)
   y_spawn <- 0.5 * (y_spawnOM - 1)
+  y_spawn <- y_spawn[y_spawn > 0]
 
   Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
   Escapement_NOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , - 1]
@@ -139,7 +140,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     # Smolt releases and SAR loss from openMSE
     p_smolt_rel <- 4
     a_smolt <- 1
-    Smolt_Rel[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+
+    Smolt_Rel[, ns, ] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
 
     p_smolt <- 1
     Mjuv_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
