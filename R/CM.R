@@ -168,6 +168,7 @@ sample_CM <- function(fit, ...) {
 #' @param seed Integer, seed for sampling the MCMC output. Only used if `sims` is missing.
 #' @param proyears Integer, the number of projection years in the operating model
 #' @return \linkS4class{SOM} object.
+#' @importFrom abind abind
 #' @export
 CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
@@ -194,8 +195,12 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   matt <- sapply(report, getElement, "matt", simplify = "array") %>%
     aperm(3:1)
+
   mo <- sapply(report, getElement, "mo", simplify = "array") %>%
     aperm(3:1)
+  mo_maxage <- mo[, dim(mo)[2], , drop = FALSE]
+  mo <- abind::abind(mo, mo_maxage, along = 2)
+
   Njuv <- sapply(report, getElement, "N", simplify = "array") %>%
     aperm(c(4, 2, 1, 3))
   Spawner <- sapply(1:2, function(i) {
@@ -249,7 +254,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   )
 
   if (data$fitness) {
-    Hatchery@fitness_type <- "Ford"
+    Hatchery@fitness_type <- c("Ford", "none")
     Hatchery@theta <- data$theta
     Hatchery@rel_loss <- data$rel_loss
 
@@ -262,7 +267,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Hatchery@heritability <- data$heritability
     Hatchery@fitness_floor <- data$fitness_floor
   } else {
-    Hatchery@fitness_type <- "none"
+    Hatchery@fitness_type <- rep("none", "none")
   }
 
   SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest, Historical, nyears = nyears, proyears = proyears)
