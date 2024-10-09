@@ -12,7 +12,7 @@
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options. Additional supported options are:
-#' `"pHOScensus"`, `"pNOB"`
+#' `"pHOScensus"`, `"pNOB"`, `"pbrood"`
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
 #' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
@@ -27,13 +27,7 @@
 #' @export
 plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
 
-  if (var == "pHOScensus") {
-    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
-  } else if (var == "pNOB") {
-    x <- SMSE@NOB[, s, ]/(SMSE@NOB[, s, ] + SMSE@HOB[, s, ])
-  } else {
-    x <- slot(SMSE, var)[, s, ]
-  }
+  x <- get_statevar(SMSE, var, s)
 
   if (!quant) {
     xplot <- x
@@ -64,14 +58,7 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 #' @export
 #' @importFrom graphics hist
 plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...) {
-
-  if (var == "pHOScensus") {
-    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
-  } else if (var == "pNOB") {
-    x <- SMSE@NOB[, s, ]/(SMSE@NOB[, s, ] + SMSE@HOB[, s, ])
-  } else {
-    x <- slot(SMSE, var)[, s, ]
-  }
+  x <- get_statevar(SMSE, var, s)
 
   if (missing(y)) {
     xvar <- colSums(x)
@@ -81,6 +68,22 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab 
   xplot <- x[, y]
   if (figure) hist(xplot, xlab = xlab, main = NULL, ...)
   invisible(xplot)
+}
+
+get_statevar <- function(SMSE, var, s) {
+  if (var == "pHOScensus") {
+    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
+  } else if (var == "pNOB") {
+    x <- SMSE@NOB[, s, ]/(SMSE@NOB[, s, ] + SMSE@HOB[, s, ])
+  } else if (var == "pbrood") {
+    x <- local({
+      Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
+      Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
+      (SMSE@NOB[, s, ] + SMSE@HOB[, s, ])/(Esc_NOS + Esc_HOS)
+    })
+  } else {
+    x <- slot(SMSE, var)[, s, ]
+  }
 }
 
 #' @name plot_statevar_ts
