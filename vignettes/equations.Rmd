@@ -202,10 +202,10 @@ K^\textrm{NOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\righ
 K^\textrm{HOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,HOS}_{y,a}\\
 \end{align}
 
-The instantaneous fishing mortality is solved to meet the following condition
+The instantaneous fishing mortality is solved so that the ratio of the total catch and the total vulnerable abundance is equal to the specified harvest rate:
 
 $$
-u^\textrm{PT} = \dfrac{\sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a} + \sum_a N^\textrm{juv,HOS}_{y,a}}
+u^\textrm{PT} = \dfrac{\sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}}{\sum_a v^\textrm{PT}_a (N^\textrm{juv,NOS}_{y,a} + N^\textrm{juv,HOS}_{y,a})}
 $$
 
 # Recruitment and maturity
@@ -238,7 +238,7 @@ K^\textrm{HOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\
 subject to
 
 $$
-u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{NOR}_{y,a} + \sum_a \textrm{HOR}_{y,a}}
+u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}}{\sum_a v^\textrm{T}_a(\textrm{NOR}_{y,a} +  \textrm{HOR}_{y,a})}
 $$
 
 # Escapement and spawners
@@ -458,7 +458,7 @@ Additional catch and release mortality then occurs for un-marked fish, according
 In the pre-terminal ($\textrm{PT}$) fishery, $E$ is solved to satisfy the following equation for hatchery fish:
 
 $$
-u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}
+u^\textrm{harvest,HOS,PT} = \dfrac{\sum_aK^\textrm{HOS,PT}_{y,a}}{\sum_a v^\textrm{PT}_a N^\textrm{juv,HOS}_{y,a}}
 $$
 
 where the kept catch $K$ is
@@ -468,19 +468,19 @@ $K^\textrm{HOS,PT}_{y,a} = \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y + F
 The exploitation rate for natural origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:
 
 \begin{align}
-u^\textrm{exploit,NOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a N^\textrm{juv,NOS}_{y,a}}\\
-u^\textrm{exploit,HOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a N^\textrm{juv,HOS}_{y,a}}
+u^\textrm{exploit,NOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel.,PT}_y))N^\textrm{juv,NOS}_{y,a}}{\sum_a v^\textrm{PT}_a N^\textrm{juv,NOS}_{y,a}}\\
+u^\textrm{exploit,HOS,PT}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y]))N^\textrm{juv,HOS}_{y,a}}{\sum_a v^\textrm{PT}_a N^\textrm{juv,HOS}_{y,a}}
 \end{align}
 
 Similarly, in the terminal fishery, the fishing effort satisfies the equation
 
 $$
-u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}
+u^\textrm{harvest,HOS,T} = \dfrac{\sum_aK^\textrm{HOS,T}_{y,a}}{\sum_a v^\textrm{T}_a \textrm{HOR}_{y,a}}
 $$
 
 with the corresponding exploitation rates:
 
 \begin{align}
-u^\textrm{exploit,NOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel,T}_y))\textrm{NOR}_{y,a}}{\sum_a \textrm{NOR}_{y,a}}\\
-u^\textrm{exploit,HOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,T}_y + F^\textrm{rel.,T}_y]))\textrm{HOR}_{y,a}}{\sum_a \textrm{HOR}_{y,a}}
+u^\textrm{exploit,NOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a F^\textrm{rel,T}_y))\textrm{NOR}_{y,a}}{\sum_a v^\textrm{T}_a \textrm{NOR}_{y,a}}\\
+u^\textrm{exploit,HOS,T}_y &= \dfrac{\sum_a (1 - \exp(-v_a[F^\textrm{kept,T}_y + F^\textrm{rel.,T}_y]))\textrm{HOR}_{y,a}}{\sum_a v^\textrm{T}_a \textrm{HOR}_{y,a}}
 \end{align}

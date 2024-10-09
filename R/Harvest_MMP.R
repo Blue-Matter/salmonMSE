@@ -154,6 +154,6 @@ F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0) {
   Z <- F_ret + F_rel + M
   catch_ret <- F_ret/Z * (1 - exp(-Z)) * N
   catch_ret[is.na(catch_ret)] <- 0
-  sum(catch_ret)/sum(N) - u
+  sum(catch_ret)/sum(vul * N) - u
 }
 
