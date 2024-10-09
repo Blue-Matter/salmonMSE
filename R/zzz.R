@@ -30,6 +30,7 @@ matplot <- function(..., zero_line = FALSE) {
 }
 
 #' @importFrom graphics hist legend
+#' @importFrom stats sd
 hist.numeric <- function(x, ...) {
   n <- length(x)
 
@@ -44,20 +45,23 @@ hist.numeric <- function(x, ...) {
 
   # Calculate skewness NA's already removed, n is the original length of x
   skewness <- (sum((x - mean(x))^3)/n)/(sum((x - mean(x))^2)/n)^1.5
+  cv <- sd(x)/mean(x)
 
   # Remove outliers
-  if (!is.na(skewness)) {
+  if (!is.na(skewness) && cv > 0.1) {
     if (skewness > 3) {
       max_x_plot <- quantile(x, 0.95)
+      p_outlier <- signif(100 * mean(x > max_x_plot), 2)
       x <- x[x <= max_x_plot]
-      legend_skew1 <- paste0(round(100 * mean(max_x_plot/n)), "% > ", round(max_x_plot, 2))
+      legend_skew1 <- paste0(p_outlier, "% > ", round(max_x_plot, 2))
     } else {
       legend_skew1 <- NULL
     }
     if (skewness < -3) {
       min_x_plot <- quantile(x, 0.05)
       x <- x[x >= min_x_plot]
-      legend_skew2 <- paste0(round(100 * mean(min_x_plot/n)), "% < ", round(min_x_plot, 2))
+      p_outlier <- signif(100 * mean(x < min_x_plot), 2)
+      legend_skew2 <- paste0(p_outlier, "% < ", round(min_x_plot, 2))
     } else {
       legend_skew2 <- NULL
     }
