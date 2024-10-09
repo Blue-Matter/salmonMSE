@@ -92,6 +92,8 @@ get_statevar <- function(SMSE, var, s) {
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
       SMSE@HOS[, s, ]/Esc_HOS
     })
+  } else if (var == "Smolt") {
+    x <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
   } else {
     x <- slot(SMSE, var)[, s, ]
   }
