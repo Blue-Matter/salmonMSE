@@ -11,7 +11,8 @@
 #' - `plot_fishery()` produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
-#' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options.
+#' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options. Additional supported options are:
+#' `"pHOScensus"`
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
 #' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
@@ -25,7 +26,13 @@
 #' @seealso [plot_decision_table()]
 #' @export
 plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
-  x <- slot(SMSE, var)[, s, ]
+
+  if (var == "pHOScensus") {
+    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
+  } else {
+    x <- slot(SMSE, var)[, s, ]
+  }
+
 
   if (!quant) {
     xplot <- x
@@ -56,14 +63,21 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 #' @export
 #' @importFrom graphics hist
 plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...) {
+
+  if (var == "pHOScensus") {
+    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
+  } else {
+    x <- slot(SMSE, var)[, s, ]
+  }
+
   if (missing(y)) {
-    xvar <- slot(SMSE, var)[, s, ] %>% colSums()
+    xvar <- colSums(x)
     ymax <- max(which(!is.na(xvar) & xvar > 0))
     y <- ymax
   }
-  x <- slot(SMSE, var)[, s, y]
-  if (figure) hist(x, xlab = xlab, main = NULL, ...)
-  invisible(x)
+  xplot <- x[, y]
+  if (figure) hist(xplot, xlab = xlab, main = NULL, ...)
+  invisible(xplot)
 }
 
 #' @name plot_statevar_ts
