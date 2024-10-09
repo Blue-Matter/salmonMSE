@@ -52,11 +52,20 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   mp <- 1 # Only MP run per OM
 
   y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0)
+  if (y_spawnOM[1] == 1) {
+    # This is actually the spawning from the last historical year
+    y_spawnOM <- y_spawnOM[-1]
+
+    t1_sp <- t1[-1]
+    t2_sp <- t2[-1]
+  } else {
+    t1_sp <- t1
+    t2_sp <- t2
+  }
   y_spawn <- 0.5 * (y_spawnOM - 1)
-  y_spawn <- y_spawn[y_spawn > 0]
 
   Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-  Escapement_NOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , - 1]
+  Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
 
   # Kept catch
   KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
@@ -90,7 +99,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_HOS_escapement <- 6 # NOS escapement
 
     Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
-    Escapement_HOS[, ns, , -SOM@proyears] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1, ], 1:3, sum)[, , -1]
+    Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
 
     # Kept catch
     KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
@@ -141,7 +150,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_smolt_rel <- 4
     a_smolt <- 1
 
-    Smolt_Rel[, ns, ] <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+    smolt_rel_openmse <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+    smolt_rel_salmonmse <- get_salmonMSE_var(state, var = "smolt_rel")
+    Smolt_Rel[, ns, y_spawn + 1] <- smolt_rel_openmse
 
     p_smolt <- 1
     Mjuv_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
