@@ -40,7 +40,8 @@ plot_fishery(
 \arguments{
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
 
-\item{var}{Character. Slot for the state variable in \code{SMSE} object. See \code{slotNames(SMSE)} for options.}
+\item{var}{Character. Slot for the state variable in \code{SMSE} object. See \code{slotNames(SMSE)} for options. Additional supported options are:
+\code{"pHOScensus"}, \code{"pNOB"}}
 
 \item{s}{Integer. Population index for multi-population model (e.g., \code{s = 1} is the first population in the model)}
 
