@@ -32,6 +32,7 @@ Below is the code for performing such a simulation, following the simple example
 
 ```{r, echo = TRUE, eval = FALSE}
 library(salmonMSE)
+library(tidyverse)
 
 # Data frame of the factorial combinations of compensation ratio (kappa)
 # and hatchery production
@@ -202,7 +203,6 @@ The level of hatchery production determines the composition hatchery and natural
 Here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
 
 ```{r, echo = TRUE, eval = FALSE}
-library(tidyverse)
 library(reshape2)
 
 PNI_ts <- lapply(1:nrow(Design), function(x) {
