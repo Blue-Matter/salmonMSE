@@ -76,7 +76,7 @@ Converts the openMSE output, along with additional state variables recorded in s
 
 
 <dt id="arg-hist">Hist<a class="anchor" aria-label="anchor" href="#arg-hist"></a></dt>
-<dd><p>Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data</p></dd>
+<dd><p>Logical, whether to stop the function stop after historical simulations?</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
@@ -88,12 +88,13 @@ Converts the openMSE output, along with additional state variables recorded in s
 
 
 <dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
-<dd><p>Logical, whether to convert the output into a salmon MSE (SMSE) object</p></dd>
+<dd><p>Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on <code>Hist</code>) object</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If <code>Hist = TRUE</code> a multiHist object (list). Otherwise, if <code>convert = TRUE</code>, a <a href="SMSE-class.html">SMSE</a> object or if <code>convert = FALSE</code>, a MMSE object.</p>
+    <p>If <code>Hist = TRUE</code>: if <code>convert = TRUE</code>, a <a href="SHist-class.html">SHist</a> object or if <code>convert = FALSE</code>, a multiHist object (list).</p>
+<p>If <code>Hist = FALSE</code>: if <code>convert = TRUE</code>, a <a href="SMSE-class.html">SMSE</a> object or if <code>convert = FALSE</code>, a MMSE object.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
