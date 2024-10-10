@@ -358,11 +358,11 @@ check_SOM <- function(SOM) {
     }
   }
 
-  # HistN check
+  # HistN check (juvenile abundance)
   if (!length(slot(SOM, "HistN"))) {
-    HistN <- array(0, c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
+    HistN <- array(0, c(SOM@nsim, SOM@maxage, SOM@nyears + 1, 2))
     HistN[, 1, , ] <- 1000
-    for (y in 2:SOM@nyears) {
+    for (y in seq(2, SOM@nyears + 1)) {
       ZNOS <- SOM@Mjuv_NOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 1]
       HistN[, 2:SOM@maxage, y, 1] <- HistN[, 2:SOM@maxage - 1, y-1, 1] * exp(-ZNOS)
 
@@ -374,12 +374,12 @@ check_SOM <- function(SOM) {
   dim_i <- dim(slot(SOM, "HistN"))
   if (is.null(dim_i)) {
     stop("Slot HistN must be an array of dimension ",
-         paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+         paste(c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2), collapse = ", "))
   } else {
-    dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
+    dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2))
     if (!dim_check) {
       stop("Slot HistN must be an array of dimension ",
-           paste(c(SOM@nsim, SOM@maxage, SOM@nyears), collapse = ", "))
+           paste(c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2), collapse = ", "))
     }
   }
 

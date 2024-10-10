@@ -248,7 +248,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   Historical <- new(
     "Historical",
     HistSpawner = Spawner,
-    HistN = Njuv[, , 1:nyears, ],
+    HistN = Njuv,
     HistFPT = FPT,
     HistFT = FT
   )

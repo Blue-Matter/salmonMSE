@@ -166,9 +166,10 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
     # Main historical ts, get deviations in fecundity (escapement) and Perr_y (immature)
     HistPars <- lapply(1:SOM@nsim, function(x) {
+
       Njuv <- SOM@HistN[x, , , pind]
       Fjuv <- outer(SOM@vulPT, SOM@HistFPT[x, , pind])
-      Recruit <- Njuv * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
+      Recruit <- Njuv[, 1:SOM@nyears] * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
       Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
       SpawnerOM <- Recruit * exp(-Fterm) # Escapement
 
@@ -190,7 +191,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       if (NOS) {
         Smolt_pred <- SRRfun(EggHist, SRRpars[x, ])
         Smolt_actual <- SOM@HistN[x, 1, , pind]
-        dev <- c(Smolt_actual[1], Smolt_actual[-1]/Smolt_pred[-SOM@nyears])
+        dev <- Smolt_actual[-1]/Smolt_pred
       } else {
         dev <- SOM@HistN[x, 1, , pind]
       }
@@ -212,7 +213,11 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       cpars_bio$Perr_y[, rev(age_init)] <- Perr_init
 
       Perr_main <- sapply(HistPars, getElement, "dev")
-      cpars_bio$Perr_y[, Stock@maxage + t1] <- t(Perr_main)
+      if (NOS) {
+        cpars_bio$Perr_y[, Stock@maxage + t1] <- t(Perr_main)
+      } else {
+        cpars_bio$Perr_y[, Stock@maxage + c(t1, max(t1) + 2)] <- t(Perr_main)
+      }
 
     } else if (stage == "escapement") {
       # Specify fecundity adjustment to match escapement to spawners
