@@ -209,6 +209,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     Smolt_NOS = Smolt_NOS,
     Smolt_HOS = Smolt_HOS,
     Smolt_Rel = Smolt_Rel,
+    Njuv_NOS = Njuv_NOS,
+    Njuv_HOS = Njuv_HOS,
     Return_NOS = Return_NOS,
     Return_HOS = Return_HOS,
     Escapement_NOS = Escapement_NOS,
