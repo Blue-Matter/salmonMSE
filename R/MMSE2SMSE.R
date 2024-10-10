@@ -13,7 +13,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   nage <- SOM@maxage
 
   # Declare arrays
-  Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
+  Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   NOB <- HOB <- array(0, c(SOM@nsim, ns, SOM@proyears))
   KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -64,6 +64,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   }
   y_spawn <- 0.5 * (y_spawnOM - 1)
 
+  Njuv_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
   Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
   Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
 
@@ -104,6 +105,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     p_HOS_return <- 5 # Population index for returning HOS
     p_HOS_escapement <- 6 # NOS escapement
 
+    Njuv_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
     Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
     Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
 

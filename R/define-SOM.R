@@ -261,6 +261,8 @@ setMethod("initialize", "SOM",
 #' @slot Smolt_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners.
 #' @slot Smolt_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners.
 #' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
+#' @slot Njuv_NOS Array `[nsim, nstocks, nage, proyears]`. Abundance of juvenile natural origin fish at the beginning of the year.
+#' @slot Njuv_HOS Array `[nsim, nstocks, nage, proyears]`. Abundance of juvenile hatchery origin fish at the beginning of the year.
 #' @slot Return_NOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be natural origin spawners.
 #' @slot Return_HOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be hatchery origin spawners.
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
@@ -337,6 +339,8 @@ setClass(
     Smolt_NOS = "array",
     Smolt_HOS = "array",
     Smolt_Rel = "array",
+    Njuv_NOS = "array",
+    Njuv_HOS = "array",
     Return_NOS = "array",
     Return_HOS = "array",
     Escapement_NOS = "array",
@@ -407,6 +411,8 @@ setMethod("initialize", "SMSE",
 #' @slot Egg_HOS Array `[nsim, nstocks, nyears]`. Spawning output of hatchery origin spawners.
 #' @slot Smolt Array `[nsim, nstocks, nyears]`. Natural smolt production (sum of offspring of natural and hatchery spawners).
 #' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
+#' @slot Njuv_NOS Array `[nsim, nstocks, nage, nyears]`. Abundance of juvenile natural origin fish at the beginning of the year.
+#' @slot Njuv_HOS Array `[nsim, nstocks, nage, nyears]`. Abundance of juvenile hatchery origin fish at the beginning of the year.
 #' @slot Return_NOS Array `[nsim, nstocks, nage, nyears]`. Mature fish that will be natural origin spawners.
 #' @slot Return_HOS Array `[nsim, nstocks, nage, nyears]`. Mature fish that will be hatchery origin spawners.
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, nyears]`. The escapement of mature fish that will be natural origin spawners.
@@ -447,6 +453,8 @@ setClass(
     Egg_HOS = "array",
     Smolt = "array",
     Smolt_Rel = "array",
+    Njuv_NOS = "array",
+    Njuv_HOS = "array",
     Return_NOS = "array",
     Return_HOS = "array",
     Escapement_NOS = "array",
