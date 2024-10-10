@@ -82,7 +82,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/vulNOS_imm
   UPT_NOS[is.na(UPT_NOS)] <- 0
 
-  vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+  vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
   NOS_ret_a <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
   vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
   UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/vulNOS_ret

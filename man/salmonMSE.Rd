@@ -9,16 +9,18 @@ salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
 
-\item{Hist}{Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data}
+\item{Hist}{Logical, whether to stop the function stop after historical simulations?}
 
 \item{silent}{Logical, whether to report progress in console bar}
 
 \item{trace}{Logical, whether to report additional messages from openMSE}
 
-\item{convert}{Logical, whether to convert the output into a salmon MSE (SMSE) object}
+\item{convert}{Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on \code{Hist}) object}
 }
 \value{
-If \code{Hist = TRUE} a multiHist object (list). Otherwise, if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \linkS4class{MMSE} object.
+If \code{Hist = TRUE}: if \code{convert = TRUE}, a \linkS4class{SHist} object or if \code{convert = FALSE}, a multiHist object (list).
+
+If \code{Hist = FALSE}: if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \linkS4class{MMSE} object.
 }
 \description{
 \code{salmonMSE()} runs a salmon management strategy evaluation through the following steps:

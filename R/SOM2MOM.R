@@ -4,9 +4,10 @@
 #'
 #' @description
 #' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
-#' - [MMSE2SMSE()] converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
 #' - [make_Stock()] creates the \linkS4class{Stock} object (openMSE) corresponding to salmon life stage
 #' - [make_Fleet()] creates the \linkS4class{Fleet} object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
+#' - [multiHist2SHist()] converts the openMSE historical reconstruction into a salmon Hist object (\linkS4class{SHist})
+#' - [MMSE2SMSE()] converts the openMSE projection output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
 #'
 #' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
 #'

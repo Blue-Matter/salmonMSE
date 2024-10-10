@@ -10,12 +10,14 @@
 #' - Runs projection (if `Hist = FALSE`)
 #' - Converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (SMSE) via [MMSE2SMSE()]
 #' @param SOM An object of class \linkS4class{SOM}
-#' @param Hist Logical, whether to stop the function stop after historical simulations? Returns a list containing all historical data
+#' @param Hist Logical, whether to stop the function stop after historical simulations?
 #' @param silent Logical, whether to report progress in console bar
 #' @param trace Logical, whether to report additional messages from openMSE
-#' @param convert Logical, whether to convert the output into a salmon MSE (SMSE) object
+#' @param convert Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on `Hist`) object
 #' @return
-#' If `Hist = TRUE` a multiHist object (list). Otherwise, if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
+#' If `Hist = TRUE`: if `convert = TRUE`, a \linkS4class{SHist} object or if `convert = FALSE`, a multiHist object (list).
+#'
+#' If `Hist = FALSE`: if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
@@ -34,8 +36,15 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
 
   if (Hist) {
-    if(!silent) message("Returning historical simulations..")
-    return(H)
+    if (!silent) message("Returning historical simulations..")
+
+    if (convert) {
+      if (!silent) message("Converting to salmon Hist object..")
+      SHist <- multiHist2SHist(H, SOM)
+      return(SHist)
+    } else {
+      return(H)
+    }
   }
 
   if (!silent) message("Running forward projections..")
