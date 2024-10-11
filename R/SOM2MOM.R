@@ -12,11 +12,12 @@
 #' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
 #'
 #' @param SOM An object of class \linkS4class{SOM}
+#' @param check Logical, whether to check the `SOM` object using [check_SOM()]
 #' @export
 #' @return
 #' `SOM2MOM`: \linkS4class{MOM} object
-SOM2MOM <- function(SOM) {
-  SOM <- check_SOM(SOM)
+SOM2MOM <- function(SOM, check = TRUE) {
+  if (check) SOM <- check_SOM(SOM)
 
   MOM <- suppressMessages(new("MOM"))
   MOM@Name <- SOM@Name
@@ -33,8 +34,8 @@ SOM2MOM <- function(SOM) {
   ns <- 1
   Stocks <- list()
   Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
-  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")            # NOS_recruitment
-  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement")        # NOS_escapement
+  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
+  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
 
   if (do_hatchery) {
     Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
@@ -223,6 +224,15 @@ SOM2MOM <- function(SOM) {
   return(MOM)
 }
 
+
+#' Check inputs to SOM object
+#'
+#' Ensures that the slots in the [salmonMSE::SOM-class] object have the correct dimensions. Function will
+#' update some slots to their full dimensions.
+#'
+#' @param SOM [salmonMSE::SOM-class] object
+#' @returns Updated [salmonMSE::SOM-class] object with full dimensions in various slots
+#' @export
 check_SOM <- function(SOM) {
 
   slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))

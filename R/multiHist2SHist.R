@@ -4,7 +4,9 @@
 #' @return
 #' `multiHist2SHist`: \linkS4class{SHist} object
 #' @export
-multiHist2SHist <- function(multiHist, SOM) {
+multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
+
+  if (check) SOM <- check_SOM(SOM)
 
   ns <- 1 # Number of stocks
   nage <- SOM@maxage

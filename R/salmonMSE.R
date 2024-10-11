@@ -24,7 +24,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   if (!silent) message("Converting salmon operating model to MOM..")
 
   SOM <- check_SOM(SOM)
-  MOM <- SOM2MOM(SOM)
+  MOM <- SOM2MOM(SOM, check = FALSE)
 
   Harvest_MMP <- make_Harvest_MMP(SOM@u_terminal, SOM@u_preterminal, SOM@m, SOM@release_mort)
 
@@ -40,7 +40,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
     if (convert) {
       if (!silent) message("Converting to salmon Hist object..")
-      SHist <- multiHist2SHist(H, SOM)
+      SHist <- multiHist2SHist(H, SOM, check = FALSE)
       return(SHist)
     } else {
       return(H)

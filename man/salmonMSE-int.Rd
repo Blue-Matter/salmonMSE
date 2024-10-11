@@ -12,13 +12,13 @@
 \usage{
 MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford, state)
 
-SOM2MOM(SOM)
+SOM2MOM(SOM, check = TRUE)
 
 make_Stock(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 
 make_Fleet(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
 
-multiHist2SHist(multiHist, SOM)
+multiHist2SHist(multiHist, SOM, check = TRUE)
 }
 \arguments{
 \item{MMSE}{Object of class \linkS4class{MMSE} returned from MSEtool}
@@ -32,6 +32,8 @@ multiHist2SHist(multiHist, SOM)
 \item{Ford}{Data frame of phenotypic trait values saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
+
+\item{check}{Logical, whether to check the \code{SOM} object using \code{\link[=check_SOM]{check_SOM()}}}
 
 \item{NOS}{Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish}
 
