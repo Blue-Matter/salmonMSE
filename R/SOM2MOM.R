@@ -313,17 +313,13 @@ check_SOM <- function(SOM) {
   for(i in var_stochastic) {
     if (i == "phi") {
       if (!length(slot(SOM, i))) {
-
         slot(SOM, i) <- local({
-          NPR <- matrix(NA_real_, SOM@nsim, SOM@maxage)
-          NPR[, 1] <- 1
-          for (a in 2:SOM@maxage) {
-            NPR[, a] <- NPR[, a-1] * exp(-SOM@Mjuv_NOS[, a-1, 1]) * (1 - SOM@p_mature[, a-1, 1])
-          }
-          EPR <- NPR * SOM@p_mature[, , 1]
+          surv_juv <- sapply(1:SOM@nsim, function(x) {
+            calc_survival(SOM@Mjuv_NOS[x, , 1], SOM@p_mature[x, , 1])
+          }) # maxage x nsim
+          EPR <- t(surv_juv) * SOM@p_mature[, , 1]
           colSums(t(EPR) * SOM@p_female * SOM@fec)
         })
-
       }
     }
     if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)

@@ -37,36 +37,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@h <- rep(0.99, 2)
   Stock@R0 <- 1
   if (NOS) {
-    a <- SOM@kappa/SOM@phi
-    if (SOM@SRrel == "BH") {
-      b <- a/SOM@capacity_smolt
-      SRRpars <- data.frame(
-        a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel, kappa = SOM@kappa,
-        capacity_smolt = SOM@capacity_smolt, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
-      )
-    } else {
-      b <- 1/SOM@Smax
-      SRRpars <- data.frame(
-        a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel, kappa = SOM@kappa,
-        Smax = SOM@Smax, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
-      )
-    }
-    SRRfun <- function(SB, SRRpars) {
-      if (SRRpars$SRrel == "BH") {
-        SRRpars$a * SB / (1 + SRRpars$b * SB)
-      } else {
-        SRRpars$a * SB * exp(-SRRpars$b * SB)
-      }
-    }
-    relRfun <- function(SSBpR, SRRpars) {
-      if (SRRpars$SRrel == "BH") {
-        (SRRpars$a * SSBpR - 1)/SRRpars$b/SSBpR
-      } else {
-        log(SRRpars$a * SSBpR)/SRRpars$b/SSBpR
-      }
-    }
-    SPRcrashfun <- function(SSBpR0, SRRpars) SRRpars$SPRcrash
-
+    cpars_bio$SRR <- make_SRR(SOM)
   } else {
     # Custom SRR
     Stock@SRrel <- 3
@@ -78,9 +49,8 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     SRRfun <- function(SB, SRRpars) ifelse(sum(SB), 1, 0)
     relRfun <- function(SSBpR, SRRpars) return(1)
     SPRcrashfun <- function(SSBpR0, SRRpars) return(0)
+    cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
   }
-
-  cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
 
   # Ignore depletion setup (use cpars$qs = 1, and Eff)
   Stock@D <- c(0, 0)
@@ -193,7 +163,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
 
       if (NOS) {
-        Smolt_pred <- SRRfun(EggHist, SRRpars[x, ])
+        Smolt_pred <- cpars_bio$SRR$SRRfun(EggHist, cpars_bio$SRR$SRRpars[x, ])
         Smolt_actual <- SOM@HistN[x, 1, , pind]
         dev <- Smolt_actual/c(1, Smolt_pred) # Length nyears + 1, for denominator see Line 165
       } else {
@@ -206,11 +176,10 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     # Specify rec devs
     if (stage == "immature") {
       # Initial abundance vector. With custom SRR, we set R0 = 1!
-      NPR <- matrix(NA_real_, SOM@nsim, Stock@maxage)
-      NPR[, 1] <- 1
-      for (a in 2:Stock@maxage) {
-        NPR[, a] <- NPR[, a-1] * exp(-cpars_bio$M_ageArray[, a-1, 1])
-      }
+      survOM <- sapply(1:SOM@nsim, function(x) {
+        calc_survival(cpars_bio$M_ageArray[x, , 1], p_mature = rep(0, Stock@maxage))
+      }) # maxage x nsim
+      NPR <- t(survOM)
       age_init <- seq(1, Stock@maxage, 2)[-1]
       Ninit <- SOM@HistN[, -1, 1, pind]
       Perr_init <- Ninit/NPR[, rev(age_init)]
@@ -346,3 +315,12 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   return(list(Fleet = Fleet, cpars_fleet = cpars_fleet))
 }
 
+
+calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
+  surv <- rep(NA_real_, maxage)
+  surv[1] <- 1
+  for (a in 2:maxage) {
+    surv[a] <- surv[a-1] * exp(-Mjuv[a-1]) * (1 - p_mature[a-1])
+  }
+  return(surv)
+}
