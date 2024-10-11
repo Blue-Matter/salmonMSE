@@ -46,27 +46,19 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   a_imm <- a1[-length(a1)]
   a_return <- a2
   a_esc <- a1[-1]
-  #age_escapement <- age_bio + 1 # MSEtool age class
 
   f <- 1 # Fleet
   mp <- 1 # Only MP run per OM
 
-  y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0)
+  y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0) # Odd time steps, indicated by presence of escapement
   if (y_spawnOM[1] == 1) {
-    # This is actually the spawning from the last historical year
-    y_spawnOM <- y_spawnOM[-1]
-
-    t1_sp <- t1[-1]
-    t2_sp <- t2[-1]
-  } else {
-    t1_sp <- t1
-    t2_sp <- t2
+    y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
   }
   y_spawn <- 0.5 * (y_spawnOM - 1)
 
   Njuv_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
   Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-  Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
+  Escapement_NOS[, ns, , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
 
   # Kept catch
   KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
@@ -107,7 +99,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
     Njuv_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
     Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
-    Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, t1_sp, ], 1:3, sum)
+    Escapement_HOS[, ns, , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
 
     # Kept catch
     KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
