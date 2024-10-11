@@ -78,7 +78,7 @@
 #' @section start:
 #' Starting values for parameters can be provided through a named list:
 #'
-#' - `cr` Numeric, compensation ratio. Default is 3.
+#' - `log_cr` Numeric, log of the compensation ratio. Default is 3.
 #' - `log_so` Numeric, unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `moadd` Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
 #' - `wt` Vector `Ldyr`. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
@@ -222,7 +222,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     maxage = data$Nages,
     p_mature = expand_array(matt, proyears),
     SRrel = "Ricker",
-    kappa = as.numeric(pars$cr[sims]),
+    kappa = as.numeric(exp(pars$log_cr[sims])),
     Smax = 1/SRbeta,
     phi = phi,
     Mjuv_NOS = expand_array(mo, proyears),

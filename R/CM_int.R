@@ -39,10 +39,10 @@ CM_int <- function(p, d) {
 
   # Transformed parameters ----
   so <- exp(p$log_so)
-  ro <- so/spro            # unfished recruitment ro
-  eo <- ro * epro          # unfished total egg production
-  mden <- p$cr/eo          # Ricker b parameter for egg-smolt relationship
-  memin <- memax - p$cr    # minimum egg-smolt M at low population density
+  ro <- so/spro                 # unfished recruitment ro
+  eo <- ro * epro               # unfished total egg production
+  mden <- p$log_cr/eo           # Ricker b parameter for egg-smolt relationship
+  memin <- memax - p$log_cr     # minimum egg-smolt M at low population density
 
   alpha <- exp(-memin)
   beta <- mden
@@ -336,7 +336,7 @@ CM_int <- function(p, d) {
 
 # Make list of starting values
 make_CMpars <- function(p, d) {
-  if (is.null(p$cr)) p$cr <- 3
+  if (is.null(p$log_cr)) p$log_cr <- 3
   if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape))
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p$wt)) p$wt <- rep(0, d$Ldyr)
@@ -508,9 +508,9 @@ make_bounds <- function(par_names, data, lower_b1, upper_b1, lower_b, upper_b) {
   lower <- structure(rep(-Inf, length(par_names)), names = par_names)
   upper <- structure(rep(Inf, length(par_names)), names = par_names)
 
-  if ("cr" %in% names(lower)) {
-    lower["cr"] <- 1
-    if (!is.null(data$maxcr)) upper["cr"] <- data$maxcr
+  if ("log_cr" %in% names(lower)) {
+    lower["log_cr"] <- 0
+    if (!is.null(data$maxcr)) upper["log_cr"] <- data$maxcr
   }
 
   if ("log_so" %in% names(lower)) {
