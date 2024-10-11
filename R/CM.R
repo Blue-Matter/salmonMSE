@@ -12,10 +12,8 @@
 #'
 #' @param data  A list containing data inputs. See details.
 #' @param start An optional list containing parameter starting values. See details.
-#' @param lower_b1 Lower bound of coefficients for linear covariates that predict natural mortality for age 1. See details.
-#' @param upper_b1 Upper bound of coefficients for linear covariates that predict natural mortality for age 1. See details.
-#' @param lower_b Lower bound of coefficients for linear covariates that predict natural mortality for age 2+ See details.
-#' @param upper_b Upper bound of coefficients for linear covariates that predict natural mortality for age 2+. See details.
+#' @param lower Named list containing lower bounds for parameters. See details.
+#' @param upper Named list containing upper bounds for parameters. See details.
 #' @param do_fit Logical, whether to do the fit and estimate the Hessian.
 #' @param silent Logical, whether to silence output from RTMB to the console.
 #' @param control List, `control` argument to pass to [`stats::nlminb()`].
@@ -62,8 +60,6 @@
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.
 #' - `so_mu` Numeric, the prior mean for unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
-#' - `so_min` Numeric, lower bound for the estimate of unfished spawners. Default is `log(2 * max(data$obsescape))`.
-#' - `maxcr` *Optional*. Upper bound to the compensation ratio parameter (the minimum value is always 1).
 #' - `fitness` Logical, whether to calculate fitness effects on survival. Default is `FALSE`.
 #' - `theta` Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
 #' [online article](https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival) for more information.
@@ -101,6 +97,15 @@
 #' - `b1` Vector `ncov1` of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 #' - `b` Vector `ncov` of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.
 #'
+#' @section Bounds:
+#'
+#' By default, the standard deviation parameters and parameters in normal space (e.g., `FbasePT`, `Fbase_T`) have a lower bound of zero.
+#' `moadd` has a lower bound of zero by default, but it is feasible that this parameter can be negative as well.
+#' Deviation parameters centred around zero are bounded between -3 to 3.
+#' The `log_cr` parameter has a lower bound of zero.
+#'
+#' All other parameters are unbounded.
+#'
 #' @section Covariates on natural mortality:
 #'
 #' Natural mortality is modeled as the sum of a base value \eqn{M^\textrm{base}}, additional scaling factor for age 1 \eqn{M^\textrm{add}},
@@ -119,7 +124,7 @@
 #' Sciences 62: vi + 60 p.
 #' @seealso [CM2SOM()]
 #' @export
-fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, do_fit = TRUE, silent = TRUE,
+fit_CM <- function(data, start = list(), lower = list(), upper = list(), do_fit = TRUE, silent = TRUE,
                    control = list(eval.max = 1e5, iter.max = 1e5), ...) {
 
   data <- check_data(data)
@@ -129,7 +134,7 @@ fit_CM <- function(data, start = list(), lower_b1, upper_b1, lower_b, upper_b, d
   f <- function(p) salmonMSE::CM_int(p, d = data) # :: is needed for parallel MCMC sampling
   obj <- RTMB::MakeADFun(func = f, parameters = p, map = map, silent = silent, ...)
 
-  bounds <- make_bounds(names(obj$par), data, lower_b1, upper_b1, lower_b, upper_b)
+  bounds <- make_bounds(names(obj$par), data, lower, upper)
 
   if (do_fit) {
     opt <- nlminb(

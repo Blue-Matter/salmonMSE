@@ -8,10 +8,8 @@
 fit_CM(
   data,
   start = list(),
-  lower_b1,
-  upper_b1,
-  lower_b,
-  upper_b,
+  lower = list(),
+  upper = list(),
   do_fit = TRUE,
   silent = TRUE,
   control = list(eval.max = 1e+05, iter.max = 1e+05),
@@ -25,13 +23,9 @@ sample_CM(fit, ...)
 
 \item{start}{An optional list containing parameter starting values. See details.}
 
-\item{lower_b1}{Lower bound of coefficients for linear covariates that predict natural mortality for age 1. See details.}
+\item{lower}{Named list containing lower bounds for parameters. See details.}
 
-\item{upper_b1}{Upper bound of coefficients for linear covariates that predict natural mortality for age 1. See details.}
-
-\item{lower_b}{Lower bound of coefficients for linear covariates that predict natural mortality for age 2+ See details.}
-
-\item{upper_b}{Upper bound of coefficients for linear covariates that predict natural mortality for age 2+. See details.}
+\item{upper}{Named list containing upper bounds for parameters. See details.}
 
 \item{do_fit}{Logical, whether to do the fit and estimate the Hessian.}
 
@@ -95,8 +89,6 @@ reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
-\item \code{so_min} Numeric, lower bound for the estimate of unfished spawners. Default is \code{log(2 * max(data$obsescape))}.
-\item \code{maxcr} \emph{Optional}. Upper bound to the compensation ratio parameter (the minimum value is always 1).
 \item \code{fitness} Logical, whether to calculate fitness effects on survival. Default is \code{FALSE}.
 \item \code{theta} Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
 \href{https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival}{online article} for more information.
@@ -137,6 +129,17 @@ Estimated with normal prior with mean zero and standard deviation \code{p$fanoma
 \item \code{b1} Vector \code{ncov1} of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 \item \code{b} Vector \code{ncov} of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.
 }
+}
+
+\section{Bounds}{
+
+
+By default, the standard deviation parameters and parameters in normal space (e.g., \code{FbasePT}, \code{Fbase_T}) have a lower bound of zero.
+\code{moadd} has a lower bound of zero by default, but it is feasible that this parameter can be negative as well.
+Deviation parameters centred around zero are bounded between -3 to 3.
+The \code{log_cr} parameter has a lower bound of zero.
+
+All other parameters are unbounded.
 }
 
 \section{Covariates on natural mortality}{

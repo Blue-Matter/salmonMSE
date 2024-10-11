@@ -503,64 +503,49 @@ make_map <- function(p, d) {
   return(map)
 }
 
-make_bounds <- function(par_names, data, lower_b1, upper_b1, lower_b, upper_b) {
+make_bounds <- function(par_names, data, lower = list(), upper = list()) {
 
-  lower <- structure(rep(-Inf, length(par_names)), names = par_names)
-  upper <- structure(rep(Inf, length(par_names)), names = par_names)
+  .lower <- structure(rep(-Inf, length(par_names)), names = par_names)
+  .upper <- structure(rep(Inf, length(par_names)), names = par_names)
 
-  if ("log_cr" %in% names(lower)) {
-    lower["log_cr"] <- 0
-    if (!is.null(data$maxcr)) upper["log_cr"] <- data$maxcr
+  # Add important defaults first
+  if ("log_cr" %in% names(.lower)) .lower["log_cr"] <- 1e-8
+  if ("moadd" %in% names(.lower)) .lower["moadd"] <- 1e-8
+  if ("FbasePT" %in% names(.lower)) .lower["FbasePT"] <- 1e-8
+  if ("FbaseT" %in% names(.lower)) .lower["FbaseT"] <- 1e-8
+
+  if ("lnE_sd" %in% names(.lower)) .lower["lnE_sd"] <- 1e-8
+  if ("wt_sd" %in% names(.lower)) .lower["wt_sd"] <- 1e-8
+  if ("wto_sd" %in% names(.lower)) .lower["wto_sd"] <- 1e-8
+  if ("fanomalyPT_sd" %in% names(.lower)) .lower["fanomalyPT_sd"] <- 1e-8
+  if ("fanomalyT_sd" %in% names(.lower)) .lower["fanomalyT_sd"] <- 1e-8
+
+  if ("sd_matt" %in% names(.lower)) .lower[names(.lower) == "sd_matt"] <- 1e-8
+
+  if ("wt" %in% names(.lower)) {
+    .lower[names(.lower) == "wt"] <- -3
+    .upper[names(.upper) == "wt"] <- 3
+  }
+  if ("wto" %in% names(.lower)) {
+    .lower[names(.lower) == "wto"] <- -3
+    .upper[names(.upper) == "wto"] <- 3
+  }
+  if ("fanomalyPT" %in% names(.lower)) {
+    .lower[names(.lower) == "fanomalyPT"] <- -3
+    .upper[names(.upper) == "fanomalyPT"] <- 3
+  }
+  if ("fanomalyT" %in% names(.lower)) {
+    .lower[names(.lower) == "fanomalyT"] <- -3
+    .upper[names(.upper) == "fanomalyT"] <- 3
   }
 
-  if ("log_so" %in% names(lower)) {
-    if (!is.null(data$so_min)) {
-      lower["log_so"] <- data$so_min
-    } else {
-      lower["log_so"] <- log(2 * max(data$obsescape))
-    }
+  # Override with user-defined bounds
+  for (i in unique(par_names)) {
+    if (!is.null(lower[[i]])) .lower[names(.lower) == i] <- lower[[i]]
+    if (!is.null(upper[[i]])) .upper[names(.upper) == i] <- upper[[i]]
   }
 
-  if ("moadd" %in% names(lower)) lower["moadd"] <- -2/3 * data$mobase[1]
-  if ("FbasePT" %in% names(lower)) lower["FbasePT"] <- 1e-8
-  if ("FbaseT" %in% names(lower)) lower["FbaseT"] <- 1e-8
-
-  if ("b1" %in% names(lower)) {
-    if (!missing(lower_b1)) lower[names(lower) == "b1"] <- lower_b1
-    if (!missing(upper_b1)) upper[names(upper) == "b1"] <- upper_b1
-  }
-
-  if ("b" %in% names(lower)) {
-    if (!missing(lower_b)) lower[names(lower) == "b"] <- lower_b
-    if (!missing(upper_b)) upper[names(upper) == "b"] <- upper_b
-  }
-
-  if ("lnE_sd" %in% names(lower)) lower["lnE_sd"] <- 1e-8
-  if ("wt_sd" %in% names(lower)) lower["wt_sd"] <- 1e-8
-  if ("wto_sd" %in% names(lower)) lower["wto_sd"] <- 1e-8
-  if ("fanomalyPT_sd" %in% names(lower)) lower["fanomalyPT_sd"] <- 1e-8
-  if ("fanomalyT_sd" %in% names(lower)) lower["fanomalyT_sd"] <- 1e-8
-
-  if ("sd_matt" %in% names(lower)) lower[names(lower) == "sd_matt"] <- 1e-8
-
-  if ("wt" %in% names(lower)) {
-    lower[names(lower) == "wt"] <- -3
-    upper[names(upper) == "wt"] <- 3
-  }
-  if ("wto" %in% names(lower)) {
-    lower[names(lower) == "wto"] <- -3
-    upper[names(upper) == "wto"] <- 3
-  }
-  if ("fanomalyPT" %in% names(lower)) {
-    lower[names(lower) == "fanomalyPT"] <- -3
-    upper[names(upper) == "fanomalyPT"] <- 3
-  }
-  if ("fanomalyT" %in% names(lower)) {
-    lower[names(lower) == "fanomalyT"] <- -3
-    upper[names(upper) == "fanomalyT"] <- 3
-  }
-
-  list(lower = lower, upper = upper)
+  list(lower = .lower, upper = .upper)
 }
 
 get_report <- function(stanfit, sims) {
