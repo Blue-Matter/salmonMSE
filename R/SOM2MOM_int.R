@@ -161,6 +161,9 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$Perr_y <- matrix(0, SOM@nsim, Stock@maxage + nyears + proyears)
   if (stage == "immature" && NOS) cpars_bio$Perr_y[, Stock@maxage + all_t1] <- 1
 
+  # Escapement needs an initial abundance = 1 in order to generate the smolt production in the first historical year
+  if (stage == "escapement" && NOS) cpars_bio$Perr_y[, Stock@maxage + 1] <- 1
+
   if (length(SOM@HistN) && stage %in% c("immature", "escapement")) {
     pind <- ifelse(NOS, 1, 2)
 
@@ -181,17 +184,18 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
       if (NOS) {
         EggOM <- colSums(SpawnerOM * SOM@fec * SOM@p_female)
+        EggHist <- colSums(SpawnerHist * SOM@fec * SOM@p_female)
       } else {
         EggOM <- colSums(SpawnerOM * SOM@gamma * SOM@fec * SOM@p_female)
+        EggHist <- colSums(SpawnerHist * SOM@gamma * SOM@fec * SOM@p_female)
       }
-      EggHist <- colSums(SpawnerHist * SOM@fec * SOM@p_female)
       fec_ratio <- EggHist/EggOM
       fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
 
       if (NOS) {
         Smolt_pred <- SRRfun(EggHist, SRRpars[x, ])
         Smolt_actual <- SOM@HistN[x, 1, , pind]
-        dev <- Smolt_actual[-1]/Smolt_pred
+        dev <- Smolt_actual/c(1, Smolt_pred) # Length nyears + 1, for denominator see Line 165
       } else {
         dev <- SOM@HistN[x, 1, , pind]
       }
@@ -213,11 +217,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       cpars_bio$Perr_y[, rev(age_init)] <- Perr_init
 
       Perr_main <- sapply(HistPars, getElement, "dev")
-      if (NOS) {
-        cpars_bio$Perr_y[, Stock@maxage + t1] <- t(Perr_main)
-      } else {
-        cpars_bio$Perr_y[, Stock@maxage + c(t1, max(t1) + 2)] <- t(Perr_main)
-      }
+      cpars_bio$Perr_y[, Stock@maxage + c(t1, max(t1) + 2)] <- t(Perr_main)
 
     } else if (stage == "escapement") {
       # Specify fecundity adjustment to match escapement to spawners
