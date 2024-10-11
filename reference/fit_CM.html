@@ -64,10 +64,8 @@ The model includes either a preterminal fishery, terminal fishery, or both (see 
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_CM</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">lower_b1</span>,</span>
-<span>  <span class="va">upper_b1</span>,</span>
-<span>  <span class="va">lower_b</span>,</span>
-<span>  <span class="va">upper_b</span>,</span>
+<span>  lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  do_fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">1e+05</span>, iter.max <span class="op">=</span> <span class="fl">1e+05</span><span class="op">)</span>,</span>
@@ -89,20 +87,12 @@ The model includes either a preterminal fishery, terminal fishery, or both (see 
 <dd><p>An optional list containing parameter starting values. See details.</p></dd>
 
 
-<dt id="arg-lower-b-">lower_b1<a class="anchor" aria-label="anchor" href="#arg-lower-b-"></a></dt>
-<dd><p>Lower bound of coefficients for linear covariates that predict natural mortality for age 1. See details.</p></dd>
+<dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
+<dd><p>Named list containing lower bounds for parameters. See details.</p></dd>
 
 
-<dt id="arg-upper-b-">upper_b1<a class="anchor" aria-label="anchor" href="#arg-upper-b-"></a></dt>
-<dd><p>Upper bound of coefficients for linear covariates that predict natural mortality for age 1. See details.</p></dd>
-
-
-<dt id="arg-lower-b">lower_b<a class="anchor" aria-label="anchor" href="#arg-lower-b"></a></dt>
-<dd><p>Lower bound of coefficients for linear covariates that predict natural mortality for age 2+ See details.</p></dd>
-
-
-<dt id="arg-upper-b">upper_b<a class="anchor" aria-label="anchor" href="#arg-upper-b"></a></dt>
-<dd><p>Upper bound of coefficients for linear covariates that predict natural mortality for age 2+. See details.</p></dd>
+<dt id="arg-upper">upper<a class="anchor" aria-label="anchor" href="#arg-upper"></a></dt>
+<dd><p>Named list containing upper bounds for parameters. See details.</p></dd>
 
 
 <dt id="arg-do-fit">do_fit<a class="anchor" aria-label="anchor" href="#arg-do-fit"></a></dt>
@@ -169,8 +159,6 @@ reduces the CWT predictions by 0.1 for the likelihood. Default is 1.</p></li>
 <li><p><code>s_enroute</code> Numeric, survival of escapement to spawning grounds. Default is 1.</p></li>
 <li><p><code>so_mu</code> Numeric, the prior mean for unfished spawners in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
 <li><p><code>so_sd</code> Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.</p></li>
-<li><p><code>so_min</code> Numeric, lower bound for the estimate of unfished spawners. Default is <code>log(2 * max(data$obsescape))</code>.</p></li>
-<li><p><code>maxcr</code> <em>Optional</em>. Upper bound to the compensation ratio parameter (the minimum value is always 1).</p></li>
 <li><p><code>fitness</code> Logical, whether to calculate fitness effects on survival. Default is <code>FALSE</code>.</p></li>
 <li><p><code>theta</code> Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
 <a href="https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival">online article</a> for more information.</p></li>
@@ -186,7 +174,7 @@ for the natural environment at the start of the model.</p></li>
     <h2 id="start">start<a class="anchor" aria-label="anchor" href="#start"></a></h2>
 
 
-<p>Starting values for parameters can be provided through a named list:</p><ul><li><p><code>cr</code> Numeric, compensation ratio. Default is 3.</p></li>
+<p>Starting values for parameters can be provided through a named list:</p><ul><li><p><code>log_cr</code> Numeric, log of the compensation ratio. Default is 3.</p></li>
 <li><p><code>log_so</code> Numeric, unfished spawners in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
 <li><p><code>moadd</code> Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.</p></li>
 <li><p><code>wt</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
@@ -209,6 +197,17 @@ Estimated with normal prior with mean zero and standard deviation <code>p$fanoma
 <li><p><code>b1</code> Vector <code>ncov1</code> of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.</p></li>
 <li><p><code>b</code> Vector <code>ncov</code> of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="bounds">Bounds<a class="anchor" aria-label="anchor" href="#bounds"></a></h2>
+
+
+
+<p>By default, the standard deviation parameters and parameters in normal space (e.g., <code>FbasePT</code>, <code>Fbase_T</code>) have a lower bound of zero.
+<code>moadd</code> has a lower bound of zero by default, but it is feasible that this parameter can be negative as well.
+Deviation parameters centred around zero are bounded between -3 to 3.
+The <code>log_cr</code> parameter has a lower bound of zero.</p>
+<p>All other parameters are unbounded.</p>
+    </div>
     <div class="section level2">
     <h2 id="covariates-on-natural-mortality">Covariates on natural mortality<a class="anchor" aria-label="anchor" href="#covariates-on-natural-mortality"></a></h2>
 
