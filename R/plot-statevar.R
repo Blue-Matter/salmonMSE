@@ -63,7 +63,7 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab 
   x <- get_statevar(SMSE, var, s)
 
   if (missing(y)) {
-    xvar <- colSums(x)
+    xvar <- colSums(x, na.rm = TRUE)
     ymax <- max(which(!is.na(xvar) & xvar > 0))
     y <- ymax
   }
