@@ -296,7 +296,8 @@ setMethod("initialize", "SOM",
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
 #' @slot Mjuv_loss Array `[nsim, nstocks, nage, proyears]`. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.
-#' @slot Misc List. Miscellaneous output
+#' @slot Misc List. Miscellaneous output. Contains `Ref` for reference points, `SHist` for the [salmonMSE::SHist-class] object, and
+#' `SOM` for the [salmonMSE::SOM-class] object.
 #'
 #' @details
 #' In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
