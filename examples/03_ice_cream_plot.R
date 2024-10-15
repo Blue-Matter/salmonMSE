@@ -2,7 +2,7 @@
 
 Design <- expand.grid(
   kappa = c(3, 6, 9),
-  hatch = c(5, 10, 15) * 1000
+  hatch = c(0, 5, 10, 15) * 1000
 )
 
 wrapper <- function(x, Design) {
@@ -91,7 +91,7 @@ wrapper <- function(x, Design) {
 }
 
 library(snowfall)
-sfInit(parallel = TRUE, cpus = nrow(Design))
+sfInit(parallel = TRUE, cpus = min(0.5 * parallel::detectCores(), nrow(Design)))
 sfLibrary(salmonMSE)
 sfExport("Design")
 
@@ -102,8 +102,9 @@ sfStop()
 
 
 # Make ice cream plot (PNI, catch, SMSY)
-pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
+pm_fn <- function(x, SMSE_list, Design) {
   out <- Design[x, ]
+  out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
   out$PNI_75 <- PNI75(SMSE_list[[x]], Yrs = c(49, 49))
 
   KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
@@ -111,7 +112,7 @@ pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
 
   out$Catch <- mean(KNOS + KHOS)
   out$Catch40 <- mean((KNOS + KHOS) >= 40)
-  out$`S/SMSY` <- SMSY85(SMSE_list[[1]], Yrs = c(49, 49))
+  out$`S/SMSY` <- SMSY85(SMSE_list[[x]], Yrs = c(49, 49))
   return(out)
 }
 
@@ -127,10 +128,15 @@ g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch40, title = "Probability Ca
 ggsave("man/figures/decision_table_catch40.png", g, height = 3, width = 3)
 
 # Make tradeoff plot
-g <- plot_tradeoff(pm$PNI_75, pm$Catch40, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Mean catch",
+g <- plot_tradeoff(pm$PNI_75, pm$Catch40, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Catch40",
                    x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
-  scale_shape_manual(values = c(1, 4, 16))
-ggsave("man/figures/tradeoff_plot.png", g, height = 3, width = 4.5)
+  scale_shape_manual(values = c(1, 2, 4, 16))
+ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
+
+g <- plot_tradeoff(pm$PNI, pm$Catch, factor(pm$kappa), factor(pm$hatch), "Mean PNI", "Mean Catch",
+                   x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
+  scale_shape_manual(values = c(1, 2, 4, 16))
+ggsave("man/figures/tradeoff_plot_mean.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(Design), function(x) {
@@ -143,7 +149,7 @@ PNI_ts <- lapply(1:nrow(Design), function(x) {
   rename(Year = Var2) %>%
   dplyr::filter(!is.na(value)) %>%
   tidyr::pivot_wider(names_from = Var1) %>%
-  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000)))
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(0, 5, 10, 15) * 1000)))
 
 g <- ggplot(PNI_ts, aes(Year)) +
   geom_line(aes(y = `50%`, colour = factor(kappa))) +
@@ -151,24 +157,24 @@ g <- ggplot(PNI_ts, aes(Year)) +
   facet_wrap(vars(hatch)) +
   labs(x = "Projection Year", y = "PNI", colour = "Compensation\nratio", fill = "Compensation\nratio") +
   theme(legend.position = "bottom")
-ggsave("man/figures/PNI_ts.png", g, height = 3, width = 6)
+ggsave("man/figures/PNI_ts.png", g, height = 4, width = 5)
 
 # Spawners
 Design_txt <- Design
 Design_txt[, 1] <- paste("Productivity =", Design[, 1])
 Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
-                          levels = paste("Hatchery production", c(5000, 10000, 15000)))
+                          levels = paste("Hatchery production", c(0, 5000, 10000, 15000)))
 
 g <- compare_spawners(SMSE_list, Design_txt) +
   coord_cartesian(ylim = c(0, 150), expand = FALSE)
-ggsave("man/figures/compare_spawners.png", g, height = 5, width = 6)
+ggsave("man/figures/compare_spawners.png", g, height = 5, width = 7)
 
 g <- compare_spawners(SMSE_list, Design_txt, prop = TRUE)
 
 # Fitness
 g <- compare_fitness(SMSE_list, Design_txt)
-ggsave("man/figures/compare_fitness.png", g, height = 5, width = 6)
+ggsave("man/figures/compare_fitness.png", g, height = 5, width = 7)
 
 # Escapement
-g <- compare_escapement(SMSE_list, Design_txt)
-ggsave("man/figures/compare_escapement.png", g, height = 5, width = 6)
+#g <- compare_escapement(SMSE_list, Design_txt)
+#ggsave("man/figures/compare_escapement.png", g, height = 5, width = 6)

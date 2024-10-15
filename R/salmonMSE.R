@@ -26,7 +26,14 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   SOM <- check_SOM(SOM)
   MOM <- SOM2MOM(SOM, check = FALSE)
 
-  Harvest_MMP <- make_Harvest_MMP(SOM@u_terminal, SOM@u_preterminal, SOM@m, SOM@release_mort)
+  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+
+  HMMP <- make_Harvest_MMP(
+    SOM@u_terminal,
+    SOM@u_preterminal,
+    SOM@m,
+    ifelse(do_hatchery, 0, SOM@release_mort)
+  )
 
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()
@@ -50,7 +57,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   if (!silent) message("Running forward projections..")
 
   # Initialize zbar in data frame
-  if (any(SOM@fitness_type == "Ford")) {
+  if (do_hatchery && any(SOM@fitness_type == "Ford")) {
     zbar_start <- reshape2::melt(SOM@zbar_start)
     salmonMSE_env$Ford <- data.frame(
       x = zbar_start$Var1,
@@ -61,13 +68,13 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
     )
   }
 
-  M <- ProjectMOM(H, MPs = "Harvest_MMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
+  M <- ProjectMOM(H, MPs = "HMMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
                   dropHist = TRUE, extended = FALSE)
   M@multiHist <- H
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
-    SMSE <- MMSE2SMSE(M, SOM, Harvest_MMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford, salmonMSE_env$state)
+    SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford, salmonMSE_env$state)
     SHist <- multiHist2SHist(H, SOM, check = FALSE)
 
     Ref <- calc_ref(SOM, check = FALSE)

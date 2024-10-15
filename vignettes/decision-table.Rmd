@@ -22,7 +22,7 @@ This article provides an example of how a decision table can be created in salmo
 Decision tables and supporting visualizations require multiple model runs to compare management actions and states of nature.
 We extend the [simple example](../articles/example.html) of a salmon operating model that has a single brood year recruitment where all fish mature at age 3.
 
-We will explore the effect of three hatchery production options with 5000, 10000, or 15000 annual releases.
+We will explore the effect of four hatchery production options with zero, 5000, 10000, or 15000 annual releases.
 
 These three options are evaluated across three states of nature with respective to productivity: a mean compensation ratio of either 3, 6, or 9. We sample the compensation ratio (kappa) over 100 simulation with a lognormal standard deviation of 0.4.
 
@@ -38,7 +38,7 @@ library(tidyverse)
 # and hatchery production
 Design <- expand.grid(
   kappa = c(3, 6, 9),
-  hatch = c(5, 10, 15) * 1000
+  hatch = c(0, 5, 10, 15) * 1000
 )
 
 # Wrapper function that runs a salmonMSE projection for each row of
@@ -131,7 +131,7 @@ wrapper <- function(x, Design) {
 
 # Run simulation with parallel processing (one core per set of parameters)
 library(snowfall)
-sfInit(parallel = TRUE, cpus = nrow(Design))
+sfInit(parallel = TRUE, cpus = min(0.5 * parallel::detectCores(), nrow(Design)))
 sfLibrary(salmonMSE)
 sfExport("Design")
 
@@ -146,8 +146,9 @@ Next, we need to define performance metrics that describe the outcomes of the va
 We will look a biological metric (PNI_75, the probability that PNI is at least 0.75 at the end of the projection) and a fishery metric, the average catch and the probability that the catches exeeds 40, also at the end of the projection.
 
 ```{r, echo = TRUE, eval = FALSE}
-pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
+pm_fn <- function(x, SMSE_list, Design) {
   out <- Design[x, ]
+  out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
   out$PNI_75 <- PNI75(SMSE_list[[x]], Yrs = c(49, 49))
 
   KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
@@ -155,7 +156,7 @@ pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
 
   out$Catch <- mean(KNOS + KHOS)
   out$Catch40 <- mean((KNOS + KHOS) >= 40)
-  out$`S/SMSY` <- SMSY85(SMSE_list[[1]], Yrs = c(49, 49))
+  out$`S/SMSY` <- SMSY85(SMSE_list[[x]], Yrs = c(49, 49))
   return(out)
 }
 
@@ -175,13 +176,13 @@ g
 ```
 
 ```{r, echo = FALSE, eval = TRUE}
-knitr::include_graphics("../man/figures/decision_table_PNI_75.png")
+knitr::include_graphics("../man/figures/decision_table_PNI75.png")
 ```
 
 At high productivity (kappa of 6 or 9), PNI_75 remains high, i.e., at least 50 percent, for the hatchery production options considered.
 However, 10,000 annual releases would be robust to low productivity scenario (kappa = 3) so that PNI_75 > 0.50.
 
-Here is the decision table for the probability the terminal catch exceeds 40:
+Here is the decision table for the probability the terminal catch exceeds 40 (Catch40):
 
 ```{r, echo = TRUE, eval = FALSE}
 g <- plot_decision_table(
@@ -198,32 +199,51 @@ knitr::include_graphics("../man/figures/decision_table_catch40.png")
 ```
 
 With high hatchery production, catches are mostly likely above 40 in the long run, as there is sufficient return with the specified harvest rate. On the other hand, 5,000 hatchery releases are still too low to reach this catch threshold. 
+The zero probability in the zero hatchery production scenario also tells us the system is dependent on hatchery production to sustain such levels of catch while maintaining the 20.3 percent harvest rate.
 
-At the intermediate hatchery production level, the ability to achieve catches of 40 is very likely with medium and high productivity. At low productivity, there is presumably insufficient return of natural origin fish in order to meet the catch threshold.
+At the intermediate hatchery production level, the ability to achieve catches of 40 is very likely with medium and high productivity. At low productivity, there is presumably insufficient return of natural origin fish in order to meet the catch threshold. 
 
 
 ## Additional figures
 
 A trade off plot compares two performance metrics across the suite of management actions. A tradeoff between the metrics may appear where a management action, in this case hatchery production (denoted by shapes in the below figure) has good properties with respect to one metric at the cost/reduction in another. A strong tradeoff occurs when the management actions are aligned along the top-left to bottom-right diagonal. 
 
-We can use `plot_tradeoff()` to visualize the tradeoff in PNI_75 and mean catch in the long term:
+We can use `plot_tradeoff()` to visualize the tradeoff in PNI_75 and Catch40 in the long term:
 
 ```{r, echo = TRUE, eval = FALSE}
 g <- plot_tradeoff(
-  pm$PNI_75, pm$Catch,
+  pm$PNI_75, pm$Catch40,
   x1 = factor(pm$kappa), x2 = factor(pm$hatch), 
-  xlab = "PNI_75", ylab = "Mean catch",
+  xlab = "PNI_75", ylab = "Catch40",
   x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases"
 ) +
-  scale_shape_manual(values = c(1, 4, 16))
+  scale_shape_manual(values = c(1, 2, 4, 16))
 g
 ```
 
 ```{r, echo = FALSE, eval = TRUE}
-knitr::include_graphics("../man/figures/tradeoff_plot.png")
+knitr::include_graphics("../man/figures/tradeoff_plot_pm.png")
 ```
 
-In this figure, we see a fairly clear tradeoff between PNI and mean catch. Increasing hatchery production increases catch but also reduces the proportion of natural spawners, especially at low productivity (red). At medium and high productivity levels, the tradeoff occurs at medium to high hatchery production. There is little reduction in PNI between hatchery production of 5 and 10 thousand, but the latter production levels produces slightly higher average catch.
+In this figure, we see a tradeoff between PNI_74 and Catch40. Increasing hatchery production increases catch but also reduces the proportion of natural spawners, especially at low productivity (red). At medium and high productivity levels, the tradeoff occurs at medium to high hatchery production. There is increasing catch with little reduction in PNI until the hatchery production of 15000 thousand.
+
+The tradeoff is more obvious when we plot the average PNI vs. catch:
+
+```{r, echo = TRUE, eval = FALSE}
+g <- plot_tradeoff(
+  pm$PNI, pm$Catch,
+  x1 = factor(pm$kappa), x2 = factor(pm$hatch), 
+  xlab = "PNI", ylab = "Mean catch",
+  x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases"
+) +
+  scale_shape_manual(values = c(1, 2, 4, 16))
+g
+```
+
+```{r, echo = FALSE, eval = TRUE}
+knitr::include_graphics("../man/figures/tradeoff_plot_mean.png")
+```
+
 
 Here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
 
@@ -239,7 +259,7 @@ PNI_ts <- lapply(1:nrow(Design), function(x) {
   rename(Year = Var2) %>%
   dplyr::filter(!is.na(value)) %>%
   tidyr::pivot_wider(names_from = Var1) %>%
-  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(5, 10, 15) * 1000)))
+  mutate(hatch = paste("Hatchery production", hatch) %>% factor(levels = paste("Hatchery production", c(0, 5, 10, 15) * 1000)))
 
 g <- ggplot(PNI_ts, aes(Year)) +
   geom_line(aes(y = `50%`, colour = factor(kappa))) +
@@ -260,7 +280,7 @@ Several comparison figures are available to plot the natural production (i.e., n
 Design_txt <- Design
 Design_txt[, 1] <- paste("Productivity =", Design[, 1])
 Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
-                          levels = paste("Hatchery production", c(5000, 10000, 15000)))
+                          levels = paste("Hatchery production", c(0, 5000, 10000, 15000)))
 
 compare_spawners(SMSE_list, Design_txt) +
   coord_cartesian(ylim = c(0, 150), expand = FALSE)

@@ -15,15 +15,22 @@
 #' Release mortality in the operating model is specified in the \linkS4class{MOM} object
 #' @param p_terminal Population index for the recruitment that experiences the terminal fishing mortality
 #' @param p_preterminal Population index for immature fish that experience the pre-terminal fishing mortality
+#' @param p_natural Population index for natural origin fish
+#' @param p_hatchery Population index for hatchery origin fish
+#'
 #' @param ... Not used
 #'
 #' @return A nested list of \linkS4class{Rec} objects, same dimension as `DataList`
 #'
 #' @keywords internal
 Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m, release_mort,
-                        p_terminal = c(2, 5), p_preterminal = c(1, 4), ...) {
+                        p_terminal = c(2, 5), p_preterminal = c(1, 4),
+                        p_natural = 1:3, p_hatchery = 4:6, ...) {
   np <- length(DataList)
   nf <- length(DataList[[1]])
+
+  p_preterminal <- intersect(1:np, p_preterminal)
+  p_terminal <- intersect(1:np, p_terminal)
 
   multiRec <- lapply(1:np, function(p) {
     y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
@@ -41,9 +48,10 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
           apply(1, unique)
 
         if (m > 0) { # MSF, Specify F here, further retention and discards handled by OM
+          Nage_HOS <- sapply(intersect(p_preterminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           Effort <- get_F(
             u = u_preterminal, M = rep(0, length(Nage_p)),
-            N = Nage_PT[, length(p_preterminal)], # Kept catch of HOS
+            N = rowSums(Nage_natural), # Kept catch of HOS
             vul = V, ret = m,
             release_mort = release_mort[1]
           )
@@ -65,9 +73,11 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
           apply(1, unique)
 
         if (m > 0) {
+          Nage_HOS <- sapply(intersect(p_terminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
+
           Effort <- get_F(
             u = u_terminal, M = rep(0, length(Nage_p)),
-            N = Nage_T[, length(p_terminal)], # Kept catch of HOS
+            N = rowSums(Nage_HOS), # Kept catch of HOS
             vul = V, ret = m,
             release_mort = release_mort[2]
           )
@@ -104,7 +114,6 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
 #' @param u_preterminal Numeric between 0-1. Harvest rate of the preterminal fishery.
 #' @param m Numeric between 0-1. Mark rate, i.e., retention rate.
 #' @param release_mort Vector length 2 (each numeric between 0-1). Release mortality, proportion of released fish that die.
-#'
 #' @export
 make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0) {
   f <- Harvest_MMP
