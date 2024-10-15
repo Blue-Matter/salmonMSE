@@ -37,6 +37,10 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       SRRpars = SRR$SRRpars[x, ], opt = FALSE
     ) %>% unlist()
 
+    names(ref) <- paste0(names(ref), "_MSY")
+    if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
+    if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
+
     if (any(ref < 0, na.rm = TRUE)) {
 
       ref[!is.na(ref)] <- 0
@@ -49,7 +53,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
           .calc_Sgen, interval = c(1, 100) * opt$maximum,
           Mjuv = SOM@Mjuv_NOS[x, , y], fec = SOM@fec, p_female = SOM@p_female, rel_F = rel_F,
           vulPT = SOM@vulPT, vulT = SOM@vulT, p_mature = SOM@p_mature[x, , y], s_enroute = 1,
-          SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"]
+          SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
         ),
         silent = TRUE
       )

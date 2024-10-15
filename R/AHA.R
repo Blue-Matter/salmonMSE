@@ -173,6 +173,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   out$p_wild <- sapply(2:length(out$pHOSeff), function(g) {
     calc_pwild(out$pHOSeff[g], out$pHOSeff[g-1], SOM@gamma)
   })
+  out$Ref <- output[[1]][["Ref"]]
 
   return(out)
 }
@@ -339,6 +340,9 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       egg_per_spawner, surv_egg_release, surv_release_adult[g]
     )
   }
+
+  # Reference points in the first entry in the loop
+  AHA_loop[[1]]$Ref <- c(Neq = Neq, MSY = MSY, SMSY = SMSY, umsy = umsy)
 
   return(AHA_loop)
 }

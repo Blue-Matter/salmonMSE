@@ -109,7 +109,7 @@ get_statevar <- function(SMSE, var, s) {
     x <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
       if (s != 1) stop("Update get_statevar() for s > 1")
-      SMSY <- SMSE@Misc$Ref["Spawners", ] # s = 1
+      SMSY <- SMSE@Misc$Ref["Spawners_MSY", ] # s = 1
       NOS/SMSY
     })
   }
@@ -118,7 +118,7 @@ get_statevar <- function(SMSE, var, s) {
     x <- local({
       S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
       if (s != 1) stop("Update get_statevar() for s > 1")
-      SMSY <- SMSE@Misc$Ref["Spawners", ] # s = 1
+      SMSY <- SMSE@Misc$Ref["Spawners_MSY", ] # s = 1
       S/SMSY
     })
   }
