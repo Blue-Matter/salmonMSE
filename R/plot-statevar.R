@@ -13,7 +13,8 @@
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options. Additional supported options are:
-#' `"pHOScensus"`, `"pNOB"`, `"pbrood"` (broodtake to escapement ratio), `"pNOSesc"` (NOS/natural escapement), `"pHOSesc"` (HOS/hatchery escapement).
+#' `"pHOScensus"`, `"pNOB"`, `"pbrood"` (broodtake to escapement ratio), `"pNOSesc"` (NOS/natural escapement), `"pHOSesc"` (HOS/hatchery escapement),
+#' `NOS/SMSY`, `S/SMSY`, and `NOS/Sgen`.
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
 #' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
@@ -73,30 +74,62 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab 
 
 get_statevar <- function(SMSE, var, s) {
 
-  if (var == "pHOScensus") {
-    x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
-  } else if (var == "pNOB") {
-    x <- SMSE@NOB[, s, ]/(SMSE@NOB[, s, ] + SMSE@HOB[, s, ])
-  } else if (var == "pbrood") {
+  if (var %in% slotNames(SMSE)) {
+    x <- slot(SMSE, var)[, s, ]
+    return(x)
+  }
+
+  if (var == "pHOScensus") x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
+  if (var == "pNOB") x <- SMSE@NOB[, s, ]/(SMSE@NOB[, s, ] + SMSE@HOB[, s, ])
+
+  if (var == "pbrood") {
     x <- local({
       Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
       (SMSE@NOB[, s, ] + SMSE@HOB[, s, ])/(Esc_NOS + Esc_HOS)
     })
-  } else if (var == "pNOSesc") {
+  }
+
+  if (var == "pNOSesc") {
     x <- local({
       Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
       SMSE@NOS[, s, ]/Esc_NOS
     })
-  } else if (var == "pHOSesc") {
+  }
+  if (var == "pHOSesc") {
     x <- local({
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
       SMSE@HOS[, s, ]/Esc_HOS
     })
-  } else if (var == "Smolt") {
-    x <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
-  } else {
-    x <- slot(SMSE, var)[, s, ]
+  }
+
+  if (var == "Smolt") x <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
+
+  if (var == "NOS/SMSY") {
+    x <- local({
+      NOS <- slot(SMSE, "NOS")[, s, ]
+      if (s != 1) stop("Update get_statevar() for s > 1")
+      SMSY <- SMSE@Misc$Ref["Spawners", ] # s = 1
+      NOS/SMSY
+    })
+  }
+
+  if (var == "S/SMSY") {
+    x <- local({
+      S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
+      if (s != 1) stop("Update get_statevar() for s > 1")
+      SMSY <- SMSE@Misc$Ref["Spawners", ] # s = 1
+      S/SMSY
+    })
+  }
+
+  if (var == "NOS/Sgen") {
+    x <- local({
+      NOS <- slot(SMSE, "NOS")[, s, ]
+      if (s != 1) stop("Update get_statevar() for s > 1")
+      Sgen <- SMSE@Misc$Ref["Sgen", ] # s = 1
+      NOS/Sgen
+    })
   }
 
   return(x)

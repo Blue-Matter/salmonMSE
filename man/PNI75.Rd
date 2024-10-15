@@ -3,11 +3,17 @@
 \name{PNI75}
 \alias{PNI75}
 \alias{WILD50}
+\alias{SMSY85}
+\alias{Sgen100}
 \title{Example performance metrics}
 \usage{
 PNI75(SMSE, Ref = 0.75, Yrs = NULL)
 
 WILD50(SMSE, Ref = 0.5, Yrs = NULL)
+
+SMSY85(SMSE, Ref = 0.85, Yrs = NULL)
+
+Sgen100(SMSE, Ref = 1, Yrs = NULL)
 }
 \arguments{
 \item{SMSE}{SMSE object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -18,7 +24,7 @@ WILD50(SMSE, Ref = 0.5, Yrs = NULL)
 If NULL, the performance is summarized over all projection years.}
 }
 \value{
-A vector of probabilites corresponding to population
+A vector of probabilities corresponding to population
 }
 \description{
 Functions that evaluate return probabilities of outcomes from the simulations.
@@ -27,5 +33,7 @@ Functions that evaluate return probabilities of outcomes from the simulations.
 \itemize{
 \item \code{PNI75} calculates the probability that PNI exceeds 0.75
 \item \code{WILD50} calculates the probability that at least 50 percent of natural spawners are wild
+\item \code{SMSY85} calculates the probability that NOS/SMSY exceeds 0.85
+\item \code{Sgen100} calculates the probability that NOS/Sgen exceeds 1
 }
 }
