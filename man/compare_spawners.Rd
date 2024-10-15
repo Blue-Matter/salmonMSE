@@ -3,11 +3,14 @@
 \name{compare_spawners}
 \alias{compare_spawners}
 \alias{compare_fitness}
+\alias{compare_escapement}
 \title{Compare simulation runs}
 \usage{
 compare_spawners(SMSE_list, Design, prop = FALSE, FUN = median)
 
 compare_fitness(SMSE_list, Design, FUN = median)
+
+compare_escapement(SMSE_list, Design, FUN = median)
 }
 \arguments{
 \item{SMSE_list}{A list of SMSE objects returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -30,5 +33,6 @@ Create figures that compare results across two dimensions
 \itemize{
 \item \code{\link[=compare_spawners]{compare_spawners()}} generates a time series of the composition of spawners
 \item \code{\link[=compare_fitness]{compare_fitness()}} generates a time series of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
+\item \code{\link[=compare_escapement]{compare_escapement()}} generates a time series of the proportion of spawners and broodtake to escapement
 }
 }

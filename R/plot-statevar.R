@@ -191,6 +191,8 @@ plot_escapement <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
 
   x <- cbind(pNOSesc, pHOSesc, pbrood)
 
+  if (any(x > 1, na.rm = TRUE)) warning("Spawners exceed escapement. Error in reporting?")
+
   if (figure) {
     if (missing(ylim)) ylim <- c(0, 1)
     matplot(Year, x, type = "n", xlab = "Projection Year", ylab = "Proportion",

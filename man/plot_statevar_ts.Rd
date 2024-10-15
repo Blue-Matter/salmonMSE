@@ -27,7 +27,7 @@ plot_spawners(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim)
 
 plot_fitness(SMSE, s = 1, FUN = median, figure = TRUE, ylim)
 
-plot_escapement(SMSE, s = 1, FUN = median, figure = TRUE)
+plot_escapement(SMSE, s = 1, FUN = median, figure = TRUE, ylim)
 
 plot_fishery(
   SMSE,

@@ -78,6 +78,8 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
       SOM = SOM
     )
 
+    return(SMSE)
+
   } else {
     return(M)
   }
