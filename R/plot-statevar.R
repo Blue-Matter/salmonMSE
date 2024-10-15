@@ -132,6 +132,8 @@ get_statevar <- function(SMSE, var, s) {
     })
   }
 
+  x[is.infinite(x)] <- NA
+
   return(x)
 }
 
