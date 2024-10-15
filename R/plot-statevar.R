@@ -7,6 +7,7 @@
 #' - `plot_statevar_ts()` produces a time series for all simulations, or with confidence intervals
 #' - `plot_statevar_hist()` produces a histogram across all simulations for a particular year
 #' - `plot_spawners()` produces a summary barplot of spawners, including NOS, HOS, and wild spawners
+#' - `plot_escapement()` produces a summary figure of the proportion of spawners and broodtake to escapement
 #' - `plot_fitness()` produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
 #' - `plot_fishery()` produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate
 #'
@@ -170,6 +171,40 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
       lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i], pch = pch[i])
     }
     legend("bottomleft", legend = colnames(x), col = col, pch = pch, lwd = 1, bty = "n")
+  }
+
+  invisible(x)
+}
+
+#' @name plot_statevar_ts
+#' @export
+plot_escapement <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
+
+  Year <- 1:SMSE@proyears
+
+  pNOSesc <- plot_statevar_ts(SMSE, "pNOSesc", s, figure = FALSE) %>%
+    apply(2, FUN)
+  pHOSesc <- plot_statevar_ts(SMSE, "pHOSesc", s, figure = FALSE) %>%
+    apply(2, FUN)
+  pbrood <- plot_statevar_ts(SMSE, "pbrood", s, figure = FALSE) %>%
+    apply(2, FUN)
+
+  x <- cbind(pNOSesc, pHOSesc, pbrood)
+
+  if (figure) {
+    if (missing(ylim)) ylim <- c(0, 1)
+    matplot(Year, x, type = "n", xlab = "Projection Year", ylab = "Proportion",
+            ylim = ylim)
+
+    legnames <- c("Spawner/Escapement (natural)", "Spawner/Escapement (hatchery)", "Broodstock/Escapement (total)")
+
+    col <- 1:ncol(x)
+    pch <- c(1, 4, 16, 18)
+    for (i in 1:ncol(x)) {
+      x_i <- x[, i]
+      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i], pch = pch[i])
+    }
+    legend("bottomleft", legend = legnames, col = col, pch = pch, lwd = 1, bty = "n")
   }
 
   invisible(x)
