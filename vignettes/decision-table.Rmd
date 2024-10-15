@@ -143,21 +143,26 @@ We now have a list of SMSE objects.
 
 Next, we need to define performance metrics that describe the outcomes of the various 
 
-We will look a biological metric (PNI_75, the probability that PNI is at least 0.75 at the end of the projection) and a fishery metric, the average catch, also at the end of the projection.
+We will look a biological metric (PNI_75, the probability that PNI is at least 0.75 at the end of the projection) and a fishery metric, the average catch and the probability that the catches exeeds 40, also at the end of the projection.
 
 ```{r, echo = TRUE, eval = FALSE}
-pm_fn <- function(x, SMSE_list, Design) {
+pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
   out <- Design[x, ]
-  out$PNI_75 <- mean(SMSE_list[[x]]@PNI[, 1, 49] >= 0.75)
-  out$Catch <- mean(SMSE_list[[x]]@KT_NOS[, 1, 49] + SMSE_list[[x]]@KT_NOS[, 1, 49])
+  out$PNI_75 <- PNI75(SMSE_list[[x]], Yrs = c(49, 49))
+
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+
+  out$Catch <- mean(KNOS + KHOS)
+  out$Catch40 <- mean((KNOS + KHOS) >= 40)
+  out$`S/SMSY` <- SMSY85(SMSE_list[[1]], Yrs = c(49, 49))
   return(out)
 }
 
 pm <- do.call(rbind, lapply(1:nrow(Design), pm_fn, SMSE_list, Design = Design))
 ```
 
-
-The decision table can be created with `plot_decision_table()`. Here is the table for PNI_75:
+Decision tables can be created with `plot_decision_table()`. Here is the table for PNI_75:
 
 ```{r, echo = TRUE, eval = FALSE}
 g <- plot_decision_table(
@@ -176,11 +181,32 @@ knitr::include_graphics("../man/figures/decision_table_PNI_75.png")
 At high productivity (kappa of 6 or 9), PNI_75 remains high, i.e., at least 50 percent, for the hatchery production options considered.
 However, 10,000 annual releases would be robust to low productivity scenario (kappa = 3) so that PNI_75 > 0.50.
 
+Here is the decision table for the probability the terminal catch exceeds 40:
+
+```{r, echo = TRUE, eval = FALSE}
+g <- plot_decision_table(
+  pm$hatch, pm$kappa, pm$Catch40, 
+  title = "Probability Catch > 40",
+  xlab =  "Hatchery releases", 
+  ylab = "Compensation ratio (productivity)"
+)
+g
+```
+
+```{r, echo = FALSE, eval = TRUE}
+knitr::include_graphics("../man/figures/decision_table_catch40.png")
+```
+
+With high hatchery production, catches are mostly likely above 40 in the long run, as there is sufficient return with the specified harvest rate. On the other hand, 5,000 hatchery releases are still too low to reach this catch threshold. 
+
+At the intermediate hatchery production level, the ability to achieve catches of 40 is very likely with medium and high productivity. At low productivity, there is presumably insufficient return of natural origin fish in order to meet the catch threshold.
+
+
 ## Additional figures
 
-A trade off plot compares two performance metrics across the suite of management actions. A tradeoff between the metrics may appear where a management action has good properties with respect to one metric at the cost/reduction in another.
+A trade off plot compares two performance metrics across the suite of management actions. A tradeoff between the metrics may appear where a management action, in this case hatchery production (denoted by shapes in the below figure) has good properties with respect to one metric at the cost/reduction in another. A strong tradeoff occurs when the management actions are aligned along the top-left to bottom-right diagonal. 
 
-We can use `plot_tradeoff()` to generate this figure:
+We can use `plot_tradeoff()` to visualize the tradeoff in PNI_75 and mean catch in the long term:
 
 ```{r, echo = TRUE, eval = FALSE}
 g <- plot_tradeoff(
@@ -197,8 +223,7 @@ g
 knitr::include_graphics("../man/figures/tradeoff_plot.png")
 ```
 
-In this figure, we see that the state of nature, i.e., compensation ratio, indicated by colours, strongly determines catch levels.
-The level of hatchery production determines the composition hatchery and natural spawners (inferred by PNI_75), but does not substantially affect catch (consider the various shapes within each band of colours).
+In this figure, we see a fairly clear tradeoff between PNI and mean catch. Increasing hatchery production increases catch but also reduces the proportion of natural spawners, especially at low productivity (red). At medium and high productivity levels, the tradeoff occurs at medium to high hatchery production. There is little reduction in PNI between hatchery production of 5 and 10 thousand, but the latter production levels produces slightly higher average catch.
 
 Here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
 

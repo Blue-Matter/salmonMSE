@@ -100,11 +100,18 @@ SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
 saveRDS(SMSE_list, file = "examples/SMSE_list.rds")
 sfStop()
 
-# Make ice cream plot
+
+# Make ice cream plot (PNI, catch, SMSY)
 pm_fn <- function(x, SMSE_list, Design, val = 0.75) {
   out <- Design[x, ]
-  out$PNI_75 <- mean(SMSE_list[[x]]@PNI[, 1, 49] >= val)
-  out$Catch <- mean(SMSE_list[[x]]@KT_NOS[, 1, 49] + SMSE_list[[x]]@KT_NOS[, 1, 49])
+  out$PNI_75 <- PNI75(SMSE_list[[x]], Yrs = c(49, 49))
+
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+
+  out$Catch <- mean(KNOS + KHOS)
+  out$Catch40 <- mean((KNOS + KHOS) >= 40)
+  out$`S/SMSY` <- SMSY85(SMSE_list[[1]], Yrs = c(49, 49))
   return(out)
 }
 
@@ -115,8 +122,12 @@ g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_75, title = "Probability PNI
                          xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
 ggsave("man/figures/decision_table_PNI75.png", g, height = 3, width = 3)
 
+g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch40, title = "Probability Catch > 40",
+                         xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
+ggsave("man/figures/decision_table_catch40.png", g, height = 3, width = 3)
+
 # Make tradeoff plot
-g <- plot_tradeoff(pm$PNI_75, pm$Catch, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Mean catch",
+g <- plot_tradeoff(pm$PNI_75, pm$Catch40, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Mean catch",
                    x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 4, 16))
 ggsave("man/figures/tradeoff_plot.png", g, height = 3, width = 4.5)
@@ -157,3 +168,7 @@ g <- compare_spawners(SMSE_list, Design_txt, prop = TRUE)
 # Fitness
 g <- compare_fitness(SMSE_list, Design_txt)
 ggsave("man/figures/compare_fitness.png", g, height = 5, width = 6)
+
+# Escapement
+g <- compare_escapement(SMSE_list, Design_txt)
+ggsave("man/figures/compare_escapement.png", g, height = 5, width = 6)
