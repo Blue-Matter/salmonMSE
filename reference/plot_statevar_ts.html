@@ -3,6 +3,7 @@
 plot_statevar_ts() produces a time series for all simulations, or with confidence intervals
 plot_statevar_hist() produces a histogram across all simulations for a particular year
 plot_spawners() produces a summary barplot of spawners, including NOS, HOS, and wild spawners
+plot_escapement() produces a summary figure of the proportion of spawners and broodtake to escapement
 plot_fitness() produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
 plot_fishery() produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate
 
@@ -10,6 +11,7 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 plot_statevar_ts() produces a time series for all simulations, or with confidence intervals
 plot_statevar_hist() produces a histogram across all simulations for a particular year
 plot_spawners() produces a summary barplot of spawners, including NOS, HOS, and wild spawners
+plot_escapement() produces a summary figure of the proportion of spawners and broodtake to escapement
 plot_fitness() produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production
 plot_fishery() produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate
 
@@ -58,6 +60,7 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
     <p>Various functions that plot the state variables from salmonMSE projections:</p><ul><li><p><code>plot_statevar_ts()</code> produces a time series for all simulations, or with confidence intervals</p></li>
 <li><p><code>plot_statevar_hist()</code> produces a histogram across all simulations for a particular year</p></li>
 <li><p><code>plot_spawners()</code> produces a summary barplot of spawners, including NOS, HOS, and wild spawners</p></li>
+<li><p><code>plot_escapement()</code> produces a summary figure of the proportion of spawners and broodtake to escapement</p></li>
 <li><p><code>plot_fitness()</code> produces a summary figure of metrics (fitness, PNI, pHOS, and pWILD) related to hatchery production</p></li>
 <li><p><code>plot_fishery()</code> produces a summary figure of metrics related to the fishery, e.g., median catch, exploitation rate or harvest rate</p></li>
 </ul></div>
@@ -82,6 +85,8 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 <span></span>
 <span><span class="fu">plot_fitness</span><span class="op">(</span><span class="va">SMSE</span>, s <span class="op">=</span> <span class="fl">1</span>, FUN <span class="op">=</span> <span class="va">median</span>, figure <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">ylim</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">plot_escapement</span><span class="op">(</span><span class="va">SMSE</span>, s <span class="op">=</span> <span class="fl">1</span>, FUN <span class="op">=</span> <span class="va">median</span>, figure <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">ylim</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">plot_fishery</span><span class="op">(</span></span>
 <span>  <span class="va">SMSE</span>,</span>
 <span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -104,7 +109,8 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 
 <dt id="arg-var">var<a class="anchor" aria-label="anchor" href="#arg-var"></a></dt>
 <dd><p>Character. Slot for the state variable in <code>SMSE</code> object. See <code>slotNames(SMSE)</code> for options. Additional supported options are:
-<code>"pHOScensus"</code>, <code>"pNOB"</code>, <code>"pbrood"</code> (broodtake to escapement ratio), <code>"pNOSesc"</code> (NOS/natural escapement), <code>"pHOSesc"</code> (HOS/hatchery escapement).</p></dd>
+<code>"pHOScensus"</code>, <code>"pNOB"</code>, <code>"pbrood"</code> (broodtake to escapement ratio), <code>"pNOSesc"</code> (NOS/natural escapement), <code>"pHOSesc"</code> (HOS/hatchery escapement),
+<code>NOS/SMSY</code>, <code>S/SMSY</code>, and <code>NOS/Sgen</code>.</p></dd>
 
 
 <dt id="arg-s">s<a class="anchor" aria-label="anchor" href="#arg-s"></a></dt>

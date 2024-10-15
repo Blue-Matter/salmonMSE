@@ -48,7 +48,11 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PNI75</span><span class="op">(</span><span class="va">SMSE</span>, Ref <span class="op">=</span> <span class="fl">0.75</span>, Yrs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">WILD50</span><span class="op">(</span><span class="va">SMSE</span>, Ref <span class="op">=</span> <span class="fl">0.5</span>, Yrs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">WILD50</span><span class="op">(</span><span class="va">SMSE</span>, Ref <span class="op">=</span> <span class="fl">0.5</span>, Yrs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">SMSY85</span><span class="op">(</span><span class="va">SMSE</span>, Ref <span class="op">=</span> <span class="fl">0.85</span>, Yrs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">Sgen100</span><span class="op">(</span><span class="va">SMSE</span>, Ref <span class="op">=</span> <span class="fl">1</span>, Yrs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,13 +74,15 @@ If NULL, the performance is summarized over all projection years.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A vector of probabilites corresponding to population</p>
+    <p>A vector of probabilities corresponding to population</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
 <ul><li><p><code>PNI75</code> calculates the probability that PNI exceeds 0.75</p></li>
 <li><p><code>WILD50</code> calculates the probability that at least 50 percent of natural spawners are wild</p></li>
+<li><p><code>SMSY85</code> calculates the probability that NOS/SMSY exceeds 0.85</p></li>
+<li><p><code>Sgen100</code> calculates the probability that NOS/Sgen exceeds 1</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
