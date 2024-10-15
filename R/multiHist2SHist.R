@@ -52,7 +52,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
   Njuv_NOS[, ns, , ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
   Return_NOS[, ns, , ] <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-  Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, ], 1:3, sum)
+  Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
 
   # Kept catch
   KPT_NOS[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
@@ -84,7 +84,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
   ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/vulNOS_ret
   ExT_NOS[is.na(ExT_NOS)] <- 0
 
-  Egg_NOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, ], 1:2, sum)
+  Egg_NOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
   Smolt[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
 
   do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
@@ -96,7 +96,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
     Njuv_HOS[, ns, , ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
     Return_HOS[, ns, , ] <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-    Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, ], 1:3, sum)
+    Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
 
     # Kept catch
     KPT_HOS[, ns, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
@@ -126,7 +126,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
     ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/vulHOS_ret
     ExT_HOS[is.na(ExT_HOS)] <- 0
 
-    Egg_HOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, ], 1:2, sum)
+    Egg_HOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
     Smolt_Rel[, ns, ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
   }
 
