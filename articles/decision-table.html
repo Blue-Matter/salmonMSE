@@ -61,7 +61,7 @@
 
       <h1>Decision table</h1>
             
-            <h4 data-toc-skip class="date">2024-10-15</h4>
+            <h4 data-toc-skip class="date">2024-10-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/decision-table.Rmd" class="external-link"><code>vignettes/decision-table.Rmd</code></a></small>
       <div class="d-none name"><code>decision-table.Rmd</code></div>
@@ -77,8 +77,8 @@ require multiple model runs to compare management actions and states of
 nature. We extend the <a href="../articles/example.html">simple
 example</a> of a salmon operating model that has a single brood year
 recruitment where all fish mature at age 3.</p>
-<p>We will explore the effect of three hatchery production options with
-5000, 10000, or 15000 annual releases.</p>
+<p>We will explore the effect of four hatchery production options with
+zero, 5000, 10000, or 15000 annual releases.</p>
 <p>These three options are evaluated across three states of nature with
 respective to productivity: a mean compensation ratio of either 3, 6, or
 9. We sample the compensation ratio (kappa) over 100 simulation with a
@@ -97,7 +97,7 @@ option and state of nature.</p>
 <span><span class="co"># and hatchery production</span></span>
 <span><span class="va">Design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span>
 <span>  kappa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">9</span><span class="op">)</span>,</span>
-<span>  hatch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span></span>
+<span>  hatch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Wrapper function that runs a salmonMSE projection for each row of</span></span>
@@ -190,7 +190,7 @@ option and state of nature.</p>
 <span></span>
 <span><span class="co"># Run simulation with parallel processing (one core per set of parameters)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">snowfall</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/snowfall/man/snowfall-b-init.html" class="external-link">sfInit</a></span><span class="op">(</span>parallel <span class="op">=</span> <span class="cn">TRUE</span>, cpus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Design</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/snowfall/man/snowfall-b-init.html" class="external-link">sfInit</a></span><span class="op">(</span>parallel <span class="op">=</span> <span class="cn">TRUE</span>, cpus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">0.5</span> <span class="op">*</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Design</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/snowfall/man/snowfall-d-tools.html" class="external-link">sfLibrary</a></span><span class="op">(</span><span class="va">salmonMSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/snowfall/man/snowfall-d-tools.html" class="external-link">sfExport</a></span><span class="op">(</span><span class="st">"Design"</span><span class="op">)</span></span>
 <span></span>
@@ -204,7 +204,7 @@ at least 0.75 at the end of the projection) and a fishery metric, the
 average catch and the probability that the catches exeeds 40, also at
 the end of the projection.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pm_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">SMSE_list</span>, <span class="va">Design</span>, <span class="va">val</span> <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="va">pm_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">SMSE_list</span>, <span class="va">Design</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="va">Design</span><span class="op">[</span><span class="va">x</span>, <span class="op">]</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI_75</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI75.html">PNI75</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -213,7 +213,7 @@ the end of the projection.</p>
 <span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">KNOS</span> <span class="op">+</span> <span class="va">KHOS</span><span class="op">)</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">Catch40</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="op">(</span><span class="va">KNOS</span> <span class="op">+</span> <span class="va">KHOS</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">40</span><span class="op">)</span></span>
-<span>  <span class="va">out</span><span class="op">$</span><span class="va">`S/SMSY`</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI75.html">SMSY85</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">out</span><span class="op">$</span><span class="va">`S/SMSY`</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI75.html">SMSY85</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -228,7 +228,7 @@ the end of the projection.</p>
 <span>  ylab <span class="op">=</span> <span class="st">"Compensation ratio (productivity)"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">g</span></span></code></pre></div>
-<p><img src="../reference/figures/decision_table_PNI_75.png"><!-- --></p>
+<p><img src="../reference/figures/decision_table_PNI75.png"><!-- --></p>
 <p>At high productivity (kappa of 6 or 9), PNI_75 remains high, i.e., at
 least 50 percent, for the hatchery production options considered.
 However, 10,000 annual releases would be robust to low productivity
@@ -247,7 +247,10 @@ exceeds 40:</p>
 <p>With high hatchery production, catches are mostly likely above 40 in
 the long run, as there is sufficient return with the specified harvest
 rate. On the other hand, 5,000 hatchery releases are still too low to
-reach this catch threshold.</p>
+reach this catch threshold. The zero probability in the zero hatchery
+production scenario also tells us the system is dependent on hatchery
+production to sustain such levels of catch while maintaining the 20.3
+percent harvest rate.</p>
 <p>At the intermediate hatchery production level, the ability to achieve
 catches of 40 is very likely with medium and high productivity. At low
 productivity, there is presumably insufficient return of natural origin
@@ -271,7 +274,7 @@ PNI_75 and mean catch in the long term:</p>
 <span>  xlab <span class="op">=</span> <span class="st">"PNI_75"</span>, ylab <span class="op">=</span> <span class="st">"Mean catch"</span>,</span>
 <span>  x1lab <span class="op">=</span> <span class="st">"Compensation\nratio"</span>, x2lab <span class="op">=</span> <span class="st">"Hatchery\nreleases"</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_shape_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">scale_shape_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">g</span></span></code></pre></div>
 <p><img src="../reference/figures/tradeoff_plot.png"><!-- --></p>
 <p>In this figure, we see a fairly clear tradeoff between PNI and mean
@@ -298,7 +301,7 @@ of the system dynamics.</p>
 <span>  <span class="fu">rename</span><span class="op">(</span>Year <span class="op">=</span> <span class="va">Var2</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">Var1</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>hatch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="va">hatch</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>hatch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="va">hatch</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">PNI_ts</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">Year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">`50%`</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">kappa</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -315,7 +318,7 @@ hatchery production:</p>
 <code class="sourceCode R"><span><span class="va">Design_txt</span> <span class="op">&lt;-</span> <span class="va">Design</span></span>
 <span><span class="va">Design_txt</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Productivity ="</span>, <span class="va">Design</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">Design_txt</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="va">Design</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>                          levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">15000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>                          levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">15000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/compare_spawners.html">compare_spawners</a></span><span class="op">(</span><span class="va">SMSE_list</span>, <span class="va">Design_txt</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">150</span><span class="op">)</span>, expand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
