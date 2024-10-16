@@ -206,6 +206,7 @@ the end of the projection.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pm_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">SMSE_list</span>, <span class="va">Design</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="va">Design</span><span class="op">[</span><span class="va">x</span>, <span class="op">]</span></span>
+<span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI_75</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI75.html">PNI75</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">KNOS</span> <span class="op">&lt;-</span> <span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">KT_NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span> <span class="co"># Catch of natural fish</span></span>
@@ -234,7 +235,7 @@ least 50 percent, for the hatchery production options considered.
 However, 10,000 annual releases would be robust to low productivity
 scenario (kappa = 3) so that PNI_75 &gt; 0.50.</p>
 <p>Here is the decision table for the probability the terminal catch
-exceeds 40:</p>
+exceeds 40 (Catch40):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_decision_table.html">plot_decision_table</a></span><span class="op">(</span></span>
 <span>  <span class="va">pm</span><span class="op">$</span><span class="va">hatch</span>, <span class="va">pm</span><span class="op">$</span><span class="va">kappa</span>, <span class="va">pm</span><span class="op">$</span><span class="va">Catch40</span>, </span>
@@ -266,30 +267,41 @@ the cost/reduction in another. A strong tradeoff occurs when the
 management actions are aligned along the top-left to bottom-right
 diagonal.</p>
 <p>We can use <code><a href="../reference/plot_tradeoff.html">plot_tradeoff()</a></code> to visualize the tradeoff in
-PNI_75 and mean catch in the long term:</p>
+PNI_75 and Catch40 in the long term:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_tradeoff.html">plot_tradeoff</a></span><span class="op">(</span></span>
-<span>  <span class="va">pm</span><span class="op">$</span><span class="va">PNI_75</span>, <span class="va">pm</span><span class="op">$</span><span class="va">Catch</span>,</span>
+<span>  <span class="va">pm</span><span class="op">$</span><span class="va">PNI_75</span>, <span class="va">pm</span><span class="op">$</span><span class="va">Catch40</span>,</span>
 <span>  x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">pm</span><span class="op">$</span><span class="va">kappa</span><span class="op">)</span>, x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">pm</span><span class="op">$</span><span class="va">hatch</span><span class="op">)</span>, </span>
-<span>  xlab <span class="op">=</span> <span class="st">"PNI_75"</span>, ylab <span class="op">=</span> <span class="st">"Mean catch"</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"PNI_75"</span>, ylab <span class="op">=</span> <span class="st">"Catch40"</span>,</span>
 <span>  x1lab <span class="op">=</span> <span class="st">"Compensation\nratio"</span>, x2lab <span class="op">=</span> <span class="st">"Hatchery\nreleases"</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_shape_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">g</span></span></code></pre></div>
-<p><img src="../reference/figures/tradeoff_plot.png"><!-- --></p>
-<p>In this figure, we see a fairly clear tradeoff between PNI and mean
-catch. Increasing hatchery production increases catch but also reduces
-the proportion of natural spawners, especially at low productivity
-(red). At medium and high productivity levels, the tradeoff occurs at
-medium to high hatchery production. There is little reduction in PNI
-between hatchery production of 5 and 10 thousand, but the latter
-production levels produces slightly higher average catch.</p>
+<p><img src="../reference/figures/tradeoff_plot_pm.png"><!-- --></p>
+<p>In this figure, we see a tradeoff between PNI_74 and Catch40.
+Increasing hatchery production increases catch but also reduces the
+proportion of natural spawners, especially at low productivity (red). At
+medium and high productivity levels, the tradeoff occurs at medium to
+high hatchery production. There is increasing catch with little
+reduction in PNI until the hatchery production of 15000 thousand.</p>
+<p>The tradeoff is more obvious when we plot the average PNI
+vs. catch:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_tradeoff.html">plot_tradeoff</a></span><span class="op">(</span></span>
+<span>  <span class="va">pm</span><span class="op">$</span><span class="va">PNI</span>, <span class="va">pm</span><span class="op">$</span><span class="va">Catch</span>,</span>
+<span>  x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">pm</span><span class="op">$</span><span class="va">kappa</span><span class="op">)</span>, x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">pm</span><span class="op">$</span><span class="va">hatch</span><span class="op">)</span>, </span>
+<span>  xlab <span class="op">=</span> <span class="st">"PNI"</span>, ylab <span class="op">=</span> <span class="st">"Mean catch"</span>,</span>
+<span>  x1lab <span class="op">=</span> <span class="st">"Compensation\nratio"</span>, x2lab <span class="op">=</span> <span class="st">"Hatchery\nreleases"</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_shape_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">g</span></span></code></pre></div>
+<p><img src="../reference/figures/tradeoff_plot_mean.png"><!-- --></p>
 <p>Here’s the time series of the median PNI (solid lines) and the 95
 percent prediction interval (shaded region) during the projection. It
 appears that the simulations have stabilized from the starting
 conditions to the point that we can make conclusions about the behavior
 of the system dynamics.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape" class="external-link">reshape2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">PNI_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Design</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -314,7 +326,7 @@ of the system dynamics.</p>
 <p>Several comparison figures are available to plot the natural
 production (i.e., number of spawners) and the fitness metrics related to
 hatchery production:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Design_txt</span> <span class="op">&lt;-</span> <span class="va">Design</span></span>
 <span><span class="va">Design_txt</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Productivity ="</span>, <span class="va">Design</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">Design_txt</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hatchery production"</span>, <span class="va">Design</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span>
