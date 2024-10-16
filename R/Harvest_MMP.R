@@ -48,10 +48,10 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
           apply(1, unique)
 
         if (m > 0) { # MSF, Specify F here, further retention and discards handled by OM
-          Nage_HOS <- sapply(intersect(p_preterminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
+          Nage_HOS_PT <- sapply(intersect(p_preterminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           Effort <- get_F(
             u = u_preterminal, M = rep(0, length(Nage_p)),
-            N = rowSums(Nage_natural), # Kept catch of HOS
+            N = rowSums(Nage_HOS_PT), # Kept catch of HOS
             vul = V, ret = m,
             release_mort = release_mort[1]
           )
@@ -73,11 +73,11 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
           apply(1, unique)
 
         if (m > 0) {
-          Nage_HOS <- sapply(intersect(p_terminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
+          Nage_HOS_T <- sapply(intersect(p_terminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
 
           Effort <- get_F(
             u = u_terminal, M = rep(0, length(Nage_p)),
-            N = rowSums(Nage_HOS), # Kept catch of HOS
+            N = rowSums(Nage_HOS_T), # Kept catch of HOS
             vul = V, ret = m,
             release_mort = release_mort[2]
           )

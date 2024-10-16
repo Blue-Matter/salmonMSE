@@ -14,6 +14,8 @@ Harvest_MMP(
   release_mort,
   p_terminal = c(2, 5),
   p_preterminal = c(1, 4),
+  p_natural = 1:3,
+  p_hatchery = 4:6,
   ...
 )
 }
@@ -37,6 +39,10 @@ Release mortality in the operating model is specified in the \linkS4class{MOM} o
 \item{p_terminal}{Population index for the recruitment that experiences the terminal fishing mortality}
 
 \item{p_preterminal}{Population index for immature fish that experience the pre-terminal fishing mortality}
+
+\item{p_natural}{Population index for natural origin fish}
+
+\item{p_hatchery}{Population index for hatchery origin fish}
 
 \item{...}{Not used}
 }
