@@ -170,6 +170,7 @@ setClass(
     Mjuv_HOS = "num.array",
     gamma = "numeric",
     m = "numeric",
+    pmax_esc = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
     phatchery = "numeric",

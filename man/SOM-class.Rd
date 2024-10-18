@@ -85,7 +85,10 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] 
 
 \item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.}
 
-\item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.}
+\item{\code{pmax_esc}}{Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.}
+
+\item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement (after en route mortality and \code{pmax_esc}) to be used as broodtake. If broodstock
+is limited by \code{pmax_esc < 1}, then this parameter should be 1.}
 
 \item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.}
 

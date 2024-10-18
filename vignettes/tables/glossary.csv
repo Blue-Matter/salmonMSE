@@ -13,7 +13,6 @@ S_\textrm{max},Spawning output that maximizes smolt production (Ricker stock-rec
 r,"Maturity at age, i.e., recruitment rate",Natural production,SOM,p_mature
 u^\textrm{PT},Pre-terminal fishery harvest rate,Harvest,SOM,u_preterminal
 u^\textrm{T},Terminal fishery harvest rate,Harvest,SOM,u_terminal
-m,Mark rate of hatchery fish,Harvest,SOM,m
 \delta,Mortality from catch and release (proportion),Harvest,SOM,release_mort
 v,Relative vulnerability by age to the fishery,Harvest,SOM,"vulPT, vulT"
 \textrm{Fec},Fecundity of spawners (eggs per female),Natural production,SOM,fec
@@ -30,9 +29,11 @@ p_\textrm{yearling},Proportion of hatchery releases as yearling (vs. subyearling
 s_\textrm{prespawn},Survival of adult broodtake in hatchery,Hatchery,SOM,s_prespawn
 n_\textrm{yearling},Target number of hatchery releases as yearlings,Hatchery,SOM,n_yearling
 n_\textrm{subyearling},Target number of hatchery releases as subyearlings,Hatchery,SOM,n_subyearling
+m,Mark rate of hatchery fish,Hatchery,SOM,m
 p_\textrm{NOB},Proportion of the total broodtake of natural origin (vs. hatchery origin),Hatchery,Internal state variable,-
 p_\textrm{HOB},Proportion of the total broodtake of hatchery origin (vs. natural origin),Hatchery,Internal state variable,-
-p^\textrm{NOB}_\textrm{max},"Maximum proportion of the natural origin broodtake from the escapement, i.e., NOB/NOS ratio",Hatchery,SOM,pmax_NOB
+p^\textrm{esc}_\textrm{max},Maximum proportion of total escapement (after en-route mortality) to use as broodtake,Hatchery,SOM,pmax_esc
+p^\textrm{NOB}_\textrm{max},"Maximum proportion of the natural origin broodtake from the escapement (after en-route mortality), i.e., NOB/NOS ratio",Hatchery,SOM,pmax_NOB
 \textrm{NOR},Natural origin return,Natural production,SMSE,Return_NOS
 \textrm{HOR},Hachery origin return,Hatchery,SMSE,Return_HOS
 p^\textrm{hatchery},"Proportion of hatchery origin escapement to hatchery, available for broodtake",Hatchery,SOM,phatchery

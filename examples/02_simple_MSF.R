@@ -31,6 +31,7 @@ Hatchery <- new(
   Mjuv_HOS = Bio@Mjuv_NOS,
   gamma = 0.8,
   m = 0.5,                          # Mark rate of hatchery releases
+  pmax_esc = 1,                     # Maximum proportion of escapement (after en route mortality) that could be used as broodtake
   pmax_NOB = 0.7,
   ptarget_NOB = 0.51,
   phatchery = 0.8,

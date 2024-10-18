@@ -133,11 +133,13 @@ where $s$ is the corresponding survival term from the egg life stage.
 From the escapement in year $y$, some proportion $p^\textrm{broodtake}$ is used as broodtake:
 
 \begin{align}
-\textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}\\
-\textrm{HOB}_{y,a} &= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
+\textrm{NOB}_{y,a} &= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
+\textrm{HOB}_{y,a} &= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}
 \end{align}
 
-The proportion of the available hatchery fish for broodtake is controlled by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
+The availability of both natural and hatchery origin fish depends on the escapement reduced by en-route mortality and can be capped by some proportion denoted by the $p^\textrm{esc}_\textrm{max}$ parameter.
+
+The proportion of the available hatchery fish for broodtake is also reduced by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
 
 The realized hatchery egg production is
 

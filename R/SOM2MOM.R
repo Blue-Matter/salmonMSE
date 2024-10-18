@@ -162,6 +162,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
       hatchery_args <- list(
         ptarget_NOB = SOM@ptarget_NOB,
+        pmax_esc = SOM@pmax_esc,
         pmax_NOB = SOM@pmax_NOB,
         fec_brood = SOM@fec_brood,
         s_yearling = SOM@s_egg_smolt,
@@ -253,7 +254,7 @@ check_SOM <- function(SOM) {
   var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female", "s_enroute",
                 "capacity_smolt_improve", "kappa_improve",
                 "n_yearling", "n_subyearling",
-                "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
+                "pmax_esc", "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
                 "u_preterminal", "u_terminal", "m",
                 "fitness_variance", "selection_strength", "heritability", "fitness_floor")
