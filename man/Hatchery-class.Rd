@@ -40,6 +40,8 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] 
 
 \item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).}
 
+\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.}
+
 \item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.}
 
 \item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.}

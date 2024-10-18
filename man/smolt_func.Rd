@@ -11,20 +11,10 @@ smolt_func(
   y,
   output = c("natural", "hatchery"),
   s_enroute,
-  ptarget_NOB,
-  pmax_NOB,
-  egg_local,
-  fec_brood,
-  s_yearling,
-  s_subyearling,
-  p_yearling,
-  phatchery,
-  premove_HOS,
-  s_prespawn,
   p_female,
   fec,
-  gamma,
   SRRpars,
+  hatchery_args,
   fitness_args,
   p_naturalsmolt
 )
@@ -36,20 +26,10 @@ makeRel_smolt(
   p_hatchery,
   output = c("natural", "hatchery"),
   s_enroute,
-  ptarget_NOB,
-  pmax_NOB,
-  egg_local,
-  fec_brood,
-  s_yearling,
-  s_subyearling,
-  p_yearling,
-  phatchery,
-  premove_HOS,
-  s_prespawn,
   p_female,
   fec,
-  gamma,
   SRRpars,
+  hatchery_args,
   fitness_args
 )
 }
@@ -64,38 +44,14 @@ makeRel_smolt(
 
 \item{s_enroute}{Numeric, en route survival of the escapement to the spawning grounds}
 
-\item{ptarget_NOB}{Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake}
-
-\item{pmax_NOB}{Numeric, the maximum proportion of the natural origin escapement to be used as broodtake}
-
-\item{egg_local}{Numeric, target egg production for hatchery}
-
-\item{fec_brood}{Vector \verb{[maxage]}. the fecundity at age schedule of broodtake to calculate the total hatchery egg production}
-
-\item{s_yearling}{Numeric, the survival of eggs to the smolt life stage (for yearling release)}
-
-\item{s_subyearling}{Numeric. the survival of eggs to subyearling life stage (for subyearling release)}
-
-\item{p_yearling}{Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)}
-
-\item{phatchery}{Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
-for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.}
-
-\item{premove_HOS}{Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
-grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
-For example, a value less than one can represent imperfect implementation of weir removal.}
-
-\item{s_prespawn}{Numeric, the survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish
-not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.}
-
 \item{p_female}{Numeric, proportion female for calculating the egg production.}
 
 \item{fec}{Vector \verb{[maxage]}. The fecundity at age schedule of spawners}
 
-\item{gamma}{Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)}
-
 \item{SRRpars}{Data frame containing stock recruit parameters for natural smolt production.
 Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve}
+
+\item{hatchery_args}{Named list containing various arguments controlling broodtake and hatchery production. See details below.}
 
 \item{fitness_args}{Named list containing various arguments controlling population fitness from hatchery production.
 Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss}
@@ -113,7 +69,7 @@ Used to report variables to \link{salmonMSE_env}.}
 \itemize{
 \item \code{smolt_func()} returns a numeric for the ratio of the realized smolt production vs. the hypothetical value if there were no
 hatchery, en route mortality, or habitat improvement
-\item \code{makeRel_smolt} returns a list that is passed to openMSE as a inter-population relationship
+\item \code{makeRel_smolt()} returns a list that is passed to openMSE as a inter-population relationship
 }
 }
 \description{
@@ -121,7 +77,30 @@ Internal function that predicts the natural origin or hatchery origin smolt prod
 escapement, and saves state variables to \link{salmonMSE_env}.
 \itemize{
 \item \code{smolt_func()} is the population dynamics function
-\item \code{makeRel_smolt} generates a list for openMSE to use in the simulations
+\item \code{makeRel_smolt()} generates a list for openMSE to use in the simulations
 }
 }
+\section{hatchery_args}{
+
+Hatchery control parameters are included in a named list with the following arguments:
+\itemize{
+\item \code{egg_local} Numeric, target egg production for hatchery. Set to zero for no hatchery production.
+\item \code{ptarget_NOB} Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
+\item \code{pmax_NOB} Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
+\item \code{fec_brood} Vector \verb{[maxage]}. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
+\item \code{s_yearling} Numeric, the survival of eggs to the smolt life stage (for yearling release)
+\item \code{s_subyearling} Numeric. the survival of eggs to subyearling life stage (for subyearling release)
+\item \code{p_yearling} Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
+\item \code{phatchery} Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
+for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.
+\item \code{premove_HOS} Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
+grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
+For example, a value less than one can represent imperfect implementation of weir removal.
+\item \code{s_prespawn} Numeric, the survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish
+not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.
+\item \code{gamma} Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)
+\item \code{m} Numeric, mark rate for selective broodtake
+}
+}
+
 \keyword{internal}

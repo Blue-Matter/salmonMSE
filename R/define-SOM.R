@@ -102,7 +102,6 @@ setClass(
     u_preterminal = "numeric",
     u_terminal = "numeric",
     MSF = "logical",
-    m = "numeric",
     release_mort = "numeric",
     vulPT = "numeric",
     vulT = "numeric"
@@ -170,6 +169,7 @@ setClass(
     s_egg_subyearling = "numeric",
     Mjuv_HOS = "num.array",
     gamma = "numeric",
+    m = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
     phatchery = "numeric",

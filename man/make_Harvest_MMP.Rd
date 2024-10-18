@@ -17,6 +17,8 @@ make_Harvest_MMP(
 
 \item{u_preterminal}{Numeric between 0-1. Harvest rate of the preterminal fishery.}
 
+\item{MSF}{Logical, whether to implement mark-selective fishing.}
+
 \item{m}{Numeric between 0-1. Mark rate, i.e., retention rate.}
 
 \item{release_mort}{Vector length 2 (each numeric between 0-1). Release mortality, proportion of released fish that die.}

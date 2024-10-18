@@ -32,7 +32,8 @@ Hatchery <- new(
   s_prespawn = 1,                   # Survival prior to spawning
   s_egg_smolt = 1e-6,               # Survival of eggs in hatchery
   s_egg_subyearling = 0.92,
-  gamma = 0.8,
+  gamma = 0.8,,
+  m = 0,
   pmax_NOB = 0.7,
   ptarget_NOB = 0.51,
   phatchery = 0.8,
@@ -57,8 +58,7 @@ Habitat <- new(
 Harvest <- new(
   "Harvest",
   u = sum(c(0.038, 0.025, 0, 0.14)),        # Specify fixed harvest rate of mature fish
-  MSF = FALSE,
-  m = 0
+  MSF = FALSE
 )
 
 # Stitched salmon operating model

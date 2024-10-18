@@ -136,52 +136,68 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
   habitat_change <- SOM@kappa_improve != 1 || SOM@capacity_smolt_improve != 1
 
-  if (do_hatchery) {
-    # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
-    # and fecundity of broodtake (identical between natural and hatchery escapement)
-    # This is a management action, cannot be stochastic
-    # No imports
-    egg_yearling <- ifelse(SOM@n_yearling > 0, SOM@n_yearling/SOM@s_egg_smolt, 0)
-    egg_subyearling <- ifelse(SOM@n_subyearling > 0, SOM@n_subyearling/SOM@s_egg_subyearling, 0)
-    egg_local <- egg_yearling + egg_subyearling
-
-    p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
-
-  } else {
-    egg_local <- 0
-    p_yearling <- NA
-  }
-
   if (do_hatchery || habitat_change || SOM@s_enroute < 1) {
+
+    if (do_hatchery) {
+      # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
+      # and fecundity of broodtake (identical between natural and hatchery escapement)
+      # This is a management action, cannot be stochastic
+      # No imports
+      egg_yearling <- ifelse(SOM@n_yearling > 0, SOM@n_yearling/SOM@s_egg_smolt, 0)
+      egg_subyearling <- ifelse(SOM@n_subyearling > 0, SOM@n_subyearling/SOM@s_egg_subyearling, 0)
+      egg_local <- egg_yearling + egg_subyearling
+
+      p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
+
+    } else {
+      egg_local <- 0
+    }
+
     fitness_args <- list()
+    hatchery_args <- list(
+      egg_local = egg_local
+    )
 
-    if (do_hatchery && any(SOM@fitness_type == "Ford")) {
-      fitness_args <- local({
-        omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
-        omega2 <- omega * omega
+    if (do_hatchery) {
 
-        list(
-          fitness_type = SOM@fitness_type,
-          rel_loss = SOM@rel_loss,
-          omega2 = omega2,
-          fitness_variance = SOM@fitness_variance,
-          fitness_floor = SOM@fitness_floor,
-          heritability = SOM@heritability,
-          #zbar_start = SOM@zbar_start
-          theta = SOM@theta
-        )
-      })
+      hatchery_args <- list(
+        ptarget_NOB = SOM@ptarget_NOB,
+        pmax_NOB = SOM@pmax_NOB,
+        fec_brood = SOM@fec_brood,
+        s_yearling = SOM@s_egg_smolt,
+        s_subyearling = SOM@s_egg_subyearling,
+        p_yearling = p_yearling,
+        phatchery = SOM@phatchery,
+        premove_HOS = SOM@premove_HOS,
+        s_prespawn = SOM@s_prespawn,
+        gamma = SOM@gamma,
+        m = SOM@m
+      )
+
+      if (any(SOM@fitness_type == "Ford")) {
+        fitness_args <- local({
+          omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
+          omega2 <- omega * omega
+
+          list(
+            fitness_type = SOM@fitness_type,
+            rel_loss = SOM@rel_loss,
+            omega2 = omega2,
+            fitness_variance = SOM@fitness_variance,
+            fitness_floor = SOM@fitness_floor,
+            heritability = SOM@heritability,
+            #zbar_start = SOM@zbar_start # Now assigned by salmonMSE::salmonMSE()
+            theta = SOM@theta
+          )
+        })
+      }
     }
 
     # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
       p_smolt = 1, p_naturalsmolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
-      s_enroute = SOM@s_enroute, ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@pmax_NOB,
-      egg_local = egg_local, fec_brood = SOM@fec_brood,
-      s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
-      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
-      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
-      fitness_args = fitness_args
+      s_enroute = SOM@s_enroute, p_female = SOM@p_female, fec = SOM@fec, SRRpars = SRRpars,
+      hatchery_args = hatchery_args, fitness_args = fitness_args
     )
 
     # Marine survival of natural origin fish
@@ -209,12 +225,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
       p_smolt = 4, p_naturalsmolt = 1, p_natural = 3, p_hatchery = 6, output = "hatchery",
-      s_enroute = SOM@s_enroute, ptarget_NOB = SOM@ptarget_NOB, pmax_NOB = SOM@ptarget_NOB,
-      egg_local = egg_local, fec_brood = SOM@fec_brood,
-      s_yearling = SOM@s_egg_smolt, s_subyearling = SOM@s_egg_subyearling, p_yearling = p_yearling,
-      phatchery = SOM@phatchery, premove_HOS = SOM@premove_HOS, s_prespawn = SOM@s_prespawn,
-      p_female = SOM@p_female, fec = SOM@fec, gamma = SOM@gamma, SRRpars = SRRpars,
-      fitness_args = fitness_args
+      s_enroute = SOM@s_enroute, p_female = SOM@p_female, fec = SOM@fec, SRRpars = SRRpars,
+      hatchery_args = hatchery_args, fitness_args = fitness_args
     )
   }
 

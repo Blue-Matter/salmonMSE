@@ -18,8 +18,6 @@ The component of the operating model that controls harvest.
 
 \item{\code{MSF}}{Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.}
 
-\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity.}
-
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
 Implemented to model mark-selective fishing. Not used if \code{MSF = FALSE}.}
 

@@ -4,75 +4,92 @@
 #' @description Internal function that predicts the natural origin or hatchery origin smolt production from the
 #' escapement, and saves state variables to [salmonMSE::salmonMSE_env].
 #' - `smolt_func()` is the population dynamics function
-#' - `makeRel_smolt` generates a list for openMSE to use in the simulations
+#' - `makeRel_smolt()` generates a list for openMSE to use in the simulations
 #'
 #' @param Nage Matrix `[n_age, 2]` of natural and hatchery escapement from openMSE
 #' @param x Integer, simulation number from openMSE
 #' @param y Integer, simulation year (including historical years)
 #' @param output Character, whether to predic the natural origin or hatchery origin smolt production
 #' @param s_enroute Numeric, en route survival of the escapement to the spawning grounds
-#' @param ptarget_NOB Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
-#' @param pmax_NOB Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
-#' @param egg_local Numeric, target egg production for hatchery
-#' @param fec_brood Vector `[maxage]`. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
-#' @param s_yearling Numeric, the survival of eggs to the smolt life stage (for yearling release)
-#' @param s_subyearling Numeric. the survival of eggs to subyearling life stage (for subyearling release)
-#' @param p_yearling Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
-#' @param phatchery Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
-#' for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.
-#' @param premove_HOS Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
-#' grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
-#' For example, a value less than one can represent imperfect implementation of weir removal.
-#' @param s_prespawn Numeric, the survival of broodtake prior to egg production. `1 - s_prespawn` is the proportion of fish
-#' not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.
 #' @param p_female Numeric, proportion female for calculating the egg production.
 #' @param fec Vector `[maxage]`. The fecundity at age schedule of spawners
-#' @param gamma Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)
 #' @param SRRpars Data frame containing stock recruit parameters for natural smolt production.
 #' Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve
+#' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
 #' @param fitness_args Named list containing various arguments controlling population fitness from hatchery production.
 #' Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss
 #' @param p_naturalsmolt Integer, the population index for the natural smolts in the openMSE model.
 #' Used to report variables to [salmonMSE::salmonMSE_env].
+#' @section hatchery_args:
+#' Hatchery control parameters are included in a named list with the following arguments:
+#'
+#' - `egg_local` Numeric, target egg production for hatchery. Set to zero for no hatchery production.
+#' - `ptarget_NOB` Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
+#' - `pmax_NOB` Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
+#' - `fec_brood` Vector `[maxage]`. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
+#' - `s_yearling` Numeric, the survival of eggs to the smolt life stage (for yearling release)
+#' - `s_subyearling` Numeric. the survival of eggs to subyearling life stage (for subyearling release)
+#' - `p_yearling` Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
+#' - `phatchery` Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
+#' for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.
+#' - `premove_HOS` Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
+#' grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
+#' For example, a value less than one can represent imperfect implementation of weir removal.
+#' - `s_prespawn` Numeric, the survival of broodtake prior to egg production. `1 - s_prespawn` is the proportion of fish
+#' not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.
+#' - `gamma` Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)
+#' - `m` Numeric, mark rate for selective broodtake
 #' @returns
 #' - `smolt_func()` returns a numeric for the ratio of the realized smolt production vs. the hypothetical value if there were no
 #' hatchery, en route mortality, or habitat improvement
-#' - `makeRel_smolt` returns a list that is passed to openMSE as a inter-population relationship
+#' - `makeRel_smolt()` returns a list that is passed to openMSE as a inter-population relationship
 #' @keywords internal
 smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
-                       s_enroute, ptarget_NOB, pmax_NOB, egg_local, fec_brood,
-                       s_yearling, s_subyearling, p_yearling,
-                       phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
-                       p_female, fec, gamma, SRRpars, # Spawning (natural production)
-                       fitness_args, p_naturalsmolt) {
+                       s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
+                       hatchery_args, fitness_args, p_naturalsmolt) {
 
   output <- match.arg(output)
   Nage[is.na(Nage)] <- 0
 
   # Hatchery
   Nage_enroute <- Nage * s_enroute
-  broodtake <- calc_broodtake(Nage_enroute, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female, fec_brood, s_prespawn)
+  broodtake <- calc_broodtake(
+    Nage_enroute,
+    hatchery_args$ptarget_NOB,
+    hatchery_args$pmax_NOB,
+    hatchery_args$phatchery,
+    hatchery_args$egg_local,
+    hatchery_args$p_female,
+    hatchery_args$fec_brood,
+    hatchery_args$s_prespawn
+  )
 
-  egg_NOB <- sum(broodtake$NOB * fec_brood * s_prespawn * p_female)
-  egg_HOB <- sum(broodtake$HOB * fec_brood * s_prespawn * p_female)
+  egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
+  egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
 
-  hatchery_production <- calc_yearling(egg_NOB + egg_HOB, s_yearling, s_subyearling, p_yearling)
+  hatchery_production <- calc_yearling(
+    egg_NOB + egg_HOB,
+    hatchery_args$s_yearling,
+    hatchery_args$s_subyearling,
+    hatchery_args$p_yearling
+  )
   yearling <- hatchery_production[1]
   subyearling <- hatchery_production[2]
 
   # Spawners
-  spawners <- calc_spawners(broodtake, Nage_enroute, phatchery, premove_HOS)
+  spawners <- calc_spawners(broodtake, Nage_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
 
   NOS <- spawners$NOS
   HOS <- spawners$HOS
   if (sum(HOS)) {
-    HOS_effective <- spawners$HOS * gamma
+    HOS_effective <- spawners$HOS * hatchery_args$gamma
   } else {
     HOS_effective <- rep(0, length(HOS))
   }
 
   # Spawners weighted by fecundity
-  pNOB <- sum(fec_brood * broodtake$NOB)/sum(fec_brood * broodtake$NOB, fec_brood * broodtake$HOB)
+  pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
+    sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB)
   pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
@@ -111,7 +128,7 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
       }
 
       zbar <- calc_zbar(
-        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, fec_brood, zbar_brood,
+        NOS, HOS_effective, broodtake$NOB, broodtake$HOB, fec, hatchery_args$fec_brood, zbar_brood,
         fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
       )
     } else {
@@ -123,7 +140,8 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
     for (i in 1:2) {
       if (fitness_args$fitness_type[i] == "Ford") {
         fitness[i] <- calc_fitness(
-          zbar[i], fitness_args$theta[i], fitness_args$omega2, fitness_args$fitness_variance, fitness_args$fitness_floor
+          zbar[i], fitness_args$theta[i], fitness_args$omega2,
+          fitness_args$fitness_variance, fitness_args$fitness_floor
         )
       }
     }
@@ -245,10 +263,8 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
 #' @param p_hatchery Integer, the population index for the hatchery origin escapement in the openMSE model
 makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery,
                           output = c("natural", "hatchery"), s_enroute,
-                          ptarget_NOB, pmax_NOB, egg_local, fec_brood,
-                          s_yearling, s_subyearling, p_yearling, phatchery, premove_HOS, s_prespawn, # Broodtake & hatchery production
-                          p_female, fec, gamma, SRRpars,  # Spawning (natural production)
-                          fitness_args) {
+                          p_female, fec, SRRpars,  # Spawning (natural production)
+                          hatchery_args, fitness_args) {
 
   output <- match.arg(output)
 
@@ -256,25 +272,12 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
 
   formals(.smolt_func)$output <- output
   formals(.smolt_func)$s_enroute <- s_enroute
-
-  formals(.smolt_func)$ptarget_NOB <- ptarget_NOB
-  formals(.smolt_func)$pmax_NOB <- pmax_NOB
-  formals(.smolt_func)$egg_local <- egg_local
-  formals(.smolt_func)$fec_brood <- fec_brood
-
-  formals(.smolt_func)$s_yearling <- s_yearling
-  formals(.smolt_func)$s_subyearling <- s_subyearling
-  formals(.smolt_func)$p_yearling <- p_yearling
-
-  formals(.smolt_func)$phatchery <- phatchery
-  formals(.smolt_func)$premove_HOS <- premove_HOS
-  formals(.smolt_func)$s_prespawn <- s_prespawn
   formals(.smolt_func)$p_female <- p_female
   formals(.smolt_func)$fec <- fec
-  formals(.smolt_func)$gamma <- gamma
 
   formals(.smolt_func)$SRRpars <- SRRpars
 
+  formals(.smolt_func)$hatchery_args <- hatchery_args
   formals(.smolt_func)$fitness_args <- fitness_args
   formals(.smolt_func)$p_naturalsmolt <- p_naturalsmolt
 

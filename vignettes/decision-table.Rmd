@@ -76,6 +76,7 @@ wrapper <- function(x, Design) {
     s_egg_subyearling = 1,
     Mjuv_HOS = Bio@Mjuv_NOS,
     gamma = 0.8,
+    m = 0,
     pmax_NOB = 0.7,
     ptarget_NOB = 0.51,
     phatchery = 0.8,
@@ -102,7 +103,6 @@ wrapper <- function(x, Design) {
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
     MSF = FALSE,                   # No mark-selective fishing
-    m = 0,
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
