@@ -10,6 +10,7 @@ Harvest_MMP(
   reps = 1,
   u_terminal,
   u_preterminal,
+  MSF = FALSE,
   m,
   release_mort,
   p_terminal = c(2, 5),
@@ -29,6 +30,8 @@ Harvest_MMP(
 \item{u_terminal}{Harvest rate of retained catch in the terminal fishery}
 
 \item{u_preterminal}{Harvest rate of retained catch in the pre-terminal fishery}
+
+\item{MSF}{Logical, whether to implement mark-selective fishing}
 
 \item{m}{Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 Retention in the operating model is specified in the \linkS4class{MOM} object}

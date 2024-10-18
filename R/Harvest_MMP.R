@@ -9,6 +9,7 @@
 #' @param reps The number of stochastic replicates to be returned by the function
 #' @param u_terminal Harvest rate of retained catch in the terminal fishery
 #' @param u_preterminal Harvest rate of retained catch in the pre-terminal fishery
+#' @param MSF Logical, whether to implement mark-selective fishing
 #' @param m Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 #' Retention in the operating model is specified in the \linkS4class{MOM} object
 #' @param release_mort Length two numeric for the release mortality of discarded fish in the pre-terminal and terminal fishery. Only used to calculate the fishing effort.
@@ -23,7 +24,7 @@
 #' @return A nested list of \linkS4class{Rec} objects, same dimension as `DataList`
 #'
 #' @keywords internal
-Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m, release_mort,
+Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MSF = FALSE, m, release_mort,
                         p_terminal = c(2, 5), p_preterminal = c(1, 4),
                         p_natural = 1:3, p_hatchery = 4:6, ...) {
   np <- length(DataList)
@@ -47,7 +48,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
         V <- sapply(p_preterminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y]) %>%
           apply(1, unique)
 
-        if (m > 0) { # MSF, Specify F here, further retention and discards handled by OM
+        if (MSF) { # MSF, Specify F here, further retention and discards handled by OM
           Nage_HOS_PT <- sapply(intersect(p_preterminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           Effort <- get_F(
             u = u_preterminal, M = rep(0, length(Nage_p)),
@@ -72,7 +73,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
         V <- sapply(p_terminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y]) %>%
           apply(1, unique)
 
-        if (m > 0) {
+        if (MSF) {
           Nage_HOS_T <- sapply(intersect(p_terminal, p_hatchery), function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
 
           Effort <- get_F(
@@ -112,13 +113,15 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, m,
 #'
 #' @param u_terminal Numeric between 0-1. Harvest rate of the terminal fishery.
 #' @param u_preterminal Numeric between 0-1. Harvest rate of the preterminal fishery.
+#' @param MSF Logical, whether to implement mark-selective fishing.
 #' @param m Numeric between 0-1. Mark rate, i.e., retention rate.
 #' @param release_mort Vector length 2 (each numeric between 0-1). Release mortality, proportion of released fish that die.
 #' @export
-make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0) {
+make_Harvest_MMP <- function(u_terminal = 0.1, u_preterminal = 0, MSF = FALSE, m = 0, release_mort = 0) {
   f <- Harvest_MMP
   formals(f)$u_terminal <- u_terminal
   formals(f)$u_preterminal <- u_preterminal
+  formals(f)$MSF <- MSF
   formals(f)$m <- m
   formals(f)$release_mort <- release_mort
   class(f) <- "MMP"

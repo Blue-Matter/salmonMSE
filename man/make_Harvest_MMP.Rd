@@ -4,7 +4,13 @@
 \alias{make_Harvest_MMP}
 \title{Harvest component of salmon operating model}
 \usage{
-make_Harvest_MMP(u_terminal = 0.1, u_preterminal = 0, m = 0, release_mort = 0)
+make_Harvest_MMP(
+  u_terminal = 0.1,
+  u_preterminal = 0,
+  MSF = FALSE,
+  m = 0,
+  release_mort = 0
+)
 }
 \arguments{
 \item{u_terminal}{Numeric between 0-1. Harvest rate of the terminal fishery.}

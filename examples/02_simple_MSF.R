@@ -55,6 +55,7 @@ Harvest <- new(
   "Harvest",
   u_preterminal = 0,             # No pre-terminal fishery
   u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
+  MSF = FALSE,
   m = 0.5,                       # Mark rate of hatchery releases
   release_mort = c(0.1, 0.1),
   vulPT = c(0, 0, 0),

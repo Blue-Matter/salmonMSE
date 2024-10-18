@@ -301,7 +301,7 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     cpars_fleet$V[, n_age, ] <- 1
   }
 
-  if (SOM@m > 0) {
+  if (SOM@MSF) {
     cpars_fleet$retA <- cpars_fleet$V
     retAproj <- cpars_fleet$retA[, , nyears + seq(1, proyears)]
     if (NOS) {

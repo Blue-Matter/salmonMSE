@@ -57,7 +57,8 @@ Habitat <- new(
 Harvest <- new(
   "Harvest",
   u = sum(c(0.038, 0.025, 0, 0.14)),        # Specify fixed harvest rate of mature fish
-  m = 0                                     # Mark rate of hatchery releases (future feature)
+  MSF = FALSE,
+  m = 0
 )
 
 # Stitched salmon operating model

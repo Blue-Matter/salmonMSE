@@ -60,14 +60,14 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     }
   }
 
-  if (SOM@m > 0) {
+  if (SOM@MSF) {
     .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
     Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
     Fret <- SOM@m * .F
     u_NOR <- 1 - exp(-Frel)
     u_HOR <- 1 - exp(-Frel - Fret)
     message(
-      "Mark rate greater than zero detected. For AHA, setting harvest rate of natural and hatchery fish = ",
+      "Mark-selective fishing detected. For AHA, setting harvest rate of natural and hatchery fish = ",
       round(u_NOR, 3), " and ", round(u_HOR, 3), ", respectively. Catch represents kept catch + dead releases."
     )
   }
@@ -86,7 +86,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
 
 .AHA_wrapper <- function(x, SOM, ngen, SAR_NOS, SAR_HOS) {
 
-  if (SOM@m > 0) {
+  if (SOM@MSF > 0) {
     .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
     Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
     Fret <- SOM@m * .F

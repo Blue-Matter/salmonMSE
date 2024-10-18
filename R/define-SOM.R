@@ -101,6 +101,7 @@ setClass(
     Name = "character",
     u_preterminal = "numeric",
     u_terminal = "numeric",
+    MSF = "logical",
     m = "numeric",
     release_mort = "numeric",
     vulPT = "numeric",

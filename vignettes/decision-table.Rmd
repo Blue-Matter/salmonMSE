@@ -101,6 +101,7 @@ wrapper <- function(x, Design) {
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
+    MSF = FALSE,                   # No mark-selective fishing
     m = 0,
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),

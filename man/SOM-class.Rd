@@ -116,10 +116,12 @@ imperfect implementation of weir removal.}
 
 \item{\code{u_terminal}}{Numeric. The exploitation rate of the return in the terminal fishery.}
 
-\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity. Mark-selective fishing (MSF) is implemented if \code{m > 0}.}
+\item{\code{MSF}}{Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.}
+
+\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity.}
 
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
-Implemented to model mark-selective fishing. Not used if \code{m = 0}.}
+Implemented to model mark-selective fishing. Not used if \code{MSF = FALSE}.}
 
 \item{\code{vulPT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
 

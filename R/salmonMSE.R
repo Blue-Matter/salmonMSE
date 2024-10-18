@@ -31,6 +31,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   HMMP <- make_Harvest_MMP(
     SOM@u_terminal,
     SOM@u_preterminal,
+    SOM@MSF,
     SOM@m,
     ifelse(do_hatchery, 0, SOM@release_mort)
   )
