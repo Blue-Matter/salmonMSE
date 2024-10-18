@@ -3,7 +3,7 @@
 # (b) smolt hatchery production
 # (c) smolt natural production
 calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
-                           fec_brood, s_prespawn) {
+                           fec_brood, s_prespawn, m) {
 
   NOR_escapement <- Nage[, 1]
   if (ncol(Nage) > 1) {
@@ -12,7 +12,7 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
     opt <- try(
       uniroot(.broodtake_func, c(1e-8, pmax_NOB),
               NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-              fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB),
+              fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m),
       silent = TRUE
     )
     if (is.character(opt)) {
@@ -23,11 +23,11 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
 
     output <- .broodtake_func(
       ptake_NOB, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-      fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, opt = FALSE
+      fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
     )
 
     NOB <- output$NOB
-    HOB <- output$HOB
+    HOB <- output$HOB_unmarked + output$HOB_marked
   } else {
 
     NOBopt <- try(
@@ -64,38 +64,48 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 }
 
 .broodtake_func <- function(ptake_NOB, NOR_escapement, HOR_escapement, phatchery, p_female, fec, gamma,
-                            egg_target, s_prespawn, ptarget_NOB, opt = TRUE) {
+                            egg_target, s_prespawn, ptarget_NOB, m = 1, opt = TRUE) {
 
   NOB <- ptake_NOB * NOR_escapement
-  egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
-  egg_HOB <- egg_target - egg_NOB
+  HOB_unmarked <- ptake_NOB * (1 - m) * HOR_escapement
 
-  if (egg_HOB < 0) {
-    ptake_HOB <- 0
+  egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
+  egg_HOB_unmarked <- sum(HOB_unmarked * s_prespawn * fec * p_female)
+
+  egg_HOB_marked <- egg_target - egg_NOB - egg_HOB_unmarked
+
+  if (egg_HOB_marked < 0) {
+    ptake_marked <- 0
   } else {
-    # solve for the required HOB
+    # solve for the required HOB marked
     HOBopt <- try(
-      uniroot(.egg_func, c(1e-8, 1), N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female,
-              s_prespawn = s_prespawn, val = egg_HOB),
+      uniroot(.egg_func, c(1e-8, 1), N = m * phatchery * HOR_escapement, gamma = gamma, fec = fec, p_female = p_female,
+              s_prespawn = s_prespawn, val = egg_HOB_marked),
       silent = TRUE
     )
     if (is.character(HOBopt)) {
-      ptake_HOB <- 1
+      ptake_marked <- 1
     } else {
-      ptake_HOB <- HOBopt$root
+      ptake_marked <- HOBopt$root
     }
   }
 
-  HOB <- ptake_HOB * HOR_escapement * phatchery
-  egg_HOB_actual <- .egg_func(
-    ptake_HOB, N = HOR_escapement * phatchery, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
+  HOB_marked <- ptake_marked * m * HOR_escapement * phatchery
+  egg_HOB_marked_actual <- .egg_func(
+    ptake_marked, N = m * phatchery * HOR_escapement, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
   )
 
   if (opt) {
-    obj <- log(sum(NOB)/sum(NOB + HOB)) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
+    pNOB_ <- sum(NOB + HOB_unmarked)/sum(NOB + HOB_unmarked + HOB_marked)
+    obj <- log(pNOB_) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
-    output <- list(egg_NOB = egg_NOB, egg_HOB = egg_HOB_actual, ptake_HOB = ptake_HOB, NOB = NOB, HOB = HOB)
+    output <- list(
+      egg_NOB = egg_NOB,
+      egg_HOB_unmarked = egg_HOB_unmarked, egg_HOB_marked = egg_HOB_marked_actual,
+      ptake_marked = ptake_marked,
+      NOB = NOB, HOB_unmarked = HOB_unmarked, HOB_marked = HOB_marked
+    )
     return(output)
   }
 }

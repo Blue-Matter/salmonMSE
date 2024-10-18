@@ -61,7 +61,8 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
     hatchery_args$egg_local,
     hatchery_args$p_female,
     hatchery_args$fec_brood,
-    hatchery_args$s_prespawn
+    hatchery_args$s_prespawn,
+    hatchery_args$m
   )
 
   egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
