@@ -62,7 +62,7 @@ wrapper <- function(x, Design) {
   Harvest <- new(
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
-    u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
+    u_terminal = 0.5,              # Specify fixed harvest rate of mature fish
     m = 0,                         # Mark rate of hatchery releases
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),
@@ -111,7 +111,7 @@ pm_fn <- function(x, SMSE_list, Design) {
   KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
 
   out$Catch <- mean(KNOS + KHOS)
-  out$Catch40 <- mean((KNOS + KHOS) >= 40)
+  out$Catch60 <- mean((KNOS + KHOS) >= 60)
   out$`S/SMSY` <- SMSY85(SMSE_list[[x]], Yrs = c(49, 49))
   return(out)
 }
@@ -123,12 +123,16 @@ g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_75, title = "Probability PNI
                          xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
 ggsave("man/figures/decision_table_PNI75.png", g, height = 3, width = 3)
 
-g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch40, title = "Probability Catch > 40",
+g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch60, title = "Probability Catch > 60",
                          xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
-ggsave("man/figures/decision_table_catch40.png", g, height = 3, width = 3)
+ggsave("man/figures/decision_table_catch60.png", g, height = 3, width = 3)
+
+g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability NOS > SMSY",
+                         xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
+ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
 # Make tradeoff plot
-g <- plot_tradeoff(pm$PNI_75, pm$Catch40, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Catch40",
+g <- plot_tradeoff(pm$PNI_75, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Catch60",
                    x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 2, 4, 16))
 ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
@@ -166,7 +170,7 @@ Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
                           levels = paste("Hatchery production", c(0, 5000, 10000, 15000)))
 
 g <- compare_spawners(SMSE_list, Design_txt) +
-  coord_cartesian(ylim = c(0, 150), expand = FALSE)
+  coord_cartesian(ylim = c(0, 75), expand = FALSE)
 ggsave("man/figures/compare_spawners.png", g, height = 5, width = 7)
 
 g <- compare_spawners(SMSE_list, Design_txt, prop = TRUE)
