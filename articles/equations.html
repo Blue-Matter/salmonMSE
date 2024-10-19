@@ -61,7 +61,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-10-16</h4>
+            <h4 data-toc-skip class="date">2024-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -202,41 +202,34 @@ smolt</td>
 <td align="left">u_terminal</td>
 </tr>
 <tr class="odd">
-<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
-<td align="left">Mark rate of hatchery fish</td>
-<td align="left">Harvest</td>
-<td align="left">SOM</td>
-<td align="left">m</td>
-</tr>
-<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math></td>
 <td align="left">Mortality from catch and release (proportion)</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">release_mort</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math></td>
 <td align="left">Relative vulnerability by age to the fishery</td>
 <td align="left">Harvest</td>
 <td align="left">SOM</td>
 <td align="left">vulPT, vulT</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Fec</mtext><annotation encoding="application/x-tex">\textrm{Fec}</annotation></semantics></math></td>
 <td align="left">Fecundity of spawners (eggs per female)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM</td>
 <td align="left">fec</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Fec</mtext><mtext mathvariant="normal">brood</mtext></msup><annotation encoding="application/x-tex">\textrm{Fec}^\textrm{brood}</annotation></semantics></math></td>
 <td align="left">Fecundity of broodtake (eggs per female)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM</td>
 <td align="left">fec_brood</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><annotation encoding="application/x-tex">p^\textrm{female}</annotation></semantics></math></td>
 <td align="left">Proportion of female spawners in broodtake and
 spawners</td>
@@ -244,14 +237,14 @@ spawners</td>
 <td align="left">SOM</td>
 <td align="left">p_female</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">SAR</mtext><annotation encoding="application/x-tex">\textrm{SAR}</annotation></semantics></math></td>
 <td align="left">Smolt-to-adult recruit survival</td>
 <td align="left">Natural production + Hatchery</td>
 <td align="left">-</td>
 <td align="left">-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math></td>
 <td align="left">Instantaneous natural mortality of juvenile,
 corresponding to either the freshwater or marine environment by age
@@ -260,7 +253,7 @@ class</td>
 <td align="left">SOM</td>
 <td align="left">Mjuv_NOS, Mjuv_HOS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><annotation encoding="application/x-tex">s_\textrm{enroute}</annotation></semantics></math></td>
 <td align="left">Survival of escapement to spawning grounds and
 hatchery</td>
@@ -268,28 +261,28 @@ hatchery</td>
 <td align="left">SOM</td>
 <td align="left">s_enroute</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOB</mtext><annotation encoding="application/x-tex">\textrm{NOB}</annotation></semantics></math></td>
 <td align="left">Natural origin broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">NOB</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HOB</mtext><annotation encoding="application/x-tex">\textrm{HOB}</annotation></semantics></math></td>
 <td align="left">Hatchery origin broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">HOB</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">s_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Survival of hatchery eggs to yearling life stage</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">s_egg_smolt</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">subyearling</mtext></msub><annotation encoding="application/x-tex">s_\textrm{subyearling}</annotation></semantics></math></td>
 <td align="left">Survival of hatchery eggs to subyearling life
 stage</td>
@@ -297,7 +290,7 @@ stage</td>
 <td align="left">SOM</td>
 <td align="left">s_egg_subyearling</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">p_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery releases as yearling
 (vs. subyearling)</td>
@@ -305,26 +298,33 @@ stage</td>
 <td align="left">Internal state variable</td>
 <td align="left">-</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">prespawn</mtext></msub><annotation encoding="application/x-tex">s_\textrm{prespawn}</annotation></semantics></math></td>
 <td align="left">Survival of adult broodtake in hatchery</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">s_prespawn</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">n_\textrm{yearling}</annotation></semantics></math></td>
 <td align="left">Target number of hatchery releases as yearlings</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">n_yearling</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">subyearling</mtext></msub><annotation encoding="application/x-tex">n_\textrm{subyearling}</annotation></semantics></math></td>
 <td align="left">Target number of hatchery releases as subyearlings</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">n_subyearling</td>
+</tr>
+<tr class="odd">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
+<td align="left">Mark rate of hatchery fish</td>
+<td align="left">Hatchery</td>
+<td align="left">SOM</td>
+<td align="left">m</td>
 </tr>
 <tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">NOB</mtext></msub><annotation encoding="application/x-tex">p_\textrm{NOB}</annotation></semantics></math></td>
@@ -343,28 +343,36 @@ stage</td>
 <td align="left">-</td>
 </tr>
 <tr class="even">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">esc</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{esc}_\textrm{max}</annotation></semantics></math></td>
+<td align="left">Maximum proportion of total escapement (after en-route
+mortality) to use as broodtake</td>
+<td align="left">Hatchery</td>
+<td align="left">SOM</td>
+<td align="left">pmax_esc</td>
+</tr>
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">NOB</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOB}_\textrm{max}</annotation></semantics></math></td>
 <td align="left">Maximum proportion of the natural origin broodtake from
-the escapement, i.e., NOB/NOS ratio</td>
+the escapement (after en-route mortality), i.e., NOB/NOS ratio</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">pmax_NOB</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOR</mtext><annotation encoding="application/x-tex">\textrm{NOR}</annotation></semantics></math></td>
 <td align="left">Natural origin return</td>
 <td align="left">Natural production</td>
 <td align="left">SMSE</td>
 <td align="left">Return_NOS</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HOR</mtext><annotation encoding="application/x-tex">\textrm{HOR}</annotation></semantics></math></td>
 <td align="left">Hachery origin return</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">Return_HOS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin escapement to hatchery,
 available for broodtake</td>
@@ -372,7 +380,7 @@ available for broodtake</td>
 <td align="left">SOM</td>
 <td align="left">phatchery</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{HOS}_\textrm{removal}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin escapement removed from
 spawning grounds, not available for broodtake</td>
@@ -380,7 +388,7 @@ spawning grounds, not available for broodtake</td>
 <td align="left">SOM</td>
 <td align="left">premove_HOS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></td>
 <td align="left">Reduced reproductive success of HOS (relative to
 NOS)</td>
@@ -388,7 +396,7 @@ NOS)</td>
 <td align="left">SOM</td>
 <td align="left">gamma</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math></td>
 <td align="left">Mean phenotypic value of cohort in natural and hatchery
 environments</td>
@@ -396,7 +404,7 @@ environments</td>
 <td align="left">Internal state variable and SOM</td>
 <td align="left">zbar_start</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math></td>
 <td align="left">Optimal phenotypic value for natural and hatchery
 environments</td>
@@ -404,14 +412,14 @@ environments</td>
 <td align="left">SOM</td>
 <td align="left">theta</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></td>
 <td align="left">Variance of phenotypic traits in population</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">fitness_variance</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math></td>
 <td align="left">Selection strength: fitness variance relative to
 phenotypic variance</td>
@@ -419,14 +427,14 @@ phenotypic variance</td>
 <td align="left">SOM</td>
 <td align="left">selection_strength</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>h</mi><mn>2</mn></msup><annotation encoding="application/x-tex">h^2</annotation></semantics></math></td>
 <td align="left">Heritability of phenotypic traits</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">heritability</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>W</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{W}</annotation></semantics></math></td>
 <td align="left">Population fitness in the natural and hatchery
 environments</td>
@@ -434,7 +442,7 @@ environments</td>
 <td align="left">SMSE</td>
 <td align="left">fitness</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>i</mi></msub><annotation encoding="application/x-tex">\ell_i</annotation></semantics></math></td>
 <td align="left">Relative fitness loss at the i-th life stage (egg, fry,
 smolt)</td>
@@ -442,14 +450,14 @@ smolt)</td>
 <td align="left">SOM</td>
 <td align="left">rel_loss</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">PNI</mtext><annotation encoding="application/x-tex">\textrm{PNI}</annotation></semantics></math></td>
 <td align="left">Proportionate natural influence</td>
 <td align="left">Fitness</td>
 <td align="left">SMSE</td>
 <td align="left">PNI</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
 <td align="left">Mark rate of hatchery fish (affects fishery retention
 of hatchery fish relative to natural fish)</td>
@@ -457,7 +465,7 @@ of hatchery fish relative to natural fish)</td>
 <td align="left">SOM</td>
 <td align="left">m</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">NOS</mtext></msub><annotation encoding="application/x-tex">p_\textrm{NOS}</annotation></semantics></math></td>
 <td align="left">Proportion of natural origin spawners (vs. effective
 HOS)</td>
@@ -465,7 +473,7 @@ HOS)</td>
 <td align="left">Internal state variable</td>
 <td align="left">-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOSeff</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOSeff}</annotation></semantics></math></td>
 <td align="left">Proportion of effective hatchery origin spawners
 (vs. NOS)</td>
@@ -473,7 +481,7 @@ HOS)</td>
 <td align="left">SMSE</td>
 <td align="left">NOS, HOS_effective</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOScensus</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOScensus}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin spawners (vs. NOS)</td>
 <td align="left">Population dynamics</td>
@@ -645,12 +653,17 @@ is the corresponding survival term from the egg life stage.</p>
 some proportion
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">broodtake</mtext></msup><annotation encoding="application/x-tex">p^\textrm{broodtake}</annotation></semantics></math>
 is used as broodtake:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msubsup><mo>×</mo><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,HOB</mtext></msubsup><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\textrm{NOB}_{y,a} &amp;= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}\\
-\textrm{HOB}_{y,a} &amp;= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msubsup><mo>×</mo><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><mo>×</mo><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">esc</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">HOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,HOB</mtext></msubsup><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><mo>×</mo><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">esc</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{NOB}_{y,a} &amp;= p^\textrm{broodtake,NOB}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
+\textrm{HOB}_{y,a} &amp;= p^\textrm{broodtake,HOB}_y \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}
 \end{align}</annotation></semantics></math></p>
-<p>The proportion of the available hatchery fish for broodtake is
-controlled by
+<p>The availability of both natural and hatchery origin fish depends on
+the escapement reduced by en-route mortality and can be capped by some
+proportion denoted by the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">max</mtext><mtext mathvariant="normal">esc</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{esc}_\textrm{max}</annotation></semantics></math>
+parameter.</p>
+<p>The proportion of the available hatchery fish for broodtake is also
+reduced by
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math>,
 which can include fish swimming back to the hatchery or removed from
 spawning grounds.</p>

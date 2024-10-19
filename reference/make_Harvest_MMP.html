@@ -46,7 +46,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_Harvest_MMP</span><span class="op">(</span>u_terminal <span class="op">=</span> <span class="fl">0.1</span>, u_preterminal <span class="op">=</span> <span class="fl">0</span>, m <span class="op">=</span> <span class="fl">0</span>, release_mort <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_Harvest_MMP</span><span class="op">(</span></span>
+<span>  u_terminal <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  u_preterminal <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  MSF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  m <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  release_mort <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,6 +65,10 @@
 
 <dt id="arg-u-preterminal">u_preterminal<a class="anchor" aria-label="anchor" href="#arg-u-preterminal"></a></dt>
 <dd><p>Numeric between 0-1. Harvest rate of the preterminal fishery.</p></dd>
+
+
+<dt id="arg-msf">MSF<a class="anchor" aria-label="anchor" href="#arg-msf"></a></dt>
+<dd><p>Logical, whether to implement mark-selective fishing.</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>

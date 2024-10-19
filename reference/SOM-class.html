@@ -172,8 +172,17 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_HOS[a] 
 <dd><p>Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).</p></dd>
 
 
+<dt><code>m</code></dt>
+<dd><p>Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.</p></dd>
+
+
+<dt><code>pmax_esc</code></dt>
+<dd><p>Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.</p></dd>
+
+
 <dt><code>pmax_NOB</code></dt>
-<dd><p>Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.</p></dd>
+<dd><p>Numeric. The maximum proportion of the natural origin escapement (after en route mortality and <code>pmax_esc</code>) to be used as broodtake. If broodstock
+is limited by <code>pmax_esc &lt; 1</code>, then this parameter should be 1.</p></dd>
 
 
 <dt><code>ptarget_NOB</code></dt>
@@ -235,13 +244,13 @@ imperfect implementation of weir removal.</p></dd>
 <dd><p>Numeric. The exploitation rate of the return in the terminal fishery.</p></dd>
 
 
-<dt><code>m</code></dt>
-<dd><p>Numeric. The mark rate of hatchery origin fish, which affects fishery selectivity. Mark-selective fishing (MSF) is implemented if <code>m &gt; 0</code>.</p></dd>
+<dt><code>MSF</code></dt>
+<dd><p>Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.</p></dd>
 
 
 <dt><code>release_mort</code></dt>
 <dd><p>Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
-Implemented to model mark-selective fishing. Not used if <code>m = 0</code>.</p></dd>
+Implemented to model mark-selective fishing. Not used if <code>MSF = FALSE</code>.</p></dd>
 
 
 <dt><code>vulPT</code></dt>

@@ -61,7 +61,7 @@
 
       <h1>Decision table</h1>
             
-            <h4 data-toc-skip class="date">2024-10-16</h4>
+            <h4 data-toc-skip class="date">2024-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/decision-table.Rmd" class="external-link"><code>vignettes/decision-table.Rmd</code></a></small>
       <div class="d-none name"><code>decision-table.Rmd</code></div>
@@ -135,6 +135,8 @@ option and state of nature.</p>
 <span>    s_egg_subyearling <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    Mjuv_HOS <span class="op">=</span> <span class="va">Bio</span><span class="op">@</span><span class="va">Mjuv_NOS</span>,</span>
 <span>    gamma <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>    m <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    pmax_esc <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    pmax_NOB <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>    ptarget_NOB <span class="op">=</span> <span class="fl">0.51</span>,</span>
 <span>    phatchery <span class="op">=</span> <span class="fl">0.8</span>,</span>
@@ -160,7 +162,7 @@ option and state of nature.</p>
 <span>    <span class="st">"Harvest"</span>,</span>
 <span>    u_preterminal <span class="op">=</span> <span class="fl">0</span>,             <span class="co"># No pre-terminal fishery</span></span>
 <span>    u_terminal <span class="op">=</span> <span class="fl">0.203</span>,            <span class="co"># Specify fixed harvest rate of mature fish</span></span>
-<span>    m <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    MSF <span class="op">=</span> <span class="cn">FALSE</span>,                   <span class="co"># No mark-selective fishing</span></span>
 <span>    release_mort <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>    vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>

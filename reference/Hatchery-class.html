@@ -95,8 +95,17 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_HOS[a] 
 <dd><p>Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).</p></dd>
 
 
+<dt><code>m</code></dt>
+<dd><p>Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.</p></dd>
+
+
+<dt><code>pmax_esc</code></dt>
+<dd><p>Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.</p></dd>
+
+
 <dt><code>pmax_NOB</code></dt>
-<dd><p>Numeric. The maximum proportion of the natural origin escapement to be used as broodtake.</p></dd>
+<dd><p>Numeric. The maximum proportion of the natural origin escapement (after en route mortality and <code>pmax_esc</code>) to be used as broodtake. If broodstock
+is limited by <code>pmax_esc &lt; 1</code>, then this parameter should be 1.</p></dd>
 
 
 <dt><code>ptarget_NOB</code></dt>
@@ -171,20 +180,23 @@ imperfect implementation of weir removal.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:          s_prespawn        s_egg_smolt  s_egg_subyearling</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Mjuv_HOS              gamma           pmax_NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Mjuv_HOS              gamma                  m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pmax_esc           pmax_NOB        ptarget_NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            rel_loss         zbar_start   fitness_variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  selection_strength       heritability      fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           phatchery        premove_HOS          fec_brood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        fitness_type              theta           rel_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          character            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          zbar_start   fitness_variance selection_strength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        heritability      fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Known Subclasses: "SOM"</span>
 </code></pre></div>
