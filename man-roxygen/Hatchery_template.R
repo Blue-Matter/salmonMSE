@@ -18,10 +18,13 @@
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
 #' @slot gamma Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).
 #' @slot m Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
+#' Set m = 1 for AHA compatibility with `ptarget_NOB`.
 #' @slot pmax_esc Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.
 #' @slot pmax_NOB Numeric. The maximum proportion of the natural origin escapement (after en route mortality and `pmax_esc`) to be used as broodtake. If broodstock
 #' is limited by `pmax_esc < 1`, then this parameter should be 1.
-#' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.
+#' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
+#' can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate < 1, then
+#' this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement.
 #' @slot phatchery Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
 #'  or swim-in facilities. These fish are available for broodtake.
 #' @slot premove_HOS Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to

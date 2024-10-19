@@ -83,14 +83,17 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] 
 
 \item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).}
 
-\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.}
+\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
+Set m = 1 for AHA compatibility with \code{ptarget_NOB}.}
 
 \item{\code{pmax_esc}}{Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.}
 
 \item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement (after en route mortality and \code{pmax_esc}) to be used as broodtake. If broodstock
 is limited by \code{pmax_esc < 1}, then this parameter should be 1.}
 
-\item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.}
+\item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
+can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate < 1, then
+this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement.}
 
 \item{\code{phatchery}}{Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
 or swim-in facilities. These fish are available for broodtake.}
