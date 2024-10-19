@@ -173,7 +173,8 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_HOS[a] 
 
 
 <dt><code>m</code></dt>
-<dd><p>Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.</p></dd>
+<dd><p>Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
+Set m = 1 for AHA compatibility with <code>ptarget_NOB</code>.</p></dd>
 
 
 <dt><code>pmax_esc</code></dt>
@@ -186,7 +187,9 @@ is limited by <code>pmax_esc &lt; 1</code>, then this parameter should be 1.</p>
 
 
 <dt><code>ptarget_NOB</code></dt>
-<dd><p>Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake.</p></dd>
+<dd><p>Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
+can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate &lt; 1, then
+this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement.</p></dd>
 
 
 <dt><code>phatchery</code></dt>
