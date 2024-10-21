@@ -60,11 +60,11 @@ Habitat <- new(
 Next, we work on the hatchery dynamics.
 
 Below, we have a management target to release 10,000 yearlings annually. 
-In comparsion, the carrying capacity of the natural environment is 17,250 smolts.
-
-However, we place some additional constraints are placed which may prevent us from realizing the target releases. 
+In comparison, the carrying capacity of the natural environment is 17,250 smolts.
 Users also specify the survival of broodtake (`s_prespawn`), eggs in the hatchery (`s_egg_smolt` and `s_egg_subyearling`), the target proportion of natural spawners in the broodtake (`ptarget_NOB`), and the maximum proportion of natural spawners to be used as broodtake (`pmax_NOB`).
+The target proportion can be obtained when the mark rate `m` = 1 and broodstock origin can be identified.
 
+We place some additional constraints are placed which may prevent us from realizing the target releases. 
 In each time step of the projection, the model calculates the required number of eggs annually for the target releases. The natural broodtake (NOB) and hatchery broodtake (HOB) are removed from the escapement to reach the target egg production and maintain `NOB/(NOB + HOB) = ptarget_NOB`.
 The proportion of NOB to the natural origin escapement cannot exceed `pmax_NOB`. 
 If the target egg production cannot be reached, then the NOB is taken in accordance with `pmax_NOB` and HOB is taken (up to the total hatchery origin escapement returned to the hatchery) to meet the target egg production.
@@ -81,7 +81,7 @@ Hatchery <- new(
   s_egg_subyearling = 1,
   Mjuv_HOS = Bio@Mjuv_NOS,
   gamma = 0.8,
-  m = 0,                          # Mark rate of hatchery releases
+  m = 1,                          # Mark rate of hatchery releases
   pmax_esc = 1,                   # Maximum proportion of escapement (after en route mortality) that could be used as broodtake
   ptarget_NOB = 0.51,
   phatchery = 0.8,
