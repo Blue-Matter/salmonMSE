@@ -74,7 +74,7 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
 
   egg_HOB_marked <- egg_target - egg_NOB - egg_HOB_unmarked
 
-  if (egg_HOB_marked < 0) {
+  if (egg_HOB_marked < 0 || !sum(HOR_escapement)) {
     ptake_marked <- 0
   } else {
     # solve for the required HOB marked
