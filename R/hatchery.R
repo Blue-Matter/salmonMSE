@@ -9,25 +9,48 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
   if (ncol(Nage) > 1) {
     HOR_escapement <- Nage[, 2]
 
+    # Optimization can fail for two reasons:
+    # (1) not enough unmarked fish
+    # (2) more than enough but too many unmarked hatchery fish but can't solve for ptarget_NOB
     opt <- try(
       uniroot(.broodtake_func, c(1e-8, pmax_NOB),
               NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
               fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m),
       silent = TRUE
     )
+
+    # Assume fail for (1), then set ptake_marked = pmax_NOB
     if (is.character(opt)) {
-      ptake_NOB <- pmax_NOB
+      ptake_unmarked <- pmax_NOB
     } else {
-      ptake_NOB <- opt$root
+      ptake_unmarked <- opt$root
     }
 
     output <- .broodtake_func(
-      ptake_NOB, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
+      ptake_unmarked, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
       fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
     )
 
+    egg_total <- output$egg_NOB + output$egg_HOB_unmarked + output$egg_HOB_marked
+
+    # Ensure hatchery egg production doesn't exceed target
+    # If it does, then optimization failed for reason (2), in which case, we use unmarked fish only to reach production target
+    if (egg_total/egg_local > 1.01) {
+      unmarked_opt <- try(
+        uniroot(.egg_func, c(1e-8, pmax_NOB), N = NOR_escapement + (1 - m) * HOR_escapement,
+                gamma = 1, fec = fec_brood, p_female = p_female,
+                s_prespawn = s_prespawn, val = egg_local),
+        silent = TRUE
+      )
+      output <- .broodtake_func(
+        unmarked_opt$root, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
+        fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
+      )
+    }
+
     NOB <- output$NOB
     HOB <- output$HOB_unmarked + output$HOB_marked
+
   } else {
 
     NOBopt <- try(
@@ -96,14 +119,16 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
   )
 
   if (opt) {
-    pNOB_ <- sum(NOB + HOB_unmarked)/sum(NOB + HOB_unmarked + HOB_marked)
-    obj <- log(pNOB_) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
+    p <- sum(NOB + HOB_unmarked)/sum(NOB + HOB_unmarked + HOB_marked)
+    obj <- log(p) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
+    pNOB <- sum(NOB)/sum(NOB + HOB_unmarked + HOB_marked)
     output <- list(
       egg_NOB = egg_NOB,
       egg_HOB_unmarked = egg_HOB_unmarked, egg_HOB_marked = egg_HOB_marked_actual,
       ptake_marked = ptake_marked,
+      pNOB = pNOB,
       NOB = NOB, HOB_unmarked = HOB_unmarked, HOB_marked = HOB_marked
     )
     return(output)
