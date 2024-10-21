@@ -52,9 +52,10 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
   Nage[is.na(Nage)] <- 0
 
   # Hatchery
-  Nage_enroute <- Nage * s_enroute * hatchery_args$pmax_esc
+  Nage_enroute <- Nage * s_enroute
+  Nage_avail_brood <- Nage_enroute * hatchery_args$pmax_esc
   broodtake <- calc_broodtake(
-    Nage_enroute,
+    Nage_avail_brood,
     hatchery_args$ptarget_NOB,
     hatchery_args$pmax_NOB,
     hatchery_args$phatchery,

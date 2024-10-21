@@ -259,10 +259,10 @@ The escapement consists of the survivors of the terminal fishery:
 The abundance of natural origin spawners consists of the escapement that survive migration to the spawning ground ($s_\textrm{enroute}$) and are not removed for brood: 
 
 $$
-\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
+\textrm{NOS}_{y,a} = \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}
 $$
 
-The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or direct removal through proportion $p^\textrm{hatchery}$), and are not removed from the spawning round (through proportion $p^\textrm{HOS}_\textrm{removal}$, these animals are not available for brood).
+The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$, these animals are not available for brood).
 
 $$
 \textrm{HOS}_{y,a} = (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal}) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}

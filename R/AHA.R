@@ -33,6 +33,14 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     warning("Only fitness dynamics in the natural environment will be modeled.")
   }
 
+  if (SOM@pmax_esc < 1) {
+    warning("SOM@pmax_esc = ", SOM@pmax_esc, ". AHA compatibility is maintained only when SOM@pmax_esc = 1")
+  }
+
+  if (SOM@m < 1) {
+    warning("SOM@m = ", SOM@m, ". AHA compatibility is maintained only when SOM@m = 1 for identifying broodstock origin.")
+  }
+
   age_mature <- SOM@p_mature[1, , 1] > 0
   age_mature <- which(age_mature)[1]
   message("Age of maturity assumed to be: ", age_mature)
