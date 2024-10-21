@@ -61,7 +61,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2024-10-19</h4>
+            <h4 data-toc-skip class="date">2024-10-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -819,14 +819,13 @@ u^\textrm{T} = \dfrac{\sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y
 that survive migration to the spawning ground
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><annotation encoding="application/x-tex">s_\textrm{enroute}</annotation></semantics></math>)
 and are not removed for brood:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">broodtake,NOB</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub></mrow><annotation encoding="application/x-tex">
-\textrm{NOS}_{y,a} = (1 - p^\textrm{broodtake,NOB}_y) \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><msubsup><mtext mathvariant="normal">NOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><mo>−</mo><msub><mtext mathvariant="normal">NOB</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mrow><annotation encoding="application/x-tex">
+\textrm{NOS}_{y,a} = \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}
 </annotation></semantics></math></p>
 <p>The hatchery origin spawners is the escapement that survive
 migration, do not return to the hatchery (either by swim-in facilities
-or direct removal through proportion
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><annotation encoding="application/x-tex">p^\textrm{hatchery}</annotation></semantics></math>),
-and are not removed from the spawning round (through proportion
+or in-river collection), and are not removed from the spawning ground
+(through proportion
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{HOS}_\textrm{removal}</annotation></semantics></math>,
 these animals are not available for brood).</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>p</mi><mtext mathvariant="normal">hatchery</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">escapement</mtext></msubsup><mo>×</mo><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub></mrow><annotation encoding="application/x-tex">

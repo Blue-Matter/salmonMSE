@@ -61,7 +61,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-10-19</h4>
+            <h4 data-toc-skip class="date">2024-10-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -119,25 +119,26 @@ object:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Next, we work on the hatchery dynamics.</p>
 <p>Below, we have a management target to release 10,000 yearlings
-annually. In comparsion, the carrying capacity of the natural
-environment is 17,250 smolts.</p>
-<p>However, we place some additional constraints are placed which may
-prevent us from realizing the target releases. Users also specify the
-survival of broodtake (<code>s_prespawn</code>), eggs in the hatchery
+annually. In comparison, the carrying capacity of the natural
+environment is 17,250 smolts. Users also specify the survival of
+broodtake (<code>s_prespawn</code>), eggs in the hatchery
 (<code>s_egg_smolt</code> and <code>s_egg_subyearling</code>), the
 target proportion of natural spawners in the broodtake
 (<code>ptarget_NOB</code>), and the maximum proportion of natural
-spawners to be used as broodtake (<code>pmax_NOB</code>).</p>
-<p>In each time step of the projection, the model calculates the
-required number of eggs annually for the target releases. The natural
-broodtake (NOB) and hatchery broodtake (HOB) are removed from the
-escapement to reach the target egg production and maintain
-<code>NOB/(NOB + HOB) = ptarget_NOB</code>. The proportion of NOB to the
-natural origin escapement cannot exceed <code>pmax_NOB</code>. If the
-target egg production cannot be reached, then the NOB is taken in
-accordance with <code>pmax_NOB</code> and HOB is taken (up to the total
-hatchery origin escapement returned to the hatchery) to meet the target
-egg production.</p>
+spawners to be used as broodtake (<code>pmax_NOB</code>). The target
+proportion can be obtained when the mark rate <code>m</code> = 1 and
+broodstock origin can be identified.</p>
+<p>We place some additional constraints are placed which may prevent us
+from realizing the target releases. In each time step of the projection,
+the model calculates the required number of eggs annually for the target
+releases. The natural broodtake (NOB) and hatchery broodtake (HOB) are
+removed from the escapement to reach the target egg production and
+maintain <code>NOB/(NOB + HOB) = ptarget_NOB</code>. The proportion of
+NOB to the natural origin escapement cannot exceed
+<code>pmax_NOB</code>. If the target egg production cannot be reached,
+then the NOB is taken in accordance with <code>pmax_NOB</code> and HOB
+is taken (up to the total hatchery origin escapement returned to the
+hatchery) to meet the target egg production.</p>
 <p>We also need to specify the relative spawning success of HOS, and
 various parameters that control fitness of hatchery fish in the natural
 environment.</p>
@@ -151,7 +152,7 @@ environment.</p>
 <span>  s_egg_subyearling <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  Mjuv_HOS <span class="op">=</span> <span class="va">Bio</span><span class="op">@</span><span class="va">Mjuv_NOS</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  m <span class="op">=</span> <span class="fl">0</span>,                          <span class="co"># Mark rate of hatchery releases</span></span>
+<span>  m <span class="op">=</span> <span class="fl">1</span>,                          <span class="co"># Mark rate of hatchery releases</span></span>
 <span>  pmax_esc <span class="op">=</span> <span class="fl">1</span>,                   <span class="co"># Maximum proportion of escapement (after en route mortality) that could be used as broodtake</span></span>
 <span>  ptarget_NOB <span class="op">=</span> <span class="fl">0.51</span>,</span>
 <span>  phatchery <span class="op">=</span> <span class="fl">0.8</span>,</span>
