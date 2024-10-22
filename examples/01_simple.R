@@ -140,7 +140,8 @@ Bio_stochastic <- new(
   kappa = kappa,                  # Productivity in recruits per spawner
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
-  p_female = 0.49
+  p_female = 0.49,
+  s_enroute = 1
   #strays = 0
 )
 
@@ -171,8 +172,8 @@ plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.
 dev.off()
 
 PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
-mean(PNI_LT >= 0.75)
-quantile(PNI_LT, c(0.025, 0.975))
+mean(PNI_LT >= 0.8)
+quantile(PNI_LT, c(0.025, 0.5, 0.975))
 
 png("man/figures/example-PNI-kappa.png", height = 4, width = 6, res = 300, units = 'in')
 par(mar = c(5, 4, 1, 1))
