@@ -3,8 +3,8 @@
 #'
 #' Functions that evaluate return probabilities of outcomes from the simulations.
 #'
-#' - `PNI50` calculates the probability that PNI exceeds 0.50 (threshold for an integrated-wild population, Withler et al. 2018)
-#' - `PNI80` calculates the probability that PNI exceeds 0.80 (threshold for an integrated-transition population, Withler et al. 2018)
+#' - `PNI50` calculates the probability that PNI exceeds 0.50 (threshold for an integrated-transition population, Withler et al. 2018)
+#' - `PNI80` calculates the probability that PNI exceeds 0.80 (threshold for an integrated-wild population, Withler et al. 2018)
 #' - `WILD50` calculates the probability that at least 50 percent of natural spawners are wild
 #' - `SMSY85` calculates the probability that NOS/SMSY exceeds 0.85
 #' - `Sgen100` calculates the probability that NOS/Sgen exceeds 1

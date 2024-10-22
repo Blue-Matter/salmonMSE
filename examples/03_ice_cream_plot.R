@@ -39,9 +39,13 @@ wrapper <- function(x, Design) {
     Mjuv_HOS = Bio@Mjuv_NOS,
     gamma = 0.8,
     m = 0,
-    pmax_esc = 1,
-    pmax_NOB = 0.7,
-    ptarget_NOB = 0.51,
+    pmax_esc = 0.50,
+    pmax_NOB = 1,
+    ptarget_NOB = 0.75,
+    #m = 1,
+    #pmax_esc = 1,
+    #pmax_NOB = 0.7,
+    #ptarget_NOB = 0.51,
     phatchery = 0.8,
     premove_HOS = 0,
     theta = c(100, 80),
@@ -107,7 +111,8 @@ sfStop()
 pm_fn <- function(x, SMSE_list, Design) {
   out <- Design[x, ]
   out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
-  out$PNI_75 <- PNI75(SMSE_list[[x]], Yrs = c(49, 49))
+  out$PNI_50 <- PNI50(SMSE_list[[x]], Yrs = c(49, 49))
+  out$PNI_80 <- PNI80(SMSE_list[[x]], Yrs = c(49, 49))
 
   KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
   KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
@@ -121,9 +126,9 @@ pm_fn <- function(x, SMSE_list, Design) {
 pm <- lapply(1:nrow(Design), pm_fn, SMSE_list, Design = Design) %>%
   bind_rows()
 
-g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_75, title = "Probability PNI > 0.75",
+g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_80, title = "Probability PNI > 0.80",
                          xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
-ggsave("man/figures/decision_table_PNI75.png", g, height = 3, width = 3)
+ggsave("man/figures/decision_table_PNI80.png", g, height = 3, width = 3)
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch60, title = "Probability Catch > 60",
                          xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
@@ -134,22 +139,22 @@ g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability N
 ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
 # Make tradeoff plot
-g <- plot_tradeoff(pm$PNI_75, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_75", "Catch60",
+g <- plot_tradeoff(pm$PNI_80, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_80", "Catch60",
                    x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 2, 4, 16))
 ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
 
 g <- plot_tradeoff(pm$PNI, pm$Catch, factor(pm$kappa), factor(pm$hatch), "Mean PNI", "Mean Catch",
                    x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
-  scale_shape_manual(values = c(1, 2, 4, 16))
+  scale_shape_manual(values = c(1, 2, 4, 16)) +
+  geom_vline(xintercept = c(0.5, 0.8), linetype = 2)
 ggsave("man/figures/tradeoff_plot_mean.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(Design), function(x) {
-  out <- plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
+  plot_statevar_ts(SMSE_list[[x]], "PNI", quant = TRUE, figure = FALSE) %>%
     reshape2::melt() %>%
     mutate(kappa = Design$kappa[x], hatch = Design$hatch[x])
-  out
 }) %>%
   bind_rows() %>%
   rename(Year = Var2) %>%
@@ -167,7 +172,8 @@ ggsave("man/figures/PNI_ts.png", g, height = 4, width = 5)
 
 # Spawners
 Design_txt <- Design
-Design_txt[, 1] <- paste("Productivity =", Design[, 1])
+Design_txt[, 1] <- factor(paste("Productivity =", Design[, 1]),
+                          levels = paste("Productivity =", c(9, 6, 3)))
 Design_txt[, 2] <- factor(paste("Hatchery production", Design[, 2]),
                           levels = paste("Hatchery production", c(0, 5000, 10000, 15000)))
 
