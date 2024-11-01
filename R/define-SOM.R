@@ -199,12 +199,11 @@ setClass(
 #' @slot nyears Integer. The number of historical years
 #' @slot proyears Integer. The number of projected years
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly
-#'
-#' @template Bio_template
-#' @template Habitat_template
-#' @template Hatchery_template
-#' @template Harvest_template
-#' @template Historical_template
+#' @slot Bio \linkS4class{Bio} object informing biological parameters, natural production, and habitat effects
+#' @slot Habitat \linkS4class{Habitat} object containing management levers for habitat mitigation
+#' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production
+#' @slot Harvest \linkS4class{Harvest} object containing management levers for harvest
+#' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection
 #' @keywords classes
 #'
 #' @export
@@ -215,9 +214,13 @@ SOM <- setClass(
     nsim = "numeric",
     nyears = "numeric",
     proyears = "numeric",
-    seed = "numeric"
-  ),
-  contains = c("Bio", "Habitat", "Hatchery", "Harvest", "Historical")
+    seed = "numeric",
+    Bio = "Bio",
+    Habitat = "Habitat",
+    Hatchery = "Hatchery",
+    Harvest = "Harvest",
+    Historical = "Historical"
+  )
 )
 
 #' @importFrom utils packageVersion
@@ -233,11 +236,11 @@ setMethod("initialize", "SOM",
             .Object@proyears <- proyears
             .Object@seed <- seed
 
-            if (!missing(Bio)) for(i in slotNames(Bio)) slot(.Object, i) <- slot(Bio, i)
-            if (!missing(Habitat)) for(i in slotNames(Habitat)) slot(.Object, i) <- slot(Habitat, i)
-            if (!missing(Hatchery)) for(i in slotNames(Hatchery)) slot(.Object, i) <- slot(Hatchery, i)
-            if (!missing(Harvest)) for(i in slotNames(Harvest)) slot(.Object, i) <- slot(Harvest, i)
-            if (!missing(Historical)) for(i in slotNames(Historical)) slot(.Object, i) <- slot(Historical, i)
+            if (!missing(Bio)) .Object@Bio <- Bio
+            if (!missing(Habitat)) .Object@Habitat <- Habitat
+            if (!missing(Hatchery)) .Object@Hatchery <- Hatchery
+            if (!missing(Harvest)) .Object@Harvest <- Harvest
+            if (!missing(Historical)) .Object@Historical <- Historical
 
             attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
             attr(.Object, "date") <- date()

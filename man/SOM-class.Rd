@@ -8,10 +8,6 @@
 \description{
 An object containing all the parameters for a salmon operating model (SOM).
 }
-\details{
-A description of the fitness parameters and hatchery dynamics is available in the
-\href{https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival}{online documentation}.
-}
 \section{Slots}{
 
 \describe{
@@ -25,125 +21,15 @@ A description of the fitness parameters and hatchery dynamics is available in th
 
 \item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}
 
-\item{\code{maxage}}{Integer. The maximum age of the population age structure.}
+\item{\code{Bio}}{\linkS4class{Bio} object informing biological parameters, natural production, and habitat effects}
 
-\item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
+\item{\code{Habitat}}{\linkS4class{Habitat} object containing management levers for habitat mitigation}
 
-\item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
+\item{\code{Hatchery}}{\linkS4class{Hatchery} object containing management levers for hatchery production}
 
-\item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from egg production. \strong{Units of smolts.}}
+\item{\code{Harvest}}{\linkS4class{Harvest} object containing management levers for harvest}
 
-\item{\code{kappa}}{Vector length \code{nsim}. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
-Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per egg}.
-In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.}
-
-\item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}
-
-\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished egg production rate per smolt.
-The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS} corresponding
-to the first year.}
-
-\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
-Natural mortality of immature natural origin fish.
-To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
-
-\item{\code{fec}}{Vector by age (length \code{maxage}). Female fecundity of natural origin spawners.}
-
-\item{\code{p_female}}{Numeric. The proportion of females in the spawning population.}
-
-\item{\code{s_enroute}}{Numeric. Survival of escapement to the spawning grounds (for spawning and for broodtake).}
-
-\item{\code{capacity_smolt_improve}}{Numeric. The proportional change in the smolt capacity parameter in the projection period.
-For example, 1.1 represents a 10 percent improvement. For the Beverton-Holt function, this increases the asymptote by 10 percent.
-For the Ricker function, this increases the maximum smolt production by 10 percent.}
-
-\item{\code{kappa_improve}}{Numeric. The proportional change in the compensation ratio, i.e., changing the smolt productivity, in the projection period.
-For example, 1.1 represents a 10 percent improvement.}
-
-\item{\code{n_yearling}}{Numeric. The number of yearlings released. No hatchery is modeled if both \code{n_yearling} and
-\code{n_subyearling} are zero.}
-
-\item{\code{n_subyearling}}{Numeric. The number of subyearlings released. No hatchery is modeled if both \code{n_yearling} and
-\code{n_subyearling} are zero.}
-
-\item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
-Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
-
-\item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the smolt life stage (for yearling release).
-Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
-
-\item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
-Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}.}
-
-\item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
-Natural mortality of immature hatchery origin fish.
-To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
-
-\item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners).}
-
-\item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
-Set m = 1 for AHA compatibility with \code{ptarget_NOB}.}
-
-\item{\code{pmax_esc}}{Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility.}
-
-\item{\code{pmax_NOB}}{Numeric. The maximum proportion of the natural origin escapement (after en route mortality and \code{pmax_esc}) to be used as broodtake. If broodstock
-is limited by \code{pmax_esc < 1}, then this parameter should be 1.}
-
-\item{\code{ptarget_NOB}}{Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
-can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate < 1, then
-this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement.}
-
-\item{\code{phatchery}}{Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
-or swim-in facilities. These fish are available for broodtake.}
-
-\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
-imperfect implementation of weir removal.}
-
-\item{\code{fec_brood}}{Vector of length \code{maxage}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery.}
-
-\item{\code{fitness_type}}{Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".}
-
-\item{\code{theta}}{Vector length 2. The optimum phenotype value for the natural and hatchery environments.}
-
-\item{\code{rel_loss}}{Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages. The three values should sum to 1.}
-
-\item{\code{zbar_start}}{Vector length 2. The mean phenotype value in the natural and hatchery populations at the start of the projection.}
-
-\item{\code{fitness_variance}}{Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments.}
-
-\item{\code{selection_strength}}{Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.}
-
-\item{\code{heritability}}{Numeric. The heritability of the phenotypic trait. Between 0-1.}
-
-\item{\code{fitness_floor}}{Numeric. The minimum fitness value in the natural and hatchery environments.}
-
-\item{\code{u_preterminal}}{Numeric. The exploitation rate of the immature stock in the pre-terminal fishery.}
-
-\item{\code{u_terminal}}{Numeric. The exploitation rate of the return in the terminal fishery.}
-
-\item{\code{MSF}}{Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.}
-
-\item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
-Implemented to model mark-selective fishing. Not used if \code{MSF = FALSE}.}
-
-\item{\code{vulPT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
-
-\item{\code{vulT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the terminal fishery.}
-
-\item{\code{HistSpawner}}{Array by \verb{[nsim, maxage, nyears, 2]}. Spawners at age in the natural environment. For the fourth dimension, the first array corresponds
-to natural origin spawners and the second array corresponds to hatchery origin spawners. \emph{Optional}}
-
-\item{\code{HistN}}{Array by \verb{[nsim, maxage, nyears+1, 2]}. The abundance of immature fish at the beginning of the annual time step. For the fourth dimension, the first array corresponds
-to natural origin fish and the second array corresponds to hatchery origin fish. Default assumes 1000 smolts (age-1) fish annually.}
-
-\item{\code{HistFPT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the preterminal fishery.
-The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish. Default is zero.}
-
-\item{\code{HistFT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the terminal fishery.
-The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish. Default is zero.}
+\item{\code{Historical}}{\linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection}
 }}
 
 \section{Objects from the Class}{
