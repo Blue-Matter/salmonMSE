@@ -175,7 +175,7 @@ calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling) {
 #' @param N1 Egg production for the density-independent component of the stock-recruit relationship. Can be the number of spawners if `phi = 1`
 #' and `Smax` is in units of spawners.
 #' @param N2 Egg production for the density-dependent component of the stock-recruit relationship (only used if `per_recruit = FALSE`)
-#' @param kappa Base compensation ratio parameter
+#' @param kappa Base productivity parameter
 #' @param capacity Base capacity parameter if `SRrel = "BH"`
 #' @param Smax Base Smax parameter if `SRrel = "Ricker"`
 #' @param phi Unfished egg per smolt (`1/phi` is the replacement line)

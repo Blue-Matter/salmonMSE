@@ -143,6 +143,14 @@ Bio_stochastic <- new(
   #strays = 0
 )
 
+nyears <- 2
+HistN <- array(0, c(nsim_stochastic, Bio@maxage, nyears+1, 2))
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+
+Historical <- new(
+  "Historical",
+  HistN = HistN
+)
 
 png("man/figures/example-kappa.png", height = 4, width = 6, res = 300, units = 'in')
 par(mar = c(5, 4, 1, 1))

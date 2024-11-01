@@ -74,7 +74,7 @@
 #' @section start:
 #' Starting values for parameters can be provided through a named list:
 #'
-#' - `log_cr` Numeric, log of the compensation ratio. Default is 3.
+#' - `log_cr` Numeric, log of the compensation ratio (productivity). Default is 3.
 #' - `log_so` Numeric, unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `moadd` Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
 #' - `wt` Vector `Ldyr`. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).

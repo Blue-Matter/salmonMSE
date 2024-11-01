@@ -25,8 +25,8 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
 density-dependent natural smolt production from egg production. \strong{Units of smolts.}}
 
-\item{\code{kappa}}{Vector length \code{nsim}. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
-Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per egg}.
+\item{\code{kappa}}{Vector length \code{nsim}. The adult productivity ratio for the stock-recruit function.
+Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per spawner}.
 In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.}
 
 \item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}

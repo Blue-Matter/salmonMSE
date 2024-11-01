@@ -100,7 +100,7 @@ The corresponding parameters in the projection is:
 knitr::include_graphics("../man/figures/SRR.png")
 ```
 
-*Comparison of the change in two density-dependent stock-recruit functions if the improvement parameter is applied to either the compensation ratio (kappa) or capacity parameter. The base value of kappa is 3, Beverton-Holt capacity is 1000, and Ricker Smax is 500. The dotted line is the one-to-one unfished replacement line (corresponding to $1/\phi$).*
+*Comparison of the change in two density-dependent stock-recruit functions if the improvement parameter is applied to either the productivity (kappa) or capacity parameter. The base value of kappa is 3, Beverton-Holt capacity is 1000, and Ricker Smax is 500. The dotted line is the one-to-one unfished replacement line (corresponding to $1/\phi$).*
 
 # Hatchery production
 

@@ -16,7 +16,7 @@ The component of the operating model that controls habitat management.
 For example, 1.1 represents a 10 percent improvement. For the Beverton-Holt function, this increases the asymptote by 10 percent.
 For the Ricker function, this increases the maximum smolt production by 10 percent. Default is 1.}
 
-\item{\code{kappa_improve}}{Numeric. The proportional change in the compensation ratio, i.e., changing the smolt productivity, in the projection period.
+\item{\code{kappa_improve}}{Numeric. The proportional change in adult productivity, in the projection period.
 For example, 1.1 represents a 10 percent improvement. Default is 1.}
 }}
 

@@ -125,15 +125,15 @@ pm <- lapply(1:nrow(Design), pm_fn, SMSE_list, Design = Design) %>%
   bind_rows()
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$PNI_80, title = "Probability PNI > 0.80",
-                         xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
+                         xlab =  "Hatchery releases", ylab = "Productivity")
 ggsave("man/figures/decision_table_PNI80.png", g, height = 3, width = 3)
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$Catch60, title = "Probability Catch > 60",
-                         xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
+                         xlab =  "Hatchery releases", ylab = "Productivity")
 ggsave("man/figures/decision_table_catch60.png", g, height = 3, width = 3)
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability NOS > SMSY",
-                         xlab =  "Hatchery releases", ylab = "Compensation ratio (productivity)")
+                         xlab =  "Hatchery releases", ylab = "Productivity")
 ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
 # Make tradeoff plot

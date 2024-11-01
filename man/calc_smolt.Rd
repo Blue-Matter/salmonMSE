@@ -24,7 +24,7 @@ and \code{Smax} is in units of spawners.}
 
 \item{N2}{Egg production for the density-dependent component of the stock-recruit relationship (only used if \code{per_recruit = FALSE})}
 
-\item{kappa}{Base compensation ratio parameter}
+\item{kappa}{Base productivity parameter}
 
 \item{capacity}{Base capacity parameter if \code{SRrel = "BH"}}
 

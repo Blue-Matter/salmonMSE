@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 Here, we show a simple example of a salmon operating model where all fish mature at age 3 and follows the structure of an analysis done in AHA.
 The historical spool-up is not informed by an estimation model. The model is used to project the proposed management levers to determine the equilibrium properties of the system.
 
-We create several S4 objects, the `Bio` object contains the natural biological dynamics, including the maturity ogive `p_mature`, fecundity, as well as the density-dependent survival of smolts through the capacity and compensation ratio parameters (`capacity_smolt` and `kappa`, respectively).
+We create several S4 objects, the `Bio` object contains the natural biological dynamics, including the maturity ogive `p_mature`, fecundity, as well as the density-dependent survival of smolts through the capacity and productivity parameters (`capacity_smolt` and `kappa`, respectively).
 
 The first example will be deterministic. With salmonMSE, we must run at minimum 2 simulation replicates, but we will run 3 simulations where the biological parameters, as well as the results, are identical among simulations.
 
@@ -157,22 +157,22 @@ knitr::include_graphics("../man/figures/example-NOS.png")
 
 ## Stochastic simulations
 
-Let's repeat the simple example with stochasticity on the compensation ratio.
-To do this, we sample the compensation ratio parameter from a distribution and we run 100 simulations.
-This incorporates our uncertainty in our understanding of the productivity of the natural environment.
+Let's repeat the simple example with stochasticity on the productivity parameter ("kappa", units of recruits/spawner).
+To do this, we sample productivity from a distribution and we run 100 simulations.
+This incorporates our uncertainty in understanding of natural productivity in the evaluation of the management strategy.
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::include_graphics("../man/figures/example-kappa.png")
 ```
 
-*Histogram of the compensation ratio (kappa) values sampled for our stochastic operating model.*
+*Histogram of the productivity (kappa) values sampled for our stochastic operating model.*
 
 ```{r, eval = FALSE, echo = TRUE}
 SAR <- 0.01
 
 nsim_stochastic <- 100
 
-# Sample the compensation ratio
+# Sample productivity
 set.seed(100)
 kappa_mean <- 3
 kappa_sd <- 0.3
@@ -189,6 +189,15 @@ Bio_stochastic <- new(
   fec = c(0, 0, 5040),
   p_female = 0.49,
   s_enroute = 1
+)
+
+nyears <- 2
+HistN <- array(0, c(nsim_stochastic, Bio_stochastic@maxage, nyears+1, 2))
+HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+
+Historical <- new(
+  "Historical",
+  HistN = HistN
 )
 
 SOM_stochastic <- new(
@@ -243,7 +252,7 @@ quantile(PNI_LT, c(0.025, 0.5, 0.975))
 c("2.5%" = 0.6266439, "50%" = 0.7634803, "97.5%" = 0.8133749)
 ```
 
-Here is the relationship between the performance metrics and the compensation ratio:
+Here is the relationship between the performance metrics and productivity:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::include_graphics("../man/figures/example-PNI-kappa.png")

@@ -4,8 +4,8 @@
 #' @slot SRrel Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"
 #' @slot capacity_smolt Vector length `nsim`. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
 #'  density-dependent natural smolt production from egg production. **Units of smolts.**
-#' @slot kappa Vector length `nsim`. The compensation ratio for the stock-recruit function, a.k.a. adult productivity.
-#'  Natural per-capita production of recruits as the population approaches zero (density-independent component). **Units of recruits per egg**.
+#' @slot kappa Vector length `nsim`. The adult productivity ratio for the stock-recruit function.
+#'  Natural per-capita production of recruits as the population approaches zero (density-independent component). **Units of recruits per spawner**.
 #'  In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
 #' @slot Smax Vector length `nsim`. The spawning output that maximizes smolt production in the Ricker stock-recruit function. **Units of egg production.**
 #' @slot phi Optional parameter, vector length `nsim`. Unfished egg production rate per smolt.
