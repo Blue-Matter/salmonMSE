@@ -324,3 +324,35 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
   }
   return(surv)
 }
+
+make_Stock_objects <- function(SOM) {
+  do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
+
+  Stocks <- list()
+  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
+  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
+  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
+
+  if (do_hatchery) {
+    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
+    Stocks[[5]] <- make_Stock(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
+    Stocks[[6]] <- make_Stock(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
+  }
+  return(Stocks)
+}
+
+make_Fleet_objects <- function(SOM) {
+  do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
+
+  Fleets <- list()
+  Fleets[[1]] <- make_Fleet(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
+  Fleets[[2]] <- make_Fleet(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
+  Fleets[[3]] <- make_Fleet(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
+
+  if (do_hatchery) {
+    Fleets[[4]] <- make_Fleet(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
+    Fleets[[5]] <- make_Fleet(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
+    Fleets[[6]] <- make_Fleet(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
+  }
+  return(Fleets)
+}

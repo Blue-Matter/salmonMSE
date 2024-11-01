@@ -30,34 +30,13 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
   # Stock objects
   do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
-
   ns <- 1
-  Stocks <- list()
-  Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
-  Stocks[[2]] <- make_Stock(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
-  Stocks[[3]] <- make_Stock(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
-
-  if (do_hatchery) {
-    Stocks[[4]] <- make_Stock(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
-    Stocks[[5]] <- make_Stock(SOM, NOS = FALSE, stage = "return")            # HOS_recruitment
-    Stocks[[6]] <- make_Stock(SOM, NOS = FALSE, stage = "escapement")        # HOS_escapement
-  }
+  Stocks <- make_Stock_objects(SOM)
   np <- length(Stocks)
 
   # Single fleet object ----
-  # In AHA, there is no harvest on immature fish
   nf <- 1
-
-  Fleets <- list()
-  Fleets[[1]] <- make_Fleet(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
-  Fleets[[2]] <- make_Fleet(SOM, NOS = TRUE, stage = "return")     # NOS_recruitment
-  Fleets[[3]] <- make_Fleet(SOM, NOS = TRUE, stage = "escapement") # NOS_escapement
-
-  if (do_hatchery) {
-    Fleets[[4]] <- make_Fleet(SOM, NOS = FALSE, stage = "immature")   # HOS_juv
-    Fleets[[5]] <- make_Fleet(SOM, NOS = FALSE, stage = "return")     # HOS_recruitment
-    Fleets[[6]] <- make_Fleet(SOM, NOS = FALSE, stage = "escapement") # HOS_escapement
-  }
+  Fleets <- make_Fleet_objects(SOM)
 
   MOM@Stocks <- lapply(Stocks, getElement, "Stock")
   MOM@Fleets <- lapply(1:np, function(p) list(Fleets[[p]]$Fleet))
@@ -260,7 +239,7 @@ check_SOM <- function(SOM) {
                 "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
                 "u_preterminal", "u_terminal", "m",
                 "fitness_variance", "selection_strength", "heritability", "fitness_floor")
-  lapply(var_len1, function(i) {
+  lapply(var_len1[var_len1 %in% slotNames(SOM)], function(i) {
     v <- slot(SOM, i)
     if (length(v) != 1) stop("Slot ", i, " must be a single numeric")
   })
