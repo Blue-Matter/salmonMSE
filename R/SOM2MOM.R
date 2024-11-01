@@ -229,159 +229,236 @@ SOM2MOM <- function(SOM, check = TRUE) {
 #' @export
 check_SOM <- function(SOM) {
 
-  slot(SOM, "SRrel") <- match.arg(slot(SOM, "SRrel"), choices = c("BH", "Ricker"))
+  ### Base slots ----
+  if (!length(SOM@nsim)) stop("Need SOM@nsim")
+  if (!length(SOM@nyears)) stop("Need SOM@nyears")
+  if (!length(SOM@proyears)) stop("Need SOM@proyears")
+  if (!length(SOM@seed)) stop("Need SOM@seed")
+  nsim <- SOM@nsim
 
-  # Length 1
-  var_len1 <- c("nyears", "proyears", "seed", "nsim", "maxage", "p_female", "s_enroute",
-                "capacity_smolt_improve", "kappa_improve",
-                "n_yearling", "n_subyearling",
-                "pmax_esc", "pmax_NOB", "ptarget_NOB", "phatchery", "premove_HOS",
-                "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "gamma",
-                "u_preterminal", "u_terminal", "m",
-                "fitness_variance", "selection_strength", "heritability", "fitness_floor")
-  lapply(var_len1[var_len1 %in% slotNames(SOM)], function(i) {
-    v <- slot(SOM, i)
-    if (length(v) != 1) stop("Slot ", i, " must be a single numeric")
-  })
+  ### Check Bio ----
+  Bio <- SOM@Bio
 
-  # Length 2
-  var_len2 <- c("release_mort", "fitness_type")
-  lapply(var_len2, function(i) {
-    v <- slot(SOM, i)
-    if (length(v) != 2) stop("Slot ", i, " must be a vector of length 2")
-  })
+  if (!length(Bio@maxage)) stop("Need SOM@Bio@maxage")
+  maxage <- Bio@maxage
+  years <- SOM@nyears + SOM@proyears
 
-  # Length maxage
-  var_maxage <- c("fec", "vulPT", "vulT", "fec_brood")
-  lapply(var_maxage, function(i) {
-    v <- slot(SOM, i)
-    if (length(v) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
-  })
+  Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, years)
+  Bio <- check_numeric(Bio, "p_female", default = 0.5)
+  Bio <- check_numeric(Bio, "s_enroute", default = 1)
+  Bio <- check_maxage(Bio, "fec", maxage)
 
-  # Length maxage to full array
-  var_dyn <- c("p_mature", "Mjuv_NOS", "Mjuv_HOS")
-  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
-  for(i in var_dyn) {
-    if (i != "Mjuv_HOS" || do_hatchery) {
-      if (is.array(slot(SOM, i))) {
+  # SRR pars
+  slot(Bio, "SRrel") <- match.arg(slot(Bio, "SRrel"), choices = c("BH", "Ricker"))
+  Bio <- check_numeric2nsim(Bio, "kappa", nsim)
 
-        dim_check <- all(dim(slot(SOM, i)) == c(SOM@nsim, SOM@maxage, SOM@nyears + SOM@proyears))
-        if (!dim_check) {
-          stop("Slot ", i, " must be an array of dimension ",
-               paste(c(SOM@nsim, SOM@maxage, SOM@nyears + SOM@proyears), collapse = ", "))
-        }
-
-      } else {
-        if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@maxage)
-        if (length(slot(SOM, i)) != SOM@maxage) stop("Slot ", i, " must be length ", SOM@maxage)
-
-        dyn_array <- slot(SOM, i) %>%
-          array(c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
-          aperm(c(2, 1, 3))
-        slot(SOM, i) <- dyn_array
-      }
-    }
-  }
-
-  # Length 2 to nsim x maxage x 2
-  if (do_hatchery) {
-    if (!is.array(SOM@zbar_start)) {
-      if (length(SOM@zbar_start) != 2) stop("Slot zbar_start should be length 2 or an array [nsim x nage x 2]")
-      SOM@zbar_start <- array(SOM@zbar_start, c(2, SOM@nsim, SOM@maxage)) %>%
-        aperm(c(2, 3, 1))
-    }
-    if (is.array(SOM@zbar_start)) {
-      dim_check <- all(dim(SOM@zbar_start) == c(SOM@nsim, SOM@maxage, 2))
-      if (!dim_check) {
-        stop("Slot ", i, " must be an array of dimension ", paste(c(SOM@nsim, SOM@maxage, 2), collapse = ", "))
-      }
-    }
-  }
-
-  # Length nsim
-  if (SOM@SRrel == "BH") {
-    var_stochastic <- c("capacity_smolt", "kappa", "phi")
+  if (SOM@Bio@SRrel == "BH") {
+    Bio <- check_numeric2nsim(Bio, "capacity_smolt", nsim)
   } else {
-    var_stochastic <- c("Smax", "kappa", "phi")
-  }
-  for(i in var_stochastic) {
-    if (i == "phi") {
-      if (!length(slot(SOM, i))) {
-        slot(SOM, i) <- local({
-          surv_juv <- sapply(1:SOM@nsim, function(x) {
-            calc_survival(SOM@Mjuv_NOS[x, , 1], SOM@p_mature[x, , 1])
-          }) # maxage x nsim
-          EPR <- t(surv_juv) * SOM@p_mature[, , 1]
-          colSums(t(EPR) * SOM@p_female * SOM@fec)
-        })
-      }
-    }
-    if (length(slot(SOM, i)) == 1) slot(SOM, i) <- rep(slot(SOM, i), SOM@nsim)
-    if (length(slot(SOM, i)) != SOM@nsim) stop("Slot ", i, " must be length ", SOM@nsim)
+    Bio <- check_numeric2nsim(Bio, "Smax", nsim)
   }
 
-  # Various hist objects
-  var_F <- c("HistFPT", "HistFT")
-  for(i in var_F) {
-    if (!length(slot(SOM, i))) slot(SOM, i) <- rep(0, SOM@nyears)
+  # Mjuv_NOS
+  Bio <- check_maxage2array(Bio, "Mjuv_NOS", maxage, nsim, years)
 
-    dim_i <- dim(slot(SOM, i))
-    if (is.null(dim_i)) { # Check if vector
-      if (length(slot(SOM, i)) != SOM@nyears) {
-        stop("Slot ", i, " must be length ", SOM@nyears)
-      }
-      slot(SOM, i) <- array(slot(SOM, i), c(SOM@nyears, SOM@nsim, 2)) %>%
-        aperm(c(2, 1, 3))
-    }
-
-    dim_i <- dim(slot(SOM, i)) # Re-check with full dimensions
-    dim_check <- length(dim_i) == 3 && all(dim_i == c(SOM@nsim, SOM@nyears, 2))
-
-    if (!dim_check) {
-      stop("Slot ", i, " must be an array of dimension ",
-           paste(c(SOM@nsim, SOM@nyears, 2), collapse = ", "))
-    }
+  # phi
+  if (!length(Bio@phi)) {
+    Bio@phi <- local({
+      surv_juv <- sapply(1:SOM@nsim, function(x) {
+        calc_survival(Bio@Mjuv_NOS[x, , 1], Bio@p_mature[x, , 1])
+      }) # maxage x nsim
+      EPR <- t(surv_juv) * Bio@p_mature[, , 1]
+      colSums(t(EPR) * Bio@p_female * Bio@fec)
+    })
   }
+  Bio <- check_numeric2nsim(Bio, "phi", nsim)
 
-  # HistSpawner check
-  if (length(slot(SOM, "HistSpawner"))) {
-    dim_i <- dim(slot(SOM, "HistSpawner"))
-    if (is.null(dim_i)) {
-      stop("Slot HistSpawner must be an array of dimension ",
-           paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
+  # Habitat
+  Habitat <- SOM@Habitat
+  Habitat <- check_numeric(Habitat, "capacity_smolt_improve", default = 1)
+  Habitat <- check_numeric(Habitat, "kappa_improve", default = 1)
+
+  # Hatchery
+  Hatchery <- SOM@Hatchery
+  Hatchery <- check_numeric(Hatchery, "n_yearling", default = 0)
+  Hatchery <- check_numeric(Hatchery, "n_subyearling", default = 0)
+
+  do_hatchery <- Hatchery@n_yearling > 0 || Hatchery@n_subyearling > 0
+
+  if (do_hatchery) {
+    Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
+    Hatchery <- check_numeric(Hatchery, "s_egg_smolt", default = 1)
+    Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
+
+    if (!length(Hatchery@Mjuv_HOS)) Hatchery@Mjuv_HOS <- Bio@Mjuv_NOS
+    Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS")
+
+    Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
+    Hatchery <- check_numeric(Hatchery, "m", default = 0)
+    Hatchery <- check_numeric(Hatchery, "pmax_esc", default = 0.75)
+    Hatchery <- check_numeric(Hatchery, "pmax_NOB", default = 1)
+    Hatchery <- check_numeric(Hatchery, "ptarget_NOB", default = 0.9)
+    Hatchery <- check_numeric(Hatchery, "phatchery", default = 0.8)
+    Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
+
+    if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
+    Hatchery <- check_maxage(Hatchery, "fec_brood", maxage)
+
+    Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
+    Hatchery <- check_numeric(Hatchery, "theta", size = 2)
+    Hatchery <- check_numeric(Hatchery, "rel_loss", size = 3)
+
+    if (!is.array(Hatchery@zbar_start)) {
+      Hatchery <- check_numeric(Hatchery, "zbar_start", size = 2)
+      Hatchery@zbar_start <- array(Hatchery@zbar_start, c(2, nsim, maxage)) %>%
+        aperm(c(2, 3, 1))
     } else {
-      dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears, 2))
-      if (!dim_check) {
-        stop("Slot HistSpawner must be an array of dimension ",
-             paste(c(SOM@nsim, SOM@maxage, SOM@nyears, 2), collapse = ", "))
-      }
+      Hatchery <- check_array(Hatchery, "zbar_start", c(nsim, maxage, 2))
     }
+
+    Hatchery <- check_numeric(Hatchery, "fitness_variance")
+    Hatchery <- check_numeric(Hatchery, "selection_strength")
+    Hatchery <- check_numeric(Hatchery, "heritability")
+    Hatchery <- check_numeric(Hatchery, "fitness_floor", default = 0.5)
   }
 
-  # HistN check (juvenile abundance)
-  if (!length(slot(SOM, "HistN"))) {
-    HistN <- array(0, c(SOM@nsim, SOM@maxage, SOM@nyears + 1, 2))
+  # Harvest
+  Harvest <- SOM@Harvest
+  Harvest <- check_numeric(Harvest, "u_preterminal")
+  Harvest <- check_numeric(Harvest, "u_terminal")
+  Harvest <- check_numeric(Harvest, "MSF")
+  if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mortality", size = 2)
+  if (Harvest@u_preterminal > 0) {
+    Harvest <- check_numeric(Harvest, "vulPT", size = maxage)
+  } else if (!length(Harvest@vulPT)) {
+    Harvest@vulPT <- rep(0, maxage)
+  }
+  if (Harvest@u_terminal > 0) {
+    Harvest <- check_numeric(Harvest, "vulT", size = maxage)
+  } else if (!length(Harvest@vulT)) {
+    Harvest@vulT <- rep(0, maxage)
+  }
+
+  # Historical
+  Historical <- SOM@Historical
+
+  var_F <- c("HistFPT", "HistFT")
+  for (i in var_F) {
+    if (!length(slot(Historical, i))) slot(Historical, i) <- rep(0, SOM@nyears)
+    if (!is.array(slot(Historical, i))) {
+      Historical <- check_numeric(Historical, i, SOM@nyears)
+      slot(Historical, i) <- slot(Historical, i) %>% array(c(SOM@nyears, nsim, 2)) %>% aperm(c(2, 1, 3))
+    }
+    Historical <- check_array(Historical, i, dims = c(nsim, SOM@nyears, 2))
+  }
+
+  if (length(Historical@HistSpawner)) {
+    Historical <- check_array(Historical, "HistSpawner", dims = c(nsim, maxage, SOM@nyears, 2))
+  }
+
+  if (!length(Historical@HistN)) {
+
+    HistN <- array(0, c(nsim, maxage, SOM@nyears + 1, 2))
     HistN[, 1, , ] <- 1000
     for (y in seq(2, SOM@nyears + 1)) {
-      ZNOS <- SOM@Mjuv_NOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 1]
-      HistN[, 2:SOM@maxage, y, 1] <- HistN[, 2:SOM@maxage - 1, y-1, 1] * exp(-ZNOS)
+      ZNOS <- Bio@Mjuv_NOS[, 2:maxage - 1, y-1] + Historical@HistFPT[, 2:maxage - 1, y-1, 1]
+      HistN[, 2:maxage, y, 1] <- HistN[, 2:maxage - 1, y-1, 1] * exp(-ZNOS)
 
-      ZHOS <- SOM@Mjuv_HOS[, 2:SOM@maxage - 1, y-1] + SOM@HistFPT[, 2:SOM@maxage - 1, y-1, 2]
-      HistN[, 2:SOM@maxage, y, 2] <- HistN[, 2:SOM@maxage - 1, y-1, 2] * exp(-ZHOS)
+      ZHOS <- Hatchery@Mjuv_HOS[, 2:maxage - 1, y-1] + Historical@HistFPT[, 2:maxage - 1, y-1, 2]
+      HistN[, 2:maxage, y, 2] <- HistN[, 2:maxage - 1, y-1, 2] * exp(-ZHOS)
     }
-    slot(SOM, "HistN") <- HistN
+    Historical@HistN <- HistN
+
   }
-  dim_i <- dim(slot(SOM, "HistN"))
-  if (is.null(dim_i)) {
-    stop("Slot HistN must be an array of dimension ",
-         paste(c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2), collapse = ", "))
-  } else {
-    dim_check <- length(dim_i) == 4 && all(dim_i == c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2))
-    if (!dim_check) {
-      stop("Slot HistN must be an array of dimension ",
-           paste(c(SOM@nsim, SOM@maxage, SOM@nyears+1, 2), collapse = ", "))
-    }
-  }
+  Historical <- check_array(Historical, "HistN", dims = c(nsim, maxage, SOM@nyears+1, 2))
+
+  SOM@Bio <- Bio
+  SOM@Habitat <- Habitat
+  SOM@Hatchery <- Hatchery
+  SOM@Harvest <- Harvest
+  SOM@Historical <- Historical
 
   return(SOM)
+}
+
+check_numeric <- function(object, name, size = 1, default) {
+  object_name <- as.character(substitute(object))
+
+  if (!length(slot(object, name))) {
+    if (!missing(default)) {
+      slot(object, name) <- default
+    } else {
+      stop(paste0("Need ", object_name, "@", name, " (numeric)"))
+    }
+  } else if (length(slot(object, name)) != size) {
+    stop(paste0("Length of ", object_name, "@", name, " needs to be ", size))
+  }
+
+  return(invisible(object))
+}
+
+check_maxage <- function(object, name, maxage) {
+  object_name <- as.character(substitute(object))
+
+  if (!length(slot(object, name)) || length(slot(object, name)) != maxage) {
+    if (!missing(default)) {
+      slot(object, name) <- default
+    } else {
+      stop(paste0("Need ", object_name, "@", name, " (maxage vector)"))
+    }
+  }
+  return(invisible(object))
+}
+
+check_maxage2array <- function(object, name, maxage, nsim, years) {
+  object_name <- as.character(substitute(object))
+
+  if (!is.array(slot(object, name))) {
+    if (length(slot(object, name) != maxage)) {
+      stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
+    }
+    slot(object, name) <- array(slot(object, name), c(maxage, nsim, years)) %>%
+      aperm(c(2, 1, 3))
+  }
+
+  dim_i <- dim(slot(object, name))
+  dim_check <- length(dim_i) == 3 && all(dim(slot(object, name) == c(nsim, maxage, years)))
+  if (!dim_check) {
+    stop(
+      paste0(object_name, "@", name, " must be an array with dimension ",
+             paste(c(nsim, maxage, years), collapse = ", "))
+    )
+  }
+  return(invisible(object))
+}
+
+check_array <- function(object, name, dims) {
+  object_name <- as.character(substitute(object))
+
+  dim_i <- dim(slot(object, name))
+
+  dim_check <- length(dim_i) == length(dims) && all(dim(slot(object, name) == dims))
+  if (!dim_check) {
+    stop(
+      paste0(object_name, "@", name, " must be an array with dimension ",
+             paste(dims, collapse = ", "))
+    )
+  }
+  return(invisible(object))
+}
+
+check_numeric2nsim <- function(object, name, nsim) {
+  object_name <- as.character(substitute(object))
+
+  if (!length(slot(object, name))) {
+    stop(paste0("Need ", object_name, "@", name))
+  }
+
+  if (length(slot(object, name)) == 1) slot(object, name) <- rep(slot(object, name), nsim)
+
+  dim_check <- all(dim(slot(object, name) == c(nsim, maxage, years)))
+  if (length(slot(object, name)) != nsim) {
+    stop(paste0(object_name, "@", name, " needs to length nsim (", nsim, ")"))
+  }
+  return(invisible(object))
 }
