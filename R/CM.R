@@ -274,7 +274,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Hatchery@fitness_type <- rep("none", "none")
   }
 
-  SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest, Historical,
+  SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest, Historical,
              nsim = nsim_om, nyears = nyears, proyears = proyears)
 
   return(SOM)

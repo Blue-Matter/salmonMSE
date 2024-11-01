@@ -83,7 +83,7 @@ make_SRR <- function(SOM) {
       capacity_smolt = SOM@Bio@capacity_smolt, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
     )
   } else {
-    b <- 1/SOM@Smax
+    b <- 1/SOM@Bio@Smax
     SRRpars <- data.frame(
       a = a, b = b, phi = SOM@Bio@phi, SPRcrash = 1/a/SOM@Bio@phi, SRrel = SOM@Bio@SRrel, kappa = SOM@Bio@kappa,
       Smax = SOM@Bio@Smax, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
