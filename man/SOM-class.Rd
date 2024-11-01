@@ -21,15 +21,15 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}
 
-\item{\code{Bio}}{\linkS4class{Bio} object informing biological parameters, natural production, and habitat effects}
+\item{\code{Bio}}{\linkS4class{Bio} object informing biological parameters, natural production, and habitat effects. Provide a list of Bio objects for multi-population models.}
 
-\item{\code{Habitat}}{\linkS4class{Habitat} object containing management levers for habitat mitigation}
+\item{\code{Habitat}}{\linkS4class{Habitat} object containing management levers for habitat mitigation. Provide a list of Habitat objects for multi-population models.}
 
-\item{\code{Hatchery}}{\linkS4class{Hatchery} object containing management levers for hatchery production}
+\item{\code{Hatchery}}{\linkS4class{Hatchery} object containing management levers for hatchery production. Provide a list of Hatchery objects for multi-population models.}
 
-\item{\code{Harvest}}{\linkS4class{Harvest} object containing management levers for harvest}
+\item{\code{Harvest}}{\linkS4class{Harvest} object containing management levers for harvest. Provide a list of Harvest objects for multi-population models.}
 
-\item{\code{Historical}}{\linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection}
+\item{\code{Historical}}{\linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.}
 }}
 
 \section{Objects from the Class}{

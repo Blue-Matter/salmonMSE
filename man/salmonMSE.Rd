@@ -11,7 +11,7 @@ salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 
 \item{Hist}{Logical, whether to stop the function stop after historical simulations?}
 
-\item{silent}{Logical, whether to report progress in console bar}
+\item{silent}{Logical, whether to report progress in console}
 
 \item{trace}{Logical, whether to report additional messages from openMSE}
 

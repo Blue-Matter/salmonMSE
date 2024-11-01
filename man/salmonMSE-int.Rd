@@ -14,9 +14,14 @@ MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford, state)
 
 SOM2MOM(SOM, check = TRUE)
 
-make_Stock(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
+make_Stock(
+  SOM,
+  s = 1,
+  NOS = TRUE,
+  stage = c("immature", "return", "escapement")
+)
 
-make_Fleet(SOM, NOS = TRUE, stage = c("immature", "return", "escapement"))
+make_Fleet(SOM, s, NOS = TRUE, stage = c("immature", "return", "escapement"))
 
 multiHist2SHist(multiHist, SOM, check = TRUE)
 }
@@ -34,6 +39,8 @@ multiHist2SHist(multiHist, SOM, check = TRUE)
 \item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{check}{Logical, whether to check the \code{SOM} object using \code{\link[=check_SOM]{check_SOM()}}}
+
+\item{s}{Logical, the population number for which to create the Stock or Fleet object}
 
 \item{NOS}{Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish}
 

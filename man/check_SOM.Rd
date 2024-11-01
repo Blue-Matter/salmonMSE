@@ -4,10 +4,12 @@
 \alias{check_SOM}
 \title{Check inputs to SOM object}
 \usage{
-check_SOM(SOM)
+check_SOM(SOM, silent = FALSE)
 }
 \arguments{
 \item{SOM}{\linkS4class{SOM} object}
+
+\item{silent}{Logical, whether to report progress in console}
 }
 \value{
 Updated \linkS4class{SOM} object with full dimensions in various slots

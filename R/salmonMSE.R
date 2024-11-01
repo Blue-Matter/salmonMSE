@@ -11,7 +11,7 @@
 #' - Converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (SMSE) via [MMSE2SMSE()]
 #' @param SOM An object of class \linkS4class{SOM}
 #' @param Hist Logical, whether to stop the function stop after historical simulations?
-#' @param silent Logical, whether to report progress in console bar
+#' @param silent Logical, whether to report progress in console
 #' @param trace Logical, whether to report additional messages from openMSE
 #' @param convert Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on `Hist`) object
 #' @return
@@ -23,7 +23,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   if (!silent) message("Converting salmon operating model to MOM..")
 
-  SOM <- check_SOM(SOM)
+  SOM <- check_SOM(SOM, silent = silent)
   MOM <- SOM2MOM(SOM, check = FALSE)
 
   do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0

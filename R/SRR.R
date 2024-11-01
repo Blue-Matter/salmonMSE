@@ -73,20 +73,20 @@ calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricke
   c(alpha, beta)
 }
 
-make_SRR <- function(SOM) {
+make_SRR <- function(Bio, Habitat) {
 
-  a <- SOM@Bio@kappa/SOM@Bio@phi
-  if (SOM@Bio@SRrel == "BH") {
-    b <- a/SOM@Bio@capacity_smolt
+  a <- Bio@kappa/Bio@phi
+  if (Bio@SRrel == "BH") {
+    b <- a/Bio@capacity_smolt
     SRRpars <- data.frame(
-      a = a, b = b, phi = SOM@Bio@phi, SPRcrash = 1/a/SOM@Bio@phi, SRrel = SOM@Bio@SRrel, kappa = SOM@Bio@kappa,
-      capacity_smolt = SOM@Bio@capacity_smolt, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
+      a = a, b = b, phi = Bio@phi, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
+      capacity_smolt = Bio@capacity_smolt, kappa_improve = Habitat@kappa_improve, capacity_smolt_improve = Habitat@capacity_smolt_improve
     )
   } else {
-    b <- 1/SOM@Bio@Smax
+    b <- 1/Bio@Smax
     SRRpars <- data.frame(
-      a = a, b = b, phi = SOM@Bio@phi, SPRcrash = 1/a/SOM@Bio@phi, SRrel = SOM@Bio@SRrel, kappa = SOM@Bio@kappa,
-      Smax = SOM@Bio@Smax, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
+      a = a, b = b, phi = Bio@phi, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
+      Smax = Bio@Smax, kappa_improve = Habitat@kappa_improve, capacity_smolt_improve = Habitat@capacity_smolt_improve
     )
   }
   SRRfun <- function(SB, SRRpars) {

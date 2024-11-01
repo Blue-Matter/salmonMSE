@@ -186,6 +186,14 @@ setClass(
   )
 )
 
+
+setClassUnion("Bio.list", c("Bio", "list"))
+setClassUnion("Habitat.list", c("Habitat", "list"))
+setClassUnion("Hatchery.list", c("Hatchery", "list"))
+setClassUnion("Harvest.list", c("Hatchery", "list"))
+setClassUnion("Historical.list", c("Historical", "list"))
+
+
 #' Class \code{"SOM"}
 #'
 #' An object containing all the parameters for a salmon operating model (SOM).
@@ -199,11 +207,11 @@ setClass(
 #' @slot nyears Integer. The number of historical years
 #' @slot proyears Integer. The number of projected years
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly
-#' @slot Bio \linkS4class{Bio} object informing biological parameters, natural production, and habitat effects
-#' @slot Habitat \linkS4class{Habitat} object containing management levers for habitat mitigation
-#' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production
-#' @slot Harvest \linkS4class{Harvest} object containing management levers for harvest
-#' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection
+#' @slot Bio \linkS4class{Bio} object informing biological parameters, natural production, and habitat effects. Provide a list of Bio objects for multi-population models.
+#' @slot Habitat \linkS4class{Habitat} object containing management levers for habitat mitigation. Provide a list of Habitat objects for multi-population models.
+#' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production. Provide a list of Hatchery objects for multi-population models.
+#' @slot Harvest \linkS4class{Harvest} object containing management levers for harvest. Provide a list of Harvest objects for multi-population models.
+#' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.
 #' @keywords classes
 #'
 #' @export
@@ -215,22 +223,21 @@ SOM <- setClass(
     nyears = "numeric",
     proyears = "numeric",
     seed = "numeric",
-    Bio = "Bio",
-    Habitat = "Habitat",
-    Hatchery = "Hatchery",
-    Harvest = "Harvest",
-    Historical = "Historical"
+    Bio = "Bio.list",
+    Habitat = "Habitat.list",
+    Hatchery = "Hatchery.list",
+    Harvest = "Harvest.list",
+    Historical = "Historical.list"
   )
 )
 
 #' @importFrom utils packageVersion
 setMethod("initialize", "SOM",
           function(.Object, Bio, Habitat, Hatchery, Harvest, Historical,
-                   nsim = 3, nyears = 2, proyears = 20, seed = 1, ...) {
+                   nsim = 3, nyears = 2, proyears = 20, seed = 1, Name = "Salmon operating model", ...) {
 
             dots <- list(...)
 
-            if (is.null(dots$Name)) .Object@Name <- "Salmon operating model"
             .Object@nsim <- nsim
             .Object@nyears <- nyears
             .Object@proyears <- proyears
