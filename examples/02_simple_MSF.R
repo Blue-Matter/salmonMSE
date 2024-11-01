@@ -5,9 +5,9 @@ library(salmonMSE)
 class?SOM # Definition of inputs
 
 SAR <- 0.01
+nsim <- 3
 Bio <- new(
   "Bio",
-  nsim = 3,
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
@@ -65,7 +65,7 @@ Harvest <- new(
 
 # Return of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
-HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears+1, 2))
+HistN <- array(0, c(nsim, Bio@maxage, nyears+1, 2))
 HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
 
 Historical <- new(
@@ -75,9 +75,8 @@ Historical <- new(
 
 # Stitched salmon operating model
 SOM <- new("SOM",
-           nyears = 2,
-           proyears = 50,
-           Bio, Habitat, Hatchery, Harvest, Historical)
+           Bio, Habitat, Hatchery, Harvest, Historical,
+           nsim = nsim, nyears = 2, proyears = 50)
 
 # run salmonMSE
 MOM <- SOM2MOM(SOM)

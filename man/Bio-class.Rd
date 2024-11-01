@@ -16,8 +16,6 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nsim}}{Integer. Number of simulations.}
-
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
 \item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}

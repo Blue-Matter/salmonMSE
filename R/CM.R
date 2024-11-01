@@ -223,7 +223,6 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   Bio <- new(
     "Bio",
-    nsim = nsim_om,
     maxage = data$Nages,
     p_mature = expand_array(matt, proyears),
     SRrel = "Ricker",
@@ -275,7 +274,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Hatchery@fitness_type <- rep("none", "none")
   }
 
-  SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest, Historical, nyears = nyears, proyears = proyears)
+  SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest, Historical,
+             nsim = nsim_om, nyears = nyears, proyears = proyears)
 
   return(SOM)
 }

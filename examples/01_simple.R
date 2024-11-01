@@ -11,9 +11,9 @@ library(salmonMSE)
 class?SOM # Definition of inputs
 
 SAR <- 0.01
+nsim <- 3
 Bio <- new(
   "Bio",
-  nsim = 100,
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
@@ -70,7 +70,7 @@ Harvest <- new(
 
 # Return of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
-HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears+1, 2))
+HistN <- array(0, c(nsim, Bio@maxage, nyears+1, 2))
 HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
 
 Historical <- new(
@@ -80,9 +80,8 @@ Historical <- new(
 
 # Stitched salmon operating model
 SOM <- new("SOM",
-           nyears = 2,
-           proyears = 50,
-           Bio, Habitat, Hatchery, Harvest, Historical)
+           Bio, Habitat, Hatchery, Harvest, Historical,
+           nsim = nsim, nyears = 2, proyears = 50)
 
 # run salmonMSE
 #MOM <- SOM2MOM(SOM)
@@ -124,15 +123,14 @@ dev.off()
 
 # Stochastic example
 SAR <- 0.01
-nsim <- 100
+nsim_stochastic <- 100
 
 set.seed(100)
 kappa_mean <- 3
 kappa_sd <- 0.3
-kappa <- rlnorm(nsim, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
+kappa <- rlnorm(nsim_stochastic, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
 Bio_stochastic <- new(
   "Bio",
-  nsim = nsim,
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
@@ -152,9 +150,8 @@ hist(kappa, main = NULL)
 dev.off()
 
 SOM_stochastic <- new("SOM",
-                      nyears = 2,
-                      proyears = 50,
-                      Bio_stochastic, Habitat, Hatchery, Harvest, Historical)
+                      Bio_stochastic, Habitat, Hatchery, Harvest, Historical,
+                      nsim = nsim_stochastic, nyears = 2, proyears = 50)
 
 SMSE_stochastic <- salmonMSE(SOM_stochastic)
 saveRDS(SMSE_stochastic, "examples/SMSE_stochastic.rds")

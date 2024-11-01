@@ -17,7 +17,6 @@ wrapper <- function(x, Design) {
 
   Bio <- new(
     "Bio",
-    nsim = nsim,
     maxage = 3,
     p_mature = c(0, 0, 1),
     SRrel = "BH",
@@ -77,7 +76,7 @@ wrapper <- function(x, Design) {
 
   # Return of 1000 natural and hatchery fish each for the first generation
   nyears <- 2
-  HistN <- array(0, c(Bio@nsim, Bio@maxage, nyears+1, 2))
+  HistN <- array(0, c(nsim, Bio@maxage, nyears+1, 2))
   HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
 
   Historical <- new(
@@ -87,9 +86,8 @@ wrapper <- function(x, Design) {
 
   # Stitched salmon operating model
   SOM <- new("SOM",
-             nyears = 2,
-             proyears = 50,
-             Bio, Habitat, Hatchery, Harvest, Historical)
+             Bio, Habitat, Hatchery, Harvest, Historical,
+             nsim = nsim, nyears = 2, proyears = 50)
 
   SMSE <- salmonMSE(SOM)
 

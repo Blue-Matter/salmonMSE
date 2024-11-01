@@ -17,13 +17,13 @@ A description of the fitness parameters and hatchery dynamics is available in th
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
+\item{\code{nsim}}{Integer. Number of simulations}
+
 \item{\code{nyears}}{Integer. The number of historical years}
 
 \item{\code{proyears}}{Integer. The number of projected years}
 
 \item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}
-
-\item{\code{nsim}}{Integer. Number of simulations.}
 
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 

@@ -34,7 +34,6 @@ setClass(
   "Bio",
   slots = c(
     Name = "character",
-    nsim = "numeric",
     maxage = "numeric",
     p_mature = "num.array",
     SRrel = "character",
@@ -196,6 +195,7 @@ setClass(
 #' \code{new("SOM", Bio, Habitat, Hatchery, Harvest, Historical)}.
 #'
 #' @slot Name Character. Identifying name
+#' @slot nsim Integer. Number of simulations
 #' @slot nyears Integer. The number of historical years
 #' @slot proyears Integer. The number of projected years
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly
@@ -212,6 +212,7 @@ SOM <- setClass(
   "SOM",
   slots = c(
     Name = "character",
+    nsim = "numeric",
     nyears = "numeric",
     proyears = "numeric",
     seed = "numeric"
@@ -222,11 +223,12 @@ SOM <- setClass(
 #' @importFrom utils packageVersion
 setMethod("initialize", "SOM",
           function(.Object, Bio, Habitat, Hatchery, Harvest, Historical,
-                   nyears = 2, proyears = 20, seed = 1, ...) {
+                   nsim = 3, nyears = 2, proyears = 20, seed = 1, ...) {
 
             dots <- list(...)
 
             if (is.null(dots$Name)) .Object@Name <- "Salmon operating model"
+            .Object@nsim <- nsim
             .Object@nyears <- nyears
             .Object@proyears <- proyears
             .Object@seed <- seed

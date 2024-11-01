@@ -9,10 +9,9 @@ remotes::install_github("Blue-Matter/salmonMSE")
 library(salmonMSE)
 
 class?SOM # Definition of inputs
-
+nsim <- 3
 Bio <- new(
   "Bio",
-  nsim = 3,
   maxage = 3,
   p_mature = c(0, 0, 1),
   capacity_smolt = 17250,   # Beverton-Holt asymptote. Not unfished capacity!!
@@ -63,7 +62,7 @@ Harvest <- new(
 )
 
 # Stitched salmon operating model
-SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest)
+SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest, nsim = nsim)
 
 # Base OM. Small natural population. No hatchery.
 SOM1 <- SOM

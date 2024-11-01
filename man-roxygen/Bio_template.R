@@ -1,5 +1,4 @@
 
-#' @slot nsim Integer. Number of simulations.
 #' @slot maxage Integer. The maximum age of the population age structure.
 #' @slot p_mature Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`. The proportion mature by age.
 #' @slot SRrel Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"
