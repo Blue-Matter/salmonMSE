@@ -10,7 +10,7 @@
 #' @export
 MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   ns <- 1 # Number of stocks
-  nage <- SOM@maxage
+  nage <- SOM@Bio@maxage
 
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
@@ -40,8 +40,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   t1 <- seq(1, 2 * SOM@proyears, 2)
   t2 <- seq(2, 2 * SOM@proyears, 2)
 
-  a1 <- seq(1, 2 * SOM@maxage + 1, 2)
-  a2 <- seq(2, 2 * SOM@maxage + 1, 2)
+  a1 <- seq(1, 2 * SOM@Bio@maxage + 1, 2)
+  a2 <- seq(2, 2 * SOM@Bio@maxage + 1, 2)
 
   a_imm <- a1[-length(a1)]
   a_return <- a2
@@ -69,28 +69,28 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
 
   # Harvest rate from kept catch
-  vulPT <- array(SOM@vulPT, c(SOM@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+  vulPT <- array(SOM@Harvest@vulPT, c(SOM@Bio@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
   NOS_imm_a <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
   vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
   UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/vulNOS_imm
   UPT_NOS[is.na(UPT_NOS)] <- 0
 
-  vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
+  vulT <- array(SOM@Harvest@vulT, c(SOM@Bio@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
   NOS_ret_a <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
   vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
   UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/vulNOS_ret
   UT_NOS[is.na(UT_NOS)] <- 0
 
   # Exploitation rate from kept + dead discards (DD)
-  DDPT_NOS <- SOM@release_mort[1] * DPT_NOS[, ns, ]
+  DDPT_NOS <- SOM@Harvest@release_mort[1] * DPT_NOS[, ns, ]
   ExPT_NOS[, ns, ] <- (KPT_NOS[, ns, ] + DDPT_NOS)/vulNOS_imm
   ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
-  DDT_NOS <- SOM@release_mort[2] * DT_NOS[, ns, ]
+  DDT_NOS <- SOM@Harvest@release_mort[2] * DT_NOS[, ns, ]
   ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/vulNOS_ret
   ExT_NOS[is.na(ExT_NOS)] <- 0
 
-  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
   if (do_hatchery) {
     # HOS state variables from MMSE object
     p_HOS_imm <- 4
@@ -121,11 +121,11 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     UT_HOS[is.na(UT_HOS)] <- 0
 
     # Exploitation rate from kept + dead discards (DD)
-    DDPT_HOS <- SOM@release_mort[1] * DPT_HOS[, ns, ]
+    DDPT_HOS <- SOM@Harvest@release_mort[1] * DPT_HOS[, ns, ]
     ExPT_HOS[, ns, ] <- (KPT_HOS[, ns, ] + DDPT_HOS)/vulHOS_imm
     ExPT_HOS[is.na(ExPT_HOS)] <- 0
 
-    DDT_HOS <- SOM@release_mort[2] * DT_HOS[, ns, ]
+    DDT_HOS <- SOM@Harvest@release_mort[2] * DT_HOS[, ns, ]
     ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/vulHOS_ret
     ExT_HOS[is.na(ExT_HOS)] <- 0
 
@@ -167,11 +167,11 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
     PNI[, ns, y_spawn] <- pNOB[, ns, y_spawn]/(pNOB[, ns, y_spawn] + pHOS_effective[, ns, y_spawn]) # Withler et al. 2018, page 17
 
-    NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@maxage, SOM@proyears))
+    NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@Bio@maxage, SOM@proyears))
     NOS_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "NOS")
     HOScensus_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "HOS")
 
-    p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@fec, SOM@gamma)
+    p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@Bio@fec, SOM@Hatchery@gamma)
 
   } else {
     # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output

@@ -15,63 +15,63 @@
 AHA <- function(SOM, ngen = 100, silent = FALSE) {
   SOM <- check_SOM(SOM)
 
-  if (sum(SOM@u_preterminal)) {
-    warning("Pre-terminal fishing is not modeled in AHA. Setting SOM@u_preterminal = 0")
-    SOM@u_preterminal <- 0
+  if (sum(SOM@Harvest@u_preterminal)) {
+    warning("Pre-terminal fishing is not modeled in AHA. Setting SOM@Harvest@u_preterminal = 0")
+    SOM@Harvest@u_preterminal <- 0
   }
 
-  if (SOM@SRrel != "BH") {
-    warning("Only Beverton-Holt smolt production is used in AHA. Setting SOM@SRrel = \"BH\"")
-    SOM@SRrel <- "BH"
+  if (SOM@Bio@SRrel != "BH") {
+    warning("Only Beverton-Holt smolt production is used in AHA. Setting SOM@Bio@SRrel = \"BH\"")
+    SOM@Bio@SRrel <- "BH"
   }
 
-  if (!length(SOM@capacity_smolt)) {
-    stop("Need to specify SOM@capacity_smolt")
+  if (!length(SOM@Bio@capacity_smolt)) {
+    stop("Need to specify SOM@Bio@capacity_smolt")
   }
 
-  if (SOM@fitness_type[2] != "none") {
+  if (SOM@Hatchery@fitness_type[2] != "none") {
     warning("Only fitness dynamics in the natural environment will be modeled.")
   }
 
-  if (SOM@pmax_esc < 1) {
-    warning("SOM@pmax_esc = ", SOM@pmax_esc, ". AHA compatibility is maintained only when SOM@pmax_esc = 1")
+  if (SOM@Hatchery@pmax_esc < 1) {
+    warning("SOM@Hatchery@pmax_esc = ", SOM@Hatchery@pmax_esc, ". AHA compatibility is maintained only when SOM@Hatchery@pmax_esc = 1")
   }
 
-  if (SOM@m < 1) {
-    warning("SOM@m = ", SOM@m, ". AHA compatibility is maintained only when SOM@m = 1 for identifying broodstock origin.")
+  if (SOM@Hatchery@m < 1) {
+    warning("SOM@Hatchery@m = ", SOM@Hatchery@m, ". AHA compatibility is maintained only when SOM@Hatchery@m = 1 for identifying broodstock origin.")
   }
 
-  age_mature <- SOM@p_mature[1, , 1] > 0
+  age_mature <- SOM@Bio@p_mature[1, , 1] > 0
   age_mature <- which(age_mature)[1]
   message("Age of maturity assumed to be: ", age_mature)
 
-  fec <- SOM@fec[age_mature]
-  SOM@fec <- fec
+  fec <- SOM@Bio@fec[age_mature]
+  SOM@Bio@fec <- fec
   message("Fecundity of spawners assumed to be: ", fec)
 
-  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
   if (do_hatchery) {
-    fec_brood <- SOM@fec_brood[age_mature]
+    fec_brood <- SOM@Hatchery@fec_brood[age_mature]
     message("Fecundity of broodtake assumed to be: ", fec_brood)
   } else {
     fec_brood <- 0
   }
-  SOM@fec_brood <- fec_brood
+  SOM@Hatchery@fec_brood <- fec_brood
 
   message("SAR calculated from survival from Mjuv to age ", age_mature)
 
   surv_NOS <- surv_HOS <- matrix(1, SOM@nsim, age_mature)
   for (a in 2:age_mature) {
-    surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Mjuv_NOS[, a-1, 1])
+    surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Bio@Mjuv_NOS[, a-1, 1])
     if (do_hatchery) {
-      surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Mjuv_HOS[, a-1, 1])
+      surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Hatchery@Mjuv_HOS[, a-1, 1])
     }
   }
 
-  if (SOM@MSF) {
-    .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
-    Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
-    Fret <- SOM@m * .F
+  if (SOM@Harvest@MSF) {
+    .F <- get_F(u = SOM@Harvest@u_terminal, M = 1e-8, ret = SOM@Hatchery@m, release_mort = SOM@Harvest@release_mort[2])
+    Frel <- (1 - SOM@Hatchery@m) * SOM@Harvest@release_mort[2] * .F
+    Fret <- SOM@Hatchery@m * .F
     u_NOR <- 1 - exp(-Frel)
     u_HOR <- 1 - exp(-Frel - Fret)
     message(
@@ -94,55 +94,55 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
 
 .AHA_wrapper <- function(x, SOM, ngen, SAR_NOS, SAR_HOS) {
 
-  if (SOM@MSF > 0) {
-    .F <- get_F(u = SOM@u_terminal, M = 1e-8, ret = SOM@m, release_mort = SOM@release_mort[2])
-    Frel <- (1 - SOM@m) * SOM@release_mort[2] * .F
-    Fret <- SOM@m * .F
+  if (SOM@Harvest@MSF) {
+    .F <- get_F(u = SOM@Harvest@u_terminal, M = 1e-8, ret = SOM@Hatchery@m, release_mort = SOM@Harvest@release_mort[2])
+    Frel <- (1 - SOM@Hatchery@m) * SOM@Harvest@release_mort[2] * .F
+    Fret <- SOM@Hatchery@m * .F
     u_NOR <- 1 - exp(-Frel)
     u_HOR <- 1 - exp(-Frel - Fret)
   } else {
-    u_NOR <- u_HOR <- SOM@u_terminal
+    u_NOR <- u_HOR <- SOM@Harvest@u_terminal
   }
 
   output <- .AHA(
-    prod_adult = SOM@kappa[x] * SOM@kappa_improve,
-    capacity_adult = SOM@capacity_smolt[x] * SOM@capacity_smolt_improve * SAR_NOS[x],
-    fec_spawn = sum(SOM@fec),
-    p_female = SOM@p_female,
+    prod_adult = SOM@Bio@kappa[x] * SOM@Habitat@kappa_improve,
+    capacity_adult = SOM@Bio@capacity_smolt[x] * SOM@Habitat@capacity_smolt_improve * SAR_NOS[x],
+    fec_spawn = sum(SOM@Bio@fec),
+    p_female = SOM@Bio@p_female,
     surv_ocean = SAR_NOS[x],
     surv_passage_juv = 1,
-    surv_passage_adult = SOM@s_enroute,
+    surv_passage_adult = SOM@Bio@s_enroute,
     u_HOR = c(u_HOR, 0, 0, 0),
     u_NOR = c(u_NOR, 0, 0, 0),
-    surv_pre_spawn = SOM@s_prespawn,
-    fec_brood = sum(SOM@fec_brood),
-    surv_egg_smolt = SOM@s_egg_smolt,
-    surv_egg_subyearling = SOM@s_egg_subyearling,
+    surv_pre_spawn = SOM@Hatchery@s_prespawn,
+    fec_brood = sum(SOM@Hatchery@fec_brood),
+    surv_egg_smolt = SOM@Hatchery@s_egg_smolt,
+    surv_egg_subyearling = SOM@Hatchery@s_egg_subyearling,
     capacity_spawn_em = 1e12,
     capacity_smolt_adult = 1e12,
     surv_adult_return_of_yearling = SAR_HOS[x],
     surv_adult_return_of_subyearling = SAR_HOS[x],
-    RRS_HOS = SOM@gamma,
-    p_weir_efficiency = SOM@premove_HOS,
-    p_return_hatchery = SOM@phatchery,
-    n_release_yearling = SOM@n_yearling,
-    n_release_subyearling = SOM@n_subyearling,
+    RRS_HOS = SOM@Hatchery@gamma,
+    p_weir_efficiency = SOM@Hatchery@premove_HOS,
+    p_return_hatchery = SOM@Hatchery@phatchery,
+    n_release_yearling = SOM@Hatchery@n_yearling,
+    n_release_subyearling = SOM@Hatchery@n_subyearling,
     brood_import = 0,
     brood_export = 0,
-    p_NOR_brood_max = SOM@pmax_NOB,
+    p_NOR_brood_max = SOM@Hatchery@pmax_NOB,
     p_HOS_goal = 0, # Not used
-    p_NOB_goal = SOM@ptarget_NOB,
+    p_NOB_goal = SOM@Hatchery@ptarget_NOB,
     SAR_vary = "none",
-    fitness_type = SOM@fitness_type[1], # Fitness
-    theta = SOM@theta,
-    rel_loss_egg = SOM@rel_loss[1],
-    rel_loss_fry = SOM@rel_loss[2],
-    rel_loss_smolt = SOM@rel_loss[3],
-    Zpop_start = c(SOM@zbar_start, 100),
-    fitness_variance = SOM@fitness_variance,
-    selection_strength = SOM@selection_strength,
-    heritability = SOM@heritability,
-    fitness_floor = SOM@fitness_floor,
+    fitness_type = SOM@Hatchery@fitness_type[1], # Fitness
+    theta = SOM@Hatchery@theta,
+    rel_loss_egg = SOM@Hatchery@rel_loss[1],
+    rel_loss_fry = SOM@Hatchery@rel_loss[2],
+    rel_loss_smolt = SOM@Hatchery@rel_loss[3],
+    Zpop_start = c(SOM@Hatchery@zbar_start[x, 1, ], 100),
+    fitness_variance = SOM@Hatchery@fitness_variance,
+    selection_strength = SOM@Hatchery@selection_strength,
+    heritability = SOM@Hatchery@heritability,
+    fitness_floor = SOM@Hatchery@fitness_floor,
     strays_total = 0,
     ngen = ngen
   )
@@ -179,7 +179,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     structure(names = var_out)
   out$PNI <- out$pNOB/(out$pNOB + out$pHOSeff)
   out$p_wild <- sapply(2:length(out$pHOSeff), function(g) {
-    calc_pwild(out$pHOSeff[g], out$pHOSeff[g-1], SOM@gamma)
+    calc_pwild(out$pHOSeff[g], out$pHOSeff[g-1], SOM@Hatchery@gamma)
   })
   out$Ref <- output[[1]][["Ref"]]
 

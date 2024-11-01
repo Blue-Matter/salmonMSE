@@ -29,7 +29,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   MOM@reps <- 1
 
   # Stock objects
-  do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
+  do_hatchery = SOM@Hatchery@n_yearling > 0 || SOM@Hatchery@n_subyearling > 0
   ns <- 1
   Stocks <- make_Stock_objects(SOM)
   np <- length(Stocks)
@@ -70,21 +70,21 @@ SOM2MOM <- function(SOM, check = TRUE) {
   # First generate the escapement, then move juveniles to adult
   first_mature_age <- sapply(1:(SOM@nyears + SOM@proyears), function(y) {
     sapply(1:SOM@nsim, function(x) {
-      which(SOM@p_mature[x, , y] > 0)[1]
+      which(SOM@Bio@p_mature[x, , y] > 0)[1]
     })
   })
-  nage <- 2 * SOM@maxage + 1
+  nage <- 2 * SOM@Bio@maxage + 1
   nyears <- 2 * SOM@nyears
   proyears <- 2 * SOM@proyears
   Herm_escapement <- Herm_mature <- array(0, c(SOM@nsim, nage, nyears + proyears))
 
   # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
-  Herm_mature[, 2 * seq(1, SOM@maxage), seq(2, nyears + proyears, 2)] <- SOM@p_mature
+  Herm_mature[, 2 * seq(1, SOM@Bio@maxage), seq(2, nyears + proyears, 2)] <- SOM@Bio@p_mature
 
   # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
   # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
-  Herm_escapement[, 2 * seq(1, SOM@maxage) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
-    sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:SOM@maxage >= first_mature_age[x, y], 1, 0))
+  Herm_escapement[, 2 * seq(1, SOM@Bio@maxage) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
+    sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:SOM@Bio@maxage >= first_mature_age[x, y], 1, 0))
   }, simplify = "array") %>%
     aperm(c(3, 1, 2))
 
@@ -113,20 +113,20 @@ SOM2MOM <- function(SOM, check = TRUE) {
   # (the escapement is the spawning output)
   SRRpars <- Stocks[[1]]$cpars_bio$SRR$SRRpars
 
-  habitat_change <- SOM@kappa_improve != 1 || SOM@capacity_smolt_improve != 1
+  habitat_change <- SOM@Habitat@kappa_improve != 1 || SOM@Habitat@capacity_smolt_improve != 1
 
-  if (do_hatchery || habitat_change || SOM@s_enroute < 1) {
+  if (do_hatchery || habitat_change || SOM@Bio@s_enroute < 1) {
 
     if (do_hatchery) {
       # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
       # and fecundity of broodtake (identical between natural and hatchery escapement)
       # This is a management action, cannot be stochastic
       # No imports
-      egg_yearling <- ifelse(SOM@n_yearling > 0, SOM@n_yearling/SOM@s_egg_smolt, 0)
-      egg_subyearling <- ifelse(SOM@n_subyearling > 0, SOM@n_subyearling/SOM@s_egg_subyearling, 0)
+      egg_yearling <- ifelse(SOM@Hatchery@n_yearling > 0, SOM@Hatchery@n_yearling/SOM@Hatchery@s_egg_smolt, 0)
+      egg_subyearling <- ifelse(SOM@Hatchery@n_subyearling > 0, SOM@Hatchery@n_subyearling/SOM@Hatchery@s_egg_subyearling, 0)
       egg_local <- egg_yearling + egg_subyearling
 
-      p_yearling <- SOM@n_yearling/(SOM@n_yearling + SOM@n_subyearling)
+      p_yearling <- SOM@Hatchery@n_yearling/(SOM@Hatchery@n_yearling + SOM@Hatchery@n_subyearling)
 
     } else {
       egg_local <- 0
@@ -140,36 +140,36 @@ SOM2MOM <- function(SOM, check = TRUE) {
     if (do_hatchery) {
 
       hatchery_args <- list(
-        ptarget_NOB = SOM@ptarget_NOB,
-        pmax_esc = SOM@pmax_esc,
-        pmax_NOB = SOM@pmax_NOB,
-        fec_brood = SOM@fec_brood,
+        ptarget_NOB = SOM@Hatchery@ptarget_NOB,
+        pmax_esc = SOM@Hatchery@pmax_esc,
+        pmax_NOB = SOM@Hatchery@pmax_NOB,
+        fec_brood = SOM@Hatchery@fec_brood,
         egg_local = egg_local,
-        p_female = SOM@p_female,
-        s_yearling = SOM@s_egg_smolt,
-        s_subyearling = SOM@s_egg_subyearling,
+        p_female = SOM@Bio@p_female,
+        s_yearling = SOM@Hatchery@s_egg_smolt,
+        s_subyearling = SOM@Hatchery@s_egg_subyearling,
         p_yearling = p_yearling,
-        phatchery = SOM@phatchery,
-        premove_HOS = SOM@premove_HOS,
-        s_prespawn = SOM@s_prespawn,
-        gamma = SOM@gamma,
-        m = SOM@m
+        phatchery = SOM@Hatchery@phatchery,
+        premove_HOS = SOM@Hatchery@premove_HOS,
+        s_prespawn = SOM@Hatchery@s_prespawn,
+        gamma = SOM@Hatchery@gamma,
+        m = SOM@Hatchery@m
       )
 
-      if (any(SOM@fitness_type == "Ford")) {
+      if (any(SOM@Hatchery@fitness_type == "Ford")) {
         fitness_args <- local({
-          omega <- sqrt(SOM@fitness_variance) * SOM@selection_strength
+          omega <- sqrt(SOM@Hatchery@fitness_variance) * SOM@Hatchery@selection_strength
           omega2 <- omega * omega
 
           list(
-            fitness_type = SOM@fitness_type,
-            rel_loss = SOM@rel_loss,
+            fitness_type = SOM@Hatchery@fitness_type,
+            rel_loss = SOM@Hatchery@rel_loss,
             omega2 = omega2,
-            fitness_variance = SOM@fitness_variance,
-            fitness_floor = SOM@fitness_floor,
-            heritability = SOM@heritability,
+            fitness_variance = SOM@Hatchery@fitness_variance,
+            fitness_floor = SOM@Hatchery@fitness_floor,
+            heritability = SOM@Hatchery@heritability,
             #zbar_start = SOM@zbar_start # Now assigned by salmonMSE::salmonMSE()
-            theta = SOM@theta
+            theta = SOM@Hatchery@theta
           )
         })
       }
@@ -178,25 +178,25 @@ SOM2MOM <- function(SOM, check = TRUE) {
     # Natural smolt production from NOS and HOS escapement and habitat
     Rel[[1]] <- makeRel_smolt(
       p_smolt = 1, p_naturalsmolt = 1, p_natural = 3, p_hatchery = ifelse(do_hatchery, 6, NA_real_), output = "natural",
-      s_enroute = SOM@s_enroute, p_female = SOM@p_female, fec = SOM@fec, SRRpars = SRRpars,
+      s_enroute = SOM@Bio@s_enroute, p_female = SOM@Bio@p_female, fec = SOM@Bio@fec, SRRpars = SRRpars,
       hatchery_args = hatchery_args, fitness_args = fitness_args
     )
 
     # Marine survival of natural origin fish
-    if (SOM@fitness_type[1] != "none") {
+    if (SOM@Hatchery@fitness_type[1] != "none") {
       Rel[[2]] <- makeRel_SAR(
         p_smolt = 1, p_naturalsmolt = 1, envir = "natural",
-        rel_loss = SOM@rel_loss[3], nyears = 2 * SOM@nyears,
+        rel_loss = SOM@Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
         Mbase = Stocks[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
       )
     }
 
     # Marine survival of hatchery origin fish
-    if (SOM@fitness_type[2] != "none") {
+    if (SOM@Hatchery@fitness_type[2] != "none") {
       nRel <- length(Rel)
       Rel[[nRel + 1]] <- makeRel_SAR(
         p_smolt = 4, p_naturalsmolt = 1, envir = "hatchery",
-        rel_loss = SOM@rel_loss[3], nyears = 2 * SOM@nyears,
+        rel_loss = SOM@Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
         Mbase = Stocks[[4]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
       )
     }
@@ -207,7 +207,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
     # Hatchery smolt releases from NOS and HOS escapement
     Rel[[nRel + 1]] <- makeRel_smolt(
       p_smolt = 4, p_naturalsmolt = 1, p_natural = 3, p_hatchery = 6, output = "hatchery",
-      s_enroute = SOM@s_enroute, p_female = SOM@p_female, fec = SOM@fec, SRRpars = SRRpars,
+      s_enroute = SOM@Bio@s_enroute, p_female = SOM@Bio@p_female, fec = SOM@Bio@fec, SRRpars = SRRpars,
       hatchery_args = hatchery_args, fitness_args = fitness_args
     )
   }
@@ -291,7 +291,7 @@ check_SOM <- function(SOM) {
     Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
 
     if (!length(Hatchery@Mjuv_HOS)) Hatchery@Mjuv_HOS <- Bio@Mjuv_NOS
-    Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS")
+    Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage, nsim, years)
 
     Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
     Hatchery <- check_numeric(Hatchery, "m", default = 0)
@@ -324,9 +324,9 @@ check_SOM <- function(SOM) {
 
   # Harvest
   Harvest <- SOM@Harvest
-  Harvest <- check_numeric(Harvest, "u_preterminal")
-  Harvest <- check_numeric(Harvest, "u_terminal")
-  Harvest <- check_numeric(Harvest, "MSF")
+  Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+  Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+  Harvest <- check_numeric(Harvest, "MSF", default = FALSE)
   if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mortality", size = 2)
   if (Harvest@u_preterminal > 0) {
     Harvest <- check_numeric(Harvest, "vulPT", size = maxage)
@@ -414,7 +414,7 @@ check_maxage2array <- function(object, name, maxage, nsim, years) {
   object_name <- as.character(substitute(object))
 
   if (!is.array(slot(object, name))) {
-    if (length(slot(object, name) != maxage)) {
+    if (length(slot(object, name)) != maxage) {
       stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
     }
     slot(object, name) <- array(slot(object, name), c(maxage, nsim, years)) %>%
@@ -437,7 +437,7 @@ check_array <- function(object, name, dims) {
 
   dim_i <- dim(slot(object, name))
 
-  dim_check <- length(dim_i) == length(dims) && all(dim(slot(object, name) == dims))
+  dim_check <- length(dim_i) == length(dims) && all(dim(slot(object, name)) == dims)
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
@@ -455,8 +455,6 @@ check_numeric2nsim <- function(object, name, nsim) {
   }
 
   if (length(slot(object, name)) == 1) slot(object, name) <- rep(slot(object, name), nsim)
-
-  dim_check <- all(dim(slot(object, name) == c(nsim, maxage, years)))
   if (length(slot(object, name)) != nsim) {
     stop(paste0(object_name, "@", name, " needs to length nsim (", nsim, ")"))
   }

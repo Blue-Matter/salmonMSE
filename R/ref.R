@@ -16,7 +16,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
   SRR <- make_SRR(SOM)
 
   if (missing(rel_F)) {
-    rel_F <- c(SOM@u_preterminal, SOM@u_terminal)
+    rel_F <- c(SOM@Harvest@u_preterminal, SOM@Harvest@u_terminal)
     rel_F <- rel_F/max(rel_F)
   }
 
@@ -25,15 +25,15 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
   val <- sapply(1:SOM@nsim, function(x) {
     opt <- optimize(
       .calc_eq, interval = c(1e-8, 3),
-      Mjuv = SOM@Mjuv_NOS[x, , y], fec = SOM@fec, p_female = SOM@p_female, rel_F = rel_F,
-      vulPT = SOM@vulPT, vulT = SOM@vulT, p_mature = SOM@p_mature[x, , y], s_enroute = 1,
+      Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
+      vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
       SRRpars = SRR$SRRpars[x, ],
       maximum = TRUE
     )
     ref <- .calc_eq(
       .F = opt$maximum,
-      Mjuv = SOM@Mjuv_NOS[x, , y], fec = SOM@fec, p_female = SOM@p_female, rel_F = rel_F,
-      vulPT = SOM@vulPT, vulT = SOM@vulT, p_mature = SOM@p_mature[x, , y], s_enroute = 1,
+      Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
+      vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
       SRRpars = SRR$SRRpars[x, ], opt = FALSE
     ) %>% unlist()
 
@@ -51,8 +51,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       opt_Sgen <- try(
         uniroot(
           .calc_Sgen, interval = c(1, 100) * opt$maximum,
-          Mjuv = SOM@Mjuv_NOS[x, , y], fec = SOM@fec, p_female = SOM@p_female, rel_F = rel_F,
-          vulPT = SOM@vulPT, vulT = SOM@vulT, p_mature = SOM@p_mature[x, , y], s_enroute = 1,
+          Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
+          vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
           SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
         ),
         silent = TRUE
@@ -63,8 +63,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       } else {
         Sgen_out <- .calc_Sgen(
           .F = opt_Sgen$root,
-          Mjuv = SOM@Mjuv_NOS[x, , y], fec = SOM@fec, p_female = SOM@p_female, rel_F = rel_F,
-          vulPT = SOM@vulPT, vulT = SOM@vulT, p_mature = SOM@p_mature[x, , y], s_enroute = 1,
+          Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
+          vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
           SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
         )
 

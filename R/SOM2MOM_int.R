@@ -15,7 +15,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   Stock@Name <- paste(ifelse(NOS, "NOS:", "HOS:"), stage)
 
   # Fish spawn at the beginning of the terminal age + 1
-  n_age <- 2 * SOM@maxage + 1
+  n_age <- 2 * SOM@Bio@maxage + 1
   Stock@maxage <- n_age - 1
   nyears <- 2 * SOM@nyears
   proyears <- 2 * SOM@proyears
@@ -72,9 +72,9 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
 
   # Proportion of releases that die (only if there is discarding from mark-selective fishing)
   if (stage == "immature") {
-    Stock@Fdisc <- rep(SOM@release_mort[1], 2)
+    Stock@Fdisc <- rep(SOM@Harvest@release_mort[1], 2)
   } else {
-    Stock@Fdisc <- rep(SOM@release_mort[2], 2)
+    Stock@Fdisc <- rep(SOM@Harvest@release_mort[2], 2)
   }
 
   # Custom pars
@@ -96,9 +96,9 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
     if (NOS) {
-      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mjuv_NOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Bio@Mjuv_NOS
     } else {
-      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Mjuv_HOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- SOM@Hatchery@Mjuv_HOS
     }
   } else if (stage == "return") {
     cpars_bio$M_ageArray[, n_age, ] <- 0.1 # Return does not experience M, n_age should be an empty age class
@@ -107,16 +107,16 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   }
   cpars_bio$M_ageArray[cpars_bio$M_ageArray < .Machine$double.eps] <- .Machine$double.eps
 
-  # Unfished spawners per recruit must be identical between immature and mature NOS populations (for BH..?)
+  # Unfished spawners per recruit must be identical between immature and mature NOS populations (?)
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "escapement") {
-    fec_array <- array(SOM@fec, c(SOM@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
+    fec_array <- array(SOM@Bio@fec, c(SOM@Bio@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
       aperm(c(2, 1, 3))
     age_fec <- seq(3, n_age, 2)
     if (NOS) {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@p_female * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@Bio@p_female * fec_array
     } else {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@p_female * SOM@gamma * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- SOM@Bio@p_female * SOM@Hatchery@gamma * fec_array
     }
   } else {
     cpars_bio$Fec_age[, n_age, ] <- 1
@@ -134,40 +134,40 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   # Escapement needs an initial abundance = 1 in order to generate the smolt production in the first historical year
   if (stage == "escapement" && NOS) cpars_bio$Perr_y[, Stock@maxage + 1] <- 1
 
-  if (length(SOM@HistN) && stage %in% c("immature", "escapement")) {
+  if (length(SOM@Historical@HistN) && stage %in% c("immature", "escapement")) {
     pind <- ifelse(NOS, 1, 2)
 
     # Main historical ts, get deviations in fecundity (escapement) and Perr_y (immature)
     HistPars <- lapply(1:SOM@nsim, function(x) {
 
-      Njuv <- SOM@HistN[x, , , pind]
-      Fjuv <- outer(SOM@vulPT, SOM@HistFPT[x, , pind])
-      Recruit <- Njuv[, 1:SOM@nyears] * exp(-Fjuv) * SOM@p_mature[x, , 1:SOM@nyears]
-      Fterm <- outer(SOM@vulT, SOM@HistFT[x, , pind])
+      Njuv <- SOM@Historical@HistN[x, , , pind]
+      Fjuv <- outer(SOM@Harvest@vulPT, SOM@Historical@HistFPT[x, , pind])
+      Recruit <- Njuv[, 1:SOM@nyears] * exp(-Fjuv) * SOM@Bio@p_mature[x, , 1:SOM@nyears]
+      Fterm <- outer(SOM@Harvest@vulT, SOM@Historical@HistFT[x, , pind])
       SpawnerOM <- Recruit * exp(-Fterm) # Escapement
 
-      if (length(SOM@HistSpawner)) {
-        SpawnerHist <- SOM@HistSpawner[x, , , pind]
+      if (length(SOM@Historical@HistSpawner)) {
+        SpawnerHist <- SOM@Historical@HistSpawner[x, , , pind]
       } else {
         SpawnerHist <- SpawnerOM
       }
 
       if (NOS) {
-        EggOM <- colSums(SpawnerOM * SOM@fec * SOM@p_female)
-        EggHist <- colSums(SpawnerHist * SOM@fec * SOM@p_female)
+        EggOM <- colSums(SpawnerOM * SOM@Bio@fec * SOM@Bio@p_female)
+        EggHist <- colSums(SpawnerHist * SOM@Bio@fec * SOM@Bio@p_female)
       } else {
-        EggOM <- colSums(SpawnerOM * SOM@gamma * SOM@fec * SOM@p_female)
-        EggHist <- colSums(SpawnerHist * SOM@gamma * SOM@fec * SOM@p_female)
+        EggOM <- colSums(SpawnerOM * SOM@Hatchery@gamma * SOM@Bio@fec * SOM@Bio@p_female)
+        EggHist <- colSums(SpawnerHist * SOM@Hatchery@gamma * SOM@Bio@fec * SOM@Bio@p_female)
       }
       fec_ratio <- EggHist/EggOM
       fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
 
       if (NOS) {
         Smolt_pred <- cpars_bio$SRR$SRRfun(EggHist, cpars_bio$SRR$SRRpars[x, ])
-        Smolt_actual <- SOM@HistN[x, 1, , pind]
+        Smolt_actual <- SOM@Historical@HistN[x, 1, , pind]
         dev <- Smolt_actual/c(1, Smolt_pred) # Length nyears + 1, for denominator see Line 165
       } else {
-        dev <- SOM@HistN[x, 1, , pind]
+        dev <- SOM@Historical@HistN[x, 1, , pind]
       }
       dev[is.na(dev)] <- 0
       list(dev = dev, fec_ratio = fec_ratio)
@@ -181,7 +181,7 @@ make_Stock <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
       }) # maxage x nsim
       NPR <- t(survOM)
       age_init <- seq(1, Stock@maxage, 2)[-1]
-      Ninit <- SOM@HistN[, -1, 1, pind]
+      Ninit <- SOM@Historical@HistN[, -1, 1, pind]
       Perr_init <- Ninit/NPR[, rev(age_init)]
       cpars_bio$Perr_y[, rev(age_init)] <- Perr_init
 
@@ -217,7 +217,7 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     "escapement" = "Escapement placeholder"
   )
 
-  n_age <- 2 * SOM@maxage + 1
+  n_age <- 2 * SOM@Bio@maxage + 1
   maxage <- n_age - 1
   nyears <- 2 * SOM@nyears
   proyears <- 2 * SOM@proyears
@@ -230,7 +230,7 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   t1 <- seq(1, nyears, 2)
   t2 <- seq(2, nyears, 2)
 
-  a1 <- seq(1, 2 * SOM@maxage, 2)
+  a1 <- seq(1, 2 * SOM@Bio@maxage, 2)
   a2 <- seq(2, n_age, 2)
 
   Fleet@EffLower <- c(0, 0.1)
@@ -258,14 +258,14 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet$Find <- matrix(0, SOM@nsim, Fleet@nyears) # Escapement experiences zero F
   Find <- ifelse(NOS, 1, 2)
   if (stage == "immature") {
-    if (length(SOM@HistFPT)) {
-      F_hist <- SOM@HistFPT[, , Find]
+    if (length(SOM@Historical@HistFPT)) {
+      F_hist <- SOM@Historical@HistFPT[, , Find]
       cpars_fleet$Find[, t1] <- F_hist
       cpars_fleet$Find[, t2] <- 0
     }
   } else if (stage == "return") {
-    if (length(SOM@HistFT)) {
-      F_hist <- SOM@HistFT[, , Find]
+    if (length(SOM@Historical@HistFT)) {
+      F_hist <- SOM@Historical@HistFT[, , Find]
       cpars_fleet$Find[, t1] <- 0
       cpars_fleet$Find[, t2] <- F_hist
     }
@@ -278,21 +278,21 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
   cpars_fleet$V <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
 
-    if (all(!SOM@vulPT)) {
+    if (all(!SOM@Harvest@vulPT)) {
       # Define dummy selectivity to remove excessive messages about selectivity < 0.01.
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      vulPT <- array(SOM@vulPT, c(SOM@maxage, SOM@nsim, nyears + proyears)) %>%
+      vulPT <- array(SOM@Harvest@vulPT, c(SOM@Bio@maxage, SOM@nsim, nyears + proyears)) %>%
         aperm(c(2, 1, 3))
       cpars_fleet$V[, a1, ] <- vulPT
     }
 
   } else if (stage == "return") {
 
-    if (all(!SOM@vulT)) {
+    if (all(!SOM@Harvest@vulT)) {
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, nyears + proyears)) %>%
+      vulT <- array(SOM@Harvest@vulT, c(SOM@Bio@maxage, SOM@nsim, nyears + proyears)) %>%
         aperm(c(2, 1, 3))
       cpars_fleet$V[, a2, ] <- vulT
     }
@@ -301,13 +301,13 @@ make_Fleet <- function(SOM, NOS = TRUE, stage = c("immature", "return", "escapem
     cpars_fleet$V[, n_age, ] <- 1
   }
 
-  if (SOM@MSF) {
+  if (SOM@Harvest@MSF) {
     cpars_fleet$retA <- cpars_fleet$V
     retAproj <- cpars_fleet$retA[, , nyears + seq(1, proyears)]
     if (NOS) {
       retAproj[] <- .Machine$double.eps
     } else {
-      retAproj[retAproj > 0] <- SOM@m
+      retAproj[retAproj > 0] <- SOM@Hatchery@m
     }
     cpars_fleet$retA[, , nyears + seq(1, proyears)] <- retAproj
   }
@@ -326,7 +326,7 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
 }
 
 make_Stock_objects <- function(SOM) {
-  do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
+  do_hatchery = SOM@Hatchery@n_yearling > 0 || SOM@Hatchery@n_subyearling > 0
 
   Stocks <- list()
   Stocks[[1]] <- make_Stock(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
@@ -342,7 +342,7 @@ make_Stock_objects <- function(SOM) {
 }
 
 make_Fleet_objects <- function(SOM) {
-  do_hatchery = SOM@n_yearling > 0 || SOM@n_subyearling > 0
+  do_hatchery = SOM@Hatchery@n_yearling > 0 || SOM@Hatchery@n_subyearling > 0
 
   Fleets <- list()
   Fleets[[1]] <- make_Fleet(SOM, NOS = TRUE, stage = "immature")   # NOS_juv
@@ -356,3 +356,18 @@ make_Fleet_objects <- function(SOM) {
   }
   return(Fleets)
 }
+
+
+make_stock_index <- function(ns, np_s) {
+  dat <- lapply(1:ns, function(s) {
+    data.frame(
+      s = s,
+      origin = if (np_s[s] == 3) rep("natural", 3) else rep(c("natural", "hatchery"), each = 3),
+      stage = rep(c("juvenile", "recruitment", "escapement"), times = ifelse(np_s[s] == 3, 1, 2))
+    )
+  }) %>%
+    bind_rows()
+  dat$p <- 1:nrow(dat)
+  return(dat)
+}
+

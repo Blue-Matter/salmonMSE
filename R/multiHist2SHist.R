@@ -9,7 +9,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
   if (check) SOM <- check_SOM(SOM)
 
   ns <- 1 # Number of stocks
-  nage <- SOM@maxage
+  nage <- SOM@Bio@maxage
 
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@nyears))
@@ -33,8 +33,8 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
   t1 <- seq(1, 2 * SOM@nyears, 2)
   t2 <- seq(2, 2 * SOM@nyears, 2)
 
-  a1 <- seq(1, 2 * SOM@maxage + 1, 2)
-  a2 <- seq(2, 2 * SOM@maxage + 1, 2)
+  a1 <- seq(1, 2 * SOM@Bio@maxage + 1, 2)
+  a2 <- seq(2, 2 * SOM@Bio@maxage + 1, 2)
 
   a_imm <- a1[-length(a1)]
   a_return <- a2
@@ -63,31 +63,31 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
   DT_NOS[, ns, ] <- apply(multiHist[[p_NOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
 
   # Harvest rate from kept catch
-  vulPT <- array(SOM@vulPT, c(SOM@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+  vulPT <- array(SOM@Harvest@vulPT, c(SOM@Bio@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
   NOS_imm_a <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
   vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
   UPT_NOS[, ns, ] <- KPT_NOS[, ns, ]/vulNOS_imm
   UPT_NOS[is.na(UPT_NOS)] <- 0
 
-  vulT <- array(SOM@vulT, c(SOM@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
+  vulT <- array(SOM@Harvest@vulT, c(SOM@Bio@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
   NOS_ret_a <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
   vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
   UT_NOS[, ns, ] <- KT_NOS[, ns, ]/vulNOS_ret
   UT_NOS[is.na(UT_NOS)] <- 0
 
   # Exploitation rate from kept + dead discards (DD)
-  DDPT_NOS <- SOM@release_mort[1] * DPT_NOS[, ns, ]
+  DDPT_NOS <- SOM@Harvest@release_mort[1] * DPT_NOS[, ns, ]
   ExPT_NOS[, ns, ] <- (KPT_NOS[, ns, ] + DDPT_NOS)/vulNOS_imm
   ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
-  DDT_NOS <- SOM@release_mort[2] * DT_NOS[, ns, ]
+  DDT_NOS <- SOM@Harvest@release_mort[2] * DT_NOS[, ns, ]
   ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/vulNOS_ret
   ExT_NOS[is.na(ExT_NOS)] <- 0
 
   Egg_NOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
   Smolt[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
 
-  do_hatchery <- SOM@n_subyearling > 0 || SOM@n_yearling > 0
+  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
   if (do_hatchery) {
     # HOS state variables from MMSE object
     p_HOS_imm <- 4
@@ -118,11 +118,11 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
     UT_HOS[is.na(UT_HOS)] <- 0
 
     # Exploitation rate from kept + dead discards (DD)
-    DDPT_HOS <- SOM@release_mort[1] * DPT_HOS[, ns, ]
+    DDPT_HOS <- SOM@Harvest@release_mort[1] * DPT_HOS[, ns, ]
     ExPT_HOS[, ns, ] <- (KPT_HOS[, ns, ] + DDPT_HOS)/vulHOS_imm
     ExPT_HOS[is.na(ExPT_HOS)] <- 0
 
-    DDT_HOS <- SOM@release_mort[2] * DT_HOS[, ns, ]
+    DDT_HOS <- SOM@Harvest@release_mort[2] * DT_HOS[, ns, ]
     ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/vulHOS_ret
     ExT_HOS[is.na(ExT_HOS)] <- 0
 

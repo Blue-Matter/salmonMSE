@@ -75,18 +75,18 @@ calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricke
 
 make_SRR <- function(SOM) {
 
-  a <- SOM@kappa/SOM@phi
-  if (SOM@SRrel == "BH") {
-    b <- a/SOM@capacity_smolt
+  a <- SOM@Bio@kappa/SOM@Bio@phi
+  if (SOM@Bio@SRrel == "BH") {
+    b <- a/SOM@Bio@capacity_smolt
     SRRpars <- data.frame(
-      a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel, kappa = SOM@kappa,
-      capacity_smolt = SOM@capacity_smolt, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
+      a = a, b = b, phi = SOM@Bio@phi, SPRcrash = 1/a/SOM@Bio@phi, SRrel = SOM@Bio@SRrel, kappa = SOM@Bio@kappa,
+      capacity_smolt = SOM@Bio@capacity_smolt, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
     )
   } else {
     b <- 1/SOM@Smax
     SRRpars <- data.frame(
-      a = a, b = b, phi = SOM@phi, SPRcrash = 1/a/SOM@phi, SRrel = SOM@SRrel, kappa = SOM@kappa,
-      Smax = SOM@Smax, kappa_improve = SOM@kappa_improve, capacity_smolt_improve = SOM@capacity_smolt_improve
+      a = a, b = b, phi = SOM@Bio@phi, SPRcrash = 1/a/SOM@Bio@phi, SRrel = SOM@Bio@SRrel, kappa = SOM@Bio@kappa,
+      Smax = SOM@Bio@Smax, kappa_improve = SOM@Habitat@kappa_improve, capacity_smolt_improve = SOM@Habitat@capacity_smolt_improve
     )
   }
   SRRfun <- function(SB, SRRpars) {
