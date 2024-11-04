@@ -26,15 +26,9 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   SOM <- check_SOM(SOM, silent = silent)
   MOM <- SOM2MOM(SOM, check = FALSE)
 
-  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
+  #do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
 
-  HMMP <- make_Harvest_MMP(
-    SOM@Harvest@u_terminal,
-    SOM@Harvest@u_preterminal,
-    SOM@Harvest@MSF,
-    SOM@Hatchery@m,
-    ifelse(do_hatchery, 0, SOM@Harvest@release_mort)
-  )
+  HMMP <- make_Harvest_MMP(SOM, check = FALSE)
 
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()
@@ -58,16 +52,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   if (!silent) message("Running forward projections..")
 
   # Initialize zbar in data frame
-  if (do_hatchery && any(SOM@Hatchery@fitness_type == "Ford")) {
-    zbar_start <- reshape2::melt(SOM@Hatchery@zbar_start)
-    salmonMSE_env$Ford <- data.frame(
-      x = zbar_start$Var1,
-      p_smolt = 1,
-      t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
-      type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
-      zbar = zbar_start$value
-    )
-  }
+  salmonMSE_env$Ford <- initialize_zbar(SOM)
 
   M <- ProjectMOM(H, MPs = "HMMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
                   dropHist = TRUE, extended = FALSE)
@@ -93,3 +78,30 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   }
 
 }
+
+initialize_zbar <- function(SOM) {
+  pindex <- make_stock_index(SOM)
+  ns <- length(SOM@Bio)
+
+  zbar_df <- lapply(1:ns, function(s) {
+    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+
+    if (do_hatchery && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
+
+      zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
+      data.frame(
+        x = zbar_start$Var1,
+        p_smolt = pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"],
+        t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
+        type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
+        zbar = zbar_start$value
+      )
+
+    } else {
+      data.frame()
+    }
+  })
+
+  return(bind_rows(zbar_df))
+}
+

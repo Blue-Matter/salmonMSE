@@ -8,6 +8,8 @@
 #' - [make_Fleet()] creates the \linkS4class{Fleet} object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
 #' - [multiHist2SHist()] converts the openMSE historical reconstruction into a salmon Hist object (\linkS4class{SHist})
 #' - [MMSE2SMSE()] converts the openMSE projection output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
+#' - [make_Harvest_MMP()] creates a multi-stock management procedure for the harvest component of the operating model by
+#' specifying exploitation rates through updating the formal arguments for [Harvest_MMP()]
 #'
 #' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
 #'
@@ -64,7 +66,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   # Ignore Complexes for now
 
   # Specify smolt natural production from NOS population
-  pindex <- make_stock_index(ns, np_s)
+  pindex <- .make_stock_index(ns, np_s)
   SSBfrom <- matrix(0, np, np)
   for (s in 1:ns) {
     # Juv NOS predicted from NOS escapement

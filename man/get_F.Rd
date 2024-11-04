@@ -15,9 +15,9 @@ get_F(u = 0, M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20)
 
 \item{vul}{Vulnerability}
 
-\item{ret}{Retention rate, between 0-1}
+\item{ret}{Retention rate}
 
-\item{release_mort}{Release mortality as a proportion, between 0-1. Only relevant if \code{ret < 1}}
+\item{release_mort}{Release mortality as a proportion, between 0-1. Only relevant if \code{ret < 1}.}
 
 \item{Fmax}{Maximum allowable value of F}
 }

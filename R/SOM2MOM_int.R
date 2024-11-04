@@ -367,8 +367,17 @@ make_Fleet_objects <- function(SOM, s = 1) {
   return(Fleets)
 }
 
+make_stock_index <- function(SOM, check = FALSE) {
+  if (check) SOM <- check_SOM(SOM)
+  ns <- length(SOM@Bio)
+  np_s <- sapply(1:ns, function(s) {
+    do_hatchery <- SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+    ifelse(do_hatchery, 6, 3)
+  })
+  .make_stock_index(ns, np_s)
+}
 
-make_stock_index <- function(ns, np_s) {
+.make_stock_index <- function(ns, np_s) {
   dat <- lapply(1:ns, function(s) {
     data.frame(
       s = s,
