@@ -13,69 +13,88 @@
 #' @export
 calc_ref <- function(SOM, rel_F, check = TRUE) {
   if (check) SOM <- check_SOM(SOM)
-  SRR <- make_SRR(SOM)
 
-  if (missing(rel_F)) {
-    rel_F <- c(SOM@Harvest@u_preterminal, SOM@Harvest@u_terminal)
-    rel_F <- rel_F/max(rel_F)
-  }
+  ns <- length(SOM@Bio)
 
   y <- SOM@nyears + SOM@proyears
 
-  val <- sapply(1:SOM@nsim, function(x) {
-    opt <- optimize(
-      .calc_eq, interval = c(1e-8, 3),
-      Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
-      vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
-      SRRpars = SRR$SRRpars[x, ],
-      maximum = TRUE
-    )
-    ref <- .calc_eq(
-      .F = opt$maximum,
-      Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
-      vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
-      SRRpars = SRR$SRRpars[x, ], opt = FALSE
-    ) %>% unlist()
+  if (missing(rel_F)) {
+    rel_F_s <- lapply(1:ns, function(s) {
+      x <- c(SOM@Harvest[[s]]@u_preterminal, SOM@Harvest[[s]]@u_terminal)
+      x/max(x)
+    })
+  } else {
+    rel_F_s <- lapply(1:ns, function(...) rel_F)
+  }
 
-    names(ref) <- paste0(names(ref), "_MSY")
-    if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
-    if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
+  ref_s <- lapply(1:ns, function(s) {
+    SRR <- make_SRR(SOM@Bio[[s]], SOM@Habitat[[s]])
 
-    if (any(ref < 0, na.rm = TRUE)) {
+    Mjuv_NOS <- SOM@Bio[[s]]@Mjuv_NOS
+    fec <- SOM@Bio[[s]]@fec
+    p_female <- SOM@Bio[[s]]@p_female
+    vulPT <- SOM@Harvest[[s]]@vulPT
+    vulT <- SOM@Harvest[[s]]@vulT
+    p_mature <- SOM@Bio[[s]]@p_mature
 
-      ref[!is.na(ref)] <- 0
-      ref["Sgen"] <- 0
-
-    } else {
-
-      opt_Sgen <- try(
-        uniroot(
-          .calc_Sgen, interval = c(1, 100) * opt$maximum,
-          Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
-          vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
-          SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
-        ),
-        silent = TRUE
+    val <- sapply(1:SOM@nsim, function(x) {
+      opt <- optimize(
+        .calc_eq, interval = c(1e-8, 3),
+        Mjuv = Mjuv_NOS[x, , y], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+        vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+        SRRpars = SRR$SRRpars[x, ],
+        maximum = TRUE
       )
+      ref <- .calc_eq(
+        .F = opt$maximum,
+        Mjuv = Mjuv_NOS[x, , y], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+        vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+        SRRpars = SRR$SRRpars[x, ], opt = FALSE
+      ) %>% unlist()
 
-      if (is.character(opt_Sgen)) {
-        ref["Sgen"] <- NA
+      names(ref) <- paste0(names(ref), "_MSY")
+      if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
+      if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
+
+      if (any(ref < 0, na.rm = TRUE)) {
+
+        ref[!is.na(ref)] <- 0
+        ref["Sgen"] <- 0
+
       } else {
-        Sgen_out <- .calc_Sgen(
-          .F = opt_Sgen$root,
-          Mjuv = SOM@Bio@Mjuv_NOS[x, , y], fec = SOM@Bio@fec, p_female = SOM@Bio@p_female, rel_F = rel_F,
-          vulPT = SOM@Harvest@vulPT, vulT = SOM@Harvest@vulT, p_mature = SOM@Bio@p_mature[x, , y], s_enroute = 1,
-          SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
+
+        opt_Sgen <- try(
+          uniroot(
+            .calc_Sgen, interval = c(1, 100) * opt$maximum,
+            Mjuv = Mjuv_NOS[x, , y], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+            vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+            SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
+          ),
+          silent = TRUE
         )
 
-        ref["Sgen"] <- sum(Sgen_out$Spawners)
-      }
+        if (is.character(opt_Sgen)) {
+          ref["Sgen"] <- NA
+        } else {
+          Sgen_out <- .calc_Sgen(
+            .F = opt_Sgen$root,
+            Mjuv = Mjuv_NOS[x, , y], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+            vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+            SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
+          )
 
-    }
-    return(ref)
+          ref["Sgen"] <- sum(Sgen_out$Spawners)
+        }
+
+      }
+      return(ref)
+    })
+
+    return(val)
+
   })
 
-  return(val)
+  return(ref_s)
 }
 
 

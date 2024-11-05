@@ -9,8 +9,8 @@
 #' `MMSE2SMSE`: \linkS4class{SMSE} object
 #' @export
 MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
-  ns <- 1 # Number of stocks
-  nage <- SOM@Bio@maxage
+  ns <- length(SOM@Bio) # Number of stocks
+  nage <- SOM@Bio[[1]]@maxage
 
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
@@ -31,17 +31,12 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
   Mjuv_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
 
-  # NOS state variables from MMSE object
-  p_NOS_imm <- 1
-  p_NOS_return <- 2 # MSEtool population index for returning NOS
-  p_NOS_escapement <- 3 # NOS escapement
-
   # openMSE year and age indices
   t1 <- seq(1, 2 * SOM@proyears, 2)
   t2 <- seq(2, 2 * SOM@proyears, 2)
 
-  a1 <- seq(1, 2 * SOM@Bio@maxage + 1, 2)
-  a2 <- seq(2, 2 * SOM@Bio@maxage + 1, 2)
+  a1 <- seq(1, 2 * nage + 1, 2)
+  a2 <- seq(2, 2 * nage + 1, 2)
 
   a_imm <- a1[-length(a1)]
   a_return <- a2
@@ -50,142 +45,153 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   f <- 1 # Fleet
   mp <- 1 # Only MP run per OM
 
-  y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0) # Odd time steps, indicated by presence of escapement
-  if (y_spawnOM[1] == 1) {
-    y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
-  }
-  y_spawn <- 0.5 * (y_spawnOM - 1)
+  pindex <- make_stock_index(SOM)
 
-  Njuv_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
-  Return_NOS[, ns, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-  Escapement_NOS[, ns, , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
+  # Loop over s
+  for (s in 1:ns) {
 
-  # Kept catch
-  KPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
-  KT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]
+    # NOS state variables from MMSE object
+    p_NOS_imm <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]
+    p_NOS_return <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "recruitment"] # MSEtool population index for returning NOS
+    p_NOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"] # NOS escapement
 
-  # Total discards (live + dead)
-  DPT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_imm, f, mp, t1] - MMSE@Catch[, p_NOS_imm, f, mp, t1]
-  DT_NOS[, ns, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
+    y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0) # Odd time steps, indicated by presence of escapement
+    if (y_spawnOM[1] == 1) {
+      y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
+    }
+    y_spawn <- 0.5 * (y_spawnOM - 1)
 
-  # Harvest rate from kept catch
-  vulPT <- array(SOM@Harvest@vulPT, c(SOM@Bio@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
-  NOS_imm_a <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
-  vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
-  UPT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/vulNOS_imm
-  UPT_NOS[is.na(UPT_NOS)] <- 0
-
-  vulT <- array(SOM@Harvest@vulT, c(SOM@Bio@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
-  NOS_ret_a <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-  vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
-  UT_NOS[, ns, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/vulNOS_ret
-  UT_NOS[is.na(UT_NOS)] <- 0
-
-  # Exploitation rate from kept + dead discards (DD)
-  DDPT_NOS <- SOM@Harvest@release_mort[1] * DPT_NOS[, ns, ]
-  ExPT_NOS[, ns, ] <- (KPT_NOS[, ns, ] + DDPT_NOS)/vulNOS_imm
-  ExPT_NOS[is.na(ExPT_NOS)] <- 0
-
-  DDT_NOS <- SOM@Harvest@release_mort[2] * DT_NOS[, ns, ]
-  ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/vulNOS_ret
-  ExT_NOS[is.na(ExT_NOS)] <- 0
-
-  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
-  if (do_hatchery) {
-    # HOS state variables from MMSE object
-    p_HOS_imm <- 4
-    p_HOS_return <- 5 # Population index for returning HOS
-    p_HOS_escapement <- 6 # NOS escapement
-
-    Njuv_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
-    Return_HOS[, ns, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
-    Escapement_HOS[, ns, , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
+    Njuv_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
+    Return_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
+    Escapement_NOS[, s, , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
 
     # Kept catch
-    KPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
-    KT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]
+    KPT_NOS[, s, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
+    KT_NOS[, s, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]
 
     # Total discards (live + dead)
-    DPT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_imm, f, mp, t1] - MMSE@Catch[, p_HOS_imm, f, mp, t1]
-    DT_HOS[, ns, ] <- MMSE@Removals[, p_HOS_return, f, mp, t2] - MMSE@Catch[, p_HOS_return, f, mp, t2]
+    DPT_NOS[, s, ] <- MMSE@Removals[, p_NOS_imm, f, mp, t1] - MMSE@Catch[, p_NOS_imm, f, mp, t1]
+    DT_NOS[, s, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
 
     # Harvest rate from kept catch
-    HOS_imm_a <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
-    vulHOS_imm <- apply(vulPT * HOS_imm_a, c(1, 3), sum)
-    UPT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]/vulHOS_imm
-    UPT_HOS[is.na(UPT_HOS)] <- 0
+    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(nage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+    NOS_imm_a <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
+    vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
+    UPT_NOS[, s, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/vulNOS_imm
+    UPT_NOS[is.na(UPT_NOS)] <- 0
 
-    HOS_ret_a <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
-    vulHOS_ret <- apply(vulT * HOS_ret_a, c(1, 3), sum)
-    UT_HOS[, ns, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/vulHOS_ret
-    UT_HOS[is.na(UT_HOS)] <- 0
+    vulT <- array(SOM@Harvest[[s]]@vulT, c(nage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
+    NOS_ret_a <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
+    vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
+    UT_NOS[, s, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/vulNOS_ret
+    UT_NOS[is.na(UT_NOS)] <- 0
 
     # Exploitation rate from kept + dead discards (DD)
-    DDPT_HOS <- SOM@Harvest@release_mort[1] * DPT_HOS[, ns, ]
-    ExPT_HOS[, ns, ] <- (KPT_HOS[, ns, ] + DDPT_HOS)/vulHOS_imm
-    ExPT_HOS[is.na(ExPT_HOS)] <- 0
+    DDPT_NOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_NOS[, s, ]
+    ExPT_NOS[, s, ] <- (KPT_NOS[, s, ] + DDPT_NOS)/vulNOS_imm
+    ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
-    DDT_HOS <- SOM@Harvest@release_mort[2] * DT_HOS[, ns, ]
-    ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/vulHOS_ret
-    ExT_HOS[is.na(ExT_HOS)] <- 0
+    DDT_NOS <- SOM@Harvest[[s]]@release_mort[2] * DT_NOS[, s, ]
+    ExT_NOS[, s, ] <- (KT_NOS[, s, ] + DDT_NOS)/vulNOS_ret
+    ExT_NOS[is.na(ExT_NOS)] <- 0
 
-    # NOS + HOS state variables from salmonMSE
-    ngen <- length(unique(salmonMSE_env$N$t))
-    if (length(y_spawn) != ngen) warning("Number of generations in salmonMSE state variables does not match generations in openMSE")
+    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    if (do_hatchery) {
 
-    NOS[, ns, y_spawn] <- get_salmonMSE_var(N, var = "NOS")
-    Egg_NOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "Egg_NOS")
-    Smolt_NOS[, ns, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_NOS")
+      # HOS state variables from MMSE object
+      p_HOS_imm <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
+      p_HOS_return <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "recruitment"] # MSEtool population index for returning HOS
+      p_HOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "escapement"] # HOS escapement
 
-    HOS[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOS")
-    HOS_effective[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOS_effective")
+      Njuv_HOS[, s, , ] <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
+      Return_HOS[, s, , ] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
+      Escapement_HOS[, s, , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
 
-    Egg_HOS[, ns, y_spawn] <- get_salmonMSE_var(state, var = "Egg_HOS")
-    Smolt_HOS[, ns, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_HOS")
+      # Kept catch
+      KPT_HOS[, s, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]
+      KT_HOS[, s, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]
 
-    # Broodtake & fitness
-    NOB[, ns, y_spawn] <- get_salmonMSE_var(N, var = "NOB")
-    HOB[, ns, y_spawn] <- get_salmonMSE_var(N, var = "HOB")
+      # Total discards (live + dead)
+      DPT_HOS[, s, ] <- MMSE@Removals[, p_HOS_imm, f, mp, t1] - MMSE@Catch[, p_HOS_imm, f, mp, t1]
+      DT_HOS[, s, ] <- MMSE@Removals[, p_HOS_return, f, mp, t2] - MMSE@Catch[, p_HOS_return, f, mp, t2]
 
-    fitness[, ns, 1, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_natural")
-    fitness[, ns, 2, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_hatchery")
+      # Harvest rate from kept catch
+      HOS_imm_a <- apply(MMSE@N[, p_HOS_imm, a_imm, mp, t1, ], 1:3, sum)
+      vulHOS_imm <- apply(vulPT * HOS_imm_a, c(1, 3), sum)
+      UPT_HOS[, s, ] <- MMSE@Catch[, p_HOS_imm, f, mp, t1]/vulHOS_imm
+      UPT_HOS[is.na(UPT_HOS)] <- 0
 
-    # Smolt releases and SAR loss from openMSE
-    p_smolt_rel <- 4
-    a_smolt <- 1
+      HOS_ret_a <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, ], 1:3, sum)
+      vulHOS_ret <- apply(vulT * HOS_ret_a, c(1, 3), sum)
+      UT_HOS[, s, ] <- MMSE@Catch[, p_HOS_return, f, mp, t2]/vulHOS_ret
+      UT_HOS[is.na(UT_HOS)] <- 0
 
-    smolt_rel_openmse <- apply(MMSE@N[, p_smolt_rel, a_smolt, mp, y_spawnOM, ], 1:2, sum)
-    smolt_rel_salmonmse <- get_salmonMSE_var(state, var = "smolt_rel")
-    Smolt_Rel[, ns, y_spawn + 1] <- smolt_rel_openmse
+      # Exploitation rate from kept + dead discards (DD)
+      DDPT_HOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_HOS[, s, ]
+      ExPT_HOS[, s, ] <- (KPT_HOS[, s, ] + DDPT_HOS)/vulHOS_imm
+      ExPT_HOS[is.na(ExPT_HOS)] <- 0
 
-    p_smolt <- 1
-    Mjuv_loss[, ns, , ] <- MMSE@Misc$MICE$M_ageArray[, p_smolt, a2, mp, t2]
+      DDT_HOS <- SOM@Harvest[[s]]@release_mort[2] * DT_HOS[, s, ]
+      ExT_HOS[, s, ] <- (KT_HOS[, s, ] + DDT_HOS)/vulHOS_ret
+      ExT_HOS[is.na(ExT_HOS)] <- 0
 
-    pNOB[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pNOB")
-    pHOS_effective[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOSeff")
-    pHOS_census[, ns, y_spawn] <- get_salmonMSE_var(state, var = "pHOScensus")
+      # NOS + HOS state variables from salmonMSE
+      ngen <- length(unique(salmonMSE_env$N$t))
+      if (length(y_spawn) != ngen) warning("Number of generations in salmonMSE state variables does not match generations in openMSE")
 
-    PNI[, ns, y_spawn] <- pNOB[, ns, y_spawn]/(pNOB[, ns, y_spawn] + pHOS_effective[, ns, y_spawn]) # Withler et al. 2018, page 17
+      NOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOS", p_smolt = p_NOS_imm)
+      Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(state, var = "Egg_NOS", p_smolt = p_NOS_imm)
+      Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_NOS", p_smolt = p_NOS_imm)
 
-    NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, SOM@Bio@maxage, SOM@proyears))
-    NOS_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "NOS")
-    HOScensus_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "HOS")
+      HOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "HOS", p_smolt = p_NOS_imm)
+      HOS_effective[, s, y_spawn] <- get_salmonMSE_var(N, var = "HOS_effective", p_smolt = p_NOS_imm)
 
-    p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@Bio@fec, SOM@Hatchery@gamma)
+      Egg_HOS[, s, y_spawn] <- get_salmonMSE_var(state, var = "Egg_HOS", p_smolt = p_NOS_imm)
+      Smolt_HOS[, ns, y_spawn + 1] <- get_salmonMSE_var(state, var = "smolt_HOS", p_smolt = p_NOS_imm)
 
-  } else {
-    # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
-    NOS[] <- apply(Escapement_NOS, c(1, 2, 4), sum)
+      # Broodtake & fitness
+      NOB[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOB", p_smolt = p_NOS_imm)
+      HOB[, s, y_spawn] <- get_salmonMSE_var(N, var = "HOB", p_smolt = p_NOS_imm)
 
-    p_smolt <- 1 # MSEtool population index for immature NOS
-    p_spawn <- 3 # NOS escapement
-    a_smolt <- 1
+      fitness[, s, 1, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_natural", p_smolt = p_NOS_imm)
+      fitness[, s, 2, y_spawn + 1] <- get_salmonMSE_var(state, var = "fitness_hatchery", p_smolt = p_NOS_imm)
 
-    Egg_NOS[, ns, y_spawn] <- MMSE@SSB[, p_spawn, mp, y_spawnOM] # -1 from 1-year lag
-    Smolt_NOS[, ns, y_spawn + 1] <- apply(MMSE@N[, p_smolt, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+      # Smolt releases and SAR loss from openMSE
+      a_smolt <- 1
 
-    PNI[, ns, y_spawn] <- p_wild[, ns, y_spawn] <- 1
-    pHOS_census[, ns, y_spawn] <- pHOS_effective[, ns, y_spawn] <- 0
+      smolt_rel_openmse <- apply(MMSE@N[, p_HOS_imm, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+      #smolt_rel_salmonmse <- get_salmonMSE_var(state, var = "smolt_rel", p_smolt = p_NOS_imm) # debugging purposes
+      Smolt_Rel[, s, y_spawn + 1] <- smolt_rel_openmse
+
+      if (!is.null(MMSE@Misc$MICE$M_ageArray)) {
+        Mjuv_loss[, s, , ] <- MMSE@Misc$MICE$M_ageArray[, p_NOS_imm, a2, mp, t2]
+      }
+
+      pNOB[, s, y_spawn] <- get_salmonMSE_var(state, var = "pNOB", p_smolt = p_NOS_imm)
+      pHOS_effective[, s, y_spawn] <- get_salmonMSE_var(state, var = "pHOSeff", p_smolt = p_NOS_imm)
+      pHOS_census[, s, y_spawn] <- get_salmonMSE_var(state, var = "pHOScensus", p_smolt = p_NOS_imm)
+
+      PNI[, s, y_spawn] <- pNOB[, s, y_spawn]/(pNOB[, s, y_spawn] + pHOS_effective[, s, y_spawn]) # Withler et al. 2018, page 17
+
+      NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
+      NOS_a[, s, , y_spawn] <- get_salmonMSE_agevar(N, "NOS", p_smolt = p_NOS_imm)
+      HOScensus_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "HOS", p_smolt = p_NOS_imm)
+
+      p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
+
+    } else {
+      # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
+      NOS[, s, ] <- apply(Escapement_NOS[, s, , ], c(1, 3), sum)
+
+      a_smolt <- 1
+
+      Egg_NOS[, s, y_spawn] <- MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM] # -1 from 1-year lag
+      Smolt_NOS[, s, y_spawn + 1] <- apply(MMSE@N[, p_NOS_imm, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+
+      PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
+      pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
+    }
+
   }
 
   SMSE <- new(
@@ -195,7 +201,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     proyears = SOM@proyears,
     nsim = SOM@nsim,
     nstocks = ns,
-    Snames = "Single CU with hatchery",
+    Snames = sapply(1:ns, function(s) if (length(SOM@Bio[[s]]@Name)) SOM@Bio[[s]]@Name else paste("Population", s)),
     Egg_NOS = Egg_NOS,
     Egg_HOS = Egg_HOS,
     Smolt_NOS = Smolt_NOS,

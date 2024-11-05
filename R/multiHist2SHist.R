@@ -8,8 +8,8 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
   if (check) SOM <- check_SOM(SOM)
 
-  ns <- 1 # Number of stocks
-  nage <- SOM@Bio@maxage
+  ns <- length(SOM@Bio) # Number of stocks
+  nage <- SOM@Bio[[1]]@maxage
 
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@nyears))
@@ -24,17 +24,12 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@nyears))
 
-  # NOS state variables from MMSE object
-  p_NOS_imm <- 1
-  p_NOS_return <- 2 # MSEtool population index for returning NOS
-  p_NOS_escapement <- 3 # NOS escapement
-
   # openMSE year and age indices
   t1 <- seq(1, 2 * SOM@nyears, 2)
   t2 <- seq(2, 2 * SOM@nyears, 2)
 
-  a1 <- seq(1, 2 * SOM@Bio@maxage + 1, 2)
-  a2 <- seq(2, 2 * SOM@Bio@maxage + 1, 2)
+  a1 <- seq(1, 2 * nage + 1, 2)
+  a2 <- seq(2, 2 * nage + 1, 2)
 
   a_imm <- a1[-length(a1)]
   a_return <- a2
@@ -43,91 +38,103 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
   f <- 1 # Fleet
 
-  y_spawnOM <- which(rowSums(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[1, , ]) > 0)
+  pindex <- make_stock_index(SOM)
 
-  # Reported spawning is delayed by one year
-  t1_sp <- t1[-1]
-  t2_sp <- t2[-1]
-  y_spawn <- 0.5 * (y_spawnOM - 1)
+  for (s in 1:ns) {
 
-  Njuv_NOS[, ns, , ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-  Return_NOS[, ns, , ] <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-  Escapement_NOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
+    # NOS state variables from MMSE object
+    p_NOS_imm <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]
+    p_NOS_return <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "recruitment"] # MSEtool population index for returning NOS
+    p_NOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"] # NOS escapement
 
-  # Kept catch
-  KPT_NOS[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
-  KT_NOS[, ns, ] <- apply(multiHist[[p_NOS_return]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
+    y_spawnOM <- which(rowSums(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[1, , ]) > 0)
 
-  # Total discards (live + dead)
-  DPT_NOS[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
-  DT_NOS[, ns, ] <- apply(multiHist[[p_NOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
+    # Reported spawning is delayed by one year
+    t1_sp <- t1[-1]
+    t2_sp <- t2[-1]
+    y_spawn <- 0.5 * (y_spawnOM - 1)
 
-  # Harvest rate from kept catch
-  vulPT <- array(SOM@Harvest@vulPT, c(SOM@Bio@maxage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
-  NOS_imm_a <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-  vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
-  UPT_NOS[, ns, ] <- KPT_NOS[, ns, ]/vulNOS_imm
-  UPT_NOS[is.na(UPT_NOS)] <- 0
-
-  vulT <- array(SOM@Harvest@vulT, c(SOM@Bio@maxage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
-  NOS_ret_a <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-  vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
-  UT_NOS[, ns, ] <- KT_NOS[, ns, ]/vulNOS_ret
-  UT_NOS[is.na(UT_NOS)] <- 0
-
-  # Exploitation rate from kept + dead discards (DD)
-  DDPT_NOS <- SOM@Harvest@release_mort[1] * DPT_NOS[, ns, ]
-  ExPT_NOS[, ns, ] <- (KPT_NOS[, ns, ] + DDPT_NOS)/vulNOS_imm
-  ExPT_NOS[is.na(ExPT_NOS)] <- 0
-
-  DDT_NOS <- SOM@Harvest@release_mort[2] * DT_NOS[, ns, ]
-  ExT_NOS[, ns, ] <- (KT_NOS[, ns, ] + DDT_NOS)/vulNOS_ret
-  ExT_NOS[is.na(ExT_NOS)] <- 0
-
-  Egg_NOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
-  Smolt[, ns, ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
-
-  do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
-  if (do_hatchery) {
-    # HOS state variables from MMSE object
-    p_HOS_imm <- 4
-    p_HOS_return <- 5 # Population index for returning HOS
-    p_HOS_escapement <- 6 # NOS escapement
-
-    Njuv_HOS[, ns, , ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-    Return_HOS[, ns, , ] <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-    Escapement_HOS[, ns, , 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
+    Njuv_NOS[, s, , ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
+    Return_NOS[, s, , ] <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
+    Escapement_NOS[, s, , 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
 
     # Kept catch
-    KPT_HOS[, ns, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
-    KT_HOS[, ns, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
+    KPT_NOS[, s, ] <- apply(multiHist[[p_NOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
+    KT_NOS[, s, ] <- apply(multiHist[[p_NOS_return]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
 
     # Total discards (live + dead)
-    DPT_HOS[, ns, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
-    DT_HOS[, ns, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
+    DPT_NOS[, s, ] <- apply(multiHist[[p_NOS_imm]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
+    DT_NOS[, s, ] <- apply(multiHist[[p_NOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
 
     # Harvest rate from kept catch
-    HOS_imm_a <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-    vulHOS_imm <- apply(vulPT * HOS_imm_a, c(1, 3), sum)
-    UPT_HOS[, ns, ] <- KPT_HOS[, ns, ]/vulHOS_imm
-    UPT_HOS[is.na(UPT_HOS)] <- 0
+    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(nage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+    NOS_imm_a <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
+    vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
+    UPT_NOS[, s, ] <- KPT_NOS[, s, ]/vulNOS_imm
+    UPT_NOS[is.na(UPT_NOS)] <- 0
 
-    HOS_ret_a <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_imm, t2, ], 1:3, sum)
-    vulHOS_ret <- apply(vulT * HOS_ret_a, c(1, 3), sum)
-    UT_HOS[, ns, ] <- KT_HOS[, ns, ]/vulHOS_ret
-    UT_HOS[is.na(UT_HOS)] <- 0
+    vulT <- array(SOM@Harvest[[s]]@vulT, c(nage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
+    NOS_ret_a <- apply(multiHist[[p_NOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
+    vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
+    UT_NOS[, s, ] <- KT_NOS[, s, ]/vulNOS_ret
+    UT_NOS[is.na(UT_NOS)] <- 0
 
     # Exploitation rate from kept + dead discards (DD)
-    DDPT_HOS <- SOM@Harvest@release_mort[1] * DPT_HOS[, ns, ]
-    ExPT_HOS[, ns, ] <- (KPT_HOS[, ns, ] + DDPT_HOS)/vulHOS_imm
-    ExPT_HOS[is.na(ExPT_HOS)] <- 0
+    DDPT_NOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_NOS[, s, ]
+    ExPT_NOS[, s, ] <- (KPT_NOS[, s, ] + DDPT_NOS)/vulNOS_imm
+    ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
-    DDT_HOS <- SOM@Harvest@release_mort[2] * DT_HOS[, ns, ]
-    ExT_HOS[, ns, ] <- (KT_HOS[, ns, ] + DDT_HOS)/vulHOS_ret
-    ExT_HOS[is.na(ExT_HOS)] <- 0
+    DDT_NOS <- SOM@Harvest[[s]]@release_mort[2] * DT_NOS[, s, ]
+    ExT_NOS[, s, ] <- (KT_NOS[, s, ] + DDT_NOS)/vulNOS_ret
+    ExT_NOS[is.na(ExT_NOS)] <- 0
 
-    Egg_HOS[, ns, 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
-    Smolt_Rel[, ns, ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
+    Egg_NOS[, s, 1:length(t1_sp)] <- apply(multiHist[[p_NOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
+    Smolt[, s, ] <- apply(multiHist[[p_NOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
+
+    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    if (do_hatchery) {
+
+      # HOS state variables from MMSE object
+      p_HOS_imm <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
+      p_HOS_return <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "recruitment"] # MSEtool population index for returning HOS
+      p_HOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "escapement"] # HOS escapement
+
+      Njuv_HOS[, s, , ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
+      Return_HOS[, s, , ] <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
+      Escapement_HOS[, s, , 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
+
+      # Kept catch
+      KPT_HOS[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
+      KT_HOS[, s, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
+
+      # Total discards (live + dead)
+      DPT_HOS[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
+      DT_HOS[, s, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
+
+      # Harvest rate from kept catch
+      HOS_imm_a <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
+      vulHOS_imm <- apply(vulPT * HOS_imm_a, c(1, 3), sum)
+      UPT_HOS[, s, ] <- KPT_HOS[, s, ]/vulHOS_imm
+      UPT_HOS[is.na(UPT_HOS)] <- 0
+
+      HOS_ret_a <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_imm, t2, ], 1:3, sum)
+      vulHOS_ret <- apply(vulT * HOS_ret_a, c(1, 3), sum)
+      UT_HOS[, s, ] <- KT_HOS[, s, ]/vulHOS_ret
+      UT_HOS[is.na(UT_HOS)] <- 0
+
+      # Exploitation rate from kept + dead discards (DD)
+      DDPT_HOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_HOS[, s, ]
+      ExPT_HOS[, s, ] <- (KPT_HOS[, s, ] + DDPT_HOS)/vulHOS_imm
+      ExPT_HOS[is.na(ExPT_HOS)] <- 0
+
+      DDT_HOS <- SOM@Harvest[[s]]@release_mort[2] * DT_HOS[, s, ]
+      ExT_HOS[, s, ] <- (KT_HOS[, s, ] + DDT_HOS)/vulHOS_ret
+      ExT_HOS[is.na(ExT_HOS)] <- 0
+
+      Egg_HOS[, s, 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
+      Smolt_Rel[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
+    }
+
   }
 
   SHist <- new(
@@ -136,7 +143,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
     nyears = SOM@nyears,
     nsim = SOM@nsim,
     nstocks = ns,
-    Snames = "character",
+    Snames = sapply(1:ns, function(s) if (length(SOM@Bio[[s]]@Name)) SOM@Bio[[s]]@Name else paste("Population", s)),
     Egg_NOS = Egg_NOS,
     Egg_HOS = Egg_HOS,
     Smolt = Smolt,
