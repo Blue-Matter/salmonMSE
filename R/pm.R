@@ -40,7 +40,7 @@ WILD50 <- function(SMSE, Ref = 0.50, Yrs = NULL) {
 SMSY85 <- function(SMSE, Ref = 0.85, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
   NOS <- SMSE@NOS[, , Yrs[1]:Yrs[2], drop = FALSE]
-  SMSY <- SMSE@Misc$Ref["Spawners_MSY", ] # Length = 1 because ns = 1
+  SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
   apply(NOS/SMSY >= Ref, 2, mean, na.rm = TRUE)
 }
 
@@ -49,7 +49,7 @@ SMSY85 <- function(SMSE, Ref = 0.85, Yrs = NULL) {
 Sgen100 <- function(SMSE, Ref = 1, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
   NOS <- SMSE@NOS[, , Yrs[1]:Yrs[2], drop = FALSE]
-  .Sgen <- SMSE@Misc$Ref["Sgen", ] # Length = 1 because ns = 1
+  .Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
   apply(NOS/.Sgen >= Ref, 2, mean, na.rm = TRUE)
 }
 

@@ -37,7 +37,7 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
     xplot <- apply(x, 2, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
   }
 
-  if (figure) {
+  if (figure && any(xplot > 0, na.rm = TRUE)) {
     ind <- colSums(xplot, na.rm = TRUE) > 0
     Year <- 1:SMSE@proyears
 
@@ -64,11 +64,15 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab 
 
   if (missing(y)) {
     xvar <- colSums(x, na.rm = TRUE)
-    ymax <- max(which(!is.na(xvar) & xvar > 0))
-    y <- ymax
+    if (all(!xvar)) {
+      y <- length(xvar)
+    } else {
+      ymax <- max(which(!is.na(xvar) & xvar > 0))
+      y <- ymax
+    }
   }
   xplot <- x[, y]
-  if (figure) hist(xplot, xlab = xlab, main = NULL, ...)
+  if (figure && any(xplot > 0, na.rm = TRUE)) hist(xplot, xlab = xlab, main = NULL, ...)
   invisible(xplot)
 }
 
@@ -108,8 +112,7 @@ get_statevar <- function(SMSE, var, s) {
   if (var == "NOS/SMSY") {
     x <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
-      if (s != 1) stop("Update get_statevar() for s > 1")
-      SMSY <- SMSE@Misc$Ref["Spawners_MSY", ] # s = 1
+      SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
       NOS/SMSY
     })
   }
@@ -117,8 +120,7 @@ get_statevar <- function(SMSE, var, s) {
   if (var == "S/SMSY") {
     x <- local({
       S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
-      if (s != 1) stop("Update get_statevar() for s > 1")
-      SMSY <- SMSE@Misc$Ref["Spawners_MSY", ] # s = 1
+      SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
       S/SMSY
     })
   }
@@ -126,8 +128,7 @@ get_statevar <- function(SMSE, var, s) {
   if (var == "NOS/Sgen") {
     x <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
-      if (s != 1) stop("Update get_statevar() for s > 1")
-      Sgen <- SMSE@Misc$Ref["Sgen", ] # s = 1
+      Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
       NOS/Sgen
     })
   }
