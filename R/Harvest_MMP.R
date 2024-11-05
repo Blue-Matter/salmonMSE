@@ -57,7 +57,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
           s_PT <- pkey$s[match(p_HOS_PT, pkey$p)]
 
           Effort <- get_F(
-            u = u_preterminal, M = array(0, dim(Nage_HOS_PT)), N = Nage_PT, # Kept catch of HOS
+            u = u_preterminal, M = array(0, dim(Nage_PT)), N = Nage_PT, # Kept catch of HOS
             vul = V_PT, ret = m[s_PT], release_mort = release_mort[1, s_PT]
           )
         } else {

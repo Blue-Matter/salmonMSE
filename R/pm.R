@@ -39,17 +39,23 @@ WILD50 <- function(SMSE, Ref = 0.50, Yrs = NULL) {
 #' @export
 SMSY85 <- function(SMSE, Ref = 0.85, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
-  NOS <- SMSE@NOS[, , Yrs[1]:Yrs[2], drop = FALSE]
-  SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
-  apply(NOS/SMSY >= Ref, 2, mean, na.rm = TRUE)
+  y <- seq(Yrs[1], Yrs[2])
+  NOS <- SMSE@NOS[, , y, drop = FALSE]
+  SMSY <- sapply(1:SMSE@nstocks, function(s) SMSE@Misc$Ref[[s]]["Spawners_MSY", ]) %>%
+    array(c(SMSE@nsim, SMSE@nstocks, length(y)))
+  ratio <- NOS/SMSY
+  apply(ratio >= Ref, 2, mean, na.rm = TRUE)
 }
 
 #' @rdname PNI50
 #' @export
 Sgen100 <- function(SMSE, Ref = 1, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
-  NOS <- SMSE@NOS[, , Yrs[1]:Yrs[2], drop = FALSE]
-  .Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
-  apply(NOS/.Sgen >= Ref, 2, mean, na.rm = TRUE)
+  y <- seq(Yrs[1], Yrs[2])
+  NOS <- SMSE@NOS[, , y, drop = FALSE]
+  Sgen <- sapply(1:SMSE@nstocks, function(s) SMSE@Misc$Ref[[s]]["Sgen", ]) %>%
+    array(c(SMSE@nsim, SMSE@nstocks, length(y)))
+  ratio <- NOS/Sgen
+  apply(ratio >= Ref, 2, mean, na.rm = TRUE)
 }
 

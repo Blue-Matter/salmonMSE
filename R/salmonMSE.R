@@ -61,16 +61,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
     SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford, salmonMSE_env$state)
-    SHist <- multiHist2SHist(H, SOM, check = FALSE)
-
-    Ref <- calc_ref(SOM, check = FALSE)
-
-    SMSE@Misc <- list(
-      Ref = Ref,
-      SHist = SHist,
-      SOM = SOM
-    )
-
+    SMSE@Misc$SHist <- multiHist2SHist(H, SOM, check = FALSE)
     return(SMSE)
 
   } else {

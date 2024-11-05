@@ -175,9 +175,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
       NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
       NOS_a[, s, , y_spawn] <- get_salmonMSE_agevar(N, "NOS", p_smolt = p_NOS_imm)
-      HOScensus_a[, ns, , y_spawn] <- get_salmonMSE_agevar(N, "HOS", p_smolt = p_NOS_imm)
+      HOScensus_a[, s, , y_spawn] <- get_salmonMSE_agevar(N, "HOS", p_smolt = p_NOS_imm)
 
-      p_wild[, ns, ] <- calc_pwild_age(NOS_a[, ns, , ], HOScensus_a[, ns, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
+      p_wild[, s, ] <- calc_pwild_age(NOS_a[, s, , ], HOScensus_a[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
 
     } else {
       # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
@@ -244,6 +244,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   )
   if (!missing(Harvest_MMP)) SMSE@Misc$Harvest_MMP <- Harvest_MMP
   if (!missing(Ford) && nrow(Ford)) SMSE@Misc$Ford <- salmonMSE_env$Ford
+
+  SMSE@Misc$SOM <- SOM
+  SMSE@Misc$Ref <- calc_ref(SOM, check = FALSE)
 
   return(SMSE)
 }
