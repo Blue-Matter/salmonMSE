@@ -96,7 +96,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     ExT_NOS[is.na(ExT_NOS)] <- 0
 
     do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
-    if (do_hatchery) {
+    has_strays <- any(SOM@stray[-s, s] > 0)
+    if (do_hatchery || has_strays) {
 
       # HOS state variables from MMSE object
       p_HOS_imm <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]

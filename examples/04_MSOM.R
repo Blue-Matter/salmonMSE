@@ -36,13 +36,13 @@ Hatchery <- lapply(1:ns, function(s) {
     pmax_esc = 1,                   # Maximum proportion of escapement (after en route mortality) that could be used as broodtake
     pmax_NOB = 0.7,
     ptarget_NOB = 0.51,
-    phatchery = 0.8,
+    phatchery = ifelse(s == 1, 0.8, 0)
     premove_HOS = 0,
     theta = c(100, 80),
     rel_loss = c(0.5, 0.4, 0.1),
     fec_brood = c(0, 0, 5040),
     fitness_type = c("Ford", "none"),
-    zbar_start = c(93.1, 92),
+    zbar_start = if (s == 1) c(93.1, 92) else c(100, 92),
     fitness_variance = 10,
     selection_strength = 3,
     heritability = 0.5,
@@ -89,7 +89,6 @@ Historical <- lapply(1:ns, function(s) {
   )
 })
 
-
 # Stitched salmon operating model
 SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
@@ -97,7 +96,12 @@ SOM <- new("SOM",
            nyears = 2,
            proyears = 50)
 
-out <- salmonMSE(SOM)
+# Stray
+SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
+
+MOM <- SOM2MOM(SOM)
+
+out <- salmonMSE(SOM, convert = FALSE)
 saveRDS(out, file = 'examples/MSOM.rds')
 
 

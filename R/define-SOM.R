@@ -212,6 +212,8 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production. Provide a list of Hatchery objects for multi-population models.
 #' @slot Harvest \linkS4class{Harvest} object containing management levers for harvest. Provide a list of Harvest objects for multi-population models.
 #' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.
+#' @slot stray Matrix `[np, np]` where `np = length(Bio)` and row `p` indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
+#' `SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)` indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations. By default, an identity matrix is used (no straying).
 #' @keywords classes
 #'
 #' @export
@@ -227,7 +229,8 @@ SOM <- setClass(
     Habitat = "Habitat.list",
     Hatchery = "Hatchery.list",
     Harvest = "Harvest.list",
-    Historical = "Historical.list"
+    Historical = "Historical.list",
+    stray = "array"
   )
 )
 

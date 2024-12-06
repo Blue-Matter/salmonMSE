@@ -337,13 +337,14 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
 
 make_Stock_objects <- function(SOM, s = 1) {
   do_hatchery = SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+  has_strays <- any(SOM@stray[-s, s] > 0)
 
   Stocks <- list()
   Stocks[[1]] <- make_Stock(SOM, s, NOS = TRUE, stage = "immature")   # NOS_juv
   Stocks[[2]] <- make_Stock(SOM, s, NOS = TRUE, stage = "return")     # NOS_recruitment
   Stocks[[3]] <- make_Stock(SOM, s, NOS = TRUE, stage = "escapement") # NOS_escapement
 
-  if (do_hatchery) {
+  if (do_hatchery || has_strays) {
     Stocks[[4]] <- make_Stock(SOM, s, NOS = FALSE, stage = "immature")   # HOS_juv
     Stocks[[5]] <- make_Stock(SOM, s, NOS = FALSE, stage = "return")     # HOS_recruitment
     Stocks[[6]] <- make_Stock(SOM, s, NOS = FALSE, stage = "escapement") # HOS_escapement
@@ -353,13 +354,14 @@ make_Stock_objects <- function(SOM, s = 1) {
 
 make_Fleet_objects <- function(SOM, s = 1) {
   do_hatchery = SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+  has_strays <- any(SOM@stray[-s, s] > 0)
 
   Fleets <- list()
   Fleets[[1]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "immature")   # NOS_juv
   Fleets[[2]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "return")     # NOS_recruitment
   Fleets[[3]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "escapement") # NOS_escapement
 
-  if (do_hatchery) {
+  if (do_hatchery || has_strays) {
     Fleets[[4]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "immature")   # HOS_juv
     Fleets[[5]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "return")     # HOS_recruitment
     Fleets[[6]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "escapement") # HOS_escapement
@@ -372,7 +374,8 @@ make_stock_index <- function(SOM, check = FALSE) {
   ns <- length(SOM@Bio)
   np_s <- sapply(1:ns, function(s) {
     do_hatchery <- SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
-    ifelse(do_hatchery, 6, 3)
+    has_strays <- any(SOM@stray[-s, s] > 0)
+    ifelse(do_hatchery || has_strays, 6, 3)
   })
   .make_stock_index(ns, np_s)
 }

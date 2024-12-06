@@ -76,8 +76,9 @@ initialize_zbar <- function(SOM) {
 
   zbar_df <- lapply(1:ns, function(s) {
     do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    has_strays <- any(SOM@stray[-s, s] > 0)
 
-    if (do_hatchery && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
+    if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
 
       zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
       data.frame(

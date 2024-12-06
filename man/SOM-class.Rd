@@ -30,6 +30,9 @@ An object containing all the parameters for a salmon operating model (SOM).
 \item{\code{Harvest}}{\linkS4class{Harvest} object containing management levers for harvest. Provide a list of Harvest objects for multi-population models.}
 
 \item{\code{Historical}}{\linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.}
+
+\item{\code{stray}}{Matrix \verb{[np, np]} where \code{np = length(Bio)} and row \code{p} indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
+\code{SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)} indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations.}
 }}
 
 \section{Objects from the Class}{

@@ -50,37 +50,43 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
 
   output <- match.arg(output)
   Nage[is.na(Nage)] <- 0
+  Nage_enroute <- Nage * s_enroute
 
   # Hatchery
-  Nage_enroute <- Nage * s_enroute
-  Nage_avail_brood <- Nage_enroute * hatchery_args$pmax_esc
-  broodtake <- calc_broodtake(
-    Nage_avail_brood,
-    hatchery_args$ptarget_NOB,
-    hatchery_args$pmax_NOB,
-    hatchery_args$phatchery,
-    hatchery_args$egg_local,
-    hatchery_args$p_female,
-    hatchery_args$fec_brood,
-    hatchery_args$s_prespawn,
-    hatchery_args$m
-  )
+  if (hatchery_args$egg_local > 0) {
+    Nage_avail_brood <- Nage_enroute * hatchery_args$pmax_esc
+    broodtake <- calc_broodtake(
+      Nage_avail_brood,
+      hatchery_args$ptarget_NOB,
+      hatchery_args$pmax_NOB,
+      hatchery_args$phatchery,
+      hatchery_args$egg_local,
+      hatchery_args$p_female,
+      hatchery_args$fec_brood,
+      hatchery_args$s_prespawn,
+      hatchery_args$m
+    )
 
-  egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
-  egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
+    egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
+    egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
 
-  hatchery_production <- calc_yearling(
-    egg_NOB + egg_HOB,
-    hatchery_args$s_yearling,
-    hatchery_args$s_subyearling,
-    hatchery_args$p_yearling
-  )
-  yearling <- hatchery_production[1]
-  subyearling <- hatchery_production[2]
+    hatchery_production <- calc_yearling(
+      egg_NOB + egg_HOB,
+      hatchery_args$s_yearling,
+      hatchery_args$s_subyearling,
+      hatchery_args$p_yearling
+    )
+
+    yearling <- hatchery_production[1]
+    subyearling <- hatchery_production[2]
+
+  } else {
+    broodtake <- list(NOB = rep(0, nrow(Nage)), HOB = rep(0, nrow(Nage)))
+    egg_NOB <- egg_HOB <- yearling <- subyearling <- 0
+  }
 
   # Spawners
   spawners <- calc_spawners(broodtake, Nage_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
-
   NOS <- spawners$NOS
   HOS <- spawners$HOS
   if (sum(HOS)) {
@@ -90,8 +96,12 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
   }
 
   # Spawners weighted by fecundity
-  pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
-    sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB)
+  if (sum(broodtake$NOB, broodtake$HOB) > 0) {
+    pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
+      sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB)
+  } else {
+    pNOB <- 0
+  }
   pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
@@ -105,7 +115,7 @@ smolt_func <- function(Nage, x = -1, y, output = c("natural", "hatchery"),
 
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
-    #browser(expr = x == 2)
+    #browser(expr = p_naturalsmolt == 7 && Egg_HOS > 0)
     # Get zbar from salmonMSE_env
     zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
 
@@ -284,10 +294,10 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
   formals(.smolt_func)$p_naturalsmolt <- p_naturalsmolt
 
   maxage <- length(fec)
-  N_natural <- rep(1, maxage) %>% structure(names = paste0("Nage_", p_natural, 1:maxage))
+  N_natural <- structure(rep(1, maxage), names = paste0("Nage_", p_natural, 1:maxage))
 
   if (!is.na(p_hatchery)) {
-    N_hatchery <- rep(0, maxage) %>% structure(names = paste0("Nage_", p_hatchery, 1:maxage))
+    N_hatchery <- structure(rep(0, maxage), names = paste0("Nage_", p_hatchery, 1:maxage))
     Nage <- cbind(N_natural, N_hatchery)
     Perr_y <- .smolt_func(Nage, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, sum(N_natural), sum(N_hatchery), x = -1, y = 1)
