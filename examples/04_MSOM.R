@@ -36,7 +36,7 @@ Hatchery <- lapply(1:ns, function(s) {
     pmax_esc = 1,                   # Maximum proportion of escapement (after en route mortality) that could be used as broodtake
     pmax_NOB = 0.7,
     ptarget_NOB = 0.51,
-    phatchery = ifelse(s == 1, 0.8, 0)
+    phatchery = ifelse(s == 1, 0.8, 0),
     premove_HOS = 0,
     theta = c(100, 80),
     rel_loss = c(0.5, 0.4, 0.1),
