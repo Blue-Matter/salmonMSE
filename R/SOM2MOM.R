@@ -31,9 +31,10 @@ SOM2MOM <- function(SOM, check = TRUE) {
   MOM@reps <- 1
 
   # Stock objects
+  ns <- length(SOM@Bio)
   Stocks_s <- lapply(1:ns, function(s) make_Stock_objects(SOM, s = s))
   Stocks <- do.call(c, Stocks_s)
-  ns <- length(Stocks_s)
+  #ns <- length(Stocks_s)
   np_s <- sapply(Stocks_s, length)
   np <- length(Stocks)
 
@@ -96,17 +97,27 @@ SOM2MOM <- function(SOM, check = TRUE) {
       sapply(1:SOM@nsim, function(x) which(SOM@Bio[[s]]@p_mature[x, , y] > 0)[1])
     })
 
-    Herm_escapement <- Herm_mature <- array(0, c(SOM@nsim, nage, nyears + proyears))
+    prop_mature <- prop_escapement <- array(0, c(SOM@nsim, nage, nyears + proyears))
 
     # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
-    Herm_mature[, 2 * seq(1, maxage_s[s]), seq(2, nyears + proyears, 2)] <- SOM@Bio[[s]]@p_mature
+    prop_mature[, 2 * seq(1, maxage_s[s]), seq(2, nyears + proyears, 2)] <- SOM@Bio[[s]]@p_mature
+
+    Herm_mature <- sapply(1:(nyears + proyears), function(y) {
+      sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature[x, , y]))
+    }, simplify = "array") %>%
+      aperm(c(2, 1, 3))
 
     # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
     # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
-    Herm_escapement[, 2 * seq(1, maxage_s[s]) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
+    prop_escapement[, 2 * seq(1, maxage_s[s]) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
       sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
     }, simplify = "array") %>%
       aperm(c(3, 1, 2))
+
+    Herm_escapement <- sapply(1:(nyears + proyears), function(y) {
+      sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement[x, , y]))
+    }, simplify = "array") %>%
+      aperm(c(2, 1, 3))
 
     # For NOS
     p_nat_esc <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"]
