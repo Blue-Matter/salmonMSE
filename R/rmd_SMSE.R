@@ -166,6 +166,14 @@ make_rmd_stock <- function(s, sname) {
     "",
     "### Hatchery production",
     "",
+    "```{r results=\"asis\"}",
+    paste0("knitr::kable(make_hatchery_table(SMSE, s = ", s, "), row.names = FALSE, caption = \"Hatchery enhancement settings.\")"),
+    "```",
+    "",
+    "```{r results=\"asis\"}",
+    paste0("knitr::kable(make_fitness_table(SMSE, s = ", s, "), row.names = FALSE, caption = \"Fitness parameters.\")"),
+    "```",
+    "",
     "<div style=\"display: flex;\">",
     "",
     "<div style=\"width: 50%;\">",
@@ -365,4 +373,6 @@ make_rmd_stock_comparison <- function() {
 
 
 }
+
+
 

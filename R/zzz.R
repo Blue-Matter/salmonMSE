@@ -91,3 +91,11 @@ hist.numeric <- function(x, ...) {
   }
   invisible(r)
 }
+
+#' @name glossary
+#' @title salmonMSE glossary
+#' @description Glossary of terms and parameters used in salmonMSE
+#' @example
+#' data(glossary)
+#' glossary[1:2, ]
+NULL
