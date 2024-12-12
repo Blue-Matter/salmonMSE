@@ -190,7 +190,7 @@ setClass(
 setClassUnion("Bio.list", c("Bio", "list"))
 setClassUnion("Habitat.list", c("Habitat", "list"))
 setClassUnion("Hatchery.list", c("Hatchery", "list"))
-setClassUnion("Harvest.list", c("Hatchery", "list"))
+setClassUnion("Harvest.list", c("Harvest", "list"))
 setClassUnion("Historical.list", c("Historical", "list"))
 
 
