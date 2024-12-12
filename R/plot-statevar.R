@@ -22,35 +22,59 @@
 #' @param ylab Character. Name of the state variable for the figure
 #' @param ylim Vector. Y-axis limits
 #' @return Functions return the matrix of plotted values invisibly. Figure plotted from base graphics
-#' @importFrom graphics matplot grid
+#' @importFrom graphics matplot grid legend
 #' @importFrom methods slot
 #' @importFrom stats quantile
+#' @importFrom grDevices hcl.colors
 #' @seealso [plot_decision_table()]
 #' @export
 plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
 
-  x <- get_statevar(SMSE, var, s)
+  if (length(s) > 1) {
+    x <- sapply(s, function(i) get_statevar(SMSE, var, i), simplify = "array")
+    xplot <- apply(x, 2:3, quantile, 0.5, na.rm = TRUE)
 
-  if (!quant) {
-    xplot <- x
+    if (figure && any(xplot > 0, na.rm = TRUE)) {
+      ind <- rowSums(xplot, na.rm = TRUE) > 0
+      Year <- 1:SMSE@proyears
+
+      if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
+
+      col <- grDevices::hcl.colors(length(s), palette = "Dark 3", alpha = 1)
+
+      matplot(Year[ind], xplot[ind, ], type = 'o', ylim = ylim, col = col, lty = 1, pch = 1,
+              xlab = "Projection Year", ylab = ylab, ...)
+      legend("topleft", legend = SMSE@Snames, col = col, lty = 1, pch = 1, bty = "n")
+
+    }
+
   } else {
-    xplot <- apply(x, 2, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
-  }
 
-  if (figure && any(xplot > 0, na.rm = TRUE)) {
-    ind <- colSums(xplot, na.rm = TRUE) > 0
-    Year <- 1:SMSE@proyears
-
-    if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
+    x <- get_statevar(SMSE, var, s)
 
     if (!quant) {
-      matplot(Year[ind], t(xplot[, ind]), type = 'l', col = "grey40", ylim = ylim, lty = 1,
-              xlab = "Projection Year", ylab = ylab, ...)
+      xplot <- x
     } else {
-      matplot(Year[ind], t(xplot[, ind]), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
-              xlab = "Projection Year", ylab = ylab, ...)
+      xplot <- apply(x, 2, quantile, c(0.025, 0.5, 0.975), na.rm = TRUE)
+    }
+
+    if (figure && any(xplot > 0, na.rm = TRUE)) {
+      ind <- colSums(xplot, na.rm = TRUE) > 0
+      Year <- 1:SMSE@proyears
+
+      if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
+
+      if (!quant) {
+        matplot(Year[ind], t(xplot[, ind]), type = 'l', col = "grey40", ylim = ylim, lty = 1,
+                xlab = "Projection Year", ylab = ylab, ...)
+      } else {
+        matplot(Year[ind], t(xplot[, ind]), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
+                xlab = "Projection Year", ylab = ylab, ...)
+      }
     }
   }
+
+
   invisible(xplot)
 }
 
