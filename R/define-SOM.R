@@ -555,6 +555,11 @@ setMethod("report", "SMSE",
             stock_ind <- grep("ADD RMD BY STOCK", rmd)
             rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames) %>% unlist()
 
+            if (SMSE@nstocks > 1) {
+              rmd_stock_compare <- make_rmd_stock_comparison()
+              rmd_split[[stock_ind]] <- c(rmd_split[[stock_ind]], rmd_stock_compare)
+            }
+
             filename_rmd <- paste0(filename, ".Rmd")
 
             render_args$input <- file.path(dir, filename_rmd)

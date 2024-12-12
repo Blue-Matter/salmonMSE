@@ -352,5 +352,17 @@ make_rmd_stock <- function(s, sname) {
 
 }
 
+make_rmd_stock_comparison <- function() {
 
+  c(
+    "## Among-population comparison",
+    "\n",
+    "```{r, fig.cap=\"Stray matrix of hatchery origin fish at the recruitment stage.\"}",
+    "plot_stray(SMSE@Misc$SOM@stray)",
+    "```",
+    "\n"
+  )
+
+
+}
 

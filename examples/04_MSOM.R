@@ -101,8 +101,8 @@ SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
 
 MOM <- SOM2MOM(SOM)
 
-out <- salmonMSE(SOM, convert = FALSE)
+out <- salmonMSE(SOM)
 saveRDS(out, file = 'examples/MSOM.rds')
 
-
+report(out, dir = 'examples', filename = 'MSOM')
 
