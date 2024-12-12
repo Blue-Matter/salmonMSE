@@ -8,8 +8,8 @@
 <title>Simple salmonMSE example • salmonMSE</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simple salmonMSE example">
 </head>
 <body>
@@ -61,7 +61,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2024-10-22</h4>
+            <h4 data-toc-skip class="date">2024-12-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -77,9 +77,8 @@ equilibrium properties of the system.</p>
 <p>We create several S4 objects, the <code>Bio</code> object contains
 the natural biological dynamics, including the maturity ogive
 <code>p_mature</code>, fecundity, as well as the density-dependent
-survival of smolts through the capacity and compensation ratio
-parameters (<code>capacity_smolt</code> and <code>kappa</code>,
-respectively).</p>
+survival of smolts through the capacity and productivity parameters
+(<code>capacity_smolt</code> and <code>kappa</code>, respectively).</p>
 <p>The first example will be deterministic. With salmonMSE, we must run
 at minimum 2 simulation replicates, but we will run 3 simulations where
 the biological parameters, as well as the results, are identical among
@@ -93,16 +92,16 @@ to maturation, i.e., age 2.</p>
 <span></span>
 <span><span class="va">class</span><span class="op">?</span><span class="va">SOM</span> <span class="co"># Definition of inputs</span></span>
 <span></span>
-<span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
+<span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span> <span class="co"># Marine survival</span></span>
+<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co"># Number of simulations</span></span>
 <span><span class="va">Bio</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Bio"</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,           <span class="co"># Beverton-Holt asymptote. Not unfished capacity!</span></span>
 <span>  kappa <span class="op">=</span> <span class="fl">3</span>,                        <span class="co"># Productivity in recruits per spawner</span></span>
-<span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,    <span class="co"># Convert marine survival to an instantaneous mortality rate</span></span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,              <span class="co"># Spawning fecundity of NOS and HOS</span></span>
 <span>  p_female <span class="op">=</span> <span class="fl">0.49</span>,</span>
 <span>  s_enroute <span class="op">=</span> <span class="fl">1</span></span>
@@ -191,7 +190,7 @@ during age 2, abundance of the cohort doesn’t change.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return of 1000 natural and hatchery fish each for the first generation</span></span>
 <span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Bio</span><span class="op">@</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
 <span></span>
 <span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
@@ -203,9 +202,8 @@ for 50 projection years (<code>proyears</code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"SOM"</span>,</span>
-<span>  nyears <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  proyears <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  <span class="va">Bio</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span></span>
+<span>  <span class="va">Bio</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim</span>, nyears <span class="op">=</span> <span class="fl">2</span>, proyears <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
 <p>With a simple salmon model, we can run AHA and compare the trajectory
@@ -226,27 +224,26 @@ example.</em></p>
 <h2 id="stochastic-simulations">Stochastic simulations<a class="anchor" aria-label="anchor" href="#stochastic-simulations"></a>
 </h2>
 <p>Let’s repeat the simple example with stochasticity on the
-compensation ratio. To do this, we sample the compensation ratio
-parameter from a distribution and we run 100 simulations. This
-incorporates our uncertainty in our understanding of the productivity of
-the natural environment.</p>
+productivity parameter (“kappa”, units of recruits/spawner). To do this,
+we sample productivity from a distribution and we run 100 simulations.
+This incorporates our uncertainty in understanding of natural
+productivity in the evaluation of the management strategy.</p>
 <p><img src="../reference/figures/example-kappa.png"><!-- --></p>
-<p><em>Histogram of the compensation ratio (kappa) values sampled for
-our stochastic operating model.</em></p>
+<p><em>Histogram of the productivity (kappa) values sampled for our
+stochastic operating model.</em></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
 <span></span>
-<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">nsim_stochastic</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span></span>
-<span><span class="co"># Sample the compensation ratio</span></span>
+<span><span class="co"># Sample productivity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">kappa_mean</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span><span class="va">kappa_sd</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
-<span><span class="va">kappa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">kappa_mean</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">kappa_sd</span><span class="op">^</span><span class="fl">2</span>, <span class="va">kappa_sd</span><span class="op">)</span></span>
+<span><span class="va">kappa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">kappa_mean</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">kappa_sd</span><span class="op">^</span><span class="fl">2</span>, <span class="va">kappa_sd</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">Bio_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Bio"</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="va">nsim</span>,</span>
 <span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
@@ -258,10 +255,19 @@ our stochastic operating model.</em></p>
 <span>  s_enroute <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="va">Bio_stochastic</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
+<span></span>
+<span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="st">"Historical"</span>,</span>
+<span>  HistN <span class="op">=</span> <span class="va">HistN</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">SOM_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"SOM"</span>,</span>
-<span>  nyears <span class="op">=</span> <span class="fl">2</span>, proyears <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  <span class="va">Bio_stochastic</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span></span>
+<span>  <span class="va">Bio_stochastic</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim_stochastic</span>, nyears <span class="op">=</span> <span class="fl">2</span>, proyears <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">SMSE_stochastic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM_stochastic</span><span class="op">)</span></span></code></pre></div>
@@ -289,8 +295,8 @@ the stochastic replicates:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">PNI_LT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;      2.5%       50%     97.5% </span></span>
 <span><span class="co">#&gt; 0.6266439 0.7634803 0.8133749</span></span></code></pre>
-<p>Here is the relationship between the performance metrics and the
-compensation ratio:</p>
+<p>Here is the relationship between the performance metrics and
+productivity:</p>
 <p><img src="../reference/figures/example-PNI-kappa.png"><!-- --></p>
 <p>A summary Markdown report can be generated with the
 <code><a href="../reference/report.html">report()</a></code> function:</p>
