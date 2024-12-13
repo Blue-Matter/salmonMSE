@@ -81,6 +81,8 @@ plot_Kobe(
 \item{FUN}{Summarizing function across simulations, typically \code{\link[=median]{median()}} or \code{\link[=mean]{mean()}}}
 
 \item{type}{For \code{plot_Kobe}, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).}
+
+\item{xlim}{Vector. X-axis limits}
 }
 \value{
 Functions return the matrix of plotted values invisibly. Figure plotted from base graphics

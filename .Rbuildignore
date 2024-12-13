@@ -14,3 +14,4 @@ LICENSE
 ^tests$
 ^examples$
 ^man/figures$
+^data-raw$

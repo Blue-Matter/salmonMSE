@@ -7,9 +7,11 @@
 plot_tradeoff(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab)
 }
 \arguments{
-\item{pm1}{Numeric, vector of values for the first performance metric on the x-axis}
+\item{pm1}{Numeric or matrix. A vector of values for the first performance metric on the x-axis. Alternatively, provide a three column matrix corresponding
+to the lower bound, central tendency, and upper bound.}
 
-\item{pm2}{Numeric, vector of values for the second performance metric on the y-axis (same length as pm1)}
+\item{pm2}{Numeric or matrix. A vector of values for the second performance metric on the y-axis (same length as pm1). Alternatively, provide a three column matrix corresponding
+to the lower bound, central tendency, and upper bound.}
 
 \item{x1}{Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1.}
 

@@ -239,7 +239,7 @@ mean(PNI_LT >= 0.5)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-0.13
+print(0.13)
 ```
 
 The quantiles can also be calculated for our performance metric from the stochastic replicates:
@@ -249,7 +249,7 @@ quantile(PNI_LT, c(0.025, 0.5, 0.975))
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-c("2.5%" = 0.6266439, "50%" = 0.7634803, "97.5%" = 0.8133749)
+print(c("2.5%" = 0.6266439, "50%" = 0.7634803, "97.5%" = 0.8133749))
 ```
 
 Here is the relationship between the performance metrics and productivity:

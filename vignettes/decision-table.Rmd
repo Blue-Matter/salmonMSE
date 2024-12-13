@@ -205,7 +205,7 @@ The low probabilities in the zero hatchery production scenario tells us the syst
 At the intermediate hatchery production level (5 thousand), the ability to achieve catches of 40 is very likely with medium and high productivity. At low productivity, there is insufficient return to meet the catch threshold. 
 
 
-## Additional figures
+## Tradeoff figure
 
 A trade off plot compares two performance metrics across the suite of management actions. A tradeoff between the metrics may appear where a management action, in this case hatchery production (denoted by shapes in the below figure) has good properties with respect to one metric at the cost/reduction in another. A strong tradeoff occurs when the set of management actions are aligned along the top-left to bottom-right diagonal. 
 
@@ -231,6 +231,60 @@ g
 ```{r, echo = FALSE, eval = TRUE}
 knitr::include_graphics("../man/figures/tradeoff_plot_mean.png")
 ```
+
+### With confidence intervals
+
+Tradeoff figures can be created with intervals by passing a matrix to `plot_tradeoff()`. 
+For each metric, provide a three column matrix where the columns correspond to the lower bound, central tendency (e.g., median), and upper bound of values from the simulations.
+
+For example:
+
+```{r, echo = TRUE, eval = FALSE}
+# Make tradeoff figure with median and confidence intervals
+
+# First calculate the median and bounds for PNI for each scenario
+PNI_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
+
+  val <- quantile(SMSE_list[[x]]@PNI[, 1, 49], c(0.025, 0.5, 0.975))
+
+  out$lower <- val[1]
+  out$median <- val[2]
+  out$upper <- val[3]
+  return(out)
+}
+PNI <- lapply(1:nrow(Design), PNI_fn, SMSE_list, Design = Design) %>%
+  bind_rows()
+
+# Next calculate the median and bounds for catch for each scenario
+Catch_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
+
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+  val <- quantile(KNOS + KHOS, c(0.025, 0.5, 0.975))
+
+  out$lower <- val[1]
+  out$median <- val[2]
+  out$upper <- val[3]
+  return(out)
+}
+Catch <- lapply(1:nrow(Design), Catch_fn, SMSE_list, Design = Design) %>%
+  bind_rows()
+
+# Provide the matrix of PNI and Catch to plot_tradeoff()
+g <- plot_tradeoff(as.matrix(PNI[, 3:5]), as.matrix(Catch[, 3:5]),
+                   factor(PNI$kappa), factor(PNI$hatch), "PNI", "Catch",
+                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
+  geom_vline(xintercept = c(0.5, 0.8), linetype = 2) +
+  scale_shape_manual(values = c(1, 2, 4, 16))
+```
+
+```{r, echo = FALSE, eval = TRUE}
+knitr::include_graphics("../man/figures/tradeoff_plot_median_ci.png")
+```
+
+## Time series figures
 
 Here's the time series of the median PNI (solid lines) and the 95 percent prediction interval (shaded region) during the projection. It appears that the simulations have stabilized from the starting conditions to the point that we can make conclusions about the behavior of the system dynamics.
 
@@ -264,7 +318,6 @@ knitr::include_graphics("../man/figures/PNI_ts.png")
 Several comparison figures are available to plot the natural production (i.e., number of spawners) and the fitness metrics related to hatchery production:
 
 ```{r, echo = TRUE, eval = FALSE}
-
 Design_txt <- Design
 Design_txt[, 1] <- factor(paste("Productivity =", Design[, 1]),
                           levels = paste("Productivity =", c(9, 6, 3)))

@@ -138,15 +138,53 @@ ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
 # Make tradeoff plot
 g <- plot_tradeoff(pm$PNI_80, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_80", "Catch60",
-                   x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
+                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 2, 4, 16))
 ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
 
 g <- plot_tradeoff(pm$PNI, pm$Catch, factor(pm$kappa), factor(pm$hatch), "Mean PNI", "Mean Catch",
-                   x1lab = "Compensation\nratio", x2lab = "Hatchery\nreleases") +
+                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 2, 4, 16)) +
   geom_vline(xintercept = c(0.5, 0.8), linetype = 2)
 ggsave("man/figures/tradeoff_plot_mean.png", g, height = 3, width = 4.5)
+
+# Make tradeoff figure with median and confidence intervals
+PNI_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
+
+  val <- quantile(SMSE_list[[x]]@PNI[, 1, 49], c(0.025, 0.5, 0.975))
+
+  out$lower <- val[1]
+  out$median <- val[2]
+  out$upper <- val[3]
+  return(out)
+}
+PNI <- lapply(1:nrow(Design), PNI_fn, SMSE_list, Design = Design) %>%
+  bind_rows()
+
+# Next calculate the median and bounds for catch for each scenario
+Catch_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
+
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+  val <- quantile(KNOS + KHOS, c(0.025, 0.5, 0.975))
+
+  out$lower <- val[1]
+  out$median <- val[2]
+  out$upper <- val[3]
+  return(out)
+}
+Catch <- lapply(1:nrow(Design), Catch_fn, SMSE_list, Design = Design) %>%
+  bind_rows()
+
+# Provide the matrix of PNI and Catch to plot_tradeoff()
+g <- plot_tradeoff(as.matrix(PNI[, 3:5]), as.matrix(Catch[, 3:5]),
+                   factor(PNI$kappa), factor(PNI$hatch), "PNI", "Catch",
+                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
+  geom_vline(xintercept = c(0.5, 0.8), linetype = 2) +
+  scale_shape_manual(values = c(1, 2, 4, 16))
+ggsave("man/figures/tradeoff_plot_median_ci.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(Design), function(x) {

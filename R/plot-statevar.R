@@ -325,6 +325,8 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
 
 
 #' @name plot_statevar_ts
+#'
+#' @param xlim Vector. X-axis limits
 #' @param type For `plot_Kobe`, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).
 #' @export
 plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
@@ -412,8 +414,10 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab) {
 #' a population dynamics variable (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
 #' See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
 #'
-#' @param pm1 Numeric, vector of values for the first performance metric on the x-axis
-#' @param pm2 Numeric, vector of values for the second performance metric on the y-axis (same length as pm1)
+#' @param pm1 Numeric or matrix. A vector of values for the first performance metric on the x-axis. Alternatively, provide a three column matrix corresponding
+#' to the lower bound, central tendency, and upper bound.
+#' @param pm2 Numeric or matrix. A vector of values for the second performance metric on the y-axis (same length as pm1). Alternatively, provide a three column matrix corresponding
+#' to the lower bound, central tendency, and upper bound.
 #' @param x1 Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1.
 #' @param x2 Numeric, vector of values for the second grouping variable. Various levels are represented by shapes. Same length as pm1.
 #' @param xlab Character, optional x-axis label
@@ -430,13 +434,19 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab) {
   if (missing(x2)) x2 <- 1
 
   dt <- data.frame(
-    pm1 = pm1,
-    pm2 = pm2,
+    pm1 = if (is.matrix(pm1)) pm1[, 2] else pm1,
+    pm2 = if (is.matrix(pm1)) pm2[, 2] else pm2,
+    pm1_lower = if (is.matrix(pm1)) pm1[, 1] else pm1,
+    pm2_lower = if (is.matrix(pm1)) pm2[, 1] else pm2,
+    pm1_upper = if (is.matrix(pm1)) pm1[, 3] else pm1,
+    pm2_upper = if (is.matrix(pm1)) pm2[, 3] else pm2,
     x1 = x1,
     x2 = x2
   )
 
   g <- ggplot(dt, aes(pm1, pm2, colour = x1, shape = x2)) +
+    geom_linerange(aes(xmin = pm1_lower, xmax = pm1_upper), linewidth = 0.25) +
+    geom_linerange(aes(ymin = pm2_lower, ymax = pm2_upper), linewidth = 0.25) +
     geom_point() +
     theme_bw()
 

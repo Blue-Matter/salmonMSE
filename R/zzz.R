@@ -8,7 +8,11 @@
 if(getRversion() >= "2.15.1") {
   utils::globalVariables(
     c(".", "2.5%", "50%", "97.5%", "Age", "Chain", "Iteration", "Origin",
-      "Var1", "Var2", "Var3", "Var4", "Year", "value", "variable", "p", "Design1", "Design2")
+      "Var1", "Var2", "Var3", "Var4", "Year", "value", "variable",
+      "p",
+      "Design1", "Design2",
+      "glossary", "pm1_lower", "pm1_upper", "pm2_lower", "pm2_upper"
+    )
   )
 }
 
