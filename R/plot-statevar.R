@@ -274,7 +274,7 @@ plot_escapement <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
 
 
 #' @name plot_statevar_ts
-#' @param type Character the fishery state variable to plot
+#' @param type Character. For `plot_fishery`, the fishery state variable to plot.
 #' @export
 plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), FUN = median, figure = TRUE, ylim, ylab, ...) {
   type <- match.arg(type)
@@ -321,6 +321,53 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
   }
 
   invisible(x)
+}
+
+
+#' @name plot_statevar_ts
+#' @param type For `plot_Kobe`, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).
+#' @export
+plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
+                      xlab = expression(NOS/S[MSY]), ylab = expression(U/U[MSY]), type = c("T", "PT")) {
+
+  type <- match.arg(type)
+
+  S_SMSY <- apply(SMSE@NOS[, s, ]/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
+  if (type == "T") {
+    Ex_ExMSY <- apply(SMSE@ExT_NOS[, s, ]/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
+  } else {
+    Ex_ExMSY <- apply(SMSE@ExPT_NOS[, s, ]/SMSE@Misc$Ref[[s]]["UPT_MSY", ], 2, FUN)
+  }
+
+  if (figure) {
+    Sind <- !is.na(S_SMSY) & S_SMSY > 0
+    Eind <- !is.na(Ex_ExMSY) & Ex_ExMSY > 0
+    ind <- Sind & Eind
+    npoints <- sum(ind)
+
+    if (npoints > 0) {
+      Year <- seq(1, SMSE@proyears)
+      Year_legend <- pretty(Year[ind], n = 4)
+      Year_legend <- Year_legend[Year_legend %in% Year]
+
+      cols <- grDevices::hcl.colors(length(Year), palette = "viridis", rev = FALSE)
+
+      if (missing(xlim)) {
+        xlim <- c(0, 1.1) * range(S_SMSY, na.rm = TRUE)
+      }
+      if (missing(ylim)) {
+        ylim <- c(0, 1.1) * range(Ex_ExMSY, na.rm = TRUE)
+      }
+
+      plot(S_SMSY[ind], Ex_ExMSY[ind], type = "p", pch = 21, bg = cols[ind],
+           xlab = xlab, ylab = ylab,
+           xlim = xlim, ylim = ylim)
+      abline(h = 1, v = 1, lty = 2, col = "grey40")
+      legend("topright", legend = Year_legend, pt.bg = cols[Year %in% Year_legend], pch = 21, bty = "n", title = "Year")
+    }
+  }
+
+  invisible(data.frame(S_SMSY, Ex_ExMSY))
 }
 
 #' Decision table of performance metrics

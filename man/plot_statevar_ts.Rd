@@ -7,6 +7,7 @@
 \alias{plot_fitness}
 \alias{plot_escapement}
 \alias{plot_fishery}
+\alias{plot_Kobe}
 \title{Plot output from salmonMSE}
 \usage{
 plot_statevar_ts(
@@ -39,6 +40,18 @@ plot_fishery(
   ylab,
   ...
 )
+
+plot_Kobe(
+  SMSE,
+  s = 1,
+  FUN = median,
+  figure = TRUE,
+  xlim,
+  ylim,
+  xlab = expression(NOS/S[MSY]),
+  ylab = expression(U/U[MSY]),
+  type = c("T", "PT")
+)
 }
 \arguments{
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
@@ -67,7 +80,7 @@ plot_fishery(
 
 \item{FUN}{Summarizing function across simulations, typically \code{\link[=median]{median()}} or \code{\link[=mean]{mean()}}}
 
-\item{type}{Character the fishery state variable to plot}
+\item{type}{For \code{plot_Kobe}, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).}
 }
 \value{
 Functions return the matrix of plotted values invisibly. Figure plotted from base graphics

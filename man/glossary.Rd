@@ -6,3 +6,7 @@
 \description{
 Glossary of terms and parameters used in salmonMSE
 }
+\examples{
+data(glossary)
+glossary[1:2, ]
+}
