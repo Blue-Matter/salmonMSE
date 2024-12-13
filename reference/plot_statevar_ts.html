@@ -96,6 +96,18 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 <span>  <span class="va">ylim</span>,</span>
 <span>  <span class="va">ylab</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plot_Kobe</span><span class="op">(</span></span>
+<span>  <span class="va">SMSE</span>,</span>
+<span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  figure <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">xlim</span>,</span>
+<span>  <span class="va">ylim</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">NOS</span><span class="op">/</span><span class="va">S</span><span class="op">[</span><span class="va">MSY</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">U</span><span class="op">/</span><span class="va">U</span><span class="op">[</span><span class="va">MSY</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T"</span>, <span class="st">"PT"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -154,7 +166,11 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Character the fishery state variable to plot</p></dd>
+<dd><p>For <code>plot_Kobe</code>, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).</p></dd>
+
+
+<dt id="arg-xlim">xlim<a class="anchor" aria-label="anchor" href="#arg-xlim"></a></dt>
+<dd><p>Vector. X-axis limits</p></dd>
 
 </dl></div>
     <div class="section level2">
