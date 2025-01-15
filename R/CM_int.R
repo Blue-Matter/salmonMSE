@@ -355,18 +355,19 @@ make_CMpars <- function(p, d) {
   if (is.null(p$fanomalyPT_sd)) p$fanomalyPT_sd <- 1
   if (is.null(p$fanomalyT_sd)) p$fanomalyT_sd <- 1
 
-  if (is.null(p$b1)) {
-    if (length(d$covariate1)) {
-      p$b1 <- rep(0, ncol(d$covariate1))
+  if (is.null(p[["b1"]])) {
+    if (length(d[["covariate1"]])) {
+      p[["b1"]] <- rep(0, ncol(d[["covariate1"]]))
     } else {
-      p$b1 <- 0
+      p[["b1"]] <- 0
     }
   }
-  if (is.null(p$b)) {
-    if (length(d$covariate)) {
-      p$b <- rep(0, ncol(d$covariate))
+
+  if (is.null(p[["b"]])) {
+    if (length(d[["covariate"]])) {
+      p[["b"]] <- rep(0, ncol(d[["covariate"]]))
     } else {
-      p$b <- 0
+      p[["b"]] <- 0
     }
   }
 
@@ -421,7 +422,7 @@ check_data <- function(data) {
     if (is.null(data$vulT) || length(data$vulT) != data$Nages) {
       stop("data$vulT should be a vector length Nages")
     }
-    if (is.null(data$RelRegFT) || length(data$RelRegT) != data$Ldyr) {
+    if (is.null(data$RelRegFT) || length(data$RelRegFT) != data$Ldyr) {
       stop("data$RelRegFT should be a vector length Ldyr")
     }
   } else {
@@ -498,8 +499,8 @@ make_map <- function(p, d) {
     map$fanomalyT_sd <- factor(NA)
   }
 
-  if (!length(d$covariate1)) map$b1 <- factor(NA)
-  if (!length(d$covariate)) map$b <- factor(NA)
+  if (!length(d[["covariate1"]])) map[["b1"]] <- factor(NA)
+  if (!length(d[["covariate"]])) map[["b"]] <- factor(NA)
   return(map)
 }
 
