@@ -4,12 +4,20 @@ stan_trace <- function(stanfit, vars) {
   val <- lapply(1:stanfit@sim$chains, function(i) {
     x <- stanfit@sim$samples[[i]]
     vars_regex <- paste0(vars, collapse = "|")
-    x[grepl(vars_regex, names(x))] %>%
-      bind_cols() %>%
-      as.data.frame() %>%
-      mutate(Chain = i, Iteration = 1:nrow(.)) %>%
-      reshape2::melt(id.vars = c("Chain", "Iteration")) %>%
-      dplyr::filter(Iteration > stanfit@sim$warmup)
+
+    x_pars <- x[grepl(vars_regex, names(x))]
+
+    if (length(x_pars)) {
+      x[grepl(vars_regex, names(x))] %>%
+        bind_cols() %>%
+        as.data.frame() %>%
+        mutate(Chain = i, Iteration = 1:nrow(.)) %>%
+        reshape2::melt(id.vars = c("Chain", "Iteration")) %>%
+        dplyr::filter(.data$Iteration > stanfit@sim$warmup)
+    } else {
+      data.frame()
+    }
+
   }) %>%
     bind_rows()
 
@@ -53,7 +61,10 @@ pairs_panel <- function(stanfit, vars) {
   }) %>%
     bind_rows()
 
-  pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor, gap = 0)
+  if (nrow(val)) {
+    pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor, gap = 0)
+  }
+
 }
 
 #' @importFrom graphics points polygon
@@ -76,14 +87,17 @@ CM_fit_CWTesc <- function(report, d, year1) {
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     mutate(Age = paste("Age", Var3)) %>%
-    mutate(value = value * d$cwtExp) %>%
     reshape2::dcast(Age + Year ~ Var1, value.var = "value")
 
-  cwtesc <- d$cwtesc %>%
+  dat <- d$cwtesc
+
+  nyears <- nrow(dat)
+  nage <- ncol(dat)
+
+  cwtesc <- dat %>%
+    structure(dimnames = list(Year = year1 + seq(1, nyears) - 1, Age = seq(1, nage))) %>%
     reshape2::melt() %>%
-    mutate(Year = Var1 + year1 - 1,
-           Age = Var2 %>% as.character() %>% strsplit("E") %>% sapply(getElement, 2),
-           Age = paste("Age", Age)) %>%
+    mutate(Age = paste("Age", Age)) %>%
     dplyr::filter(value > 0)
 
   g <- ggplot(ebrood, aes(Year)) +
@@ -99,11 +113,12 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1) {
   dat <- d[[ifelse(PT, "cwtcatPT", "cwtcatT")]]
 
   if (sum(dat)) {
+    nyears <- nrow(dat)
+    nage <- ncol(dat)
     cwtcat <- dat %>%
+      structure(dimnames = list(Year = year1 + seq(1, nyears) - 1, Age = seq(1, nage))) %>%
       reshape2::melt() %>%
-      mutate(Year = Var1 + year1 - 1,
-             Age = Var2 %>% as.character() %>% strsplit("C") %>% sapply(getElement, 2),
-             Age = paste("Age", Age)) %>%
+      mutate(Age = paste("Age", Age)) %>%
       dplyr::filter(value > 0)
 
     cbrood <- sapply(report, getElement, ifelse(PT, "cbroodPT", "cbroodT"), simplify = "array") %>%
@@ -111,7 +126,6 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1) {
       reshape2::melt() %>%
       mutate(Year = Var2 + year1 - 1) %>%
       mutate(Age = paste("Age", Var3)) %>%
-      mutate(value = value * d$cwtExp) %>%
       reshape2::dcast(Age + Year ~ Var1, value.var = "value")
 
     g <- ggplot(cbrood, aes(Year)) +
@@ -259,37 +273,49 @@ CM_surv <- function(report, year1, ci = TRUE) {
 }
 
 CM_wt <- function(stanfit, year1, ci = TRUE) {
-  ts <- rstan::extract(stanfit, "wt")$wt %>%
-    apply(2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-  g <- ggplot(ts, aes(Year, `50%`)) +
-    geom_line() +
-    geom_point() +
-    geom_hline(yintercept = 0, linetype = 2) +
-    labs(x = "Year", y = "Egg mortality deviation")
+  wt <- try(rstan::extract(stanfit, "wt")$wt, silent = TRUE)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
-  g
+  if (!is.character(wt)) {
+    ts <- wt %>%
+      apply(2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+      reshape2::melt() %>%
+      mutate(Year = Var2 + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"), value.var = "value")
+
+    g <- ggplot(ts, aes(Year, `50%`)) +
+      geom_line() +
+      geom_point() +
+      geom_hline(yintercept = 0, linetype = 2) +
+      labs(x = "Year", y = "Egg mortality deviation")
+
+    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+    g
+  }
+
 }
 
 CM_wto <- function(stanfit, year1, ci = TRUE) {
-  ts <- rstan::extract(stanfit, "wto")$wto %>%
-    apply(2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-  g <- ggplot(ts, aes(Year, `50%`)) +
-    geom_line() +
-    geom_point() +
-    geom_hline(yintercept = 0, linetype = 2) +
-    labs(x = "Year", y = "Age 1 mortality deviation")
+  wto <- try(rstan::extract(stanfit, "wto")$wto, silent = TRUE)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
-  g
+  if (!is.character(wto)) {
+    ts <- wto %>%
+      apply(2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+      reshape2::melt() %>%
+      mutate(Year = Var2 + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"), value.var = "value")
+
+    g <- ggplot(ts, aes(Year, `50%`)) +
+      geom_line() +
+      geom_point() +
+      geom_hline(yintercept = 0, linetype = 2) +
+      labs(x = "Year", y = "Age 1 mortality deviation")
+
+    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+    g
+  }
+
 }
 
 #CM_fitness <- function(report, year) {

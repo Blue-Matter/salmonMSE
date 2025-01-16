@@ -195,9 +195,9 @@ CM_int <- function(p, d) {
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {
       if (t+a-1 <= d$Ldyr) {
-        cbroodPT[t, a] <- ccwtPT[t+a-1, a] + tiny
-        cbroodT[t, a] <- ccwtT[t+a-1, a] + tiny
-        ebrood[t, a] <- ecwt[t+a-1, a] + tiny
+        cbroodPT[t, a] <- d$cwtExp * ccwtPT[t+a-1, a] + tiny
+        cbroodT[t, a] <- d$cwtExp * ccwtT[t+a-1, a] + tiny
+        ebrood[t, a] <- d$cwtExp * ecwt[t+a-1, a] + tiny
       }
     }
   }
@@ -247,17 +247,17 @@ CM_int <- function(p, d) {
 
   # Log likelihood
   loglike_esc <- dnorm(logobsesc, logpredesc, p$lnE_sd, log = TRUE)
-  loglike_cwtesc <- dpois(d$cwtesc, ebrood * d$cwtExp, log = TRUE)
+  loglike_cwtesc <- dpois(d$cwtesc, ebrood, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
-    loglike_cwtcatPT <- dpois(d$cwtcatPT, cbroodPT * d$cwtExp, log = TRUE)
+    loglike_cwtcatPT <- dpois(d$cwtcatPT, cbroodPT, log = TRUE)
   } else if (is_ad) {
     loglike_cwtcatPT <- advector(0)
   } else {
     loglike_cwtcatPT <- 0
   }
   if (sum(d$cwtcatT)) {
-    loglike_cwtcatT <- dpois(d$cwtcatT, cbroodT * d$cwtExp, log = TRUE)
+    loglike_cwtcatT <- dpois(d$cwtcatT, cbroodT, log = TRUE)
   } else if (is_ad) {
     loglike_cwtcatT <- advector(0)
   } else {
@@ -347,7 +347,7 @@ make_CMpars <- function(p, d) {
 
   if (is.null(p$log_FbasePT)) p$log_FbasePT <- log(0.1)
   if (is.null(p$log_FbaseT)) p$log_FbaseT <- log(0.1)
-  if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
+  if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, d$Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
 
   if (is.null(p$wt_sd)) p$wt_sd <- 1
