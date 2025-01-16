@@ -45,7 +45,7 @@ df_pars[, c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
 ## Estimates
 
 ```{r trace-cr, fig.cap="MCMC wormplots of productivity parameters, scaling parameters and the log-posterior."}
-pars_core <- c("cr", "log_so", "moadd", "FbasePT", "FbaseT", "lp")
+pars_core <- c("cr", "log_so", "moadd", "log_FbasePT", "log_FbaseT", "lp")
 stan_trace(stanfit, pars_core)
 ```
 

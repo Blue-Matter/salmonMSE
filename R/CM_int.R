@@ -83,8 +83,8 @@ CM_int <- function(p, d) {
   }
 
   # Initialize F
-  FPT[] <- p$FbasePT * d$RelRegFPT + p$fanomalyPT
-  FT[] <- p$FbaseT * d$RelRegFT + p$fanomalyT
+  FPT[] <- exp(p$log_FbasePT) * d$RelRegFPT * exp(p$log_fanomalyPT)
+  FT[] <- exp(p$log_FbaseT) * d$RelRegFT * exp(p$log_fanomalyT)
 
   # Loop over years ----
   for (t in 1:d$Ldyr) {
@@ -119,7 +119,7 @@ CM_int <- function(p, d) {
 
     # predict terminal catch at age for the year
     cyearT[t, , ] <- recr[t, , ] * (1 - survT[t, ])
-    ccwtT[t, ] <- Ncwt[t, ] * (1 - survT[t, ])
+    ccwtT[t, ] <- Ncwt[t, ] * survPT[t, ] * matt[t, ] * (1 - survT[t, ])
 
     # predict escapement at age for the year
     escyear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
@@ -208,7 +208,7 @@ CM_int <- function(p, d) {
   logprior_wto <- dnorm(p$wto, 0, p$wto_sd, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
-    logprior_fanomPT <- dnorm(p$fanomalyPT, 0, p$fanomalyPT_sd, log = TRUE)
+    logprior_fanomPT <- dnorm(p$log_fanomalyPT, 0, p$fanomalyPT_sd, log = TRUE)
     logprior_fanomPT_sd <- dgamma(p$fanomalyPT_sd, 2, scale = 0.2, log = TRUE)
   } else if (is_ad) {
     logprior_fanomPT <- logprior_fanomPT_sd <- advector(0)
@@ -216,7 +216,7 @@ CM_int <- function(p, d) {
     logprior_fanomPT <- logprior_fanomPT_sd <- 0
   }
   if (sum(d$cwtcatT)) {
-    logprior_fanomT <- dnorm(p$fanomalyT, 0, p$fanomalyT_sd, log = TRUE)
+    logprior_fanomT <- dnorm(p$log_fanomalyT, 0, p$fanomalyT_sd, log = TRUE)
     logprior_fanomT_sd <- dgamma(p$fanomalyT_sd, 2, scale = 0.2, log = TRUE)
   } else if (is_ad) {
     logprior_fanomT <- logprior_fanomT_sd <- advector(0)
@@ -257,7 +257,7 @@ CM_int <- function(p, d) {
     loglike_cwtcatPT <- 0
   }
   if (sum(d$cwtcatT)) {
-    loglike_cwtcatT <- dpois(d$cwtcatT, cbroodPT * d$cwtExp, log = TRUE)
+    loglike_cwtcatT <- dpois(d$cwtcatT, cbroodT * d$cwtExp, log = TRUE)
   } else if (is_ad) {
     loglike_cwtcatT <- advector(0)
   } else {
@@ -341,12 +341,12 @@ make_CMpars <- function(p, d) {
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p$wt)) p$wt <- rep(0, d$Ldyr)
   if (is.null(p$wto)) p$wto <- rep(0, d$Ldyr)
-  if (is.null(p$fanomalyPT)) p$fanomalyPT <- rep(0, d$Ldyr)
-  if (is.null(p$fanomalyT)) p$fanomalyT <- rep(0, d$Ldyr)
+  if (is.null(p$log_fanomalyPT)) p$log_fanomalyPT <- rep(0, d$Ldyr)
+  if (is.null(p$log_fanomalyT)) p$log_fanomalyT <- rep(0, d$Ldyr)
   if (is.null(p$lnE_sd)) p$lnE_sd <- 0.1
 
-  if (is.null(p$FbasePT)) p$FbasePT <- 0.1
-  if (is.null(p$FbaseT)) p$FbaseT <- 0.1
+  if (is.null(p$log_FbasePT)) p$log_FbasePT <- log(0.1)
+  if (is.null(p$log_FbaseT)) p$log_FbaseT <- log(0.1)
   if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
 

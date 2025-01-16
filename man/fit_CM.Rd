@@ -116,11 +116,11 @@ Starting values for parameters can be provided through a named list:
 Estimated with normal prior with mean zero and standard deviation \code{p$wt_sd}. Default is zero.
 \item \code{wto} Vector \code{Ldyr}. Annual deviates in natural mortality for age 1 juveniles (marine life stage).
 Estimated with normal prior with mean zero and standard deviation \code{p$wto_sd}. Default is zero.
-\item \code{FbasePT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFPT}. Default is 0.1.
-\item \code{FbaseT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFT}. Default is 0.1.
-\item \code{fanomalyPT} Vector \code{Ldyr}. Annual deviates from \code{FbasePT * data$RelRegFPT} to estimate preterminal fishing mortality.
+\item \code{log_FbasePT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFPT}. Default is \code{log(0.1)}.
+\item \code{log_FbaseT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFT}. Default is \code{log(0.1)}.
+\item \code{log_fanomalyPT} Vector \code{Ldyr}. Annual lognormal deviates from \code{exp(log_FbasePT) * data$RelRegFPT} to estimate preterminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation \code{p$fanomaly_sd}. Default is zero.
-\item \code{fanomalyT} Vector \code{Ldyr}. Annual deviates from \code{FbaseT * data$RelRegFT} to estimate terminal fishing mortality.
+\item \code{log_fanomalyT} Vector \code{Ldyr}. Annual lognormal deviates from \code{exp(log_FbaseT) * data$RelRegFT} to estimate terminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation \code{p$fanomalyPT_sd}. Default is zero.
 \item \code{lnE_sd} Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 0.1.
 \item \code{wt_sd} Numeric, lognormal standard deviation of the egg to smolt (freshwater) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.

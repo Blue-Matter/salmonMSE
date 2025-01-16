@@ -82,11 +82,11 @@
 #' Estimated with normal prior with mean zero and standard deviation `p$wt_sd`. Default is zero.
 #' - `wto` Vector `Ldyr`. Annual deviates in natural mortality for age 1 juveniles (marine life stage).
 #' Estimated with normal prior with mean zero and standard deviation `p$wto_sd`. Default is zero.
-#' - `FbasePT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFPT`. Default is 0.1.
-#' - `FbaseT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFT`. Default is 0.1.
-#' - `fanomalyPT` Vector `Ldyr`. Annual deviates from `FbasePT * data$RelRegFPT` to estimate preterminal fishing mortality.
+#' - `log_FbasePT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFPT`. Default is `log(0.1)`.
+#' - `log_FbaseT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFT`. Default is `log(0.1)`.
+#' - `log_fanomalyPT` Vector `Ldyr`. Annual lognormal deviates from `exp(log_FbasePT) * data$RelRegFPT` to estimate preterminal fishing mortality.
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomaly_sd`. Default is zero.
-#' - `fanomalyT` Vector `Ldyr`. Annual deviates from `FbaseT * data$RelRegFT` to estimate terminal fishing mortality.
+#' - `log_fanomalyT` Vector `Ldyr`. Annual lognormal deviates from `exp(log_FbaseT) * data$RelRegFT` to estimate terminal fishing mortality.
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomalyPT_sd`. Default is zero.
 #' - `lnE_sd` Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical `gamma(2, 5)` prior. Default is 0.1.
 #' - `wt_sd` Numeric, lognormal standard deviation of the egg to smolt (freshwater) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
