@@ -64,6 +64,7 @@ The model includes either a preterminal fishery, terminal fishery, or both (see 
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_CM</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  do_fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -85,6 +86,10 @@ The model includes either a preterminal fishery, terminal fishery, or both (see 
 
 <dt id="arg-start">start<a class="anchor" aria-label="anchor" href="#arg-start"></a></dt>
 <dd><p>An optional list containing parameter starting values. See details.</p></dd>
+
+
+<dt id="arg-map">map<a class="anchor" aria-label="anchor" href="#arg-map"></a></dt>
+<dd><p>An optional list that describes how parameters are fixed in the model. See <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">TMB::MakeADFun()</a></code>.</p></dd>
 
 
 <dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
@@ -177,22 +182,23 @@ for the natural environment at the start of the model.</p></li>
 <p>Starting values for parameters can be provided through a named list:</p><ul><li><p><code>log_cr</code> Numeric, log of the compensation ratio (productivity). Default is 3.</p></li>
 <li><p><code>log_so</code> Numeric, unfished spawners in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
 <li><p><code>moadd</code> Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.</p></li>
-<li><p><code>wt</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
+<li><p><code>wt</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality during the freshwater life stage (affects egg to smolt survival).
 Estimated with normal prior with mean zero and standard deviation <code>p$wt_sd</code>. Default is zero.</p></li>
-<li><p><code>wto</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality for age 2+ juveniles (marine life stage).
+<li><p><code>wto</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality for age 1 juveniles (marine life stage).
 Estimated with normal prior with mean zero and standard deviation <code>p$wto_sd</code>. Default is zero.</p></li>
-<li><p><code>FbasePT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFPT</code>. Default is 1.</p></li>
-<li><p><code>FbaseT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFT</code>. Default is 1.</p></li>
-<li><p><code>fanomalyPT</code> Vector <code>Ldyr</code>. Annual deviates from <code>FbasePT * data$RelRegFPT</code> to estimate preterminal fishing mortality.
+<li><p><code>log_FbasePT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFPT</code>. Default is <code>log(0.1)</code>.</p></li>
+<li><p><code>log_FbaseT</code> Numeric, scaling coefficient to estimate preterminal fishing mortality from <code>data$RelRegFT</code>. Default is <code>log(0.1)</code>.</p></li>
+<li><p><code>log_fanomalyPT</code> Vector <code>Ldyr</code>. Annual lognormal deviates from <code>exp(log_FbasePT) * data$RelRegFPT</code> to estimate preterminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation <code>p$fanomaly_sd</code>. Default is zero.</p></li>
-<li><p><code>fanomalyT</code> Vector <code>Ldyr</code>. Annual deviates from <code>FbaseT * data$RelRegFT</code> to estimate terminal fishing mortality.
+<li><p><code>log_fanomalyT</code> Vector <code>Ldyr</code>. Annual lognormal deviates from <code>exp(log_FbaseT) * data$RelRegFT</code> to estimate terminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation <code>p$fanomalyPT_sd</code>. Default is zero.</p></li>
 <li><p><code>lnE_sd</code> Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 0.1.</p></li>
-<li><p><code>wt_sd</code> Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
-<li><p><code>wto_sd</code> Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
+<li><p><code>wt_sd</code> Numeric, lognormal standard deviation of the egg to smolt (freshwater) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
+<li><p><code>wto_sd</code> Numeric, lognormal standard deviation of the age 1 (marine) natural mortality deviates. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>fanomalyPT_sd</code> Numeric, lognormal standard deviation of <code>fanomalyPT</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
 <li><p><code>fanomalyT_sd</code> Numeric, lognormal standard deviation of <code>fanomalyT</code>. Estimated with hierarchical <code>gamma(2, 5)</code> prior. Default is 1.</p></li>
-<li><p><code>logit_matt</code> Matrix <code>Ldyr, Nages-2</code> maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.</p></li>
+<li><p><code>logit_matt</code> Matrix <code>Ldyr, Nages-2</code> maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively.
+Default is <code>matrix(qlogis(data$bmatt[-c(1, data$Nages)]), data$Ldyr, data$Nages-2, byrow = TRUE)</code>.</p></li>
 <li><p><code>sd_matt</code> Vector <code>Nages-2</code>. Logit standard deviation of maturity (<code>logit_matt</code>) by age class. Default is 0.5.</p></li>
 <li><p><code>b1</code> Vector <code>ncov1</code> of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.</p></li>
 <li><p><code>b</code> Vector <code>ncov</code> of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.</p></li>
