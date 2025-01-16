@@ -8,6 +8,7 @@
 fit_CM(
   data,
   start = list(),
+  map = list(),
   lower = list(),
   upper = list(),
   do_fit = TRUE,
@@ -22,6 +23,8 @@ sample_CM(fit, ...)
 \item{data}{A list containing data inputs. See details.}
 
 \item{start}{An optional list containing parameter starting values. See details.}
+
+\item{map}{An optional list that describes how parameters are fixed in the model. See \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.}
 
 \item{lower}{Named list containing lower bounds for parameters. See details.}
 
@@ -109,22 +112,23 @@ Starting values for parameters can be provided through a named list:
 \item \code{log_cr} Numeric, log of the compensation ratio (productivity). Default is 3.
 \item \code{log_so} Numeric, unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{moadd} Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
-\item \code{wt} Vector \code{Ldyr}. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
+\item \code{wt} Vector \code{Ldyr}. Annual deviates in natural mortality during the freshwater life stage (affects egg to smolt survival).
 Estimated with normal prior with mean zero and standard deviation \code{p$wt_sd}. Default is zero.
-\item \code{wto} Vector \code{Ldyr}. Annual deviates in natural mortality for age 2+ juveniles (marine life stage).
+\item \code{wto} Vector \code{Ldyr}. Annual deviates in natural mortality for age 1 juveniles (marine life stage).
 Estimated with normal prior with mean zero and standard deviation \code{p$wto_sd}. Default is zero.
-\item \code{FbasePT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFPT}. Default is 1.
-\item \code{FbaseT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFT}. Default is 1.
+\item \code{FbasePT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFPT}. Default is 0.1.
+\item \code{FbaseT} Numeric, scaling coefficient to estimate preterminal fishing mortality from \code{data$RelRegFT}. Default is 0.1.
 \item \code{fanomalyPT} Vector \code{Ldyr}. Annual deviates from \code{FbasePT * data$RelRegFPT} to estimate preterminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation \code{p$fanomaly_sd}. Default is zero.
 \item \code{fanomalyT} Vector \code{Ldyr}. Annual deviates from \code{FbaseT * data$RelRegFT} to estimate terminal fishing mortality.
 Estimated with normal prior with mean zero and standard deviation \code{p$fanomalyPT_sd}. Default is zero.
 \item \code{lnE_sd} Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 0.1.
-\item \code{wt_sd} Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
-\item \code{wto_sd} Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
+\item \code{wt_sd} Numeric, lognormal standard deviation of the egg to smolt (freshwater) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
+\item \code{wto_sd} Numeric, lognormal standard deviation of the age 1 (marine) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{fanomalyPT_sd} Numeric, lognormal standard deviation of \code{fanomalyPT}. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{fanomalyT_sd} Numeric, lognormal standard deviation of \code{fanomalyT}. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
-\item \code{logit_matt} Matrix \verb{Ldyr, Nages-2} maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
+\item \code{logit_matt} Matrix \verb{Ldyr, Nages-2} maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively.
+Default is \code{matrix(qlogis(data$bmatt[-c(1, data$Nages)]), data$Ldyr, data$Nages-2, byrow = TRUE)}.
 \item \code{sd_matt} Vector \code{Nages-2}. Logit standard deviation of maturity (\code{logit_matt}) by age class. Default is 0.5.
 \item \code{b1} Vector \code{ncov1} of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 \item \code{b} Vector \code{ncov} of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.

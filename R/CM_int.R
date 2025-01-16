@@ -345,9 +345,9 @@ make_CMpars <- function(p, d) {
   if (is.null(p$fanomalyT)) p$fanomalyT <- rep(0, d$Ldyr)
   if (is.null(p$lnE_sd)) p$lnE_sd <- 0.1
 
-  if (is.null(p$FbasePT)) p$FbasePT <- 1
-  if (is.null(p$FbaseT)) p$FbaseT <- 1
-  if (is.null(p$logit_matt)) p$logit_matt <- matrix(0.1, d$Ldyr, d$Nages - 2)
+  if (is.null(p$FbasePT)) p$FbasePT <- 0.1
+  if (is.null(p$FbaseT)) p$FbaseT <- 0.1
+  if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
 
   if (is.null(p$wt_sd)) p$wt_sd <- 1
@@ -481,8 +481,7 @@ check_data <- function(data) {
 }
 
 
-make_map <- function(p, d) {
-  map <- list()
+make_map <- function(map = list(), p, d) {
 
   FPT <- sum(d$cwtcatPT)
   FT <- sum(d$cwtcatT)

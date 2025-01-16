@@ -12,6 +12,7 @@
 #'
 #' @param data  A list containing data inputs. See details.
 #' @param start An optional list containing parameter starting values. See details.
+#' @param map An optional list that describes how parameters are fixed in the model. See [`TMB::MakeADFun()`].
 #' @param lower Named list containing lower bounds for parameters. See details.
 #' @param upper Named list containing upper bounds for parameters. See details.
 #' @param do_fit Logical, whether to do the fit and estimate the Hessian.
@@ -77,22 +78,23 @@
 #' - `log_cr` Numeric, log of the compensation ratio (productivity). Default is 3.
 #' - `log_so` Numeric, unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `moadd` Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
-#' - `wt` Vector `Ldyr`. Annual deviates in natural mortality during the freshwater life stage (affects survival to smolt life stage).
+#' - `wt` Vector `Ldyr`. Annual deviates in natural mortality during the freshwater life stage (affects egg to smolt survival).
 #' Estimated with normal prior with mean zero and standard deviation `p$wt_sd`. Default is zero.
-#' - `wto` Vector `Ldyr`. Annual deviates in natural mortality for age 2+ juveniles (marine life stage).
+#' - `wto` Vector `Ldyr`. Annual deviates in natural mortality for age 1 juveniles (marine life stage).
 #' Estimated with normal prior with mean zero and standard deviation `p$wto_sd`. Default is zero.
-#' - `FbasePT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFPT`. Default is 1.
-#' - `FbaseT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFT`. Default is 1.
+#' - `FbasePT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFPT`. Default is 0.1.
+#' - `FbaseT` Numeric, scaling coefficient to estimate preterminal fishing mortality from `data$RelRegFT`. Default is 0.1.
 #' - `fanomalyPT` Vector `Ldyr`. Annual deviates from `FbasePT * data$RelRegFPT` to estimate preterminal fishing mortality.
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomaly_sd`. Default is zero.
 #' - `fanomalyT` Vector `Ldyr`. Annual deviates from `FbaseT * data$RelRegFT` to estimate terminal fishing mortality.
 #' Estimated with normal prior with mean zero and standard deviation `p$fanomalyPT_sd`. Default is zero.
 #' - `lnE_sd` Numeric, lognormal standard deviation of the observed escapement. Estimated with hierarchical `gamma(2, 5)` prior. Default is 0.1.
-#' - `wt_sd` Numeric, lognormal standard deviation of the age 1 (freshwater) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
-#' - `wto_sd` Numeric, lognormal standard deviation of the age 2+ (marine) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
+#' - `wt_sd` Numeric, lognormal standard deviation of the egg to smolt (freshwater) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
+#' - `wto_sd` Numeric, lognormal standard deviation of the age 1 (marine) natural mortality deviates. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `fanomalyPT_sd` Numeric, lognormal standard deviation of `fanomalyPT`. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
 #' - `fanomalyT_sd` Numeric, lognormal standard deviation of `fanomalyT`. Estimated with hierarchical `gamma(2, 5)` prior. Default is 1.
-#' - `logit_matt` Matrix `Ldyr, Nages-2` maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively. Default is 0.1.
+#' - `logit_matt` Matrix `Ldyr, Nages-2` maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively.
+#' Default is `matrix(qlogis(data$bmatt[-c(1, data$Nages)]), data$Ldyr, data$Nages-2, byrow = TRUE)`.
 #' - `sd_matt` Vector `Nages-2`. Logit standard deviation of maturity (`logit_matt`) by age class. Default is 0.5.
 #' - `b1` Vector `ncov1` of coefficients for linear covariates that predict natural mortality for age 1. Default is zero.
 #' - `b` Vector `ncov` of coefficients for linear covariates that predict natural mortality for ages 2+. Default is zero.
@@ -124,12 +126,12 @@
 #' Sciences 62: vi + 60 p.
 #' @seealso [CM2SOM()]
 #' @export
-fit_CM <- function(data, start = list(), lower = list(), upper = list(), do_fit = TRUE, silent = TRUE,
+fit_CM <- function(data, start = list(), map = list(), lower = list(), upper = list(), do_fit = TRUE, silent = TRUE,
                    control = list(eval.max = 1e5, iter.max = 1e5), ...) {
 
   data <- check_data(data)
   p <- make_CMpars(start, data)
-  map <- make_map(p, data)
+  map <- make_map(map, p, data)
 
   f <- function(p) salmonMSE::CM_int(p, d = data) # :: is needed for parallel MCMC sampling
   obj <- RTMB::MakeADFun(func = f, parameters = p, map = map, silent = silent, ...)
