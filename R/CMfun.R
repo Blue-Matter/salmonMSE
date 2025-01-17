@@ -75,8 +75,20 @@ CM_fit_esc <- function(report, d, year) {
 
   plot(NULL, NULL, typ = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(esc, obs), xlab = "Year", ylab = "Escapement")
   polygon(c(rev(year), year), c(rev(esc[1, ]), esc[3, ]), col = alpha("grey", 0.5), border = NA)
-  lines(year, esc[2, ])
+  lines(year, esc[2, ], lwd = 1.5)
+
   points(year, obs, pch = 16)
+  lines(year, obs, lty = 3)
+
+  invisible()
+}
+
+CM_data <- function(obs, year, ylab) {
+
+  if (!is.null(obs) && sum(obs)) {
+    plot(year, obs, typ = "o", pch = 16, xlim = range(year),
+         ylim = c(0, 1.1) * range(obs), xlab = "Year", ylab = ylab)
+  }
 
   invisible()
 }
@@ -102,9 +114,10 @@ CM_fit_CWTesc <- function(report, d, year1) {
 
   g <- ggplot(ebrood, aes(Year)) +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5)) +
-    geom_line(aes(y = `50%`)) +
+    geom_line(aes(y = `50%`), linewidth = 0.75) +
     facet_wrap(vars(Age), scales = "free_y") +
     geom_point(data = cwtesc, aes(Year, value), inherit.aes = FALSE) +
+    geom_line(data = cwtesc, aes(Year, value), linetype = 3, inherit.aes = FALSE) +
     labs(x = "Brood year", y = "CWT Escapement")
   g
 }
@@ -130,9 +143,10 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1) {
 
     g <- ggplot(cbrood, aes(Year)) +
       geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5)) +
-      geom_line(aes(y = `50%`)) +
+      geom_line(aes(y = `50%`), linewidth = 0.75) +
       facet_wrap(vars(Age), scales = "free_y") +
       geom_point(data = cwtcat, aes(Year, value), inherit.aes = FALSE) +
+      geom_line(data = cwtcat, aes(Year, value), linetype = 3, inherit.aes = FALSE) +
       labs(x = "Brood year", y = ifelse(PT, "CWT preterminal catch", "CWT terminal catch"))
     g
   }

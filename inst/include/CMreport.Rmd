@@ -100,21 +100,25 @@ CM_wt(stanfit, year1)
 CM_wto(stanfit, year1)
 ```
 
-## Fits
+## Data and fits
 
-```{r fit-esc, fig.cap="Observed total escapement (points) and posterior predicted values (medians and 95% prediction interval)."}
+```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_esc(report, d, year)
 ```
 
-```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+```{r cwt-rel, fig.cap="Total CWT releases."}
+CM_data(d$cwtrelease, year, ylab = "CWT release")
+```
+
+```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_CWTesc(report, d, year1)
 ```
 
-```{r fit-cwt-catpt, fig.cap="Observed coded wire tag preterminal catch at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+```{r fit-cwt-catpt, fig.cap="Observed coded wire tag preterminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_CWTcatch(report, d, PT = TRUE, year1)
 ```
 
-```{r fit-cwt-catt, fig.cap="Observed coded wire tag terminal catch at age (points) and posterior predicted values (medians and 95% prediction interval)."}
+```{r fit-cwt-catt, fig.cap="Observed coded wire tag terminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_CWTcatch(report, d, PT = FALSE, year1)
 ```
 
