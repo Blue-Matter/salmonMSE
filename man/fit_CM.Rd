@@ -67,10 +67,11 @@ Data should passed through a named list with the following:
 \item \code{ssum} Numeric, proportion of spawners that is female
 \item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 \item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
-\item \code{bmatt} Vector length \code{Nages}. Proportion maturity at age, base values for calculating the unfished replacement line.
+\item \code{bmatt} Vector length \code{Nages}. Proportion maturity at age, base values for calculating the unfished replacement line. Also the prior means if year-specific
+maturity rates are estimated.
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
-\item \code{vulPT} Vector length \code{Nages}. Vulnerability at age to the preterminal fishery
-\item \code{vulT} Vector length \code{Nages}. Vulnerability at age to the terminal fishery
+\item \code{bvulPT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the preterminal fishery.
+\item \code{bvulT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the terminal fishery.
 \item \code{mobase}. Vector length \code{Nages}. Natural mortality at age, base values for calculating the unfished replacement line and the
 the equilibrium spawners at age.
 \item \code{cwtrelease} Vector length \code{Ldyr}, coded wire tag (CWT) releases
@@ -127,6 +128,10 @@ Estimated with normal prior with mean zero and standard deviation \code{p$fanoma
 \item \code{wto_sd} Numeric, lognormal standard deviation of the age 1 (marine) natural mortality deviates. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{fanomalyPT_sd} Numeric, lognormal standard deviation of \code{fanomalyPT}. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
 \item \code{fanomalyT_sd} Numeric, lognormal standard deviation of \code{fanomalyT}. Estimated with hierarchical \code{gamma(2, 5)} prior. Default is 1.
+\item \code{logit_vulPT} Vector \code{Nages-2} of preterminal vulnerability at age in logit space. Fixed to zero and one at age 1 and the maximum age, respectively.
+Default is \code{qlogis(data$bvul_PT[-c(1, data$Nages)])}.
+\item \code{logit_vulT} Vector \code{Nages-2} of terminal vulnerability at age in logit space. Fixed to zero and one at age 1 and the maximum age, respectively.
+Default is \code{qlogis(data$bvul_T[-c(1, data$Nages)])}.
 \item \code{logit_matt} Matrix \verb{Ldyr, Nages-2} maturity by year and age in logit space. Maturity is fixed to zero and one at age 1 and the maximum age, respectively.
 Default is \code{matrix(qlogis(data$bmatt[-c(1, data$Nages)]), data$Ldyr, data$Nages-2, byrow = TRUE)}.
 \item \code{sd_matt} Vector \code{Nages-2}. Logit standard deviation of maturity (\code{logit_matt}) by age class. Default is 0.5.

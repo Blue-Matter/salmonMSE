@@ -161,6 +161,25 @@ CM_maturity <- function(report, d, year1) {
 
 }
 
+CM_vul <- function(report, type = c("vulPT", "vulT")) {
+  type <- match.arg(type)
+  vul <- sapply(report, getElement, type) # age x sim
+
+  if (sum(vul)) {
+    vul_q <- apply(vul, 1, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+      reshape2::melt() %>%
+      rename(Age = Var2) %>%
+      reshape2::dcast(list("Age", "Var1"), value.var = "value")
+
+    g <- vul_q %>%
+      ggplot(aes(Age, `50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      labs(x = "Age", y = ifelse(type == "vulPT", "Preterminal vulnerability", "Terminal vulnerability"))
+    g
+  }
+}
+
 CM_SRR <- function(report) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
   smolt <- sapply(report, function(x) x$N[-1, 1, 1]) %>% apply(1, median)

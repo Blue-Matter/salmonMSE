@@ -23,16 +23,34 @@ CM_int <- function(p, d) {
   spawnhist <- d$obsescape[1]
   logobsesc <- log(d$obsescape)
 
-  lo <- lhist <- numeric(d$Nages)
-  lo[1] <- lhist[1] <- 1
+  # Vulnerability (= 0 for age 1, = 1 for oldest age)
+  if (is_ad) {
+    vulPT <- vulT <- advector(rep(0, d$Nages))
+  } else {
+    vulPT <- vulT <- numeric(d$Nages)
+  }
+  vulPT[seq(2, d$Nages-1)] <- plogis(p$logit_vulPT)
+  vulPT[d$Nages] <- 1
+  vulT[seq(2, d$Nages-1)] <- plogis(p$logit_vulT)
+  vulT[d$Nages] <- 1
+
+  lo <- numeric(d$Nages)
+  if (is_ad) {
+    lhist <- advector(rep(0, d$Nages))
+  } else {
+    lhist <- numeric(d$Nages)
+  }
+
+  lo[1] <- 1
+  lhist[1] <- 1
   for (a in 2:d$Nages) {
     lo[a] <- lo[a-1] * exp(-d$mobase[a-1]) * (1 - d$bmatt[a-1]) # unfished juvenile survival
-    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - d$vulPT[a-1] * d$finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
+    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - vulPT[a] * d$finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
   }
 
   epro <- d$ssum * sum(lo * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
   spro <- d$ssum * sum(lo * d$bmatt)                             # unfished spawners per smolt
-  sprhist <- d$ssum * sum(lhist * exp(-d$vulPT * d$finitPT) * d$bmatt * exp(d$vulT * d$finitT))   # historcial spawners per recruit (pr)
+  sprhist <- d$ssum * sum(lhist * exp(-vulPT * d$finitPT) * d$bmatt * exp(vulT * d$finitT))   # historcial spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
   rhist <- spawnhist/sprhist # historical recruitment
@@ -107,8 +125,8 @@ CM_int <- function(p, d) {
     matt[t, 2:(d$Nages-1)] <- plogis(p$logit_matt[t, ])
 
     # set age-specific survival rates through fishing
-    survPT[t, ] <- exp(-d$vulPT * FPT[t])
-    survT[t, ] <- exp(-d$vulT * FT[t])
+    survPT[t, ] <- exp(-vulPT * FPT[t])
+    survT[t, ] <- exp(-vulT * FT[t])
 
     # predict preterminal catch at age for the year
     cyearPT[t, , ] <- N[t, , ] * (1 - survPT[t, ])
@@ -224,6 +242,26 @@ CM_int <- function(p, d) {
     logprior_fanomT <- logprior_fanomT_sd <- 0
   }
 
+  # Log prior for vulnerability
+  logit_bvulPT <- qlogis(squeeze(d$bvulPT[2:(d$Nages-1)]))
+  logit_bvulT <- qlogis(squeeze(d$bvulT[2:(d$Nages-1)]))
+
+  if (sum(d$bvulPT)) {
+    logprior_vulPT <- dnorm(p$logit_vulPT, logit_bvulPT, 1.75, log = TRUE)
+  } else if (is_ad) {
+    logprior_vulPT <- advector(0)
+  } else {
+    logprior_vulPT <- 0
+  }
+
+  if (sum(d$bvulT)) {
+    logprior_vulT <- dnorm(p$logit_vulT, logit_bvulT, 1.75, log = TRUE)
+  } else if (is_ad) {
+    logprior_vulT <- advector(0)
+  } else {
+    logprior_vulT <- 0
+  }
+
   #convert base maturity rates to logit for calculation of time-varying rates
   #no time variation for first and last age
   logit_bmatt <- qlogis(d$bmatt[2:(d$Nages-1)])
@@ -231,7 +269,11 @@ CM_int <- function(p, d) {
     dnorm(p$logit_matt[, a-1], logit_bmatt[a-1], p$sd_matt[a-1], log = TRUE)
   })
 
-  logprior <- sum(logprior_so, logprior_wt, logprior_wto, logprior_fanomPT, logprior_fanomT, logprior_matt)
+  logprior <- sum(
+    logprior_so, logprior_wt, logprior_wto,
+    logprior_fanomPT, logprior_fanomT, logprior_matt,
+    logprior_vulPT, logprior_vulT
+  )
 
   # Log prior for hyperparameters ----
   # Gamma mean=shape/rate, variance=shape/rate^2 (scale = 1/rate)
@@ -300,6 +342,8 @@ CM_int <- function(p, d) {
   REPORT(moplot)
   REPORT(FPT)
   REPORT(FT)
+  REPORT(vulPT)
+  REPORT(vulT)
 
   REPORT(matt)
   REPORT(N)
@@ -347,6 +391,9 @@ make_CMpars <- function(p, d) {
 
   if (is.null(p$log_FbasePT)) p$log_FbasePT <- log(0.1)
   if (is.null(p$log_FbaseT)) p$log_FbaseT <- log(0.1)
+  if (is.null(p$logit_vulPT)) p$logit_vulPT <- qlogis(squeeze(d$bvulPT[-c(1, d$Nages)]))
+  if (is.null(p$logit_vulT)) p$logit_vulT <- qlogis(squeeze(d$bvulT[-c(1, d$Nages)]))
+
   if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, d$Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
 
@@ -407,26 +454,26 @@ check_data <- function(data) {
   if (!FPT && !FT) stop("No CWT preterminal or terminal catch found")
 
   if (FPT) {
-    if (is.null(data$vulPT) || length(data$vulPT) != data$Nages) {
-      stop("data$vulPT should be a vector length Nages")
+    if (is.null(data$bvulPT) || length(data$bvulPT) != data$Nages) {
+      stop("data$bvulPT should be a vector length Nages")
     }
     if (is.null(data$RelRegFPT) || length(data$RelRegFPT) != data$Ldyr) {
       stop("data$RelRegFPT should be a vector length Ldyr")
     }
   } else {
-    data$vulPT <- rep(0, data$Nages)
+    data$bvulPT <- rep(0, data$Nages)
     data$RelRegFPT <- rep(0, data$Ldyr)
   }
 
   if (FT) {
-    if (is.null(data$vulT) || length(data$vulT) != data$Nages) {
-      stop("data$vulT should be a vector length Nages")
+    if (is.null(data$bvulT) || length(data$bvulT) != data$Nages) {
+      stop("data$bvulT should be a vector length Nages")
     }
     if (is.null(data$RelRegFT) || length(data$RelRegFT) != data$Ldyr) {
       stop("data$RelRegFT should be a vector length Ldyr")
     }
   } else {
-    data$vulT <- rep(0, data$Nages)
+    data$bvulT <- rep(0, data$Nages)
     data$RelRegFT <- rep(0, data$Ldyr)
   }
 
@@ -511,8 +558,8 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
   # Add important defaults first
   if ("log_cr" %in% names(.lower)) .lower["log_cr"] <- 1e-8
   if ("moadd" %in% names(.lower)) .lower["moadd"] <- 1e-8
-  if ("FbasePT" %in% names(.lower)) .lower["FbasePT"] <- 1e-8
-  if ("FbaseT" %in% names(.lower)) .lower["FbaseT"] <- 1e-8
+  #if ("FbasePT" %in% names(.lower)) .lower["FbasePT"] <- 1e-8
+  #if ("FbaseT" %in% names(.lower)) .lower["FbaseT"] <- 1e-8
 
   if ("lnE_sd" %in% names(.lower)) .lower["lnE_sd"] <- 1e-8
   if ("wt_sd" %in% names(.lower)) .lower["wt_sd"] <- 1e-8
@@ -530,14 +577,14 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
     .lower[names(.lower) == "wto"] <- -3
     .upper[names(.upper) == "wto"] <- 3
   }
-  if ("fanomalyPT" %in% names(.lower)) {
-    .lower[names(.lower) == "fanomalyPT"] <- -3
-    .upper[names(.upper) == "fanomalyPT"] <- 3
-  }
-  if ("fanomalyT" %in% names(.lower)) {
-    .lower[names(.lower) == "fanomalyT"] <- -3
-    .upper[names(.upper) == "fanomalyT"] <- 3
-  }
+  #if ("fanomalyPT" %in% names(.lower)) {
+  #  .lower[names(.lower) == "fanomalyPT"] <- -3
+  #  .upper[names(.upper) == "fanomalyPT"] <- 3
+  #}
+  #if ("fanomalyT" %in% names(.lower)) {
+  #  .lower[names(.lower) == "fanomalyT"] <- -3
+  #  .upper[names(.upper) == "fanomalyT"] <- 3
+  #}
 
   # Override with user-defined bounds
   for (i in unique(par_names)) {
@@ -583,3 +630,5 @@ expand_array <- function(x, proyears) {
   abind::abind(x, xproj, along = 3) %>%
     structure(dimnames = NULL)
 }
+
+squeeze <- function(x) (1 - .Machine$double.eps) * (x - 0.5) + 0.5

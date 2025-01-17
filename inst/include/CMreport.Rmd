@@ -54,6 +54,11 @@ pars_cov <- c("^b")
 stan_trace(stanfit, pars_cov)
 ```
 
+```{r trace-vul, fig.cap="MCMC wormplots of fishery vulnerability at age parameters."}
+pars_vul <- c("^logit_vul")
+stan_trace(stanfit, pars_cov)
+```
+
 ```{r trace-var, fig.cap="MCMC wormplots of variance parameters."}
 pars_var <- c("lnE_sd", "wt_sd", "wto_sd", "fanomalyPT_sd", "fanomalyT_sd", "sd_matt")
 stan_trace(stanfit, pars_var)
@@ -67,12 +72,24 @@ pairs_panel(stanfit, pars_core)
 pairs_panel(stanfit, pars_cov)
 ```
 
+```{r pairs-vul, fig.cap="Marginal posterior distributions and correlations for fishery vulnerability at age parameters."}
+pairs_panel(stanfit, pars_vul)
+```
+
 ```{r pairs-var, fig.cap="Marginal posterior distributions and correlations of variance parameters."}
 pairs_panel(stanfit, pars_var)
 ```
 
-```{r matt, fig.cap="Posterior estimates of maturity (medians and 95% prediction interval)."}
+```{r matt, fig.cap="Posterior estimates of maturity (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
 CM_maturity(report, d, year1)
+```
+
+```{r vulPT, fig.cap="Posterior estimates of preterminal vulnerability at age (medians and 95% prediction interval)."}
+CM_vul(report, type = "vulPT")
+```
+
+```{r vulT, fig.cap="Posterior estimates of terminal vulnerability at age (medians and 95% prediction interval)."}
+CM_vul(report, type = "vulT")
 ```
 
 ```{r wt, fig.cap="Posterior estimates of egg mortality deviates from the stock-recruit relationship (medians and 95% prediction interval)."}
