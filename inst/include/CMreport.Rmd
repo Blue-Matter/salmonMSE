@@ -124,6 +124,14 @@ CM_fit_CWTcatch(report, d, PT = FALSE, year1)
 CM_SRR(report)
 ```
 
+```{r Megg, fig.cap="Estimated egg-smolt instantaneous mortality rate (medians and 95% prediction interval)."}
+CM_Megg(report, year1, ci = TRUE, surv = FALSE)
+```
+
+```{r Meggsurv, fig.cap="Estimated egg-smolt survival (medians and 95% prediction interval)."}
+CM_Megg(report, year1, ci = TRUE, surv = TRUE)
+```
+
 ```{r M, fig.cap="Natural mortality at age (medians and 95% prediction interval)."}
 CM_M(report, year1)
 ```

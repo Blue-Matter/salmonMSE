@@ -232,6 +232,28 @@ CM_M <- function(report, year1, ci = TRUE) {
   g
 }
 
+
+CM_Megg <- function(report, year1, ci = TRUE, surv = FALSE) {
+  megg <- sapply(report, getElement, 'megg')
+
+  if (surv) megg <- exp(-megg)
+
+  df <- megg %>%
+    apply(1, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1) %>%
+    reshape2::dcast(list("Year", "Var1"), value.var = "value")
+
+  g <- ggplot(df, aes(Year)) +
+    geom_line(aes(y = `50%`)) +
+    labs(x = "Year", y = ifelse(surv, "Egg-smolt survival", "Egg-smolt mortality")) +
+    expand_limits(y = 0)
+
+  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+  g
+}
+
+
 CM_Njuv <- function(report, year1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "N", "Juvenile abundance") +
     theme(legend.position = "bottom")
