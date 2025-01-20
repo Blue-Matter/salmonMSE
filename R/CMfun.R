@@ -291,17 +291,17 @@ CM_F <- function(report, PT = TRUE, year1, ci = TRUE) {
   )
 }
 
-.CM_ts <- function(report, year1, ci = TRUE, var, ylab) {
+.CM_ts <- function(report, year1, ci = TRUE, var, ylab, xlab = "Year") {
   ts <- sapply(report, getElement, var) %>%
-    apply(1, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+    apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-  if (sum(ts$`50%`)) {
+  if (sum(ts$`50%`, na.rm = TRUE)) {
     g <- ggplot(ts, aes(Year)) +
       geom_line(aes(y = `50%`)) +
-      labs(x = "Year", y = ylab) +
+      labs(x = xlab, y = ylab) +
       expand_limits(y = 0)
 
     if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
