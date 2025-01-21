@@ -161,7 +161,7 @@ CM_maturity <- function(report, d, year1) {
     rename(Age = Var3) %>%
     dplyr::filter(Age > 1)
 
-  bmatt <- data.frame(Age = 1:6, value = d$bmatt) %>%
+  bmatt <- data.frame(Age = 1:d$Nages, value = d$bmatt) %>%
     dplyr::filter(Age > 1)
 
   g <- matt_q %>%
