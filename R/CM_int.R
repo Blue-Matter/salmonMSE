@@ -569,14 +569,14 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
 
   if ("sd_matt" %in% names(.lower)) .lower[names(.lower) == "sd_matt"] <- 1e-8
 
-  if ("wt" %in% names(.lower)) {
-    .lower[names(.lower) == "wt"] <- -3
-    .upper[names(.upper) == "wt"] <- 3
-  }
-  if ("wto" %in% names(.lower)) {
-    .lower[names(.lower) == "wto"] <- -3
-    .upper[names(.upper) == "wto"] <- 3
-  }
+  #if ("wt" %in% names(.lower)) {
+  #  .lower[names(.lower) == "wt"] <- -3
+  #  .upper[names(.upper) == "wt"] <- 3
+  #}
+  #if ("wto" %in% names(.lower)) {
+  #  .lower[names(.lower) == "wto"] <- -3
+  #  .upper[names(.upper) == "wto"] <- 3
+  #}
   #if ("fanomalyPT" %in% names(.lower)) {
   #  .lower[names(.lower) == "fanomalyPT"] <- -3
   #  .upper[names(.upper) == "fanomalyPT"] <- 3
