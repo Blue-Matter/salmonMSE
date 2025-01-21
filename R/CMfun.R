@@ -210,19 +210,39 @@ CM_SRR <- function(report) {
 }
 
 
-.CM_statevarage <- function(report, year1, ci = TRUE, var, ylab) {
-  df <- sapply(report, getElement, var, simplify = "array") %>%
-    apply(1:3, quantile, probs = c(0.025, 0.5, 0.975)) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var4 == 1, "Natural", "Hatchery")) %>%
-    mutate(Age = paste("Age", Var3)) %>%
-    reshape2::dcast(Year + Age + Origin ~ Var1, value.var = "value")
+.CM_statevarage <- function(report, year1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
+  arr <- sapply(report, getElement, var, simplify = "array")
 
-  g <- ggplot(df, aes(Year, fill = Origin)) +
-    geom_line(aes(y = `50%`, colour = Origin)) +
-    facet_wrap(vars(Age), scales = "free_y") +
-    labs(x = "Year", y = ylab) +
-    expand_limits(y = 0)
+  if (length(dim(arr)) == 4) { # Include NO/HO dimension
+
+    df <- arr %>%
+      apply(1:3, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+      reshape2::melt() %>%
+      mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var4 == 1, "Natural", "Hatchery")) %>%
+      mutate(Age = paste("Age", Var3)) %>%
+      reshape2::dcast(Year + Age + Origin ~ Var1, value.var = "value")
+
+    g <- ggplot(df, aes(Year, fill = Origin)) +
+      geom_line(aes(y = `50%`, colour = Origin)) +
+      facet_wrap(vars(Age), scales = scales) +
+      labs(x = xlab, y = ylab) +
+      expand_limits(y = 0)
+
+  } else {
+
+    df <- arr %>%
+      apply(1:2, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+      reshape2::melt() %>%
+      mutate(Year = Var2 + year1 - 1) %>%
+      mutate(Age = paste("Age", Var3)) %>%
+      reshape2::dcast(Year + Age ~ Var1, value.var = "value")
+
+    g <- ggplot(df, aes(Year)) +
+      geom_line(aes(y = `50%`)) +
+      facet_wrap(vars(Age), scales = scales) +
+      labs(x = xlab, y = ylab) +
+      expand_limits(y = 0)
+  }
 
   if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
   g
@@ -380,6 +400,190 @@ CM_wto <- function(stanfit, year1, ci = TRUE) {
 #    ylab = "Fitness"
 #  )
 #}
+
+# Convert calendar year matrix to brood year matrix
+CY2BY <- function(x) {
+
+  nt <- nrow(x)
+  na <- ncol(x)
+
+  xbrood <- matrix(NA_real_, nt, na)
+  for (t in 1:nt) {
+    for (a in 1:na) {
+      if (t+a-1 <= nt) {
+        xbrood[t, a] <- x[t+a-1, a]
+      }
+    }
+  }
+  return(xbrood)
+}
+
+# Calculate adult equivalent
+calc_AEQ <- function(report, brood = TRUE) {
+
+  Msurv <- array(NA_real_, dim(report$matt))
+  if (brood) {
+    matt <- CY2BY(report$matt)
+    Msurv[, -ncol(Msurv)] <- CY2BY(report$mo)
+  } else {
+    matt <- report$matt
+    Msurv[, -ncol(Msurv)] <- report$mo
+  }
+  Msurv[, ncol(Msurv)] <- 1
+
+  AEQ <- array(NA_real_, dim(Msurv))
+  AEQ[, ncol(AEQ)] <- 1
+
+  nt <- nrow(AEQ)
+  na <- ncol(AEQ)
+  for (t in seq(nt, 2) - 1) {
+    for (a in seq(na, 2) - 1) {
+      AEQ[t, a] <- matt[t,a] * (1 - matt[t, a]) * Msurv[t, a+1] * AEQ[t, a+1]
+    }
+  }
+
+  return(AEQ)
+}
+
+
+CM_BYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age = TRUE) {
+
+  type <- match.arg(type)
+
+  if (at_age) {
+
+    BYER_list <- lapply(report, function(i) {
+      name <- ifelse(type == "PT", "survPT", "survT")
+      CYER <- 1 - i[[name]]
+      BYER <- CY2BY(CYER)
+      return(list(BYER = BYER))
+    })
+
+    g <- .CM_statevarage(
+      BYER_list,
+      year1,
+      ci,
+      "BYER",
+      ylab = switch(
+        type,
+        "PT" = "Preterminal exploitation rate",
+        "T" = "Terminal exploitation rate"
+      ),
+      xlab = "Brood year"
+    )
+
+  } else {
+
+    BYER_list <- lapply(report, function(i) {
+
+      esc <- apply(i$escyear, 1:2, sum)
+      esc_brood <- CY2BY(esc)
+
+      morts_PT <- apply(i$cyearPT, 1:2, sum)
+      morts_brood_PT <- CY2BY(morts_PT)
+
+      morts_T <- apply(i$cyearT, 1:2, sum)
+      morts_brood_T <- CY2BY(morts_T)
+
+      AEQ_PT <- calc_AEQ(i)
+      AEQ_T <- array(1, dim(esc))
+
+      denom <- rowSums(morts_brood_PT * AEQ_PT + morts_brood_T * AEQ_T + esc_brood)
+
+      if (type == "PT") {
+        num <- rowSums(morts_brood_PT * AEQ_PT)
+      } else if (type == "T") {
+        num <- rowSums(morts_brood_T * AEQ_T)
+      } else {
+        num <- rowSums(morts_brood_PT * AEQ_PT + morts_brood_T * AEQ_T)
+      }
+
+      list(BYER = num/denom)
+    })
+
+    g <- .CM_ts(
+      BYER_list, year1, ci,
+      var = "BYER",
+      xlab = "Brood year",
+      ylab = switch(
+        type,
+        "PT" = "Preterminal exploitation rate",
+        "T" = "Terminal exploitation rate",
+        "all" = "Total exploitation rate"
+      )
+    )
+  }
+
+  g
+}
+
+
+CM_CYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age = TRUE) {
+
+  type <- match.arg(type)
+
+  if (at_age) {
+
+    CYER_list <- lapply(report, function(i) {
+      name <- ifelse(type == "PT", "survPT", "survT")
+      return(list(CYER = 1 - i[[name]]))
+    })
+
+    g <- .CM_statevarage(
+      CYER_list,
+      year1,
+      ci,
+      "CYER",
+      ylab = switch(
+        type,
+        "PT" = "Preterminal exploitation rate",
+        "T" = "Terminal exploitation rate"
+      ),
+      xlab = "Calendar year"
+    )
+
+  } else {
+
+    CYER_list <- lapply(report, function(i) {
+
+      esc <- apply(i$escyear, 1:2, sum)
+
+      morts_PT <- apply(i$cyearPT, 1:2, sum)
+      morts_T <- apply(i$cyearT, 1:2, sum)
+
+      AEQ_PT <- calc_AEQ(i, brood = FALSE)
+      AEQ_T <- array(1, dim(esc))
+
+      denom <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T + esc)
+
+      if (type == "PT") {
+        num <- rowSums(morts_PT * AEQ_PT)
+      } else if (type == "T") {
+        num <- rowSums(morts_T * AEQ_T)
+      } else {
+        num <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T)
+      }
+
+      list(CYER = num/denom)
+    })
+
+    g <- .CM_ts(
+      CYER_list, year1, ci,
+      var = "CYER",
+      xlab = "Calendar year",
+      ylab = switch(
+        type,
+        "PT" = "Preterminal exploitation rate",
+        "T" = "Terminal exploitation rate",
+        "all" = "Total exploitation rate"
+      )
+    )
+
+  }
+
+  g
+}
+
 
 reportCM <- function(stanfit, year,
                      name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {

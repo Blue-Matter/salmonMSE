@@ -42,7 +42,7 @@ df_pars <- rstan::summary(stanfit)$summary %>%
 df_pars[, c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
 ```
 
-## Estimates
+## Parameters
 
 ```{r trace-cr, fig.cap="MCMC wormplots of productivity parameters, scaling parameters and the log-posterior."}
 pars_core <- c("cr", "log_so", "moadd", "log_FbasePT", "log_FbaseT", "lp")
@@ -122,7 +122,21 @@ CM_fit_CWTcatch(report, d, PT = TRUE, year1)
 CM_fit_CWTcatch(report, d, PT = FALSE, year1)
 ```
 
-## State variables
+## State variables {.tabset}
+
+### Abundance 
+
+```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval). Natural origin age 1 fish corresponds to smolt production."}
+CM_Njuv(report, year1, ci = FALSE)
+```
+
+```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
+CM_recr(report, year1, ci = TRUE)
+```
+
+```{r esc, fig.cap="Escapement at age (medians and 95% prediction interval)."}
+CM_esc(report, year1)
+```
 
 ```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Points show annual smolt production (medians)."}
 CM_SRR(report)
@@ -136,7 +150,7 @@ CM_Megg(report, year1, ci = TRUE, surv = FALSE)
 CM_Megg(report, year1, ci = TRUE, surv = TRUE)
 ```
 
-```{r M, fig.cap="Natural mortality at age (medians and 95% prediction interval)."}
+```{r M, fig.cap="Instantaneous natural mortality at age (medians and 95% prediction interval)."}
 CM_M(report, year1)
 ```
 
@@ -144,25 +158,32 @@ CM_M(report, year1)
 CM_surv(report, year1)
 ```
 
-```{r FPT, fig.cap="Preterminal fishing mortality (medians and 95% prediction interval)."}
+### Exploitation 
+
+```{r FPT, fig.cap="Preterminal instantaneous fishing mortality (medians and 95% prediction interval)."}
 CM_F(report, PT = TRUE, year1)
 ```
 
-```{r FT, fig.cap="Terminal fishing mortality (medians and 95% prediction interval)."}
+```{r FT, fig.cap="Terminal instantaneous fishing mortality (medians and 95% prediction interval)."}
 CM_F(report, PT = FALSE, year1)
 ```
 
-```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval)."}
-CM_Njuv(report, year1, ci = FALSE)
+```{r CYER-PT, fig.cap="Calendar year preterminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_CYER(report, type = "PT", year1)
 ```
 
-```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
-CM_recr(report, year1, ci = TRUE)
+```{r CYER-T, fig.cap="Calendar year terminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_CYER(report, type = "T", year1)
 ```
 
-```{r esc, fig.cap="Escapement at age (medians and 95% prediction interval)."}
-CM_esc(report, year1)
+```{r BYER-PT, fig.cap="Brood year preterminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_BYER(report, type = "PT", year1)
 ```
+
+```{r BYER-T, fig.cap="Brood year terminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_BYER(report, type = "T", year1)
+```
+
 
 ## About
 
