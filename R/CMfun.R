@@ -213,39 +213,42 @@ CM_SRR <- function(report) {
 .CM_statevarage <- function(report, year1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
   arr <- sapply(report, getElement, var, simplify = "array")
 
-  if (length(dim(arr)) == 4) { # Include NO/HO dimension
+  if (sum(arr, na.rm = TRUE)) {
+    if (length(dim(arr)) == 4) { # Include NO/HO dimension
 
-    df <- arr %>%
-      apply(1:3, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
-      reshape2::melt() %>%
-      mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var4 == 1, "Natural", "Hatchery")) %>%
-      mutate(Age = paste("Age", Var3)) %>%
-      reshape2::dcast(Year + Age + Origin ~ Var1, value.var = "value")
+      df <- arr %>%
+        apply(1:3, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+        reshape2::melt() %>%
+        mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var4 == 1, "Natural", "Hatchery")) %>%
+        mutate(Age = paste("Age", Var3)) %>%
+        reshape2::dcast(Year + Age + Origin ~ Var1, value.var = "value")
 
-    g <- ggplot(df, aes(Year, fill = Origin)) +
-      geom_line(aes(y = `50%`, colour = Origin)) +
-      facet_wrap(vars(Age), scales = scales) +
-      labs(x = xlab, y = ylab) +
-      expand_limits(y = 0)
+      g <- ggplot(df, aes(Year, fill = Origin)) +
+        geom_line(aes(y = `50%`, colour = Origin)) +
+        facet_wrap(vars(Age), scales = scales) +
+        labs(x = xlab, y = ylab) +
+        expand_limits(y = 0)
 
-  } else {
+    } else {
 
-    df <- arr %>%
-      apply(1:2, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
-      reshape2::melt() %>%
-      mutate(Year = Var2 + year1 - 1) %>%
-      mutate(Age = paste("Age", Var3)) %>%
-      reshape2::dcast(Year + Age ~ Var1, value.var = "value")
+      df <- arr %>%
+        apply(1:2, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+        reshape2::melt() %>%
+        mutate(Year = Var2 + year1 - 1) %>%
+        mutate(Age = paste("Age", Var3)) %>%
+        reshape2::dcast(Year + Age ~ Var1, value.var = "value")
 
-    g <- ggplot(df, aes(Year)) +
-      geom_line(aes(y = `50%`)) +
-      facet_wrap(vars(Age), scales = scales) +
-      labs(x = xlab, y = ylab) +
-      expand_limits(y = 0)
+      g <- ggplot(df, aes(Year)) +
+        geom_line(aes(y = `50%`)) +
+        facet_wrap(vars(Age), scales = scales) +
+        labs(x = xlab, y = ylab) +
+        expand_limits(y = 0)
+    }
+
+    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
+    g
+
   }
-
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
-  g
 }
 
 CM_M <- function(report, year1, ci = TRUE) {
@@ -469,7 +472,8 @@ CM_BYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age
         "PT" = "Preterminal exploitation rate",
         "T" = "Terminal exploitation rate"
       ),
-      xlab = "Brood year"
+      xlab = "Brood year",
+      scales = "fixed"
     )
 
   } else {
@@ -539,7 +543,8 @@ CM_CYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age
         "PT" = "Preterminal exploitation rate",
         "T" = "Terminal exploitation rate"
       ),
-      xlab = "Calendar year"
+      xlab = "Calendar year",
+      scales = "fixed"
     )
 
   } else {
@@ -585,7 +590,65 @@ CM_CYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age
 }
 
 
-reportCM <- function(stanfit, year,
+CM_covariate <- function(x, names, year1, b, ylab = "Covariate") {
+
+  if (sum(x)) {
+
+
+    if (!is.matrix(x)) x <- matrix(x, ncol = 1)
+    if (missing(names)) names <- paste("Covariate", 1:ncol(x))
+
+    if (missing(b)) { # Plot covariate
+
+      g <- structure(x, dimnames = list(Year = 1:nrow(x) + year1 - 1, Covariate = names)) %>%
+        reshape2::melt() %>%
+        ggplot(aes(Year, value, colour = Covariate)) +
+        geom_line() +
+        geom_point() +
+        labs(y = ylab, colour = NULL) +
+        expand_limits(y = 0) +
+        theme(legend.position = "bottom")
+
+    } else { # Plot M = covariate x coefficient
+
+      if (!is.matrix(b)) b <- matrix(b, ncol = 1) # simulation x cov
+      nsim <- nrow(b)
+      ncov <- ncol(b)
+      nt <- nrow(x)
+
+      Mcov <- array(NA_real_, c(nsim, ncov, nt))
+
+      i <- expand.grid(
+        x = 1:nsim,
+        j = 1:ncov,
+        t = 1:nt
+      ) %>% as.matrix()
+
+      i_b <- i[, c("x", "j")]
+      i_x <- i[, c("t", "j")]
+
+      Mcov[i] <- b[i_b] * x[i_x]
+
+      g <- Mcov %>%
+        apply(2:3, quantile, c(0.025, 0.5, 0.975)) %>%
+        reshape2::melt() %>%
+        mutate(Covariate = names[Var2], Year = Var3 + year1 - 1) %>%
+        reshape2::dcast(Year + Covariate ~ Var1, value.var = "value") %>%
+        ggplot(aes(Year, `50%`, colour = Covariate, fill = Covariate)) +
+        geom_line() +
+        geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+        labs(y = ylab, colour = NULL, fill = NULL) +
+        expand_limits(y = 0) +
+        theme(legend.position = "bottom")
+    }
+
+    return(g)
+
+  }
+
+}
+
+reportCM <- function(stanfit, year, cov1_names, cov_names,
                      name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
 
   report <- get_report(stanfit)

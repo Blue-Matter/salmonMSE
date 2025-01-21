@@ -100,14 +100,28 @@ CM_wt(stanfit, year1)
 CM_wto(stanfit, year1)
 ```
 
-## Data and fits
-
-```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_esc(report, d, year)
-```
+## Data
 
 ```{r cwt-rel, fig.cap="Total CWT releases."}
 CM_data(d$cwtrelease, year, ylab = "CWT release")
+```
+
+```{r hatch-rel, fig.cap="Total hatchery releases."}
+CM_data(d$hatchrelease, c(year, max(year) + 1), ylab = "Hatchery release")
+```
+
+```{r cov1, fig.cap="Linear covariates to natural mortality in age 1."}
+CM_covariate(d[["covariate1"]], cov1_names, year1, ylab = "M covariates (age 1)")
+```
+
+```{r cov, fig.cap="Linear covariates to natural mortality in ages 2+."}
+CM_covariate(d[["covariate"]], cov_names, year1, ylab = "M covariates (age 2+)")
+```
+
+## Fits
+
+```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_esc(report, d, year)
 ```
 
 ```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
@@ -142,6 +156,8 @@ CM_esc(report, year1)
 CM_SRR(report)
 ```
 
+### Natural mortality
+
 ```{r Megg, fig.cap="Estimated egg-smolt instantaneous mortality rate (medians and 95% prediction interval)."}
 CM_Megg(report, year1, ci = TRUE, surv = FALSE)
 ```
@@ -157,6 +173,15 @@ CM_M(report, year1)
 ```{r Msurv, fig.cap="Natural survival at age (medians and 95% prediction interval)."}
 CM_surv(report, year1)
 ```
+
+```{r Mcov1, fig.cap="Contribution to natural mortality in age 1 from covariates."}
+CM_covariate(d[["covariate1"]], cov1_names, year1, b = rstan::extract(stanfit, "b1")[["b1"]], ylab = "Natural mortality (age 1)")
+```
+
+```{r Mcov, fig.cap="Contribution to natural mortality in age 1 from covariates."}
+CM_covariate(d[["covariate"]], cov_names, year1, b = rstan::extract(stanfit, "b")[["b"]], ylab = "Natural mortality (age 2+)")
+```
+
 
 ### Exploitation 
 
