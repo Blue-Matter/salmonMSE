@@ -534,15 +534,17 @@ make_map <- function(map = list(), p, d) {
   FT <- sum(d$cwtcatT)
 
   if (!FPT) {
-    map$FbasePT <- factor(NA)
-    map$fanomalyPT <- factor(rep(NA, d$Ldyr))
+    map$log_FbasePT <- factor(NA)
+    map$log_fanomalyPT <- factor(rep(NA, d$Ldyr))
     map$fanomalyPT_sd <- factor(NA)
+    map$logit_vulPT <- factor(rep(NA, d$Nages - 2))
   }
 
   if (!FT) {
-    map$FbaseT <- factor(NA)
-    map$fanomalyT <- factor(rep(NA, d$Ldyr))
+    map$log_FbaseT <- factor(NA)
+    map$log_fanomalyT <- factor(rep(NA, d$Ldyr))
     map$fanomalyT_sd <- factor(NA)
+    map$logit_vulT <- factor(rep(NA, d$Nages - 2))
   }
 
   if (!length(d[["covariate1"]])) map[["b1"]] <- factor(NA)

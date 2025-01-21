@@ -594,7 +594,6 @@ CM_covariate <- function(x, names, year1, b, ylab = "Covariate") {
 
   if (sum(x)) {
 
-
     if (!is.matrix(x)) x <- matrix(x, ncol = 1)
     if (missing(names)) names <- paste("Covariate", 1:ncol(x))
 
