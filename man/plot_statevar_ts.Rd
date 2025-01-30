@@ -8,7 +8,7 @@
 \alias{plot_escapement}
 \alias{plot_fishery}
 \alias{plot_Kobe}
-\title{Plot output from salmonMSE}
+\title{Plot core output from salmonMSE}
 \usage{
 plot_statevar_ts(
   SMSE,
@@ -99,5 +99,5 @@ Various functions that plot the state variables from salmonMSE projections:
 }
 }
 \seealso{
-\code{\link[=plot_decision_table]{plot_decision_table()}}
+\code{\link[=plot_decision_table]{plot_decision_table()}} \code{\link[=plot_LHG]{plot_LHG()}}
 }

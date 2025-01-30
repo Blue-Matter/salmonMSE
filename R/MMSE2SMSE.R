@@ -31,6 +31,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
   Mjuv_loss <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
 
+  LHG <- vector("list", length = ns)
+
   # openMSE year and age indices
   t1 <- seq(1, 2 * SOM@proyears, 2)
   t2 <- seq(2, 2 * SOM@proyears, 2)
@@ -50,40 +52,38 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
   # Loop over s
   for (s in 1:ns) {
 
-    # NOS state variables from MMSE object
+    # NOS state variables from MMSE object (length n_g)
     p_NOS_imm <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]
     p_NOS_return <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "recruitment"] # MSEtool population index for returning NOS
     p_NOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"] # NOS escapement
 
-    y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement, mp, ] > 0) # Odd time steps, indicated by presence of escapement
+    y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement[1], mp, ] > 0) # Odd time steps, indicated by presence of escapement
     if (y_spawnOM[1] == 1) {
       y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
     }
     y_spawn <- 0.5 * (y_spawnOM - 1)
 
-    Njuv_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
-    Return_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-    Escapement_NOS[, s, , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, ], 1:3, sum)
+    Njuv_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, , drop = FALSE], c(1, 3, 5), sum)
+    Return_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, , drop = FALSE], c(1, 3, 5), sum)
+    Escapement_NOS[, s, , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 3, 5), sum)
 
     # Kept catch
-    KPT_NOS[, s, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]
-    KT_NOS[, s, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]
+    KPT_NOS[, s, ] <- apply(MMSE@Catch[, p_NOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum)
+    KT_NOS[, s, ] <- apply(MMSE@Catch[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum)
 
     # Total discards (live + dead)
-    DPT_NOS[, s, ] <- MMSE@Removals[, p_NOS_imm, f, mp, t1] - MMSE@Catch[, p_NOS_imm, f, mp, t1]
-    DT_NOS[, s, ] <- MMSE@Removals[, p_NOS_return, f, mp, t2] - MMSE@Catch[, p_NOS_return, f, mp, t2]
+    DPT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_imm, f, mp, t1, drop = FALSE] - MMSE@Catch[, p_NOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum)
+    DT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_return, f, mp, t2, drop = FALSE] - MMSE@Catch[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum)
 
     # Harvest rate from kept catch
     vulPT <- array(SOM@Harvest[[s]]@vulPT, c(nage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
-    NOS_imm_a <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, ], 1:3, sum)
-    vulNOS_imm <- apply(vulPT * NOS_imm_a, c(1, 3), sum)
-    UPT_NOS[, s, ] <- MMSE@Catch[, p_NOS_imm, f, mp, t1]/vulNOS_imm
+    vulNOS_imm <- apply(vulPT * Njuv_NOS[, s, , ], c(1, 3), sum)
+    UPT_NOS[, s, ] <- KPT_NOS[, s, ]/vulNOS_imm
     UPT_NOS[is.na(UPT_NOS)] <- 0
 
     vulT <- array(SOM@Harvest[[s]]@vulT, c(nage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
-    NOS_ret_a <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, ], 1:3, sum)
-    vulNOS_ret <- apply(vulT * NOS_ret_a, c(1, 3), sum)
-    UT_NOS[, s, ] <- MMSE@Catch[, p_NOS_return, f, mp, t2]/vulNOS_ret
+    vulNOS_ret <- apply(vulT * Return_NOS[, s, , ], c(1, 3), sum)
+    UT_NOS[, s, ] <- KT_NOS[, s, ]/vulNOS_ret
     UT_NOS[is.na(UT_NOS)] <- 0
 
     # Exploitation rate from kept + dead discards (DD)
@@ -97,6 +97,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
     do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
     has_strays <- any(SOM@stray[-s, s] > 0)
+    n_g <- length(unique(pindex$g[pindex$s == s]))
+
     if (do_hatchery || has_strays) {
 
       # HOS state variables from MMSE object
@@ -183,14 +185,42 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     } else {
       # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
       NOS[, s, ] <- apply(Escapement_NOS[, s, , ], c(1, 3), sum)
+      Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
 
       a_smolt <- 1
-
-      Egg_NOS[, s, y_spawn] <- MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM] # -1 from 1-year lag
-      Smolt_NOS[, s, y_spawn + 1] <- apply(MMSE@N[, p_NOS_imm, a_smolt, mp, y_spawnOM, ], 1:2, sum)
+      Smolt_NOS[, s, ] <- Njuv_NOS[, s, a_smolt, ]
 
       PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
       pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
+    }
+
+    if (n_g > 1) {
+
+      LHG_s <- list()
+
+      Egg_g <- Smolt_g <- array(NA_real_, c(nsim, n_g, SOM@proyears))
+      Esc_g <- NOS_g <- array(NA_real_, c(nsim, n_g, nage, SOM@proyears))
+
+      x <- a <- g <- t <- NULL
+      Egg_g[, , y_spawn] <- dplyr::filter(state, .data$p_smolt == min(p_NOS_imm)) %>%
+        summarise(value = sum(.data$Egg_NOS_g), .by = c(x, g, t)) %>%
+        reshape2::acast(list("x", "g", "t"), value.var = "value")
+
+      a_smolt <- 1
+      Smolt_g[] <- apply(MMSE@N[, p_NOS_imm, a_smolt, mp, t1, , drop = FALSE], c(1, 2, 5), sum)
+
+      Esc_g[, , , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 2, 3, 5), sum)
+
+      NOS_g[, , , y_spawn] <- dplyr::filter(N, .data$p_smolt == min(p_NOS_imm)) %>%
+        summarise(value = sum(.data$NOS), .by = c(x, g, a, t)) %>%
+        reshape2::acast(list("x", "g", "a", "t"), value.var = "value")
+
+      LHG[[s]] <- list(
+        Egg = Egg_g,
+        Smolt = Smolt_g,
+        Esc = Esc_g,
+        NOS = NOS_g
+      )
     }
 
   }
@@ -248,6 +278,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
   SMSE@Misc$SOM <- SOM
   SMSE@Misc$Ref <- calc_ref(SOM, check = FALSE)
+  SMSE@Misc$LHG <- LHG
 
   return(SMSE)
 }

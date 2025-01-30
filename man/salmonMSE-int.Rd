@@ -20,6 +20,7 @@ SOM2MOM(SOM, check = TRUE)
 make_Stock(
   SOM,
   s = 1,
+  g = 1,
   NOS = TRUE,
   stage = c("immature", "return", "escapement")
 )
@@ -43,7 +44,9 @@ multiHist2SHist(multiHist, SOM, check = TRUE)
 
 \item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
-\item{s}{Logical, the population number for which to create the Stock or Fleet object}
+\item{s}{Integer, the population integer for which to create the Stock or Fleet object}
+
+\item{g}{Integer, the life history group for which to create the Stock object. Not relevant if \code{NOS = FALSE}}
 
 \item{NOS}{Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish}
 

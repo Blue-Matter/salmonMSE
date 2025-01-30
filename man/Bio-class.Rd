@@ -18,6 +18,15 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
+\item{\code{n_g}}{Integer. Number of life history groups within a cohort.
+Life history groups (LHGs) are sub-units of a cohort that have different biological parameters, e.g., survival,
+but the egg production and smolt production in the next generation is calculated from the sum across life history groups.
+Default is 1.}
+
+\item{\code{p_LHG}}{The proportion of the total egg production assigned to each life history group within a cohort. For example,
+if \code{Bio@n_g <- 2}, then \code{Bio@p_LHG <- c(0.9, 0.1)}, then 90 percent of the egg production in the first population is assigned to the first life history group and
+ten percent to the second LHG. Default is \code{rep(1/Bio@n_g, Bio@n_g)}}
+
 \item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
 
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
@@ -34,9 +43,9 @@ In stage-based models, equivalent to the product of smolt productivity (smolts p
 \item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished egg production rate per smolt.
 The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
 the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS} corresponding
-to the first year.}
+to the first year and first life history group.}
 
-\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}.
+\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_g]}.
 Natural mortality of immature natural origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
 

@@ -231,6 +231,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   Bio <- new(
     "Bio",
     maxage = data$Nages,
+    n_g = 1,
+    p_LHG = 1,
     p_mature = expand_array(matt, proyears),
     SRrel = "Ricker",
     kappa = as.numeric(exp(pars$log_cr[sims])),
@@ -258,8 +260,10 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   Historical <- new(
     "Historical",
-    HistSpawner = Spawner,
-    HistN = Njuv,
+    HistSpawner_NOS = Spawner[, , , 1],
+    HistSpawner_HOS = Spawner[, , , 2],
+    HistNjuv_NOS = Njuv[, , , 1, drop = FALSE],
+    HistNjuv_HOS = Njuv[, , , 2, drop = FALSE],
     HistFPT = FPT,
     HistFT = FT
   )

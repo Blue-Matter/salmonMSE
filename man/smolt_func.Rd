@@ -6,7 +6,8 @@
 \title{Predict smolt production}
 \usage{
 smolt_func(
-  Nage,
+  Nage_NOS,
+  Nage_HOS,
   x = -1,
   y,
   output = c("natural", "hatchery"),
@@ -16,7 +17,9 @@ smolt_func(
   SRRpars,
   hatchery_args,
   fitness_args,
-  p_naturalsmolt
+  p_naturalsmolt,
+  g,
+  prop_LHG
 )
 
 makeRel_smolt(
@@ -30,11 +33,17 @@ makeRel_smolt(
   fec,
   SRRpars,
   hatchery_args,
-  fitness_args
+  fitness_args,
+  g,
+  prop_LHG
 )
 }
 \arguments{
-\item{Nage}{Matrix \verb{[n_age, 2]} of natural and hatchery escapement from openMSE}
+\item{Nage_NOS}{Matrix \verb{[n_age, n_g]} of natural escapement from openMSE. \code{n_g} is the number of life history groups (divisons within cohorts
+that contribute to spawning.}
+
+\item{Nage_HOS}{Matrix \verb{[n_age, n_g]} of hatchery escapement from openMSE. \code{n_g} is the number of life history groups (divisons within cohorts
+that contribute to spawning.}
 
 \item{x}{Integer, simulation number from openMSE}
 
@@ -56,14 +65,18 @@ Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, ca
 \item{fitness_args}{Named list containing various arguments controlling population fitness from hatchery production.
 Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss}
 
-\item{p_naturalsmolt}{Integer, the population index for the natural smolts in the openMSE model.
+\item{p_naturalsmolt}{Integer, the population index for the natural smolts, and first life history group, in the openMSE model.
 Used to report variables to \link{salmonMSE_env}.}
+
+\item{prop_LHG}{Proportion of the egg production assign to the life history groups corresponding to \code{p_smolt} for the next generation}
 
 \item{p_smolt}{Integer, the population index for the smolt production in the openMSE model, corresponding to \code{output}}
 
-\item{p_natural}{Integer, the population index for the natural origin escapement in the openMSE model}
+\item{p_natural}{Integer vector, the population index for the natural origin escapement in the openMSE model. Can be more than one
+if spawning is from multiple life history groups}
 
-\item{p_hatchery}{Integer, the population index for the hatchery origin escapement in the openMSE model}
+\item{p_hatchery}{Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
+if spawning is from multiple life history groups}
 }
 \value{
 \itemize{

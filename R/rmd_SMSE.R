@@ -1,6 +1,6 @@
 
 
-make_rmd_stock <- function(s, sname) {
+rmd_natural_production <- function(s, sname) {
 
   c(
     paste("##", sname, "{.tabset}"),
@@ -163,7 +163,13 @@ make_rmd_stock <- function(s, sname) {
     "</div>",
     "",
     "</div>",
-    "",
+    ""
+  )
+
+}
+
+rmd_hatchery_production <- function(s, sname) {
+  c(
     "### Hatchery production {.tabset}",
     "",
     "#### Parameters",
@@ -318,7 +324,12 @@ make_rmd_stock <- function(s, sname) {
     "</div>",
     "",
     "</div>",
-    "",
+    ""
+  )
+}
+
+rmd_fishery <- function(s, sname) {
+  c(
     "### Fishery",
     "\n",
     "```{r, fig.cap=\"Kept catch in the preterminal (PT) and terminal (T) fishery (annual medians across simulations).\"}",
@@ -368,7 +379,36 @@ make_rmd_stock <- function(s, sname) {
     "```",
     "\n"
   )
+}
 
+rmd_lhg <- function(s, sname) {
+  c(
+    "### Life history groups",
+    "\n",
+    "```{r, fig.cap=\"Annual distribution of life history groups at the smolt life stage.\"}",
+    paste0("plot_LHG(SMSE, var = \"Smolt\", s = ", s, ")"),
+    "```",
+    "\n",
+    "```{r, fig.cap=\"Annual distribution of life history groups of natural spawners.\"}",
+    paste0("plot_LHG(SMSE, var = \"NOS\", s = ", s, ")"),
+    "```",
+    "\n"
+  )
+}
+
+make_rmd_stock <- function(s, sname, n_g = 1) {
+
+  natural_production <- rmd_natural_production(s, sname)
+
+  if (n_g > 1) {
+    lhg <- rmd_lhg(s, sname)
+  } else {
+    lhg <- NULL
+  }
+  hatchery_production <- rmd_hatchery_production(s, sname)
+  fishery <- rmd_fishery(s, sname)
+
+  c(natural_production, lhg, hatchery_production, fishery)
 }
 
 make_rmd_stock_comparison <- function() {

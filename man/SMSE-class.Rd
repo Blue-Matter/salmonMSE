@@ -117,8 +117,13 @@ non-assortative mating, defined under Canada's Wild Salmon Policy.}
 
 \item{\code{Mjuv_loss}}{Array \verb{[nsim, nstocks, nage, proyears]}. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.}
 
-\item{\code{Misc}}{List. Miscellaneous output. Contains \code{Ref} for reference points, \code{SHist} for the \linkS4class{SHist} object, and
-\code{SOM} for the \linkS4class{SOM} object.}
+\item{\code{Misc}}{List. Miscellaneous output:
+\itemize{
+\item \code{Ref} for reference points
+\item \code{SHist} for the \linkS4class{SHist} object
+\item \code{SOM} for the \linkS4class{SOM} object.
+\item \code{LHG} list \code{nstocks} long containing state variables by life history group
+}}
 }}
 
 \section{Creating Object}{

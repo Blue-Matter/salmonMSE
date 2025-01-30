@@ -2,12 +2,10 @@
 ## Internal functions to predict either:
 # (b) smolt hatchery production
 # (c) smolt natural production
-calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
+calc_broodtake <- function(NOR_escapement, HOR_escapement, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
                            fec_brood, s_prespawn, m) {
 
-  NOR_escapement <- Nage[, 1]
-  if (ncol(Nage) > 1) {
-    HOR_escapement <- Nage[, 2]
+  if (sum(HOR_escapement)) {
 
     # Optimization can fail for two reasons:
     # (1) not enough unmarked fish
@@ -64,19 +62,19 @@ calc_broodtake <- function(Nage, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_
       ptake_NOB <- NOBopt$root
     }
     NOB <- ptake_NOB * NOR_escapement
-    HOB <- rep(0, length(NOB))
+    HOB <- array(0, dim(HOR_escapement))
   }
 
   list(NOB = NOB, HOB = HOB)
 }
 
-calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
+calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, premove_HOS) {
   spawners <- list()
-  spawners$NOS <- escapement[, 1] - broodtake$NOB
-  if (ncol(escapement) > 1) {
-    spawners$HOS <- escapement[, 2] * (1 - phatchery) * (1 - premove_HOS)
+  spawners$NOS <- escapement_NOS - broodtake$NOB
+  if (sum(escapement_HOS)) {
+    spawners$HOS <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS)
   } else {
-    spawners$HOS <- rep(0, length(spawners$NOS))
+    spawners$HOS <- array(0, dim(escapement_HOS))
   }
   return(spawners)
 }
@@ -126,7 +124,8 @@ calc_spawners <- function(broodtake, escapement, phatchery, premove_HOS) {
     pNOB <- sum(NOB)/sum(NOB + HOB_unmarked + HOB_marked)
     output <- list(
       egg_NOB = egg_NOB,
-      egg_HOB_unmarked = egg_HOB_unmarked, egg_HOB_marked = egg_HOB_marked_actual,
+      egg_HOB_unmarked = egg_HOB_unmarked,
+      egg_HOB_marked = egg_HOB_marked_actual,
       ptake_marked = ptake_marked,
       pNOB = pNOB,
       NOB = NOB, HOB_unmarked = HOB_unmarked, HOB_marked = HOB_marked

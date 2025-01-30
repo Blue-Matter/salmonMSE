@@ -1,5 +1,5 @@
 
-#' Plot output from salmonMSE
+#' Plot core output from salmonMSE
 #'
 #' @description
 #' Various functions that plot the state variables from salmonMSE projections:
@@ -26,7 +26,7 @@
 #' @importFrom methods slot
 #' @importFrom stats quantile
 #' @importFrom grDevices hcl.colors
-#' @seealso [plot_decision_table()]
+#' @seealso [plot_decision_table()] [plot_LHG()]
 #' @export
 plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
 

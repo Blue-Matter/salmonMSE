@@ -37,6 +37,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   #ns <- length(Stocks_s)
   np_s <- sapply(Stocks_s, length)
   np <- length(Stocks)
+  n_g <- sapply(1:ns, function(s) SOM@Bio[[s]]@n_g)
 
   do_hatchery <- vapply(SOM@Hatchery, function(Hatchery) Hatchery@n_yearling > 0 || Hatchery@n_subyearling > 0, logical(1))
   has_strays <- vapply(1:ns, function(s) any(SOM@stray[-s, s] > 0), logical(1))
@@ -69,18 +70,20 @@ SOM2MOM <- function(SOM, check = TRUE) {
   # Ignore Complexes for now
 
   # Specify smolt natural production from NOS population
-  pindex <- .make_stock_index(ns, np_s)
+  pindex <- .make_stock_index(ns, n_g, np_s)
   SSBfrom <- matrix(0, np, np)
   for (s in 1:ns) {
-    # Juv NOS predicted from NOS escapement
-    p_nat_esc <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"]
-    p_nat_juv <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]
-    SSBfrom[p_nat_juv, p_nat_esc] <- 1
+    for (g in 1:n_g[s]) {
+      # Juv NOS predicted from NOS escapement
+      p_nat_juv <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "juvenile"]
+      p_nat_esc <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "escapement"]
+      SSBfrom[p_nat_juv, p_nat_esc] <- 1
 
-    # Integrated hatchery: triggers SRRfun so that there is hatchery production (p = 4) only when there is natural escapement (p = 3)
-    if (do_hatchery[s]) {
-      p_hat_juv <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
-      SSBfrom[p_hat_juv, p_nat_esc] <- 1
+      # Integrated hatchery: triggers SRRfun so that there is hatchery production only when there is natural escapement
+      if (do_hatchery[s]) {
+        p_hat_juv <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
+        SSBfrom[p_hat_juv, p_nat_esc] <- 1
+      }
     }
   }
 
@@ -120,12 +123,16 @@ SOM2MOM <- function(SOM, check = TRUE) {
       aperm(c(2, 1, 3))
 
     # For NOS
-    p_nat_esc <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"]
-    p_nat_rec <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "recruitment"]
-    p_nat_juv <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]
+    Herm <- list()
+    Herm_names <- character(0)
+    for (g in 1:n_g[s]) {
+      p_nat_esc <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "escapement"]
+      p_nat_rec <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "recruitment"]
+      p_nat_juv <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "juvenile"]
 
-    Herm <- list(Herm_escapement, Herm_mature)
-    names(Herm) <- c(paste0("H_", p_nat_esc, "_", p_nat_rec), paste0("H_", p_nat_rec, "_", p_nat_juv))
+      Herm <- c(Herm, list(Herm_escapement, Herm_mature))
+      Herm_names <- c(Herm_names, paste0("H_", p_nat_esc, "_", p_nat_rec), paste0("H_", p_nat_rec, "_", p_nat_juv))
+    }
 
     # HOS
     if (do_hatchery[s] || has_strays[s]) {
@@ -133,13 +140,12 @@ SOM2MOM <- function(SOM, check = TRUE) {
       p_hat_rec <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "recruitment"]
       p_hat_juv <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
 
-      Herm <- c(Herm, Herm)
-      names(Herm)[3:4] <- c(paste0("H_", p_hat_esc, "_", p_hat_rec), paste0("H_", p_hat_rec, "_", p_hat_juv))
+      Herm <- c(Herm, list(Herm_escapement, Herm_mature))
+      Herm_names <- c(Herm_names, paste0("H_", p_hat_esc, "_", p_hat_rec), paste0("H_", p_hat_rec, "_", p_hat_juv))
     }
 
-    return(Herm)
+    structure(Herm, names = Herm_names)
   })
-
   Herm_mature <- do.call(c, Herm_mature)
 
   if (sum(diag(SOM@stray)) < ns) {
@@ -201,16 +207,24 @@ SOM2MOM <- function(SOM, check = TRUE) {
     Hatchery <- SOM@Hatchery[[s]]
     S <- Stocks_s[[s]]
     SRRpars <- S[[1]]$cpars_bio$SRR$SRRpars
+
+    p_LHG <- Bio@p_LHG
+
     pind <- pindex[pindex$s == s, ]
 
-    Rel <- list()
-
-    # Not needed if no habitat improvement, no hatchery, and s_enroute = 1.
+    # Not needed if no habitat improvement, no hatchery, and s_enroute = 1 and n_g = 1.
     # SRR pars in the OM should suffice in that case (the escapement is the spawning output)
     do_hatchery_s <- do_hatchery[s]
     habitat_change_s <- Habitat@kappa_improve != 1 || Habitat@capacity_smolt_improve != 1
     has_strays_s <- has_strays[s]
-    if (do_hatchery_s || habitat_change_s || Bio@s_enroute < 1 || has_strays_s) {
+    g_s <- n_g[s]
+
+    Rel_smolt_g <- list()
+    Rel_hatchrel <- list()
+    Rel_SAR_NOS_g <- list()
+    Rel_SAR_HOS <- list()
+
+    if (do_hatchery_s || habitat_change_s || Bio@s_enroute < 1 || has_strays_s || g_s > 1) {
 
       if (do_hatchery_s) {
         # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
@@ -268,48 +282,52 @@ SOM2MOM <- function(SOM, check = TRUE) {
         }
       }
 
-      # Natural smolt production from NOS and HOS escapement (including strays), habitat, and/or en-route mortality
-      p_nat_smolt <- pind$p[pind$origin == "natural" & pind$stage == "juvenile"]
-      p_nat_esc <- pind$p[pind$origin == "natural" & pind$stage == "escapement"]
+      p_nat_smolt1 <- pind$p[pind$origin == "natural" & pind$g == 1 & pind$stage == "juvenile"]
+      for (g in seq_len(g_s)) {
+        # Natural smolt production from NOS and HOS escapement (including strays), habitat, and/or en-route mortality
+        p_nat_smolt <- pind$p[pind$origin == "natural" & pind$g == g & pind$stage == "juvenile"]
+        p_nat_esc <- pind$p[pind$origin == "natural" & pind$stage == "escapement"] # length ng
 
-      p_hat_smolt <- ifelse(do_hatchery_s || has_strays_s, pind$p[pind$origin == "hatchery" & pind$stage == "juvenile"], NA_real_)
-      p_hat_esc <- ifelse(do_hatchery_s || has_strays_s, pind$p[pind$origin == "hatchery" & pind$stage == "escapement"], NA_real_)
+        p_hat_esc <- ifelse(do_hatchery_s || has_strays_s, pind$p[pind$origin == "hatchery" & pind$stage == "escapement"], NA_real_)
 
-      Rel[[1]] <- makeRel_smolt(
-        p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
-        output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
-        hatchery_args = hatchery_args, fitness_args = fitness_args
-      )
-
-      # Marine survival of natural origin fish
-      if (Hatchery@fitness_type[1] != "none" && Hatchery@rel_loss[3] > 0) {
-        Rel[[2]] <- makeRel_SAR(
-          p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt, envir = "natural",
-          rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-          Mbase = S[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+        Rel_smolt_g[[g]] <- makeRel_smolt(
+          p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt1, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+          output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
+          hatchery_args = hatchery_args, fitness_args = fitness_args, g = g, prop_LHG = p_LHG[g]
         )
+
+        # Marine survival of natural origin fish
+        if (do_hatchery_s && Hatchery@fitness_type[1] != "none" && Hatchery@rel_loss[3] > 0) {
+          Rel_SAR_NOS_g[[g]] <- makeRel_SAR(
+            p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "natural",
+            rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
+            Mbase = S[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+          )
+        }
       }
 
-      # Marine survival of hatchery origin fish
-      if (do_hatchery_s && Hatchery@fitness_type[2] != "none" && Hatchery@rel_loss[3] > 0) {
-        nRel <- length(Rel)
-        Rel[[nRel + 1]] <- makeRel_SAR(
-          p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt, envir = "hatchery",
-          rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-          Mbase = S[[4]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
-        )
-      }
-
-      # Hatchery smolt releases from NOS and HOS escapement
       if (do_hatchery_s) {
-        nRel <- length(Rel)
-        Rel[[nRel + 1]] <- makeRel_smolt(
+        p_hat_smolt <- pind$p[pind$origin == "hatchery" & pind$stage == "juvenile"]
+
+        # Marine survival of hatchery origin fish
+        if (Hatchery@fitness_type[2] != "none" && Hatchery@rel_loss[3] > 0) {
+          Rel_SAR_HOS[[1]] <- makeRel_SAR(
+            p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "hatchery",
+            rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
+            Mbase = S[[4]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+          )
+        }
+
+        # Hatchery smolt releases from NOS and HOS escapement
+        Rel_hatchrel[[1]] <- makeRel_smolt(
           p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
           output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args
         )
       }
+
     }
+    Rel <- c(Rel_smolt_g, Rel_SAR_NOS_g, Rel_SAR_HOS, Rel_hatchrel)
 
     return(Rel)
   })
@@ -361,6 +379,9 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_numeric(Bio, "maxage")
     maxage <- Bio@maxage
 
+    Bio <- check_numeric(Bio, "n_g", default = 1)
+    Bio <- check_numeric(Bio, "p_LHG", size = Bio@n_g, default = rep(1/Bio@n_g, Bio@n_g))
+
     Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, years)
     Bio <- check_numeric(Bio, "p_female", default = 0.5)
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
@@ -377,13 +398,16 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     # Mjuv_NOS
-    Bio <- check_maxage2array(Bio, "Mjuv_NOS", maxage, nsim, years)
+    if (length(dim(Bio@Mjuv_NOS)) == 3 && Bio@n_g == 1) {
+      Bio@Mjuv_NOS <- array(Bio@Mjuv_NOS, c(dim(Bio@Mjuv_NOS), Bio@n_g))
+    }
+    Bio <- check_maxage2Marray(Bio, "Mjuv_NOS", maxage, nsim, years, Bio@n_g)
 
     # phi
     if (!length(Bio@phi)) {
       Bio@phi <- local({
         surv_juv <- sapply(1:SOM@nsim, function(x) {
-          calc_survival(Bio@Mjuv_NOS[x, , 1], Bio@p_mature[x, , 1])
+          calc_survival(Bio@Mjuv_NOS[x, , 1, 1], Bio@p_mature[x, , 1])
         }) # maxage x nsim
         EPR <- t(surv_juv) * Bio@p_mature[, , 1]
         colSums(t(EPR) * Bio@p_female * Bio@fec)
@@ -475,25 +499,42 @@ check_SOM <- function(SOM, silent = FALSE) {
       Historical <- check_array(Historical, i, dims = c(nsim, SOM@nyears, 2))
     }
 
-    if (length(Historical@HistSpawner)) {
-      Historical <- check_array(Historical, "HistSpawner", dims = c(nsim, maxage, SOM@nyears, 2))
-    }
-
-    if (!length(Historical@HistN)) {
-
-      HistN <- array(0, c(nsim, maxage, SOM@nyears + 1, 2))
-      HistN[, 1, , ] <- 1000
-      for (y in seq(2, SOM@nyears + 1)) {
-        ZNOS <- Bio@Mjuv_NOS[, 2:maxage - 1, y-1] + Historical@HistFPT[, 2:maxage - 1, y-1, 1]
-        HistN[, 2:maxage, y, 1] <- HistN[, 2:maxage - 1, y-1, 1] * exp(-ZNOS)
-
-        ZHOS <- Hatchery@Mjuv_HOS[, 2:maxage - 1, y-1] + Historical@HistFPT[, 2:maxage - 1, y-1, 2]
-        HistN[, 2:maxage, y, 2] <- HistN[, 2:maxage - 1, y-1, 2] * exp(-ZHOS)
+    if (length(Historical@HistSpawner_NOS)) {
+      if (length(dim(Historical@HistSpawner_NOS)) == 3 && Bio@n_g == 1) {
+        Historical@HistSpawner_NOS <- array(Historical@HistSpawner_NOS, c(dim(Historical@HistSpawner_NOS, Bio@n_g)))
       }
-      Historical@HistN <- HistN
-
+      Historical <- check_array(Historical, "HistSpawner_NOS", dims = c(nsim, maxage, SOM@nyears, Bio@n_g))
     }
-    Historical <- check_array(Historical, "HistN", dims = c(nsim, maxage, SOM@nyears+1, 2))
+
+    if (length(Historical@HistSpawner_HOS)) {
+      Historical <- check_array(Historical, "HistSpawner_HOS", dims = c(nsim, maxage, SOM@nyears))
+    }
+
+    if (!length(Historical@HistNjuv_NOS)) {
+      HistNjuv_NOS <- array(0, c(nsim, maxage, SOM@nyears + 1, Bio@n_g))
+      HistNjuv_NOS[, 1, , ] <- 1000
+      for (y in seq(2, SOM@nyears + 1)) {
+        FNOS <- matrix(Harvest@vulPT[2:maxage - 1], nsim, maxage-1, byrow = TRUE) * Historical@HistFPT[, y-1, 1]
+        ZNOS <- array(FNOS, c(nsim, maxage-1, Bio@n_g)) + Bio@Mjuv_NOS[, 2:maxage - 1, y-1, ]
+        HistNjuv_NOS[, 2:maxage, y, ] <- HistNjuv_NOS[, 2:maxage - 1, y-1, ] * exp(-ZNOS)
+      }
+      Historical@HistNjuv_NOS <- HistNjuv_NOS
+    } else if (Bio@n_g == 1) {
+      Historical@HistNjuv_NOS <- array(Historical@HistNjuv_NOS, c(dim(Historical@HistNjuv_NOS), 1))
+    }
+    Historical <- check_array(Historical, "HistNjuv_NOS", dims = c(nsim, maxage, SOM@nyears+1, Bio@n_g))
+
+    if (!length(Historical@HistNjuv_HOS)) {
+      HistNjuv_HOS <- array(0, c(nsim, maxage, SOM@nyears + 1))
+      HistNjuv_HOS[, 1, ] <- 1000
+      for (y in seq(2, SOM@nyears + 1)) {
+        FHOS <- matrix(Harvest@vulPT[2:maxage - 1], nsim, maxage-1, byrow = TRUE) * Historical@HistFPT[, y-1, 2]
+        ZHOS <- FHOS + Hatchery@Mjuv_HOS[, 2:maxage - 1, y-1]
+        HistNjuv_HOS[, 2:maxage, y] <- HistNjuv_HOS[, 2:maxage - 1, y-1] * exp(-ZHOS)
+      }
+      Historical@HistNjuv_HOS <- HistNjuv_HOS
+    }
+    Historical <- check_array(Historical, "HistNjuv_HOS", dims = c(nsim, maxage, SOM@nyears+1))
 
     SOM@Bio[[s]] <- Bio
     SOM@Habitat[[s]] <- Habitat
@@ -551,6 +592,28 @@ check_maxage2array <- function(object, name, maxage, nsim, years) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
              paste(c(nsim, maxage, years), collapse = ", "))
+    )
+  }
+  return(invisible(object))
+}
+
+check_maxage2Marray <- function(object, name, maxage, nsim, years, n_g) {
+  object_name <- as.character(substitute(object))
+
+  if (!is.array(slot(object, name))) {
+    if (length(slot(object, name)) != maxage) {
+      stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
+    }
+    slot(object, name) <- array(slot(object, name), c(maxage, nsim, years, n_g)) %>%
+      aperm(c(2, 1, 3, 4))
+  }
+
+  dim_i <- dim(slot(object, name))
+  dim_check <- length(dim_i) == 4 && all(dim(slot(object, name) == c(nsim, maxage, years, n_g)))
+  if (!dim_check) {
+    stop(
+      paste0(object_name, "@", name, " must be an array with dimension ",
+             paste(c(nsim, maxage, years, n_g), collapse = ", "))
     )
   }
   return(invisible(object))

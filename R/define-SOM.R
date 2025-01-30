@@ -35,6 +35,8 @@ setClass(
   slots = c(
     Name = "character",
     maxage = "numeric",
+    n_g = "numeric",
+    p_LHG = "numeric",
     p_mature = "num.array",
     SRrel = "character",
     capacity_smolt = "numeric",
@@ -129,8 +131,10 @@ setClass(
   "Historical",
   slots = c(
     Name = "character",
-    HistSpawner = "array",
-    HistN = "array",
+    HistSpawner_NOS = "array",
+    HistSpawner_HOS = "array",
+    HistNjuv_NOS = "array",
+    HistNjuv_HOS = "array",
     HistFPT = "num.array",
     HistFT = "num.array"
   )
@@ -313,9 +317,12 @@ setMethod("initialize", "SOM",
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
 #' @slot Mjuv_loss Array `[nsim, nstocks, nage, proyears]`. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.
-#' @slot Misc List. Miscellaneous output. Contains `Ref` for reference points, `SHist` for the [salmonMSE::SHist-class] object, and
-#' `SOM` for the [salmonMSE::SOM-class] object.
+#' @slot Misc List. Miscellaneous output:
 #'
+#' - `Ref` for reference points
+#' - `SHist` for the [salmonMSE::SHist-class] object
+#' - `SOM` for the [salmonMSE::SOM-class] object.
+#' - `LHG` list `nstocks` long containing state variables by life history group
 #' @details
 #' In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
 #'
@@ -553,7 +560,8 @@ setMethod("report", "SMSE",
             rmd_split[[name_ind]] <- paste("#", name, "{.tabset}")
 
             stock_ind <- grep("ADD RMD BY STOCK", rmd)
-            rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames) %>% unlist()
+            n_g <- sapply(SMSE@Misc$SOM@Bio, slot, "n_g")
+            rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames, n_g = n_g) %>% unlist()
 
             if (SMSE@nstocks > 1) {
               rmd_stock_compare <- make_rmd_stock_comparison()
