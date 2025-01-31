@@ -14,7 +14,7 @@ AHA(SOM, ngen = 100, silent = FALSE)
 \item{silent}{Logical, indicates whether to silence messages to the R console}
 }
 \value{
-A named list containing vectors of state variables (by simulation and generation). See \linkS4class{SMSE} object description.
+A named list containing vectors of state variables (by simulation, population, and generation). See \linkS4class{SMSE} object description.
 }
 \description{
 Wrapper function for an implementation of All-H Analyzer (\href{https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/}{AHA}) in R. Can be used to compare outputs between AHA
