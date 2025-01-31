@@ -97,7 +97,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
     do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
     has_strays <- any(SOM@stray[-s, s] > 0)
-    n_g <- length(unique(pindex$g[pindex$s == s]))
+    n_g <- length(unique(pindex$g[pindex$s == s & pindex$origin == "natural"]))
 
     if (do_hatchery || has_strays) {
 
