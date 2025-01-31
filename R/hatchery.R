@@ -117,11 +117,11 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, 
   )
 
   if (opt) {
-    p <- sum(NOB + HOB_unmarked)/sum(NOB + HOB_unmarked + HOB_marked)
-    obj <- log(p) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
+    p_unmarked <- sum(NOB, HOB_unmarked)/sum(NOB, HOB_unmarked, HOB_marked)
+    obj <- log(p_unmarked) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
-    pNOB <- sum(NOB)/sum(NOB + HOB_unmarked + HOB_marked)
+    pNOB <- sum(NOB)/sum(NOB, HOB_unmarked, HOB_marked)
     output <- list(
       egg_NOB = egg_NOB,
       egg_HOB_unmarked = egg_HOB_unmarked,

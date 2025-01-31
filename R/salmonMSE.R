@@ -83,7 +83,7 @@ initialize_zbar <- function(SOM) {
       zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
       data.frame(
         x = zbar_start$Var1,
-        p_smolt = pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"],
+        p_smolt = min(pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "juvenile"]),
         t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
         type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
         zbar = zbar_start$value

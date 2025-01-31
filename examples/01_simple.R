@@ -70,12 +70,13 @@ Harvest <- new(
 
 # Return of 1000 natural and hatchery fish each for the first generation
 nyears <- 2
-HistN <- array(0, c(nsim, Bio@maxage, nyears+1, 2))
-HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+HistN <- array(0, c(nsim, Bio@maxage, nyears+1))
+HistN[, 1, 1] <- HistN[, 2, 2] <- 1000/SAR
 
 Historical <- new(
   "Historical",
-  HistN = HistN
+  HistNjuv_NOS = HistN,
+  HistNjuv_HOS = HistN
 )
 
 # Stitched salmon operating model
@@ -113,10 +114,10 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
   if (!missing(yline)) abline(h = yline, lty = 2)
 }
 
-compare(SAHA$Egg_NOS, SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 200000))
+compare(SAHA$Egg_NOS[, 1, ], SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 200000))
 
 png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
-compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 20])
+compare(SAHA$NOS[, 1, ], SMSE@NOS[, 1, ], "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 1, 20])
 dev.off()
 
 
@@ -144,12 +145,13 @@ Bio_stochastic <- new(
 )
 
 nyears <- 2
-HistN <- array(0, c(nsim_stochastic, Bio@maxage, nyears+1, 2))
-HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+HistNjuv <- array(0, c(nsim_stochastic, Bio@maxage, nyears+1))
+HistNjuv[, 1, 1] <- HistNjuv[, 2, 2] <- 1000/SAR
 
 Historical <- new(
   "Historical",
-  HistN = HistN
+  HistNjuv_NOS = HistNjuv,
+  HistNjuv_HOS = HistNjuv
 )
 
 png("man/figures/example-kappa.png", height = 4, width = 6, res = 300, units = 'in')

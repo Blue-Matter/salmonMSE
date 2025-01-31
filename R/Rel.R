@@ -127,7 +127,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
     #browser(expr = p_naturalsmolt == 7 && Egg_HOS > 0)
     # Get zbar from salmonMSE_env
-    zbar_prev <- filter(salmonMSE_env$Ford, x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
+    zbar_prev <- filter(salmonMSE_env$Ford, .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
 
     if (nrow(zbar_prev)) {
       maxage <- nrow(NOS)
@@ -161,10 +161,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     fitness <- rep(1, 2)
     for (i in 1:2) {
       if (fitness_args$fitness_type[i] == "Ford") {
-        fitness[i] <- calc_fitness(
+
+        fcheck <- try({fitness[i] <- calc_fitness(
           zbar[i], fitness_args$theta[i], fitness_args$omega2,
           fitness_args$fitness_variance, fitness_args$fitness_floor
-        )
+        )}, silent = TRUE)
+        browser(expr = is.character(fcheck))
       }
     }
     fitness_loss <- outer(fitness, fitness_args$rel_loss, "^")
@@ -237,12 +239,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       a = 1:nrow(Nage_NOS),
       Esc_NOS = Nage_NOS[, g],
-      Esc_HOS = Nage_HOS[, g],
+      Esc_HOS = Nage_HOS[, 1],
       NOB = broodtake$NOB[, g],
-      HOB = broodtake$HOB[, g],
+      HOB = broodtake$HOB[, 1],
       NOS = NOS[, g],
-      HOS = HOS[, g],
-      HOS_effective = HOS_effective[, g]
+      HOS = HOS[, 1],
+      HOS_effective = HOS_effective[, 1]
     )
     salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
 
@@ -272,7 +274,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     salmonMSE_env$state <- rbind(salmonMSE_env$state, df_state)
 
     # Save zbar
-    if (any(fitness_args$fitness_type == "Ford")) {
+    if (any(fitness_args$fitness_type == "Ford") && g == 1) {
       df_Ford <- data.frame(
         x = x,
         p_smolt = p_naturalsmolt,
@@ -331,14 +333,12 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
       names = paste0("Nage_", rep(p_hatchery, each = maxage), rep(1:maxage, times = length(p_hatchery)))
     ) %>%
       matrix(ncol = length(p_hatchery))
-    #Nage <- cbind(N_natural, N_hatchery)
     Perr_y <- .smolt_func(N_natural, N_hatchery, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, colSums(N_natural), colSums(N_hatchery), x = -1, y = 1)
     input <- paste0("Nage_", c(p_natural, p_hatchery))
 
     natural_origin <- c(rep(TRUE, length(p_natural)), rep(FALSE, length(p_hatchery)))
   } else {
-    #Nage <- matrix(N_natural, ncol = length(p_natural))
     Perr_y <- .smolt_func(N_natural, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, colSums(N_natural), x = -1, y = 1)
     input <- paste0("Nage_", p_natural)
@@ -446,7 +446,7 @@ SAR_fitness <- function(x = -1, y = 1,
       if (nrow(salmonMSE_env$state) && x > 0) {
         fitness_y <- dplyr::filter(
           salmonMSE_env$state,
-          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a
+          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a, .data$g == 1
         ) %>%
           pull(.data[[paste0("fitness_", envir)]])
 

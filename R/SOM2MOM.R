@@ -301,7 +301,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           Rel_SAR_NOS_g[[g]] <- makeRel_SAR(
             p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "natural",
             rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-            Mbase = S[[1]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+            Mbase = S[[p_nat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
           )
         }
       }
@@ -314,13 +314,13 @@ SOM2MOM <- function(SOM, check = TRUE) {
           Rel_SAR_HOS[[1]] <- makeRel_SAR(
             p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "hatchery",
             rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-            Mbase = S[[4]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+            Mbase = S[[p_hat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
           )
         }
 
         # Hatchery smolt releases from NOS and HOS escapement
         Rel_hatchrel[[1]] <- makeRel_smolt(
-          p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+          p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt1, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
           output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args
         )
@@ -519,7 +519,7 @@ check_SOM <- function(SOM, silent = FALSE) {
         HistNjuv_NOS[, 2:maxage, y, ] <- HistNjuv_NOS[, 2:maxage - 1, y-1, ] * exp(-ZNOS)
       }
       Historical@HistNjuv_NOS <- HistNjuv_NOS
-    } else if (Bio@n_g == 1) {
+    } else if (Bio@n_g == 1 && length(dim(Historical@HistNjuv_NOS)) == 3) {
       Historical@HistNjuv_NOS <- array(Historical@HistNjuv_NOS, c(dim(Historical@HistNjuv_NOS), 1))
     }
     Historical <- check_array(Historical, "HistNjuv_NOS", dims = c(nsim, maxage, SOM@nyears+1, Bio@n_g))
