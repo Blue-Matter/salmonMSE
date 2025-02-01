@@ -61,7 +61,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2025-01-22</h4>
+            <h4 data-toc-skip class="date">2025-02-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -190,12 +190,13 @@ during age 2, abundance of the cohort doesn’t change.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return of 1000 natural and hatchery fish each for the first generation</span></span>
 <span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
+<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
 <span></span>
 <span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
-<span>  HistN <span class="op">=</span> <span class="va">HistN</span></span>
+<span>  HistNjuv_NOS <span class="op">=</span> <span class="va">HistN</span>,</span>
+<span>  HistNjuv_HOS <span class="op">=</span> <span class="va">HistN</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s stitch together the operating model and run the simulation
 for 50 projection years (<code>proyears</code>).</p>
@@ -213,7 +214,7 @@ slowly equilibriating to approximately 70.</p>
 <code class="sourceCode R"><span><span class="va">SAHA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span>, ngen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Compare NOS</span></span>
-<span><span class="va">SAHA</span><span class="op">$</span><span class="va">NOS</span></span>
+<span><span class="va">SAHA</span><span class="op">$</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span>
 <span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span></code></pre></div>
 <p><img src="../reference/figures/example-NOS.png"><!-- --></p>
 <p><em>Comparison of the abundance of NOS between AHA (by generation)
@@ -256,12 +257,13 @@ stochastic operating model.</em></p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="va">Bio_stochastic</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
+<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="va">Bio_stochastic</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
 <span></span>
 <span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
-<span>  HistN <span class="op">=</span> <span class="va">HistN</span></span>
+<span>  HistNjuv_NOS <span class="op">=</span> <span class="va">HistN</span>,</span>
+<span>  HistNjuv_HOS <span class="op">=</span> <span class="va">HistN</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">SOM_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>

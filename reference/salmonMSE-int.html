@@ -85,6 +85,7 @@ specifying exploitation rates through updating the formal arguments for <code><a
 <span><span class="fu">make_Stock</span><span class="op">(</span></span>
 <span>  <span class="va">SOM</span>,</span>
 <span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  g <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  NOS <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  stage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"immature"</span>, <span class="st">"return"</span>, <span class="st">"escapement"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -127,7 +128,11 @@ specifying exploitation rates through updating the formal arguments for <code><a
 
 
 <dt id="arg-s">s<a class="anchor" aria-label="anchor" href="#arg-s"></a></dt>
-<dd><p>Logical, the population number for which to create the Stock or Fleet object</p></dd>
+<dd><p>Integer, the population integer for which to create the Stock or Fleet object</p></dd>
+
+
+<dt id="arg-g">g<a class="anchor" aria-label="anchor" href="#arg-g"></a></dt>
+<dd><p>Integer, the life history group for which to create the Stock object. Not relevant if <code>NOS = FALSE</code></p></dd>
 
 
 <dt id="arg-nos">NOS<a class="anchor" aria-label="anchor" href="#arg-nos"></a></dt>

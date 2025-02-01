@@ -53,14 +53,22 @@
 <dd><p>Character. Identifying name</p></dd>
 
 
-<dt><code>HistSpawner</code></dt>
-<dd><p>Array by <code>[nsim, maxage, nyears, 2]</code>. Spawners at age in the natural environment. For the fourth dimension, the first array corresponds
-to natural origin spawners and the second array corresponds to hatchery origin spawners. <em>Optional</em></p></dd>
+<dt><code>HistSpawner_NOS</code></dt>
+<dd><p>Array by <code>[nsim, maxage, nyears, n_g]</code>. Natural origin spawners at age in the natural environment. <em>Optional</em></p></dd>
 
 
-<dt><code>HistN</code></dt>
-<dd><p>Array by <code>[nsim, maxage, nyears+1, 2]</code>. The abundance of immature fish at the beginning of the annual time step. For the fourth dimension, the first array corresponds
-to natural origin fish and the second array corresponds to hatchery origin fish. Default assumes 1000 smolts (age-1) fish annually.</p></dd>
+<dt><code>HistSpawner_HOS</code></dt>
+<dd><p>Array by <code>[nsim, maxage, nyears]</code>. Hatchery origin spawners at age in the natural environment. <em>Optional</em></p></dd>
+
+
+<dt><code>HistNjuv_NOS</code></dt>
+<dd><p>Array by <code>[nsim, maxage, nyears+1, n_g]</code>. The abundance of immature natural origin fish at the beginning of the annual time step.
+Default assumes 1000 smolts (age-1) fish annually.</p></dd>
+
+
+<dt><code>HistNjuv_HOS</code></dt>
+<dd><p>Array by <code>[nsim, maxage, nyears+1]</code>. The abundance of immature hatchery origin fish at the beginning of the annual time step.
+Default assumes 1000 smolts (age-1) fish annually.</p></dd>
 
 
 <dt><code>HistFPT</code></dt>
@@ -87,9 +95,12 @@ The first array slice corresponds to F for natural origin fish and the second ar
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Historical" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         Name HistSpawner       HistN     HistFPT      HistFT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   character       array       array   num.array   num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             Name HistSpawner_NOS HistSpawner_HOS    HistNjuv_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       character           array           array           array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:     HistNjuv_HOS         HistFPT          HistFT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           array       num.array       num.array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Historical.list"</span>
 </code></pre></div>

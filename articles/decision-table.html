@@ -61,7 +61,7 @@
 
       <h1>Decision table</h1>
             
-            <h4 data-toc-skip class="date">2025-01-22</h4>
+            <h4 data-toc-skip class="date">2025-02-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/decision-table.Rmd" class="external-link"><code>vignettes/decision-table.Rmd</code></a></small>
       <div class="d-none name"><code>decision-table.Rmd</code></div>
@@ -178,12 +178,13 @@ years).</p>
 <span></span>
 <span>  <span class="co"># Return of 1000 natural and hatchery fish each for the first generation</span></span>
 <span>  <span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span>  <span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
+<span>  <span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
 <span></span>
 <span>  <span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>    <span class="st">"Historical"</span>,</span>
-<span>    HistN <span class="op">=</span> <span class="va">HistN</span></span>
+<span>    HistNjuv_NOS <span class="op">=</span> <span class="va">HistN</span>,</span>
+<span>    HistNjuv_HOS <span class="op">=</span> <span class="va">HistN</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Stitched salmon operating model</span></span>
