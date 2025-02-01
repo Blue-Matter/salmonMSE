@@ -383,7 +383,7 @@ rmd_fishery <- function(s, sname) {
 
 rmd_lhg <- function(s, sname) {
   c(
-    "### Life history groups",
+    "#### Life history groups",
     "\n",
     "```{r, fig.cap=\"Annual distribution of life history groups at the smolt life stage.\"}",
     paste0("plot_LHG(SMSE, var = \"Smolt\", s = ", s, ")"),
