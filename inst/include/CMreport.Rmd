@@ -42,6 +42,12 @@ df_pars <- rstan::summary(stanfit)$summary %>%
 df_pars[, c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
 ```
 
+### Legend
+
+```{r par-key, results="asis"}
+knitr::kable(make_CM_table(fit), row.names = FALSE)
+```
+
 ## Parameters
 
 ```{r trace-cr, fig.cap="MCMC wormplots of productivity parameters, scaling parameters and the log-posterior."}

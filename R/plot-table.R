@@ -43,3 +43,38 @@ make_fitness_table <- function(SMSE, s = 1) {
   return(fitness_table)
 }
 
+
+CMpar_key <- data.frame(
+  Parameter = c("log_cr", "log_so", "moadd", "wt", "wto", "wt_sd", "wto_sd",
+                "logit_matt", "sd_matt",
+                "log_fanomalyPT", "log_FbasePT", "fanomalyPT_sd",
+                "log_fanomalyT", "log_FbaseT", "fanomalyT_sd",
+                "lnE_sd", "b1", "b", "logit_vulPT", "logit_vulT"),
+
+  Description = c("Log productivity (compensation ratio)",
+                  "Log unfished natural spawners",
+                  "Additional age 1 natural mortality (M)",
+                  "Annual lognormal deviation in egg-smolt mortality",
+                  "Annual lognormal deviation in age 1 natural mortality",
+                  "Prior standard deviation in egg-smolt mortality deviates",
+                  "Prior standard deviation in annual age 1 M deviates",
+                  "Logit annual maturity at age",
+                  "Prior standard deviation in annual maturity at age",
+                  "Annual lognormal deviation in pre-terminal instantaneous fishing mortality (from specified trend)",
+                  "Lognormal scaling parameter for pre-terminal fishing mortality (from specified trend)",
+                  "Prior standard deviation in pre-terminal fishing mortality deviates",
+                  "Annual lognormal deviation in terminal instantaneous fishing mortality (from specified trend)",
+                  "Lognormal scaling parameter for terminal fishing mortality (from specified trend)",
+                  "Prior standard deviation in terminal fishing mortality deviates",
+                  "Lognormal standard deviation in total escapement (observation error)",
+                  "Linear coefficients for age 1 mortality covariates",
+                  "Linear coefficients for age 2+ mortality covariates",
+                  "Logit preterminal fishery vulnerability at age",
+                  "Logit terminal fishery vulnerability at age")
+)
+
+make_CM_table <- function(fit) {
+  model_names <- unique(names(fit$obj$par))
+  CMpar_key[match(model_names, CMpar_key$Parameter), ]
+}
+
