@@ -15,7 +15,7 @@ h1 { /* Header 1 */
 </style>
 
 ```{r setup, include = FALSE, echo = FALSE}
-library(tidyverse)
+library(ggplot2)
 library(salmonMSE)
 knitr::opts_chunk$set(
   collapse = TRUE, echo = FALSE, message = FALSE,
@@ -144,7 +144,7 @@ CM_fit_CWTcatch(report, d, PT = FALSE, year1)
 
 ## State variables {.tabset}
 
-### Abundance 
+### Abundance at age 
 
 ```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval). Natural origin age 1 fish corresponds to smolt production."}
 CM_Njuv(report, year1, ci = FALSE)
@@ -158,8 +158,42 @@ CM_recr(report, year1, ci = TRUE)
 CM_esc(report, year1)
 ```
 
+### Spawners/Broodtake
+
 ```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Points show annual smolt production (medians)."}
 CM_SRR(report)
+```
+
+```{r Spawners, fig.cap="Number of spawners by origin (medians and 95% prediction interval)."}
+CM_ts_origin(report, year1, var = "Spawners")
+```
+
+```{r pHOS, fig.cap="Proportion hatchery origin spawners (medians and 95% prediction interval)."}
+.CM_ts(report, year1, var = "pHOScensus", ci = TRUE, ylab = "pHOScensus")
+```
+
+```{r egg, fig.cap="Egg production (medians and 95% prediction interval)."}
+.CM_ts(report, year1, var = "egg", ci = TRUE, ylab = "Egg production")
+```
+
+```{r smolt, fig.cap="Natural smolt production (medians and 95% prediction interval)."}
+report <- lapply(report, function(i) {
+  i$Smolt <- rowSums(i$N[, 1, ])
+  return(i)
+})
+.CM_ts(report, year1, var = "Smolt", ci = TRUE, ylab = "Smolt production")
+```
+
+```{r pNOB, fig.cap="Proportion natural origin broodtake, assuming non-selective broodtake (medians and 95% prediction interval)."}
+.CM_ts(report, year1, var = "pNOB", ci = TRUE, ylab = "pNOB")
+```
+
+```{r PNI, fig.cap="Proportionate natural influence."}
+report <- lapply(report, function(i) {
+  i$PNI <- i$pNOB/(i$pNOB + i$pHOSeff)
+  return(i)
+})
+.CM_ts(report, year1, var = "PNI", ci = TRUE, ylab = "PNI")
 ```
 
 ### Natural mortality

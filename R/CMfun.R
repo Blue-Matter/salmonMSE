@@ -251,6 +251,28 @@ CM_SRR <- function(report) {
   }
 }
 
+CM_ts_origin <- function(report, year1, ci = TRUE, var = "Spawners", ylab = var, xlab = "Year") {
+  var <- match.arg(var)
+  if (var == "Spawners") {
+    arr <- sapply(report, getElement, "syear", simplify = "array") %>%
+      apply(c(1, 3, 4), sum)
+  }
+
+  df <- arr %>%
+    apply(1:2, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var3 == 1, "Natural", "Hatchery")) %>%
+    reshape2::dcast(Year + Origin ~ Var1, value.var = "value")
+
+  g <- ggplot(df, aes(Year, colour = Origin, fill = Origin)) +
+    geom_line(aes(y = `50%`)) +
+    labs(x = xlab, y = ylab) +
+    expand_limits(y = 0)
+
+  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
+  g
+}
+
 CM_M <- function(report, year1, ci = TRUE) {
   df <- sapply(report, getElement, "mo", simplify = "array") %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
