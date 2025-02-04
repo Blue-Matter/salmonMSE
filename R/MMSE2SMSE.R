@@ -201,8 +201,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
 
       LHG_s <- list()
 
-      Egg_g <- Smolt_g <- array(NA_real_, c(nsim, n_g, SOM@proyears))
-      Esc_g <- NOS_g <- array(NA_real_, c(nsim, n_g, nage, SOM@proyears))
+      Egg_g <- Smolt_g <- array(NA_real_, c(SOM@nsim, n_g, SOM@proyears))
+      Esc_g <- NOS_g <- array(NA_real_, c(SOM@nsim, n_g, nage, SOM@proyears))
 
       x <- a <- g <- t <- NULL
       Egg_g[, , y_spawn] <- dplyr::filter(state, .data$p_smolt == min(p_NOS_imm)) %>%

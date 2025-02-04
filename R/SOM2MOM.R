@@ -501,7 +501,7 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     if (length(Historical@HistSpawner_NOS)) {
       if (length(dim(Historical@HistSpawner_NOS)) == 3 && Bio@n_g == 1) {
-        Historical@HistSpawner_NOS <- array(Historical@HistSpawner_NOS, c(dim(Historical@HistSpawner_NOS, Bio@n_g)))
+        Historical@HistSpawner_NOS <- array(Historical@HistSpawner_NOS, c(dim(Historical@HistSpawner_NOS), Bio@n_g))
       }
       Historical <- check_array(Historical, "HistSpawner_NOS", dims = c(nsim, maxage, SOM@nyears, Bio@n_g))
     }
