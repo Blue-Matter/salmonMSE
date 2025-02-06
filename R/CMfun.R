@@ -93,7 +93,7 @@ CM_data <- function(obs, year, ylab) {
   invisible()
 }
 
-CM_fit_CWTesc <- function(report, d, year1) {
+CM_fit_CWTesc <- function(report, d, year1 = 1) {
   ebrood <- sapply(report, getElement, "ebrood", simplify = "array") %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
@@ -122,7 +122,7 @@ CM_fit_CWTesc <- function(report, d, year1) {
   g
 }
 
-CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1) {
+CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1) {
   dat <- d[[ifelse(PT, "cwtcatPT", "cwtcatT")]]
 
   if (sum(dat)) {
@@ -153,7 +153,7 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1) {
 }
 
 #' @importFrom dplyr rename
-CM_maturity <- function(report, d, year1) {
+CM_maturity <- function(report, d, year1 = 1) {
   matt <- sapply(report, getElement, "matt", simplify = 'array')
   matt_q <- apply(matt, 1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
@@ -194,23 +194,58 @@ CM_vul <- function(report, type = c("vulPT", "vulT")) {
   }
 }
 
-CM_SRR <- function(report) {
+CM_SRR <- function(report, year1 = 1, gg = TRUE) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
   smolt <- sapply(report, function(x) x$N[-1, 1, 1]) %>% apply(1, median)
   epred <- seq(0, 1.1 * max(egg), length.out = 50)
   spred <- sapply(report, function(x) x$alpha * epred * exp(-x$beta * epred)) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975))
 
-  plot(egg, smolt, xlim = c(0, 1.1) * range(egg), ylim = c(0, 1.1) * range(smolt),
-       xlab = "Egg production", ylab = "Smolt production")
-  lines(epred, spred[2, ])
-  polygon(c(rev(epred), epred), c(rev(spred[1, ]), spred[3, ]), col = alpha("grey", 0.5), border = NA)
+  year <- year1 + seq(1, length(egg))
 
-  invisible()
+  #plot(egg, smolt, xlim = c(0, 1.1) * range(egg), ylim = c(0, 1.1) * range(smolt),
+  #     xlab = "Egg production", ylab = "Smolt production")
+  #lines(epred, spred[2, ])
+  #polygon(c(rev(epred), epred), c(rev(spred[1, ]), spred[3, ]), col = alpha("grey", 0.5), border = NA)
+  #invisible()
+
+  df <- data.frame(
+    year = year,
+    egg = egg,
+    smolt = smolt
+  )
+
+  df_med <- data.frame(
+    egg = epred,
+    smolt = spred[2, ]
+  )
+
+  df_poly1 <- data.frame(
+    egg = epred,
+    smolt = spred[1, ]
+  )
+
+  df_poly2 <- data.frame(
+    egg = rev(epred),
+    smolt = rev(spred[3, ])
+  )
+
+  g <- ggplot(df, aes(.data$egg, .data$smolt)) +
+    geom_point(shape = 1) +
+    geom_line(data = df_med) +
+    geom_polygon(data = rbind(df_poly1, df_poly2), fill = "grey", alpha = 0.5) +
+    labs(x = "Egg production", y = "Smolt production") +
+
+    expand_limits(x = 0, y = 0)
+
+  if (requireNamespace("ggrepel", quietly = TRUE)) {
+    g <- g + ggrepel::geom_text_repel(aes(label = .data$year))
+  }
+  g
 }
 
 
-.CM_statevarage <- function(report, year1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
+.CM_statevarage <- function(report, year1 = 1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
   arr <- sapply(report, getElement, var, simplify = "array")
 
   if (sum(arr, na.rm = TRUE)) {
@@ -251,7 +286,7 @@ CM_SRR <- function(report) {
   }
 }
 
-CM_ts_origin <- function(report, year1, ci = TRUE, var = "Spawners", ylab = var, xlab = "Year") {
+CM_ts_origin <- function(report, year1 = 1, ci = TRUE, var = "Spawners", ylab = var, xlab = "Year") {
   var <- match.arg(var)
   if (var == "Spawners") {
     arr <- sapply(report, getElement, "syear", simplify = "array") %>%
@@ -273,7 +308,7 @@ CM_ts_origin <- function(report, year1, ci = TRUE, var = "Spawners", ylab = var,
   g
 }
 
-CM_M <- function(report, year1, ci = TRUE) {
+CM_M <- function(report, year1 = 1, ci = TRUE) {
   df <- sapply(report, getElement, "mo", simplify = "array") %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
@@ -292,7 +327,7 @@ CM_M <- function(report, year1, ci = TRUE) {
 }
 
 
-CM_Megg <- function(report, year1, ci = TRUE, surv = FALSE) {
+CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
   megg <- sapply(report, getElement, 'megg')
 
   if (surv) megg <- exp(-megg)
@@ -313,22 +348,22 @@ CM_Megg <- function(report, year1, ci = TRUE, surv = FALSE) {
 }
 
 
-CM_Njuv <- function(report, year1, ci = TRUE) {
+CM_Njuv <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "N", "Juvenile abundance") +
     theme(legend.position = "bottom")
 }
 
-CM_recr <- function(report, year1, ci = TRUE) {
+CM_recr <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "recr", "Recruitment") +
     theme(legend.position = "bottom")
 }
 
-CM_esc <- function(report, year1, ci = TRUE) {
+CM_esc <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "escyear", "Escapement") +
     theme(legend.position = "bottom")
 }
 
-CM_F <- function(report, PT = TRUE, year1, ci = TRUE) {
+CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
   .CM_ts(
     report, year1, ci,
     var = ifelse(PT, "FPT", "FT"),
@@ -336,7 +371,7 @@ CM_F <- function(report, PT = TRUE, year1, ci = TRUE) {
   )
 }
 
-.CM_ts <- function(report, year1, ci = TRUE, var, ylab, xlab = "Year") {
+.CM_ts <- function(report, year1 = 1, ci = TRUE, var, ylab, xlab = "Year") {
   ts <- sapply(report, getElement, var) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
@@ -354,7 +389,7 @@ CM_F <- function(report, PT = TRUE, year1, ci = TRUE) {
   }
 }
 
-CM_surv <- function(report, year1, ci = TRUE) {
+CM_surv <- function(report, year1 = 1, ci = TRUE) {
   df <- exp(-sapply(report, getElement, "mo", simplify = "array")) %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
@@ -372,7 +407,7 @@ CM_surv <- function(report, year1, ci = TRUE) {
   g
 }
 
-CM_wt <- function(stanfit, year1, ci = TRUE) {
+CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
 
   wt <- try(rstan::extract(stanfit, "wt")$wt, silent = TRUE)
 
@@ -395,7 +430,7 @@ CM_wt <- function(stanfit, year1, ci = TRUE) {
 
 }
 
-CM_wto <- function(stanfit, year1, ci = TRUE) {
+CM_wto <- function(stanfit, year1 = 1, ci = TRUE) {
 
   wto <- try(rstan::extract(stanfit, "wto")$wto, silent = TRUE)
 
@@ -471,7 +506,7 @@ calc_AEQ <- function(report, brood = TRUE) {
 }
 
 
-CM_BYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age = TRUE) {
+CM_BYER <- function(report, type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE) {
 
   type <- match.arg(type)
 
@@ -544,7 +579,7 @@ CM_BYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age
 }
 
 
-CM_CYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age = TRUE) {
+CM_CYER <- function(report, type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE) {
 
   type <- match.arg(type)
 
@@ -612,7 +647,7 @@ CM_CYER <- function(report, type = c("PT", "T", "all"), year1, ci = TRUE, at_age
 }
 
 
-CM_covariate <- function(x, names, year1, b, ylab = "Covariate") {
+CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 
   if (sum(x)) {
 
@@ -671,6 +706,10 @@ CM_covariate <- function(x, names, year1, b, ylab = "Covariate") {
 
 reportCM <- function(stanfit, year, cov1_names, cov_names,
                      name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
+
+  if (!requireNamespace("ggrepel", quietly = TRUE)) {
+    warning("Install ggrepel package to label years for stock-recruit figure.")
+  }
 
   report <- get_report(stanfit)
   fit <- stanfit@.MISC$CMfit

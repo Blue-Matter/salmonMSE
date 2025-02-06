@@ -11,7 +11,7 @@ Description: Simulation tools for the evaluation of salmon management strategies
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
 Imports: abind, MSEtool, RTMB, dplyr, ggplot2, grDevices, methods, reshape2, rlang, rmarkdown, stats, utils
-Suggests: rstan, testthat (>= 3.0.0), tmbstan
+Suggests: ggrepel, rstan, testthat (>= 3.0.0), tmbstan
 Encoding: UTF-8
 LazyData: yes
 LazyLoad: yes

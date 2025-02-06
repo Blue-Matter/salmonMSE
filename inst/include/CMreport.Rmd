@@ -94,14 +94,16 @@ CM_wt(stanfit, year1)
 CM_wto(stanfit, year1)
 ```
 
-## Data
+## Data and fits {.tabset}
 
-```{r cwt-rel, fig.cap="Total CWT releases."}
-CM_data(d$cwtrelease, year, ylab = "CWT release")
-```
+### Hatchery and escapement
 
 ```{r hatch-rel, fig.cap="Total hatchery releases."}
 CM_data(d$hatchrelease, c(year, max(year) + 1), ylab = "Hatchery release")
+```
+
+```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_esc(report, d, year)
 ```
 
 ```{r cov1, fig.cap="Linear covariates to natural mortality in age 1."}
@@ -112,10 +114,10 @@ CM_covariate(d[["covariate1"]], cov1_names, year1, ylab = "M covariates (age 1)"
 CM_covariate(d[["covariate"]], cov_names, year1, ylab = "M covariates (age 2+)")
 ```
 
-## Fits
+### CWT
 
-```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_esc(report, d, year)
+```{r cwt-rel, fig.cap="Total CWT releases."}
+CM_data(d$cwtrelease, year, ylab = "CWT release")
 ```
 
 ```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
@@ -157,7 +159,7 @@ report <- lapply(report, function(i) {
 ### Egg production
 
 ```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Points show annual smolt production (medians)."}
-CM_SRR(report)
+CM_SRR(report, year1)
 ```
 
 ```{r egg, fig.cap="Egg production (medians and 95% prediction interval)."}
