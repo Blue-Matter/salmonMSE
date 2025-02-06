@@ -56,7 +56,8 @@
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
 #' - `cwtExp` Numeric, the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, `cwtExp = 0.1`
-#' reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
+#' reduces the CWT predictions by 0.1 for the likelihood. Default is 1. The Poisson distribution is used for the likelihood of the CWT observations,
+#' and this parameter can be used to downweight the CWT likelihood relative to the escapement time series.
 #' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.

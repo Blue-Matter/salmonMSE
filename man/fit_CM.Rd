@@ -87,7 +87,8 @@ coefficient and annual deviations from this vector.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
 \item \code{cwtExp} Numeric, the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, \code{cwtExp = 0.1}
-reduces the CWT predictions by 0.1 for the likelihood. Default is 1.
+reduces the CWT predictions by 0.1 for the likelihood. Default is 1. The Poisson distribution is used for the likelihood of the CWT observations,
+and this parameter can be used to downweight the CWT likelihood relative to the escapement time series.
 \item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
