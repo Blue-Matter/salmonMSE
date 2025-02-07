@@ -71,11 +71,11 @@ Implemented to model mark-selective fishing. Not used if <code>MSF = FALSE</code
 
 
 <dt><code>vulPT</code></dt>
-<dd><p>Vector length <code>maxage</code>. Vulnerability schedule (between 0-1) in the preterminal fishery.</p></dd>
+<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the preterminal fishery.</p></dd>
 
 
 <dt><code>vulT</code></dt>
-<dd><p>Vector length <code>maxage</code>. Vulnerability schedule (between 0-1) in the terminal fishery.</p></dd>
+<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the terminal fishery.</p></dd>
 
 
 </dl></div>
@@ -97,7 +97,7 @@ Implemented to model mark-selective fishing. Not used if <code>MSF = FALSE</code
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       logical       numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:          vulPT          vulT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       numeric       numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    num.matrix    num.matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Harvest.list"</span>
 </code></pre></div>
