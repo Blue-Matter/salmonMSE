@@ -140,14 +140,14 @@ CM_int <- function(p, d) {
     ccwtT[t, ] <- Ncwt[t, ] * survPT[t, ] * matt[t, ] * (1 - survT[t, ])
 
     # predict escapement at age for the year
-    escyear[t, , ] <- d$ssum * recr[t, , ] * survT[t, ]
-    ecwt[t, ] <- d$ssum * Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
+    escyear[t, , ] <- recr[t, , ] * survT[t, ]
+    ecwt[t, ] <- Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
 
     # predict spawners at age for the year
     syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ] * d$s_enroute
 
     # predict egg production for the year
-    egg[t] <- sum(d$fec * (syear[t, , 1] + d$gamma * syear[t, , 2]))
+    egg[t] <- sum(d$ssum * d$fec * (syear[t, , 1] + d$gamma * syear[t, , 2]))
 
     # Assume broodtake is equal between NOB and HOB
     # predict pHOS, pNOB
