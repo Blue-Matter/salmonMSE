@@ -216,14 +216,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   Njuv <- sapply(report, getElement, "N", simplify = "array") %>%
     aperm(c(4, 2, 1, 3))
-  Spawner <- sapply(1:2, function(i) {
-    sapply(1:nsim_om, function(x) {
-      esc <- report[[x]]$recr[, , i] * report[[x]]$survT
-      spawn <- esc * data$propwildspawn
-      return(spawn)
-    }, simplify = "array")
-  }, simplify = "array") %>%
-    aperm(c(3:1, 4))
+  Spawner <- sapply(report, getElement, "syear", simplify = "array") %>%
+    aperm(c(4, 2, 1, 3))
   FPT <- sapply(1:2, function(...) sapply(report, getElement, "FPT"), simplify = "array") %>%
     aperm(c(2, 1, 3))
   FT <- sapply(1:2, function(...) sapply(report, getElement, "FT"), simplify = "array") %>%
@@ -253,8 +247,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
 
   Harvest <- new(
     "Harvest",
-    vulPT = data$vulPT,
-    vulT = data$vulT
+    vulPT = sapply(report, getElement, "vulPT") %>% t(),
+    vulT =sapply(report, getElement, "vulT") %>% t()
   )
 
   Habitat <- new("Habitat")
@@ -283,7 +277,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     Hatchery@heritability <- data$heritability
     Hatchery@fitness_floor <- data$fitness_floor
   } else {
-    Hatchery@fitness_type <- rep("none", "none")
+    Hatchery@fitness_type <- c("none", "none")
   }
 
   SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest, Historical,
