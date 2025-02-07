@@ -104,8 +104,8 @@ setClass(
     u_terminal = "numeric",
     MSF = "logical",
     release_mort = "numeric",
-    vulPT = "numeric",
-    vulT = "numeric"
+    vulPT = "num.matrix",
+    vulT = "num.matrix"
   )
 )
 

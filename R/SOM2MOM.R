@@ -476,14 +476,14 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest <- check_numeric(Harvest, "MSF", default = FALSE)
     if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mortality", size = 2)
     if (Harvest@u_preterminal > 0) {
-      Harvest <- check_numeric(Harvest, "vulPT", size = maxage)
+      Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     } else if (!length(Harvest@vulPT)) {
-      Harvest@vulPT <- rep(0, maxage)
+      Harvest@vulPT <- matrix(0, nsim, maxage)
     }
     if (Harvest@u_terminal > 0) {
-      Harvest <- check_numeric(Harvest, "vulT", size = maxage)
+      Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
     } else if (!length(Harvest@vulT)) {
-      Harvest@vulT <- rep(0, maxage)
+      Harvest@vulT <- matrix(0, nsim, maxage)
     }
 
     # Historical
@@ -571,6 +571,27 @@ check_maxage <- function(object, name, maxage) {
 
   if (length(slot(object, name)) != maxage) {
     stop(paste0("Need ", object_name, "@", name, " (maxage vector)"))
+  }
+  return(invisible(object))
+}
+
+check_maxage2matrix <- function(object, name, maxage, nsim) {
+  object_name <- as.character(substitute(object))
+
+  if (!is.array(slot(object, name))) {
+    if (length(slot(object, name)) != maxage) {
+      stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
+    }
+    slot(object, name) <- matrix(slot(object, name), nsim, maxage, byrow = TRUE)
+  }
+
+  dim_i <- dim(slot(object, name))
+  dim_check <- length(dim_i) == 2 && all(dim(slot(object, name) == c(nsim, maxage)))
+  if (!dim_check) {
+    stop(
+      paste0(object_name, "@", name, " must be a matrix with dimension ",
+             paste(c(nsim, maxage), collapse = ", "))
+    )
   }
   return(invisible(object))
 }

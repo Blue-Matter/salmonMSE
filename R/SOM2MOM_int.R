@@ -296,8 +296,7 @@ make_Fleet <- function(SOM, s, NOS = TRUE, stage = c("immature", "return", "esca
       # Define dummy selectivity to remove excessive messages about selectivity < 0.01.
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      vulPT <- array(Harvest@vulPT, c(Bio@maxage, SOM@nsim, nyears + proyears)) %>%
-        aperm(c(2, 1, 3))
+      vulPT <- array(Harvest@vulPT, c(SOM@nsim, Bio@maxage, nyears + proyears))
       cpars_fleet$V[, a1, ] <- vulPT
     }
 
@@ -306,8 +305,7 @@ make_Fleet <- function(SOM, s, NOS = TRUE, stage = c("immature", "return", "esca
     if (all(!Harvest@vulT)) {
       cpars_fleet$V[, n_age, ] <- 1
     } else {
-      vulT <- array(Harvest@vulT, c(Bio@maxage, SOM@nsim, nyears + proyears)) %>%
-        aperm(c(2, 1, 3))
+      vulT <- array(Harvest@vulT, c(SOM@nsim, Bio@maxage, nyears + proyears))
       cpars_fleet$V[, a2, ] <- vulT
     }
 

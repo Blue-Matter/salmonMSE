@@ -21,9 +21,9 @@ The component of the operating model that controls harvest.
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
 Implemented to model mark-selective fishing. Not used if \code{MSF = FALSE}.}
 
-\item{\code{vulPT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
+\item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
 
-\item{\code{vulT}}{Vector length \code{maxage}. Vulnerability schedule (between 0-1) in the terminal fishery.}
+\item{\code{vulT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the terminal fishery.}
 }}
 
 \section{Creating Object}{
