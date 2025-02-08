@@ -13,7 +13,7 @@
 #'
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options. Additional supported options are:
-#' `"pHOScensus"`, `"pNOB"`, `"pbrood"` (broodtake to escapement ratio), `"pNOSesc"` (NOS/natural escapement), `"pHOSesc"` (HOS/hatchery escapement),
+#' `"ESS"` (egg-smolt survival), `"pHOScensus"`, `"pNOB"`, `"pbrood"` (broodtake to escapement ratio), `"pNOSesc"` (NOS/natural escapement), `"pHOSesc"` (HOS/hatchery escapement),
 #' `NOS/SMSY`, `S/SMSY`, and `NOS/Sgen`.
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
@@ -105,6 +105,16 @@ get_statevar <- function(SMSE, var, s) {
   if (var %in% slotNames(SMSE)) {
     x <- slot(SMSE, var)[, s, ]
     return(x)
+  }
+
+  if (var == "ESS") {
+    x <- matrix(NA_real_, SMSE@nsim, SMSE@proyears)
+    x[, seq(2, SMSE@proyears)] <- local({
+      Smolt <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
+      Egg <- SMSE@Egg_NOS[, s, ] + SMSE@Egg_HOS[, s, ]
+
+      Smolt[, seq(2, SMSE@proyears)]/Egg[, seq(2, SMSE@proyears) - 1]
+    })
   }
 
   if (var == "pHOScensus") x <- SMSE@HOS[, s, ]/(SMSE@HOS[, s, ] + SMSE@NOS[, s, ])
