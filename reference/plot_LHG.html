@@ -49,11 +49,12 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_LHG</span><span class="op">(</span></span>
 <span>  <span class="va">SMSE</span>,</span>
 <span>  var <span class="op">=</span> <span class="st">"NOS"</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prop"</span>, <span class="st">"abs"</span><span class="op">)</span>,</span>
 <span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="va">median</span>,</span>
 <span>  figure <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Projection Year"</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Proportion"</span>, <span class="va">var</span><span class="op">)</span>,</span>
+<span>  <span class="va">ylab</span>,</span>
 <span>  <span class="va">LHG_names</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,6 +69,10 @@
 
 <dt id="arg-var">var<a class="anchor" aria-label="anchor" href="#arg-var"></a></dt>
 <dd><p>Character. Slot for the state variables in <code>SMSE@Misc$LHG[[1]]</code>.</p></dd>
+
+
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>Character to indicate whether to plot proportion or absolute numbers</p></dd>
 
 
 <dt id="arg-s">s<a class="anchor" aria-label="anchor" href="#arg-s"></a></dt>
