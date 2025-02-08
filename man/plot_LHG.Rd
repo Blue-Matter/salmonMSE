@@ -7,11 +7,12 @@
 plot_LHG(
   SMSE,
   var = "NOS",
+  type = c("prop", "abs"),
   s = 1,
   FUN = median,
   figure = TRUE,
   xlab = "Projection Year",
-  ylab = paste("Proportion", var),
+  ylab,
   LHG_names
 )
 }
@@ -19,6 +20,8 @@ plot_LHG(
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
 
 \item{var}{Character. Slot for the state variables in \code{SMSE@Misc$LHG[[1]]}.}
+
+\item{type}{Character to indicate whether to plot proportion or absolute numbers}
 
 \item{s}{Integer. Population index for multi-population model (e.g., \code{s = 1} is the first population in the model)}
 
