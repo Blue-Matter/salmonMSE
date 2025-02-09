@@ -72,16 +72,16 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, Ford, state) {
     KT_NOS[, s, ] <- apply(MMSE@Catch[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum)
 
     # Total discards (live + dead)
-    DPT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_imm, f, mp, t1, drop = FALSE] - MMSE@Catch[, p_NOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum)
-    DT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_return, f, mp, t2, drop = FALSE] - MMSE@Catch[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum)
+    DPT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum) - KPT_NOS[, s, ]
+    DT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum) - KT_NOS[, s, ]
 
     # Harvest rate from kept catch
-    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(nage, SOM@nsim, length(t1))) %>% aperm(c(2, 1, 3))
+    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(SOM@nsim, nage, length(t1)))
     vulNOS_imm <- apply(vulPT * Njuv_NOS[, s, , ], c(1, 3), sum)
     UPT_NOS[, s, ] <- KPT_NOS[, s, ]/vulNOS_imm
     UPT_NOS[is.na(UPT_NOS)] <- 0
 
-    vulT <- array(SOM@Harvest[[s]]@vulT, c(nage, SOM@nsim, length(t2))) %>% aperm(c(2, 1, 3))
+    vulT <- array(SOM@Harvest[[s]]@vulT, c(SOM@nsim, nage, length(t2)))
     vulNOS_ret <- apply(vulT * Return_NOS[, s, , ], c(1, 3), sum)
     UT_NOS[, s, ] <- KT_NOS[, s, ]/vulNOS_ret
     UT_NOS[is.na(UT_NOS)] <- 0

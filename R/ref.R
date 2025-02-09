@@ -41,14 +41,14 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       opt <- optimize(
         .calc_eq, interval = c(1e-8, 3),
         Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+        vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
         SRRpars = SRR$SRRpars[x, ],
         maximum = TRUE
       )
       ref <- .calc_eq(
         .F = opt$maximum,
         Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+        vulPT = vulPT[x ,], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
         SRRpars = SRR$SRRpars[x, ], opt = FALSE
       ) %>% unlist()
 
@@ -67,7 +67,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
           uniroot(
             .calc_Sgen, interval = c(1, 100) * opt$maximum,
             Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
             SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
           ),
           silent = TRUE
@@ -79,7 +79,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
           Sgen_out <- .calc_Sgen(
             .F = opt_Sgen$root,
             Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT, vulT = vulT, p_mature = p_mature[x, , y], s_enroute = 1,
+            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
             SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
           )
 
