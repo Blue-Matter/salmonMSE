@@ -428,7 +428,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     do_hatchery <- Hatchery@n_yearling > 0 || Hatchery@n_subyearling > 0
     has_strays <- any(SOM@stray[-s, s] > 0)
 
-    if (do_hatchery) {
+    if (do_hatchery || has_strays) {
       Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_smolt", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
@@ -444,30 +444,32 @@ check_SOM <- function(SOM, silent = FALSE) {
 
       if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
       Hatchery <- check_maxage(Hatchery, "fec_brood", maxage)
-    }
 
-    if (do_hatchery || has_strays) {
       Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
+
       Hatchery <- check_numeric(Hatchery, "phatchery", default = 0.8)
       Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
 
       Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
-      Hatchery <- check_numeric(Hatchery, "theta", size = 2)
-      Hatchery <- check_numeric(Hatchery, "rel_loss", size = 3)
+      if (any(Hatchery@fitness_type == "Ford")) {
+        Hatchery <- check_numeric(Hatchery, "theta", size = 2)
+        Hatchery <- check_numeric(Hatchery, "rel_loss", size = 3)
 
-      if (!is.array(Hatchery@zbar_start)) {
-        Hatchery <- check_numeric(Hatchery, "zbar_start", size = 2)
-        Hatchery@zbar_start <- array(Hatchery@zbar_start, c(2, nsim, maxage)) %>%
-          aperm(c(2, 3, 1))
-      } else {
-        Hatchery <- check_array(Hatchery, "zbar_start", c(nsim, maxage, 2))
+        if (!is.array(Hatchery@zbar_start)) {
+          Hatchery <- check_numeric(Hatchery, "zbar_start", size = 2)
+          Hatchery@zbar_start <- array(Hatchery@zbar_start, c(2, nsim, maxage)) %>%
+            aperm(c(2, 3, 1))
+        } else {
+          Hatchery <- check_array(Hatchery, "zbar_start", c(nsim, maxage, 2))
+        }
+
+        Hatchery <- check_numeric(Hatchery, "fitness_variance")
+        Hatchery <- check_numeric(Hatchery, "selection_strength")
+        Hatchery <- check_numeric(Hatchery, "heritability")
+        Hatchery <- check_numeric(Hatchery, "fitness_floor", default = 0.5)
       }
-
-      Hatchery <- check_numeric(Hatchery, "fitness_variance")
-      Hatchery <- check_numeric(Hatchery, "selection_strength")
-      Hatchery <- check_numeric(Hatchery, "heritability")
-      Hatchery <- check_numeric(Hatchery, "fitness_floor", default = 0.5)
     }
+
 
     # Harvest
     Harvest <- SOM@Harvest[[s]]
