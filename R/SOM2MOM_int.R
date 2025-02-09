@@ -149,8 +149,8 @@ make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "ret
       HistPars <- lapply(1:SOM@nsim, function(x) {
         calc_Perr_main(
           Njuv = Historical@HistNjuv_NOS[x, , , g],
-          Fjuv = outer(Harvest@vulPT, Historical@HistFPT[x, , pind]),
-          Fterm = outer(Harvest@vulT, Historical@HistFT[x, , pind]),
+          Fjuv = outer(Harvest@vulPT[x, ], Historical@HistFPT[x, , pind]),
+          Fterm = outer(Harvest@vulT[x, ], Historical@HistFT[x, , pind]),
           p_mature = Bio@p_mature[x, , ],
           nyears = SOM@nyears,
           HistSpawner = if (length(Historical@HistSpawner_NOS)) Historical@HistSpawner_NOS[x, , , g] else NULL,
@@ -166,8 +166,8 @@ make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "ret
       HistPars <- lapply(1:SOM@nsim, function(x) {
         calc_Perr_main(
           Njuv = Historical@HistNjuv_HOS[x, , ],
-          Fjuv = outer(Harvest@vulPT, Historical@HistFPT[x, , pind]),
-          Fterm = outer(Harvest@vulT, Historical@HistFT[x, , pind]),
+          Fjuv = outer(Harvest@vulPT[x, ], Historical@HistFPT[x, , pind]),
+          Fterm = outer(Harvest@vulT[x, ], Historical@HistFT[x, , pind]),
           p_mature = Bio@p_mature[x, , ],
           nyears = SOM@nyears,
           HistSpawner = if (length(Historical@HistSpawner_HOS)) Historical@HistSpawner_HOS[x, , ] else NULL,

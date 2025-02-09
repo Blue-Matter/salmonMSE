@@ -588,7 +588,7 @@ check_maxage2matrix <- function(object, name, maxage, nsim) {
   }
 
   dim_i <- dim(slot(object, name))
-  dim_check <- length(dim_i) == 2 && all(dim(slot(object, name) == c(nsim, maxage)))
+  dim_check <- length(dim_i) == 2 && all(dim(slot(object, name)) == c(nsim, maxage))
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be a matrix with dimension ",
