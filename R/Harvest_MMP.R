@@ -39,7 +39,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
     y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
     nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
 
-    Nage_p <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ])
+    Nage_p <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ], na.rm = TRUE)
 
     if (!sum(Nage_p)) {
       Effort <- 0

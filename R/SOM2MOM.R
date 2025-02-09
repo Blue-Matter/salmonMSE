@@ -470,13 +470,13 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
     }
 
-
     # Harvest
     Harvest <- SOM@Harvest[[s]]
     Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
     Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
     Harvest <- check_numeric(Harvest, "MSF", default = FALSE)
-    if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mortality", size = 2)
+    if (!Harvest@MSF && !length(Harvest@release_mort)) Harvest@release_mort <- c(0, 0)
+    if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mort", size = 2)
     if (Harvest@u_preterminal > 0) {
       Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     } else if (!length(Harvest@vulPT)) {

@@ -125,7 +125,6 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
-    #browser(expr = p_naturalsmolt == 7 && Egg_HOS > 0)
     # Get zbar from salmonMSE_env
     zbar_prev <- filter(salmonMSE_env$Ford, .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
 
