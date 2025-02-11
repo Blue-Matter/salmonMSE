@@ -3,7 +3,7 @@
 make_hatchery_table <- function(SMSE, s = 1) {
   hatch_settings <- c("n_yearling", "n_subyearling", "pmax_esc", "pmax_NOB", "premove_HOS",
                       "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "ptarget_NOB",
-                      "phatchery")
+                      "phatchery", "m")
 
   hatch_table <- glossary[match(hatch_settings, glossary$Slot), c("Definition", "Slot")]
 
