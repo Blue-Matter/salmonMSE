@@ -337,6 +337,24 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
   return(surv)
 }
 
+
+#' Calculate unfished egg per smolt with life history groups
+#'
+#' @param Mjuv Matrix `[maxage, n_g]`. Juvenile natural mortality
+#' @param p_mature Matrix `[maxage, n_g]`. Maturity at age
+#' @param p_female Numeric. Proportion female
+#' @param fec Matrix `[maxage, n_g]`. Fecundity at age
+#' @param s_enroute Numeric, en-route survival of escapement to spawning grounds
+#' @param n_g Integer. Number of life history groups
+#' @param p_LHG Proportion Mjuv Array `[nsim, maxage, n_g]`. Juvenile natural mortality
+#' @keywords internal
+calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g, p_LHG) {
+  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g], p_mature[, g])) # age x g
+  Esc <- p_mature * surv_juv # escapement per smolt
+  Egg <- p_female * Esc * s_enroute * fec
+  sum(Egg)
+}
+
 make_Stock_objects <- function(SOM, s = 1) {
   do_hatchery <- SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
   has_strays <- any(SOM@stray[-s, s] > 0)

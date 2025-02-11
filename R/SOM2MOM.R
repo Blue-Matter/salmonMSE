@@ -405,12 +405,16 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     # phi
     if (!length(Bio@phi)) {
-      Bio@phi <- local({
-        surv_juv <- sapply(1:SOM@nsim, function(x) {
-          calc_survival(Bio@Mjuv_NOS[x, , 1, 1], Bio@p_mature[x, , 1])
-        }) # maxage x nsim
-        EPR <- t(surv_juv) * Bio@p_mature[, , 1]
-        colSums(t(EPR) * Bio@p_female * Bio@fec)
+      Bio@phi <- sapply(1:SOM@nsim, function(x) {
+        calc_phi(
+          Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage, Bio@n_g),
+          p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
+          p_female = Bio@p_female,
+          fec = matrix(Bio@fec, Bio@maxage, Bio@n_g),
+          s_enroute = Bio@s_enroute,
+          n_g = Bio@n_g,
+          p_LHG = Bio@p_LHG
+        )
       })
     }
     Bio <- check_numeric2nsim(Bio, "phi", nsim)
