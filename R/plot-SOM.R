@@ -30,7 +30,7 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
       figure <- FALSE
     }
 
-    if (figure) {
+    if (figure && any(xplot > 0, na.rm = TRUE)) {
       if (missing(xlab)) xlab <- "Age"
       ylim <- c(0, 1.1) * range(xplot)
 

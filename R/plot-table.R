@@ -44,6 +44,37 @@ make_fitness_table <- function(SMSE, s = 1) {
 }
 
 
+make_harvest_table <- function(SMSE, s = 1) {
+
+  harvest_par <- c("u_preterminal", "u_terminal", "m")
+
+  harvest_extra <- data.frame(
+    Definition = c("Mark-selective fishing (both preterminal and terminal fishery)",
+                   "Mortality from catch and release (proportion, in preterminal and terminal fishery, respectively)"),
+    Slot = c("MSF", "release_mort")
+  )
+  harvest_table <- rbind(
+    glossary[match(harvest_par, glossary$Slot), c("Definition", "Slot")],
+    harvest_extra
+  )
+  harvest_table$Value <- sapply(harvest_table$Slot, function(i) {
+    SOM <- SMSE@Misc$SOM
+    if (i == "m") {
+      v <- slot(SOM@Hatchery[[s]], i)
+    } else {
+      v <- slot(SOM@Harvest[[s]], i)
+    }
+    if (!length(v)) v <- NA
+    if (length(v) > 1) {
+      v <- paste(v, sep = ",")
+    }
+    return(format(v))
+  })
+  names(harvest_table)[2] <- "Parameter"
+  return(harvest_table)
+}
+
+
 CMpar_key <- data.frame(
   Parameter = c("log_cr", "log_so", "moadd", "wt", "wto", "wt_sd", "wto_sd",
                 "logit_matt", "sd_matt",
