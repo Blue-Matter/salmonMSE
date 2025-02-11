@@ -31,24 +31,39 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
     SRR <- make_SRR(SOM@Bio[[s]], SOM@Habitat[[s]])
 
     Mjuv_NOS <- SOM@Bio[[s]]@Mjuv_NOS
-    fec <- SOM@Bio[[s]]@fec
     p_female <- SOM@Bio[[s]]@p_female
     vulPT <- SOM@Harvest[[s]]@vulPT
     vulT <- SOM@Harvest[[s]]@vulT
-    p_mature <- SOM@Bio[[s]]@p_mature
+    maxage <- SOM@Bio[[s]]@maxage
+    s_enroute <- SOM@Bio[[s]]@s_enroute
+    n_g <- SOM@Bio[[s]]@n_g
+    p_LHG <- SOM@Bio[[s]]@p_LHG
+
+    fec <- matrix(SOM@Bio[[s]]@fec, maxage, n_g)
 
     val <- sapply(1:SOM@nsim, function(x) {
+
+      Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage, n_g)
+      p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
+
       opt <- optimize(
         .calc_eq, interval = c(1e-8, 3),
-        Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
+        Mjuv = Mjuv,
+        fec = fec,
+        p_female = p_female, rel_F = rel_F_s[[s]],
+        vulPT = vulPT[x, ], vulT = vulT[x, ],
+        p_mature = p_mature,
+        s_enroute = s_enroute,
+        n_g = n_g,
+        p_LHG = p_LHG,
         SRRpars = SRR$SRRpars[x, ],
         maximum = TRUE
       )
       ref <- .calc_eq(
         .F = opt$maximum,
-        Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT[x ,], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
+        Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+        vulPT = vulPT[x ,], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
+        n_g = n_g, p_LHG = p_LHG,
         SRRpars = SRR$SRRpars[x, ], opt = FALSE
       ) %>% unlist()
 
@@ -66,8 +81,9 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
         opt_Sgen <- try(
           uniroot(
             .calc_Sgen, interval = c(1, 100) * opt$maximum,
-            Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
+            Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
+            n_g = n_g, p_LHG = p_LHG,
             SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
           ),
           silent = TRUE
@@ -78,8 +94,9 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
         } else {
           Sgen_out <- .calc_Sgen(
             .F = opt_Sgen$root,
-            Mjuv = Mjuv_NOS[x, , y, 1], fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature[x, , y], s_enroute = 1,
+            Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
+            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
+            n_g = n_g, p_LHG = p_LHG,
             SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
           )
 
@@ -99,10 +116,10 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 
 
 .calc_Sgen <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1,
-                       SRRpars, popt = 1, SMSY, opt = TRUE) {
+                       n_g, p_LHG, SRRpars, popt = 1, SMSY, opt = TRUE) {
 
   Sgen_ref <- .calc_eq(
-    .F, Mjuv, fec, p_female, gamma, rel_F, vulPT, vulT, p_mature, s_enroute,
+    .F, Mjuv, fec, p_female, gamma, rel_F, vulPT, vulT, p_mature, s_enroute, n_g, p_LHG,
     SRRpars, opt = FALSE, aggregate_age = FALSE
   )
 
@@ -142,18 +159,18 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 }
 
 
-.calc_eq <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1,
+.calc_eq <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1, n_g, p_LHG,
                      SRRpars, opt = TRUE, aggregate_age = TRUE) {
 
   FPT <- vulPT * .F * rel_F[1]
   FT <- vulT * .F * rel_F[2]
 
-  surv_juv <- calc_survival(Mjuv + FPT, p_mature)
+  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g] + FPT, p_mature[, g])) # First semester due to exploitation
   surv_return <- surv_juv * p_mature
   surv_esc <- surv_return * exp(-FT)
   surv_spawn <- surv_esc * s_enroute
 
-  EPR <- sum(surv_spawn * gamma * p_female * fec)
+  EPR <- sum(surv_spawn * gamma * p_female * fec) # Egg per smolt
 
   Smolt <- calc_smolt(
     EPR,
