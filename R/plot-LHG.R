@@ -45,7 +45,7 @@ plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = me
 
     if (missing(LHG_names)) LHG_names <- paste("LHG", 1:nrow(xplot))
 
-    col <- grDevices::hcl.colors(nrow(xplot), palette = "Pastel 1")
+    col <- grDevices::hcl.colors(nrow(xplot), palette = "Dark 2")
 
     if (type == "abs") {
       ylim <- c(0, 1.1) * range(colSums(xplot, na.rm = TRUE))

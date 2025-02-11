@@ -1,9 +1,77 @@
 
-plot_SOM <- function(SOM, var = "kappa", figure = TRUE, xlab = var, ...) {
-  x <- slot(SOM, var)
-  xplot <- x
+plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequency",
+                     type = c("hist", "age", "age_ts", "ts"),
+                     maxage, nsim, nyears, proyears, g = 1, ...) {
 
-  if (figure) hist(xplot, xlab = xlab, main = NULL, ...)
+  type <- match.arg(type)
+  x <- slot(object, var)
+
+  quant <- c(0.025, 0.5, 0.975)
+
+  if (type == "hist") {
+    xplot <- x
+    if (figure) {
+      if (missing(xlab)) xlab <- var
+      hist(xplot, xlab = xlab, main = NULL, ...)
+    }
+  } else if (type == "age") {
+
+    if (is.matrix(x) && all(dim(x) == c(nsim, maxage))) { # nsim x age
+      xplot <- apply(x, 2, quantile, quant)
+    } else if (is.array(x)) {
+      if (length(dim(x)) == 4) x <- x[, , , g]
+      if (all(dim(x) == c(nsim, maxage, nyears + proyears))) {
+        xplot <- apply(x[, , nyears + proyears], 2, quantile, quant)
+      }
+    } else if (is.numeric(x) && length(x) == maxage) {
+      xplot <- matrix(x, 3, maxage, byrow = TRUE)
+    } else {
+      xplot <- NULL
+      figure <- FALSE
+    }
+
+    if (figure) {
+      if (missing(xlab)) xlab <- "Age"
+      ylim <- c(0, 1.1) * range(xplot)
+
+      plot(seq(1, maxage), xplot[2, ], xlab = xlab, ylab = ylab, ylim = ylim, typ = "o")
+      polygon(c(seq(1, maxage), seq(maxage, 1)), c(xplot[1, ], rev(xplot[3, ])),
+              border = NA, col = alpha("grey", 0.5))
+    }
+
+  } else if (type == "age_ts") {
+
+  }
+
+  invisible(xplot)
+}
+
+# x - array by sim x age x g
+plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = TRUE, LHG_names, palette = "Dark 2") {
+
+  quant <- c(0.025, 0.5, 0.975)
+  xplot <- apply(x, 2:3, quantile, quant)
+
+  n_g <- dim(x)[3]
+  maxage <- dim(x)[2]
+
+  if (figure) {
+
+    if (missing(LHG_names)) LHG_names <- paste("LHG", 1:n_g)
+
+    col <- grDevices::hcl.colors(n_g, palette = palette)
+
+    ylim <- c(0, 1.1) * range(xplot)
+    Age <- seq(1, maxage)
+
+    plot(Age, NULL, xlab = "Age", ylab = "Juvenile natural mortality", typ = "n", ylim = ylim)
+    for (g in 1:n_g) {
+      lines(Age, xplot[2, , g], typ = "o", col = col[g], pch = 16)
+      polygon(c(Age, rev(Age)), c(xplot[1, , g], rev(xplot[3, , g])), col = col[g], border = col[g])
+    }
+    legend('topright', legend = LHG_names, col = col, lty = 1, pch = 16)
+  }
+
   invisible(xplot)
 }
 
