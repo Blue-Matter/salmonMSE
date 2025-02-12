@@ -2,7 +2,9 @@
 .onLoad <- function(libname, pkgname) {
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()
-  salmonMSE_env$state <- data.frame()
+  salmonMSE_env$stateN <- data.frame()
+  salmonMSE_env$H <- data.frame()
+  salmonMSE_env$stateH <- data.frame()
 }
 
 if(getRversion() >= "2.15.1") {

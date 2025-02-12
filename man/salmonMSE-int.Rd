@@ -13,7 +13,7 @@
 \usage{
 make_Harvest_MMP(SOM, check = TRUE)
 
-MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, Ford, state)
+MMSE2SMSE(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH)
 
 SOM2MOM(SOM, check = TRUE)
 
@@ -21,6 +21,7 @@ make_Stock(
   SOM,
   s = 1,
   g = 1,
+  r = 1,
   NOS = TRUE,
   stage = c("immature", "return", "escapement")
 )
@@ -38,15 +39,21 @@ multiHist2SHist(multiHist, SOM, check = TRUE)
 
 \item{Harvest_MMP}{Optional harvest function created by \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}}}
 
-\item{N}{Data frame of abundance at age saved in the \link{salmonMSE_env} environment during the simulation}
+\item{N}{Data frame of natural origin abundance at age saved in the \link{salmonMSE_env} environment during the simulation}
+
+\item{stateN}{Data frame of natural origin state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{Ford}{Data frame of phenotypic trait values saved in the \link{salmonMSE_env} environment during the simulation}
 
-\item{state}{Data frame of state variables saved in the \link{salmonMSE_env} environment during the simulation}
+\item{H}{Data frame of hatchery origin abundance at age saved in the \link{salmonMSE_env} environment during the simulation}
+
+\item{stateH}{Data frame of hatchery origin state variables saved in the \link{salmonMSE_env} environment during the simulation}
 
 \item{s}{Integer, the population integer for which to create the Stock or Fleet object}
 
 \item{g}{Integer, the life history group for which to create the Stock object. Not relevant if \code{NOS = FALSE}}
+
+\item{r}{Integer, the hatchery release group for which to create the Stock object. Not relevant if \code{NOS = TRUE}}
 
 \item{NOS}{Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish}
 

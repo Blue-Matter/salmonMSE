@@ -2,21 +2,20 @@
 #' @details
 #' A description of the fitness parameters and hatchery dynamics is available in the
 #' [online documentation](https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival).
-#'
-#' @slot n_yearling Numeric. The number of yearlings released. No hatchery is modeled if both `n_yearling` and
-#' `n_subyearling` are zero. Yearlings survival is density-independent survival after release. Default is zero.
-#' @slot n_subyearling Numeric. The number of subyearlings released. No hatchery is modeled if both `n_yearling` and
-#' `n_subyearling` are zero. Subyearlings experience density-dependent survival in competition with natural origin young. Default is zero.
+#' @slot n_r Integer. Number of release strategies, sub-groups of fish with different survival schedules. Default is one.
+#' @slot n_yearling Vector length `n_r`. The number of yearlings released by release strategy. No hatchery is modeled if `sum(n_yearling, n_subyearling) = 0`.
+#' are zero. Yearlings survival is density-independent after release. Default is zero.
+#' @slot n_subyearling Vector length `n_r`. The number of subyearlings released. No hatchery is modeled if `sum(n_yearling, n_subyearling) = 0` are zero.
+#' Subyearlings experience density-dependent survival in competition with natural origin young. Default is zero.
 #' @slot s_prespawn Numeric. The survival of broodtake prior to egg production. `1 - s_prespawn` is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
 #' @slot s_egg_smolt Numeric. The survival of eggs to the smolt life stage (for yearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
 #' @slot s_egg_subyearling Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
-#' @slot Mjuv_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`.
+#' @slot Mjuv_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears, n_r]`.
 #'  Natural mortality of immature hatchery origin fish.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
-#'  If missing, uses `Bio@Mjuv_HOS`.
 #' @slot gamma Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners). Default is 1.
 #' @slot m Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
 #' Set m = 1 for AHA compatibility with `ptarget_NOB`. Default is zero.

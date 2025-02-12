@@ -3,11 +3,12 @@
 #' @param NOS Logical, whether the Stock or Fleet object corresponds to natural origin or hatchery origin fish
 #' @param s Integer, the population integer for which to create the Stock or Fleet object
 #' @param g Integer, the life history group for which to create the Stock object. Not relevant if `NOS = FALSE`
+#' @param r Integer, the hatchery release group for which to create the Stock object. Not relevant if `NOS = TRUE`
 #' @param stage Character indicating the corresponding salmon life stage of the Stock or Fleet object
 #' @return
 #' `make_Stock`: List containing a \linkS4class{Stock} object and accompanying custom parameters list
 #' @export
-make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "return", "escapement")) {
+make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature", "return", "escapement")) {
   stage <- match.arg(stage)
 
   Bio <- SOM@Bio[[s]]
@@ -106,7 +107,7 @@ make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "ret
     if (NOS) {
       cpars_bio$M_ageArray[, a2, all_t2] <- Bio@Mjuv_NOS[, , , g]
     } else {
-      cpars_bio$M_ageArray[, a2, all_t2] <- Hatchery@Mjuv_HOS
+      cpars_bio$M_ageArray[, a2, all_t2] <- Hatchery@Mjuv_HOS[, , , r]
     }
   } else if (stage == "return") {
     cpars_bio$M_ageArray[, n_age, ] <- 0.1 # Return does not experience M, n_age should be an empty age class
@@ -165,12 +166,12 @@ make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "ret
     } else {
       HistPars <- lapply(1:SOM@nsim, function(x) {
         calc_Perr_main(
-          Njuv = Historical@HistNjuv_HOS[x, , ],
+          Njuv = Historical@HistNjuv_HOS[x, , , r],
           Fjuv = outer(Harvest@vulPT[x, ], Historical@HistFPT[x, , pind]),
           Fterm = outer(Harvest@vulT[x, ], Historical@HistFT[x, , pind]),
           p_mature = Bio@p_mature[x, , ],
           nyears = SOM@nyears,
-          HistSpawner = if (length(Historical@HistSpawner_HOS)) Historical@HistSpawner_HOS[x, , ] else NULL,
+          HistSpawner = if (length(Historical@HistSpawner_HOS)) Historical@HistSpawner_HOS[x, , , r] else NULL,
           fec = Bio@fec,
           p_female = Bio@p_female,
           gamma = Hatchery@gamma,
@@ -190,7 +191,7 @@ make_Stock <- function(SOM, s = 1, g = 1, NOS = TRUE, stage = c("immature", "ret
       if (NOS) {
         Ninit <- Historical@HistNjuv_NOS[, -1, 1, g]
       } else {
-        Ninit <- Historical@HistNjuv_HOS[, -1, 1]
+        Ninit <- Historical@HistNjuv_HOS[, -1, 1, r]
       }
       Perr_init <- Ninit/NPR[, rev(age_init)]
       cpars_bio$Perr_y[, rev(age_init)] <- Perr_init
@@ -356,63 +357,76 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g, p_LHG) {
 }
 
 make_Stock_objects <- function(SOM, s = 1) {
-  do_hatchery <- SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+  do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
   has_strays <- any(SOM@stray[-s, s] > 0)
 
-  Stocks <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
+  Stocks_g <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
     S <- list()
-    S[[1]] <- make_Stock(SOM, s, g, NOS = TRUE, stage = "immature")   # NOS_juv
-    S[[2]] <- make_Stock(SOM, s, g, NOS = TRUE, stage = "return")     # NOS_recruitment
-    S[[3]] <- make_Stock(SOM, s, g, NOS = TRUE, stage = "escapement") # NOS_escapement
+    S[[1]] <- make_Stock(SOM, s, g = g, NOS = TRUE, stage = "immature")   # NOS_juv
+    S[[2]] <- make_Stock(SOM, s, g = g, NOS = TRUE, stage = "return")     # NOS_recruitment
+    S[[3]] <- make_Stock(SOM, s, g = g, NOS = TRUE, stage = "escapement") # NOS_escapement
     return(S)
   })
-  Stocks <- do.call(c, Stocks)
-  np <- length(Stocks)
+  Stocks_g <- do.call(c, Stocks_g)
 
   if (do_hatchery || has_strays) {
-    Stocks[[np + 1]] <- make_Stock(SOM, s, NOS = FALSE, stage = "immature")   # HOS_juv
-    Stocks[[np + 2]] <- make_Stock(SOM, s, NOS = FALSE, stage = "return")     # HOS_recruitment
-    Stocks[[np + 3]] <- make_Stock(SOM, s, NOS = FALSE, stage = "escapement") # HOS_escapement
+    Stocks_r <- lapply(1:SOM@Hatchery[[s]]@n_r, function(r) {
+      S <- list()
+      S[[1]] <- make_Stock(SOM, s, r = r, NOS = FALSE, stage = "immature")   # HOS_juv
+      S[[2]] <- make_Stock(SOM, s, r = r, NOS = FALSE, stage = "return")     # HOS_recruitment
+      S[[3]] <- make_Stock(SOM, s, r = r, NOS = FALSE, stage = "escapement") # HOS_escapement
+      return(S)
+    })
+    Stocks_r <- do.call(c, Stocks_r)
+  } else {
+    Stocks_r <- list()
   }
-  return(Stocks)
+
+  c(Stocks_g, Stocks_r)
 }
 
 make_Fleet_objects <- function(SOM, s = 1) {
-  do_hatchery = SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+  do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
   has_strays <- any(SOM@stray[-s, s] > 0)
 
-  Fleets <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
+  Fleets_g <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
     FF <- list()
     FF[[1]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "immature")   # NOS_juv
     FF[[2]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "return")     # NOS_recruitment
     FF[[3]] <- make_Fleet(SOM, s, NOS = TRUE, stage = "escapement") # NOS_escapement
     return(FF)
   })
-  Fleets <- do.call(c, Fleets)
-  np <- length(Fleets)
+  Fleets_g <- do.call(c, Fleets_g)
 
   if (do_hatchery || has_strays) {
-    Fleets[[np + 1]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "immature")   # HOS_juv
-    Fleets[[np + 2]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "return")     # HOS_recruitment
-    Fleets[[np + 3]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "escapement") # HOS_escapement
+    Fleets_r <- lapply(1:SOM@Hatchery[[s]]@n_r, function(r) {
+      FF <- list()
+      FF[[1]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "immature")   # HOS_juv
+      FF[[2]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "return")     # HOS_recruitment
+      FF[[3]] <- make_Fleet(SOM, s, NOS = FALSE, stage = "escapement") # HOS_escapement
+      return(FF)
+    })
+    Fleets_r <- do.call(c, Fleets_r)
+  } else {
+    Fleets_r <- list()
   }
-  return(Fleets)
+  c(Fleets_g, Fleets_r)
 }
 
 make_stock_index <- function(SOM, check = FALSE) {
   if (check) SOM <- check_SOM(SOM)
   ns <- length(SOM@Bio)
   n_g <- sapply(1:ns, function(s) SOM@Bio[[s]]@n_g)
+  n_r <- sapply(1:ns, function(s) SOM@Hatchery[[s]]@n_r)
   np_s <- sapply(1:ns, function(s) {
-    do_hatchery <- SOM@Hatchery[[s]]@n_yearling > 0 || SOM@Hatchery[[s]]@n_subyearling > 0
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
     has_strays <- any(SOM@stray[-s, s] > 0)
-
-    3 * SOM@Bio[[s]]@n_g + ifelse(do_hatchery || has_strays, 3, 0)
+    3 * (n_g[s] + ifelse(do_hatchery || has_strays, n_r[s], 0))
   })
-  .make_stock_index(ns, n_g, np_s)
+  .make_stock_index(ns, n_g, n_r, np_s)
 }
 
-.make_stock_index <- function(ns, n_g, np_s) {
+.make_stock_index <- function(ns, n_g, n_r, np_s) {
 
   dat <- lapply(1:ns, function(s) {
 
@@ -423,16 +437,19 @@ make_stock_index <- function(SOM, check = FALSE) {
     df_natural <- data.frame(
       s = s,
       g = g,
+      r = NA,
       origin = "natural",
       stage = rep(c("juvenile", "recruitment", "escapement"), times = n_g[s])
     )
 
     if (n_hatchery > 0) {
+      r <- rep(1:n_r[s], each = 3)
       df_hatchery <- data.frame(
         s = s,
         g = NA,
+        r = r,
         origin = "hatchery",
-        stage = rep(c("juvenile", "recruitment", "escapement"), times = n_hatchery/3)
+        stage = rep(c("juvenile", "recruitment", "escapement"), times = n_r[s])
       )
     } else {
       df_hatchery <- data.frame()

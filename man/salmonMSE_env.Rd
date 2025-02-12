@@ -5,7 +5,7 @@
 \alias{salmonMSE_env}
 \title{Environment to store salmon specific variables, e.g, fitness, during the simulation}
 \format{
-An object of class \code{environment} of length 3.
+An object of class \code{environment} of length 5.
 }
 \usage{
 salmonMSE_env

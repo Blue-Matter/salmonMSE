@@ -26,13 +26,13 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   SOM <- check_SOM(SOM, silent = silent)
   MOM <- SOM2MOM(SOM, check = FALSE)
 
-  #do_hatchery <- SOM@Hatchery@n_subyearling > 0 || SOM@Hatchery@n_yearling > 0
-
   HMMP <- make_Harvest_MMP(SOM, check = FALSE)
 
   salmonMSE_env$Ford <- data.frame()
   salmonMSE_env$N <- data.frame()
-  salmonMSE_env$state <- data.frame()
+  salmonMSE_env$stateN <- data.frame()
+  salmonMSE_env$H <- data.frame()
+  salmonMSE_env$stateH <- data.frame()
 
   if (!silent) message("Generating historical dynamics..")
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
@@ -60,7 +60,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
-    SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, Ford = salmonMSE_env$Ford, salmonMSE_env$state)
+    SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, salmonMSE_env$stateN, Ford = salmonMSE_env$Ford, salmonMSE_env$H, salmonMSE_env$stateH)
     SMSE@Misc$SHist <- multiHist2SHist(H, SOM, check = FALSE)
     return(SMSE)
 
@@ -75,7 +75,7 @@ initialize_zbar <- function(SOM) {
   ns <- length(SOM@Bio)
 
   zbar_df <- lapply(1:ns, function(s) {
-    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
     has_strays <- any(SOM@stray[-s, s] > 0)
 
     if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {

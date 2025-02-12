@@ -121,7 +121,8 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
     }, simplify = "array") %>%
       apply(1:2, sum)
 
-    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
+
     if (do_hatchery) {
 
       # HOS state variables from MMSE object
@@ -129,26 +130,49 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
       p_HOS_return <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "recruitment"] # MSEtool population index for returning HOS
       p_HOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "escapement"] # HOS escapement
 
-      Njuv_HOS[, s, , ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-      Return_HOS[, s, , ] <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
-      Escapement_HOS[, s, , 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
+      Njuv_HOS[, s, , ] <- sapply(p_HOS_imm, function(p) {
+        apply(multiHist[[p]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
+      }, simplify = "array") %>%
+        apply(1:3, sum)
+
+      Return_HOS[, s, , ] <- sapply(p_HOS_return, function(p) {
+        apply(multiHist[[p]][[f]]@AtAge$Number[, a_return, t2, ], 1:3, sum)
+      }, simplify = "array") %>%
+        apply(1:3, sum)
+
+      Escapement_HOS[, s, , 1:length(t1_sp)] <- sapply(p_HOS_escapement, function(p) {
+        apply(multiHist[[p]][[f]]@AtAge$Number[, a_esc, t1_sp, , drop = FALSE], 1:3, sum)
+      }, simplify = "array") %>%
+        apply(1:3, sum)
 
       # Kept catch
-      KPT_HOS[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
-      KT_HOS[, s, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
+      KPT_HOS[, s, ] <- sapply(p_HOS_imm, function(p) {
+        apply(multiHist[[p]][[f]]@TSdata$Landings[, t1, ], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
+
+      KT_HOS[, s, ] <- sapply(p_HOS_return, function(p) {
+        apply(multiHist[[p]][[f]]@TSdata$Landings[, t2, ], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
 
       # Total discards (live + dead)
-      DPT_HOS[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
-      DT_HOS[, s, ] <- apply(multiHist[[p_HOS_return]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
+      DPT_HOS[, s, ] <- sapply(p_HOS_imm, function(p) {
+        apply(multiHist[[p]][[f]]@TSdata$Discards[, t1, ], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
+
+      DT_HOS[, s, ] <- sapply(p_HOS_return, function(p) {
+        apply(multiHist[[p]][[f]]@TSdata$Discards[, t2, ], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
 
       # Harvest rate from kept catch
-      HOS_imm_a <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, a_imm, t1, ], 1:3, sum)
-      vulHOS_imm <- apply(vulPT * HOS_imm_a, c(1, 3), sum)
+      vulHOS_imm <- apply(vulPT * Njuv_HOS[, s, , ], c(1, 3), sum)
       UPT_HOS[, s, ] <- KPT_HOS[, s, ]/vulHOS_imm
       UPT_HOS[is.na(UPT_HOS)] <- 0
 
-      HOS_ret_a <- apply(multiHist[[p_HOS_return]][[f]]@AtAge$Number[, a_imm, t2, ], 1:3, sum)
-      vulHOS_ret <- apply(vulT * HOS_ret_a, c(1, 3), sum)
+      vulHOS_ret <- apply(vulT * Return_HOS[, s, , ], c(1, 3), sum)
       UT_HOS[, s, ] <- KT_HOS[, s, ]/vulHOS_ret
       UT_HOS[is.na(UT_HOS)] <- 0
 
@@ -161,8 +185,14 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
       ExT_HOS[, s, ] <- (KT_HOS[, s, ] + DDT_HOS)/vulHOS_ret
       ExT_HOS[is.na(ExT_HOS)] <- 0
 
-      Egg_HOS[, s, 1:length(t1_sp)] <- apply(multiHist[[p_HOS_escapement]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
-      Smolt_Rel[, s, ] <- apply(multiHist[[p_HOS_imm]][[f]]@AtAge$Number[, 1, t1, ], c(1, 2), sum)
+      Egg_HOS[, s, 1:length(t1_sp)] <- sapply(p_HOS_escapement, function(p) {
+        apply(multiHist[[p]][[f]]@TSdata$SBiomass[, t1_sp, , drop = FALSE], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
+      Smolt_Rel[, s, ] <- sapply(p_HOS_imm, function(p) {
+        apply(multiHist[[p]][[f]]@AtAge$Number[, 1, t1, ], 1:2, sum)
+      }, simplify = "array") %>%
+        apply(1:2, sum)
     }
 
   }

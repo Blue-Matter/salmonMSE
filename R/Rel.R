@@ -49,17 +49,17 @@
 #' @keywords internal
 smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hatchery"),
                        s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
-                       hatchery_args, fitness_args, p_naturalsmolt, g, prop_LHG) {
+                       hatchery_args, fitness_args, p_naturalsmolt, g, prop_LHG, r) {
 
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
   Nage_NOS_enroute <- Nage_NOS * s_enroute
 
   # Hatchery
-  if (hatchery_args$egg_local > 0) {
+  Nage_HOS[is.na(Nage_HOS)] <- 0
+  Nage_HOS_enroute <- Nage_HOS * s_enroute
 
-    Nage_HOS[is.na(Nage_HOS)] <- 0
-    Nage_HOS_enroute <- Nage_HOS * s_enroute
+  if (hatchery_args$egg_local > 0) {
 
     Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
     Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
@@ -83,30 +83,28 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       egg_NOB + egg_HOB,
       hatchery_args$s_yearling,
       hatchery_args$s_subyearling,
-      hatchery_args$p_yearling
+      hatchery_args$p_yearling,
+      hatchery_args$p_subyearling
     )
 
-    yearling <- hatchery_production[1]
-    subyearling <- hatchery_production[2]
-
   } else {
-    Nage_HOS <- Nage_HOS_enroute <- array(0, dim(Nage_NOS))
-    broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_NOS)))
-    egg_NOB <- egg_HOB <- yearling <- subyearling <- hatchery_production <- 0
+    broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_HOS)))
+    egg_NOB <- egg_HOB <- 0
+
+    hatchery_production <- list(
+      yearling = rep(0, ncol(Nage_HOS)),
+      subyearling = rep(0, ncol(Nage_HOS))
+    )
   }
 
   # Spawners
   spawners <- calc_spawners(broodtake, Nage_NOS_enroute, Nage_HOS_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
   NOS <- spawners$NOS
   HOS <- spawners$HOS
-  if (sum(HOS)) {
-    HOS_effective <- spawners$HOS * hatchery_args$gamma
-  } else {
-    HOS_effective <- spawners$HOS
-  }
+  HOS_effective <- spawners$HOS * hatchery_args$gamma
 
   # Spawners weighted by fecundity
-  if (sum(broodtake$NOB, broodtake$HOB) > 0) {
+  if (sum(unlist(broodtake))) {
     pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
       sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB)
   } else {
@@ -121,7 +119,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
   total_egg <- sum(Egg_NOS, Egg_HOS)
   if (output == "natural" && !total_egg) return(0) # Perr_y = 0
-  if (output == "hatchery" && !sum(hatchery_production)) return(0) # Perr_y = 0
+  if (output == "hatchery" && !sum(unlist(hatchery_production))) return(0) # Perr_y = 0
 
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
@@ -160,16 +158,15 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     fitness <- rep(1, 2)
     for (i in 1:2) {
       if (fitness_args$fitness_type[i] == "Ford") {
-
-        fcheck <- try({fitness[i] <- calc_fitness(
+        fitness[i] <- calc_fitness(
           zbar[i], fitness_args$theta[i], fitness_args$omega2,
           fitness_args$fitness_variance, fitness_args$fitness_floor
-        )}, silent = TRUE)
-        browser(expr = is.character(fcheck))
+        )
       }
     }
     fitness_loss <- outer(fitness, fitness_args$rel_loss, "^")
   } else {
+    zbar <- rep(100, 2)
     fitness <- c(1, 1)
     fitness_loss <- matrix(1, 2, 3)
   }
@@ -179,25 +176,53 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   Egg_HOS_out <- Egg_HOS * fitness_loss[1, 1]
 
   # Hatchery production after fitness loss
-  yearling_out <- yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
-  subyearling_out <- subyearling * fitness_loss[2, 1]
+  yearling_out <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
+  subyearling_out <- hatchery_production$subyearling * fitness_loss[2, 1]
   total_egg_out <- sum(Egg_NOS_out, Egg_HOS_out, subyearling_out)
 
   # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
   xx <- max(x, 1)
   SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
 
-  smolt_subyearling <- calc_smolt(
-    subyearling_out, total_egg_out,
-    SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-    SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[2, 2],
-    SRrel
-  )
-  smolt_rel <- yearling_out + smolt_subyearling
-
-  # Return total hatchery smolt releases after density-dependent survival of subyearlings
+  # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
   if (output == "hatchery") {
-    return(smolt_rel)
+    smolt_subyearling_r <- calc_smolt(
+      subyearling_out[r], total_egg_out,
+      SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+      SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[2, 2],
+      SRrel
+    )
+    smolt_rel_r <- yearling_out[r] + smolt_subyearling_r
+
+    # Save state variable for hatchery production
+    if (x > 0) {
+      df_H <- data.frame(
+        x = x,
+        p_smolt = p_naturalsmolt,
+        r = r,
+        t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+        a = 1:nrow(Nage_HOS),
+        Esc_HOS = Nage_HOS[, r],
+        HOB = broodtake$HOB[, r],
+        HOS = HOS[, r],
+        HOS_effective = HOS_effective[, r]
+      )
+      salmonMSE_env$H <- rbind(salmonMSE_env$H, df_H)
+
+      df_stateH <- data.frame(
+        x = x,
+        p_smolt = p_naturalsmolt,
+        r = r,
+        t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+        Egg_HOS = Egg_HOS_out[r], # Spawning output by RS r of this generation
+        yearling = yearling_out[r],
+        subyearling = subyearling_out[r],
+        smolt_rel = smolt_rel_r
+      )
+      salmonMSE_env$stateH <- rbind(salmonMSE_env$stateH, df_stateH)
+    }
+
+    return(smolt_rel_r)
   }
 
   # Egg production for life history group g
@@ -238,48 +263,37 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       a = 1:nrow(Nage_NOS),
       Esc_NOS = Nage_NOS[, g],
-      Esc_HOS = Nage_HOS[, 1],
       NOB = broodtake$NOB[, g],
-      HOB = broodtake$HOB[, 1],
-      NOS = NOS[, g],
-      HOS = HOS[, 1],
-      HOS_effective = HOS_effective[, 1]
+      NOS = NOS[, g]
     )
     salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
 
-    df_state <- data.frame(
+    df_stateN <- data.frame(
       x = x,
       p_smolt = p_naturalsmolt,
       g = g,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+      Egg_NOS = Egg_NOS_out[g], # Spawning output by LHG g of this generation
       Egg_NOS_g = Egg_NOS_g,    # Egg production assigned to LHG g for next generation
       Egg_HOS_g = Egg_HOS_g,
-      Egg_NOS = Egg_NOS_out[g], # Spawning output by LHG g of this generation
-      Egg_HOS = Egg_HOS_out[g],
       smolt_NOS = smolt_NOS_proj,
       smolt_HOS = smolt_HOS_proj,
-      fitness_natural = fitness[1],
-      fitness_hatchery = fitness[2],
       pNOB = as.numeric(pNOB),
       pHOSeff = as.numeric(pHOSeff),
       pHOScensus = as.numeric(pHOScensus),
-      Perr_y = Perr_y,
-      #alpha = alpha_proj,
-      #beta = beta_proj,
-      yearling = yearling_out,
-      subyearling = subyearling_out,
-      smolt_rel = smolt_rel
+      Perr_y = Perr_y
     )
-    salmonMSE_env$state <- rbind(salmonMSE_env$state, df_state)
+    salmonMSE_env$stateN <- rbind(salmonMSE_env$stateN, df_stateN)
 
     # Save zbar
-    if (any(fitness_args$fitness_type == "Ford") && g == 1) {
+    if (g == 1) {
       df_Ford <- data.frame(
         x = x,
         p_smolt = p_naturalsmolt,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         type = c("natural", "hatchery"),
-        zbar = zbar
+        zbar = zbar,
+        fitness = fitness
       )
       salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
     }
@@ -293,12 +307,14 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 #' @param p_natural Integer vector, the population index for the natural origin escapement in the openMSE model. Can be more than one
 #' if spawning is from multiple life history groups
 #' @param p_hatchery Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
-#' if spawning is from multiple life history groups
-#' @param prop_LHG Proportion of the egg production assign to the life history groups corresponding to `p_smolt` for the next generation
-makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery,
+#' if there are multiple release strategies. Set to `NULL` for no hatchery production
+#' @param g Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if `output = "natural"`)
+#' @param prop_LHG Numeric, proportion of the egg production assign to life history group `g` corresponding to `p_smolt` for the next generation (only used if `output = "natural"`)
+#' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
+makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery = NULL,
                           output = c("natural", "hatchery"), s_enroute,
                           p_female, fec, SRRpars,  # Spawning (natural production)
-                          hatchery_args, fitness_args, g, prop_LHG) {
+                          hatchery_args, fitness_args, g, prop_LHG, r) {
 
   output <- match.arg(output)
 
@@ -319,19 +335,14 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
     formals(.smolt_func)$g <- g
     formals(.smolt_func)$prop_LHG <- prop_LHG
   }
+  if (output == "hatchery") formals(.smolt_func)$r <- r
 
   maxage <- length(fec)
-  N_natural <- structure(
-    rep(1, length(p_natural) * maxage),
-    names = paste0("Nage_", rep(p_natural, each = maxage), rep(1:maxage, times = length(p_natural)))
-  ) %>% matrix(ncol = length(p_natural))
+  N_natural <- matrix(1, maxage, length(p_natural))
 
-  if (!is.na(p_hatchery)) {
-    N_hatchery <- structure(
-      rep(0, length(p_hatchery) * maxage),
-      names = paste0("Nage_", rep(p_hatchery, each = maxage), rep(1:maxage, times = length(p_hatchery)))
-    ) %>%
-      matrix(ncol = length(p_hatchery))
+  if (!is.null(p_hatchery)) {
+    N_hatchery <- matrix(0, maxage, length(p_hatchery))
+
     Perr_y <- .smolt_func(N_natural, N_hatchery, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, colSums(N_natural), colSums(N_hatchery), x = -1, y = 1)
     input <- paste0("Nage_", c(p_natural, p_hatchery))
@@ -442,12 +453,12 @@ SAR_fitness <- function(x = -1, y = 1,
     n_age <- dim(Mbase)[2]
     fitness_a <- rep(1, n_age)
     for (a in seq(2, n_age, 2)) {
-      if (nrow(salmonMSE_env$state) && x > 0) {
+      if (nrow(salmonMSE_env$Ford) && x > 0) {
         fitness_y <- dplyr::filter(
-          salmonMSE_env$state,
-          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a, .data$g == 1
+          salmonMSE_env$Ford,
+          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a, .data$type == envir
         ) %>%
-          pull(.data[[paste0("fitness_", envir)]])
+          pull(.data$fitness)
 
         if (length(fitness_y)) fitness_a[a] <- fitness_y
       }

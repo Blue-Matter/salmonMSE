@@ -57,7 +57,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     SOM@Bio[[s]]@fec <- fec
     message("Fecundity of spawners assumed to be: ", fec)
 
-    do_hatchery <- SOM@Hatchery[[s]]@n_subyearling > 0 || SOM@Hatchery[[s]]@n_yearling > 0
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
     if (do_hatchery) {
       fec_brood <- SOM@Hatchery[[s]]@fec_brood[age_mature]
       message("Fecundity of broodtake assumed to be: ", fec_brood)

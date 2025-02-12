@@ -134,23 +134,29 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, 
   }
 }
 
-calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling) {
+calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling, p_subyearling) {
 
-  if (p_yearling == 1 || p_yearling == 0) {
+  if (sum(p_yearling) == 1 || sum(p_yearling) == 0) {
     ans <- .yearling_func(
-      p_egg_yearling = p_yearling, egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
+      p_egg_yearling = sum(p_yearling), egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
     )
   } else {
     opt <- uniroot(
       .yearling_func, interval = c(1e-8, 0.9999),
-      egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, p_yearling = p_yearling
+      egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, p_yearling = sum(p_yearling)
     )
     ans <- .yearling_func(
-      p_egg_yearling = opt$root, egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
+      p_yearling = opt$root, egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
     )
   }
 
-  return(ans)
+  yearling <- ans[1] * p_yearling/sum(p_yearling)
+  subyearling <- ans[2] * p_subyearling/sum(p_subyearling)
+
+  yearling[is.na(yearling)] <- 0
+  subyearling[is.na(subyearling)] <- 0
+
+  list(yearling = yearling, subyearling = subyearling)
 }
 
 .yearling_func <- function(p_egg_yearling, egg_local, s_yearling, s_subyearling, p_yearling, opt = TRUE) {

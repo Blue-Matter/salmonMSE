@@ -19,14 +19,15 @@ smolt_func(
   fitness_args,
   p_naturalsmolt,
   g,
-  prop_LHG
+  prop_LHG,
+  r
 )
 
 makeRel_smolt(
   p_smolt = 1,
   p_naturalsmolt = 1,
   p_natural,
-  p_hatchery,
+  p_hatchery = NULL,
   output = c("natural", "hatchery"),
   s_enroute,
   p_female,
@@ -35,7 +36,8 @@ makeRel_smolt(
   hatchery_args,
   fitness_args,
   g,
-  prop_LHG
+  prop_LHG,
+  r
 )
 }
 \arguments{
@@ -68,7 +70,11 @@ Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar
 \item{p_naturalsmolt}{Integer, the population index for the natural smolts, and first life history group, in the openMSE model.
 Used to report variables to \link{salmonMSE_env}.}
 
-\item{prop_LHG}{Proportion of the egg production assign to the life history groups corresponding to \code{p_smolt} for the next generation}
+\item{g}{Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if \code{output = "natural"})}
+
+\item{prop_LHG}{Numeric, proportion of the egg production assign to life history group \code{g} corresponding to \code{p_smolt} for the next generation (only used if \code{output = "natural"})}
+
+\item{r}{Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if \code{output = "hatchery"})}
 
 \item{p_smolt}{Integer, the population index for the smolt production in the openMSE model, corresponding to \code{output}}
 
@@ -76,7 +82,7 @@ Used to report variables to \link{salmonMSE_env}.}
 if spawning is from multiple life history groups}
 
 \item{p_hatchery}{Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
-if spawning is from multiple life history groups}
+if there are multiple release strategies. Set to \code{NULL} for no hatchery production}
 }
 \value{
 \itemize{

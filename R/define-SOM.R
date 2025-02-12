@@ -165,6 +165,7 @@ setClass(
   "Hatchery",
   slots = c(
     Name = "character",
+    n_r = "numeric",
     n_yearling = "numeric",           # Management lever. No hatchery if both this line and next line are zero
     n_subyearling = "numeric",        # Management lever. No hatchery if both this line and previous line are zero
     s_prespawn = "numeric",           # Survival prior to spawning

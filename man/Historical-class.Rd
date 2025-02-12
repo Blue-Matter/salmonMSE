@@ -14,12 +14,12 @@ The component of the operating model that specifies the historical dynamics.
 
 \item{\code{HistSpawner_NOS}}{Array by \verb{[nsim, maxage, nyears, n_g]}. Natural origin spawners at age in the natural environment. \emph{Optional}}
 
-\item{\code{HistSpawner_HOS}}{Array by \verb{[nsim, maxage, nyears]}. Hatchery origin spawners at age in the natural environment. \emph{Optional}}
+\item{\code{HistSpawner_HOS}}{Array by \verb{[nsim, maxage, nyears, n_r]}. Hatchery origin spawners at age in the natural environment. \emph{Optional}}
 
 \item{\code{HistNjuv_NOS}}{Array by \verb{[nsim, maxage, nyears+1, n_g]}. The abundance of immature natural origin fish at the beginning of the annual time step.
 Default assumes 1000 smolts (age-1) fish annually.}
 
-\item{\code{HistNjuv_HOS}}{Array by \verb{[nsim, maxage, nyears+1]}. The abundance of immature hatchery origin fish at the beginning of the annual time step.
+\item{\code{HistNjuv_HOS}}{Array by \verb{[nsim, maxage, nyears+1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the annual time step.
 Default assumes 1000 smolts (age-1) fish annually.}
 
 \item{\code{HistFPT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the preterminal fishery.
