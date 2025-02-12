@@ -110,7 +110,7 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
   if (check) SOM <- check_SOM(SOM)
 
   smolt0 <- sapply(1:SOM@nsim, function(x) {
-    salmonMSE:::calc_smolt(
+    calc_smolt(
       N1 = SOM@Bio[[s]]@phi[x],
       kappa = SOM@Bio[[s]]@kappa[x],
       capacity = SOM@Bio[[s]]@capacity_smolt[x],
@@ -127,7 +127,7 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
   Egg <- seq(0, 1.5 * max(E0), length.out = 100)
   Smolt <- sapply(1:SOM@nsim, function(x) {
     sapply(Egg, function(N) {
-      salmonMSE:::calc_smolt(
+      calc_smolt(
         N1 = N,
         kappa = SOM@Bio[[s]]@kappa[x],
         capacity = SOM@Bio[[s]]@capacity_smolt[x],
