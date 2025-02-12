@@ -1,10 +1,12 @@
 
 plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequency",
                      type = c("hist", "age", "age_ts", "ts"),
-                     maxage, nsim, nyears, proyears, g = 1, ...) {
+                     maxage, nsim, nyears, proyears, g = 1, surv = FALSE, ...) {
 
   type <- match.arg(type)
   x <- slot(object, var)
+
+  if (surv) x <- exp(-x)
 
   quant <- c(0.025, 0.5, 0.975)
 
@@ -47,7 +49,9 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
 }
 
 # x - array by sim x age x g
-plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = TRUE, LHG_names, palette = "Dark 2") {
+plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = TRUE, LHG_names, palette = "Dark 2", surv = FALSE) {
+
+  if (surv) x <- exp(-x)
 
   quant <- c(0.025, 0.5, 0.975)
   xplot <- apply(x, 2:3, quantile, quant)
@@ -64,7 +68,7 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
     ylim <- c(0, 1.1) * range(xplot)
     Age <- seq(1, maxage)
 
-    plot(Age, NULL, xlab = "Age", ylab = "Juvenile natural mortality", typ = "n", ylim = ylim)
+    plot(Age, NULL, xlab = "Age", ylab = ifelse(surv, "Juvenile natural survival", "Juvenile natural mortality"), typ = "n", ylim = ylim)
     for (g in 1:n_g) {
       lines(Age, xplot[2, , g], typ = "o", col = col[g], pch = 16)
       polygon(c(Age, rev(Age)), c(xplot[1, , g], rev(xplot[3, , g])), col = col[g], border = col[g])
