@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot-LHG.R
 \name{plot_LHG}
 \alias{plot_LHG}
-\title{Plot life history groups}
+\alias{plot_RS}
+\title{Plot life history groups and release strategies}
 \usage{
 plot_LHG(
   SMSE,
@@ -13,13 +14,25 @@ plot_LHG(
   figure = TRUE,
   xlab = "Projection Year",
   ylab,
-  LHG_names
+  name
+)
+
+plot_RS(
+  SMSE,
+  var = "HOS",
+  type = c("prop", "abs"),
+  s = 1,
+  FUN = median,
+  figure = TRUE,
+  xlab = "Projection Year",
+  ylab,
+  name
 )
 }
 \arguments{
 \item{SMSE}{Class \linkS4class{SMSE} object returned by \code{\link[=salmonMSE]{salmonMSE()}}}
 
-\item{var}{Character. Slot for the state variables in \code{SMSE@Misc$LHG[[1]]}.}
+\item{var}{Character. Slot for the state variables in \code{SMSE@Misc$LHG[[1]]} or \code{SMSE@Misc$RS[[1]]}.}
 
 \item{type}{Character to indicate whether to plot proportion or absolute numbers}
 
@@ -33,10 +46,13 @@ plot_LHG(
 
 \item{ylab}{Character. Name of the state variable for the figure}
 
-\item{LHG_names}{Character. Vector of names for the life history groups}
+\item{name}{Character. Vector of names for the life history groups or release strategies}
+}
+\value{
+Base graphics figure, barplot of distribution or total numbers by LHG or RS. Returns invisibly the matrix of plotted values
 }
 \description{
-Plot the annual proportions of life history groups at various life stages
+Plot the annual proportions of life history groups (natural origin fish) or release strategies (hatchery origin) at various life stages
 }
 \seealso{
 \code{\link[=plot_statevar_ts]{plot_statevar_ts()}}

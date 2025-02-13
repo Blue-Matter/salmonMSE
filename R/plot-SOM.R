@@ -79,6 +79,10 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
   invisible(xplot)
 }
 
+plot_Mjuv_RS <- function(x, ylab = "Juvenile natural mortality rate", figure = TRUE, RS_names, palette = "Cold", surv = FALSE) {
+  plot_Mjuv_LHG(x, ylab, figure, RS_names, palette, surv)
+}
+
 #' @importFrom grDevices rainbow
 #' @importFrom graphics axis
 plot_stray <- function(stray, xlab = "Destination", ylab = "Origin") {

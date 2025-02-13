@@ -562,7 +562,8 @@ setMethod("report", "SMSE",
 
             stock_ind <- grep("ADD RMD BY STOCK", rmd)
             n_g <- sapply(SMSE@Misc$SOM@Bio, slot, "n_g")
-            rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames, n_g = n_g) %>% unlist()
+            n_r <- sapply(SMSE@Misc$SOM@Hatchery, slot, "n_r")
+            rmd_split[[stock_ind]] <- Map(make_rmd_stock, s = 1:SMSE@nstocks, sname = SMSE@Snames, n_g = n_g, n_r = n_r) %>% unlist()
 
             if (SMSE@nstocks > 1) {
               rmd_stock_compare <- make_rmd_stock_comparison()

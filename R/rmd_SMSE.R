@@ -29,7 +29,7 @@ rmd_natural_production <- function(s, sname) {
     "```{r, fig.cap=\"Egg to smolt survival from the density-dependent stock-recruit relationship. The dotted vertical line denotes the median egg production in unfished conditions.\"}",
     paste0("plot_SRR(SOM, s = ", s, ", surv = TRUE, check = FALSE, quant = TRUE)"),
     "```",
-    "```{r, fig.cap=\"Juvenile instantaneous natural mortality rate (median and 95 percent interval across simulations).\"}",
+    "```{r, fig.cap=\"Juvenile instantaneous natural mortality rate of natural origin fish (median and 95 percent interval across simulations).\"}",
     paste0("if (SOM@Bio[[", s, "]]@n_g > 1) {"),
     paste0("  plot_Mjuv_LHG(SOM@Bio[[", s, "]]@Mjuv_NOS[, , SOM@nyears + SOM@proyears, ])"),
     "} else {",
@@ -37,7 +37,7 @@ rmd_natural_production <- function(s, sname) {
     "}",
     "```",
     "",
-    "```{r, fig.cap=\"Juvenile natural survival (median and 95 percent interval across simulations).\"}",
+    "```{r, fig.cap=\"Juvenile natural survival of natural origin fish (median and 95 percent interval across simulations).\"}",
     paste0("if (SOM@Bio[[", s, "]]@n_g > 1) {"),
     paste0("  plot_Mjuv_LHG(SOM@Bio[[", s, "]]@Mjuv_NOS[, , SOM@nyears + SOM@proyears, ], surv = TRUE)"),
     "} else {",
@@ -231,6 +231,22 @@ rmd_hatchery_production <- function(s, sname) {
     "",
     "```{r results=\"asis\"}",
     paste0("knitr::kable(make_fitness_table(SMSE, s = ", s, "), row.names = FALSE, caption = \"Fitness parameters.\")"),
+    "```",
+    "",
+    "```{r, fig.cap=\"Juvenile instantaneous natural mortality rate of hatchery origin fish (median and 95 percent interval across simulations).\"}",
+    paste0("if (SOM@Hatchery[[", s, "]]@n_r > 1) {"),
+    paste0("  plot_Mjuv_RS(SOM@Hatchery[[", s, "]]@Mjuv_HOS[, , SOM@nyears + SOM@proyears, ])"),
+    "} else {",
+    paste0("  plot_SOM(SOM@Hatchery[[", s, "]], \"Mjuv_HOS\", type = \"age\", nsim = SOM@nsim, maxage = SOM@Bio[[", s, "]]@maxage, nyears = SOM@nyears, proyears = SOM@proyears, ylab = \"Juvenile natural mortality rate\")"),
+    "}",
+    "```",
+    "",
+    "```{r, fig.cap=\"Juvenile natural survival of hatchery origin fish (median and 95 percent interval across simulations).\"}",
+    paste0("if (SOM@Hatchery[[", s, "]]@n_r > 1) {"),
+    paste0("  plot_Mjuv_RS(SOM@Hatchery[[", s, "]]@Mjuv_HOS[, , SOM@nyears + SOM@proyears, ], surv = TRUE)"),
+    "} else {",
+    paste0("  plot_SOM(SOM@Hatchery[[", s, "]], \"Mjuv_HOS\", type = \"age\", nsim = SOM@nsim, maxage = SOM@Bio[[", s, "]]@maxage, nyears = SOM@nyears, proyears = SOM@proyears, surv = TRUE, ylab = \"Juvenile natural survival\")"),
+    "}",
     "```",
     "",
     "```{r, fig.cap=\"Broodtake fecundity.\"}",
@@ -475,19 +491,48 @@ rmd_lhg <- function(s, sname) {
   )
 }
 
-make_rmd_stock <- function(s, sname, n_g = 1) {
+rmd_rs <- function(s, sname) {
+  c(
+    "#### Release strategies",
+    "\n",
+    "```{r, fig.cap=\"Hatchery releases at smolt life stage by release strategy (median across simulations).\"}",
+    paste0("plot_RS(SMSE, var = \"Smolt\", ylab = \"Hatchery smolts\", type = \"abs\", s = ", s, ")"),
+    "```",
+    "\n",
+    "```{r, fig.cap=\"Hatchery origin spawners by release strategy  (median across simulations).\"}",
+    paste0("plot_RS(SMSE, var = \"HOS\", type = \"abs\", s = ", s, ")"),
+    "```",
+    "\n",
+    "```{r, fig.cap=\"Proportion of release strategy at the smolt life stage.\"}",
+    paste0("plot_RS(SMSE, var = \"Smolt\", ylab = \"Proportion hatchery smolts\", s = ", s, ")"),
+    "```",
+    "\n",
+    "```{r, fig.cap=\"Proportion of release strategy of hatchery spawners.\"}",
+    paste0("plot_RS(SMSE, var = \"HOS\", s = ", s, ")"),
+    "```",
+    "\n"
+  )
+}
+
+make_rmd_stock <- function(s, sname, n_g = 1, n_r = 1) {
 
   natural_production <- rmd_natural_production(s, sname)
-
   if (n_g > 1) {
     lhg <- rmd_lhg(s, sname)
   } else {
     lhg <- NULL
   }
+
   hatchery_production <- rmd_hatchery_production(s, sname)
+  if (n_r > 1) {
+    rs <- rmd_rs(s, sname)
+  } else {
+    rs <- NULL
+  }
+
   fishery <- rmd_fishery(s, sname)
 
-  c(natural_production, lhg, hatchery_production, fishery)
+  c(natural_production, lhg, hatchery_production, rs, fishery)
 }
 
 make_rmd_stock_comparison <- function() {
