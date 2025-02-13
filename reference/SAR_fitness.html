@@ -63,14 +63,14 @@ to fitness</p><ul><li><p><code>SAR_fitness()</code> calculates the new natural m
 <span>  y <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"natural"</span>, <span class="st">"hatchery"</span><span class="op">)</span>,</span>
 <span>  rel_loss <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  p_naturalsmolt <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">nyears</span>,</span>
 <span>  <span class="va">Mbase</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">makeRel_SAR</span><span class="op">(</span></span>
 <span>  p_smolt <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  p_naturalsmolt <span class="op">=</span> <span class="va">p_smolt</span>,</span>
+<span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"natural"</span>, <span class="st">"hatchery"</span><span class="op">)</span>,</span>
 <span>  <span class="va">rel_loss</span>,</span>
 <span>  <span class="va">nyears</span>,</span>
@@ -98,8 +98,8 @@ to fitness</p><ul><li><p><code>SAR_fitness()</code> calculates the new natural m
 <dd><p>Numeric, the loss exponent for the juveniles</p></dd>
 
 
-<dt id="arg-p-naturalsmolt">p_naturalsmolt<a class="anchor" aria-label="anchor" href="#arg-p-naturalsmolt"></a></dt>
-<dd><p>Integer, the population index for the natural smolts in the openMSE model. Used to search for the fitness value</p></dd>
+<dt id="arg-s">s<a class="anchor" aria-label="anchor" href="#arg-s"></a></dt>
+<dd><p>Integer, the salmonMSE population index. Used to search for the fitness value</p></dd>
 
 
 <dt id="arg-nyears">nyears<a class="anchor" aria-label="anchor" href="#arg-nyears"></a></dt>
