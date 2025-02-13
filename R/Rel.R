@@ -21,8 +21,7 @@
 #' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
 #' @param fitness_args Named list containing various arguments controlling population fitness from hatchery production.
 #' Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss
-#' @param p_naturalsmolt Integer, the population index for the natural smolts, and first life history group, in the openMSE model.
-#' Used to report variables to [salmonMSE::salmonMSE_env].
+#' @param s Integer, salmonMSE population index. Used to report variables to [salmonMSE::salmonMSE_env].
 #' @section hatchery_args:
 #' Hatchery control parameters are included in a named list with the following arguments:
 #'
@@ -49,7 +48,7 @@
 #' @keywords internal
 smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hatchery"),
                        s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
-                       hatchery_args, fitness_args, p_naturalsmolt, g, prop_LHG, r) {
+                       hatchery_args, fitness_args, s, g, prop_LHG, r) {
 
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
@@ -124,7 +123,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   # Fitness
   if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
     # Get zbar from salmonMSE_env
-    zbar_prev <- filter(salmonMSE_env$Ford, .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt)
+    zbar_prev <- filter(salmonMSE_env$Ford, .data$x == .env$x, .data$s == .env$s)
 
     if (nrow(zbar_prev)) {
       maxage <- nrow(NOS)
@@ -198,7 +197,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     if (x > 0) {
       df_H <- data.frame(
         x = x,
-        p_smolt = p_naturalsmolt,
+        s = s,
         r = r,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         a = 1:nrow(Nage_HOS),
@@ -211,7 +210,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
       df_stateH <- data.frame(
         x = x,
-        p_smolt = p_naturalsmolt,
+        s = s,
         r = r,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         Egg_HOS = Egg_HOS_out[r], # Spawning output by RS r of this generation
@@ -258,7 +257,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     # Save state variables at age
     df_N <- data.frame(
       x = x,
-      p_smolt = p_naturalsmolt,
+      s = s,
       g = g,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       a = 1:nrow(Nage_NOS),
@@ -270,7 +269,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
     df_stateN <- data.frame(
       x = x,
-      p_smolt = p_naturalsmolt,
+      s = s,
       g = g,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
       Egg_NOS = Egg_NOS_out[g], # Spawning output by LHG g of this generation
@@ -289,7 +288,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     if (g == 1) {
       df_Ford <- data.frame(
         x = x,
-        p_smolt = p_naturalsmolt,
+        s = s,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         type = c("natural", "hatchery"),
         zbar = zbar,
@@ -311,7 +310,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 #' @param g Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if `output = "natural"`)
 #' @param prop_LHG Numeric, proportion of the egg production assign to life history group `g` corresponding to `p_smolt` for the next generation (only used if `output = "natural"`)
 #' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
-makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery = NULL,
+makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
                           output = c("natural", "hatchery"), s_enroute,
                           p_female, fec, SRRpars,  # Spawning (natural production)
                           hatchery_args, fitness_args, g, prop_LHG, r) {
@@ -329,7 +328,7 @@ makeRel_smolt <- function(p_smolt = 1, p_naturalsmolt = 1, p_natural, p_hatchery
 
   formals(.smolt_func)$hatchery_args <- hatchery_args
   formals(.smolt_func)$fitness_args <- fitness_args
-  formals(.smolt_func)$p_naturalsmolt <- p_naturalsmolt
+  formals(.smolt_func)$s <- s
 
   if (output == "natural") {
     formals(.smolt_func)$g <- g
@@ -433,7 +432,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 #' @param y Integer, simulation year (including historical years)
 #' @param envir Character, whether to obtain the fitness value for the natural or hatchery environment.
 #' @param rel_loss Numeric, the loss exponent for the juveniles
-#' @param p_naturalsmolt Integer, the population index for the natural smolts in the openMSE model. Used to search for the fitness value
+#' @param s Integer, the salmonMSE population index. Used to search for the fitness value
 #' @param nyears Integer, the number of historical years in the operating model
 #' @param Mbase Array `[nsim, n_age, proyears]` the base natural mortality value in the openMSE operating model.
 #' @returns
@@ -443,7 +442,7 @@ simulate.RelSmolt <- function(object, nsim = 1, seed = 1, ...) {
 #' @keywords internal
 SAR_fitness <- function(x = -1, y = 1,
                         envir = c("natural", "hatchery"),
-                        rel_loss = 1, p_naturalsmolt = 1,
+                        rel_loss = 1, s = 1,
                         nyears, Mbase) {
 
   envir <- match.arg(envir)
@@ -456,7 +455,7 @@ SAR_fitness <- function(x = -1, y = 1,
       if (nrow(salmonMSE_env$Ford) && x > 0) {
         fitness_y <- dplyr::filter(
           salmonMSE_env$Ford,
-          .data$x == .env$x, .data$p_smolt == .env$p_naturalsmolt, .data$t == y - a, .data$type == envir
+          .data$x == .env$x, .data$s == .env$s, .data$t == y - a, .data$type == envir
         ) %>%
           pull(.data$fitness)
 
@@ -477,14 +476,14 @@ SAR_fitness <- function(x = -1, y = 1,
 #' @rdname SAR_fitness
 #' @param p_smolt Integer, the population index for the juvenile population in the openMSE model
 #' @keywords internal
-makeRel_SAR <- function(p_smolt = 1, p_naturalsmolt = p_smolt, envir = c("natural", "hatchery"),
+makeRel_SAR <- function(p_smolt = 1, s = 1, envir = c("natural", "hatchery"),
                         rel_loss, nyears, Mbase) {
 
   envir <- match.arg(envir)
 
   .SAR_fitness <- SAR_fitness
 
-  formals(.SAR_fitness)$p_naturalsmolt <- p_naturalsmolt
+  formals(.SAR_fitness)$s <- s
   formals(.SAR_fitness)$rel_loss <- rel_loss
   formals(.SAR_fitness)$envir <- envir
   formals(.SAR_fitness)$nyears <- nyears

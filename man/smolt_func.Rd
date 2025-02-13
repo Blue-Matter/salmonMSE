@@ -17,7 +17,7 @@ smolt_func(
   SRRpars,
   hatchery_args,
   fitness_args,
-  p_naturalsmolt,
+  s,
   g,
   prop_LHG,
   r
@@ -25,7 +25,7 @@ smolt_func(
 
 makeRel_smolt(
   p_smolt = 1,
-  p_naturalsmolt = 1,
+  s = 1,
   p_natural,
   p_hatchery = NULL,
   output = c("natural", "hatchery"),
@@ -67,8 +67,7 @@ Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, ca
 \item{fitness_args}{Named list containing various arguments controlling population fitness from hatchery production.
 Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss}
 
-\item{p_naturalsmolt}{Integer, the population index for the natural smolts, and first life history group, in the openMSE model.
-Used to report variables to \link{salmonMSE_env}.}
+\item{s}{Integer, salmonMSE population index. Used to report variables to \link{salmonMSE_env}.}
 
 \item{g}{Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if \code{output = "natural"})}
 

@@ -293,7 +293,6 @@ SOM2MOM <- function(SOM, check = TRUE) {
         }
       }
 
-      p_nat_smolt1 <- pind$p[pind$origin == "natural" & pind$g == 1 & pind$stage == "juvenile"]
       p_nat_esc <- pind$p[pind$origin == "natural" & pind$stage == "escapement"] # length ng
       p_hat_esc <- if(do_hatchery_s || has_strays_s) {
         pind$p[pind$origin == "hatchery" & pind$stage == "escapement"]
@@ -306,7 +305,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
         p_nat_smolt <- pind$p[pind$origin == "natural" & pind$g == g & pind$stage == "juvenile"]
 
         Rel_smolt_g[[g]] <- makeRel_smolt(
-          p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt1, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+          p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
           output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args, g = g, prop_LHG = p_LHG[g]
         )
@@ -314,7 +313,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
         # Marine survival of natural origin fish
         if (do_hatchery_s && Hatchery@fitness_type[1] != "none" && Hatchery@rel_loss[3] > 0) {
           Rel_SAR_NOS_g[[g]] <- makeRel_SAR(
-            p_smolt = p_nat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "natural",
+            p_smolt = p_nat_smolt, s = s, envir = "natural",
             rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
             Mbase = S[[p_nat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
           )
@@ -327,7 +326,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
           # Hatchery smolt releases from NOS and HOS escapement
           Rel_hatchrel[[r]] <- makeRel_smolt(
-            p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt1, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+            p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
             output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
             hatchery_args = hatchery_args, fitness_args = fitness_args, r = r
           )
@@ -335,7 +334,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           # Marine survival of hatchery origin fish
           if (Hatchery@fitness_type[2] != "none" && Hatchery@rel_loss[3] > 0) {
             Rel_SAR_HOS[[1]] <- makeRel_SAR(
-              p_smolt = p_hat_smolt, p_naturalsmolt = p_nat_smolt1, envir = "hatchery",
+              p_smolt = p_hat_smolt, s = s, envir = "hatchery",
               rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
               Mbase = S[[p_hat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
             )

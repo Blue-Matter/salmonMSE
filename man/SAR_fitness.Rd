@@ -10,14 +10,14 @@ SAR_fitness(
   y = 1,
   envir = c("natural", "hatchery"),
   rel_loss = 1,
-  p_naturalsmolt = 1,
+  s = 1,
   nyears,
   Mbase
 )
 
 makeRel_SAR(
   p_smolt = 1,
-  p_naturalsmolt = p_smolt,
+  s = 1,
   envir = c("natural", "hatchery"),
   rel_loss,
   nyears,
@@ -33,7 +33,7 @@ makeRel_SAR(
 
 \item{rel_loss}{Numeric, the loss exponent for the juveniles}
 
-\item{p_naturalsmolt}{Integer, the population index for the natural smolts in the openMSE model. Used to search for the fitness value}
+\item{s}{Integer, the salmonMSE population index. Used to search for the fitness value}
 
 \item{nyears}{Integer, the number of historical years in the operating model}
 
