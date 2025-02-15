@@ -37,8 +37,7 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
       ylim <- c(0, 1.1) * range(xplot)
 
       plot(seq(1, maxage), xplot[2, ], xlab = xlab, ylab = ylab, ylim = ylim, typ = "o")
-      polygon(c(seq(1, maxage), seq(maxage, 1)), c(xplot[1, ], rev(xplot[3, ])),
-              border = NA, col = alpha("grey", 0.5))
+      matlines(seq(1, maxage), t(xplot[c(1, 3), ]), lty = 2, col = 1)
     }
 
   } else if (type == "age_ts") {
@@ -71,7 +70,7 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
     plot(Age, NULL, xlab = "Age", ylab = ifelse(surv, "Juvenile natural survival", "Juvenile natural mortality"), typ = "n", ylim = ylim)
     for (g in 1:n_g) {
       lines(Age, xplot[2, , g], typ = "o", col = col[g], pch = 16)
-      polygon(c(Age, rev(Age)), c(xplot[1, , g], rev(xplot[3, , g])), col = col[g], border = col[g])
+      matlines(Age, t(xplot[c(1, 3), , g]), col = col[g], lty = 2)
     }
     legend('topright', legend = LHG_names, col = col, lty = 1, pch = 16)
   }
