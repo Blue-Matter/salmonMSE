@@ -104,7 +104,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
     s_enroute <- SOM@Bio[[s]]@s_enroute
 
-    if (do_hatchery || has_strays || s_enroute < 1) {
+    if (do_hatchery || has_strays) {
 
       # HOS state variables from MMSE object
       p_HOS_imm <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
@@ -144,11 +144,6 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       # NOS + HOS state variables from salmonMSE
       ngen <- length(unique(salmonMSE_env$N$t))
       if (length(y_spawn) != ngen) warning("Number of generations in salmonMSE state variables does not match generations in openMSE")
-
-      # Sum across LHG
-      NOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOS", s)
-      Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
-      Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
 
       # Sum across RS
       HOS[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOS", s)
@@ -190,15 +185,24 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       p_wild[, s, ] <- calc_pwild_age(NOS_a[, s, , ], HOScensus_a[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
 
     } else {
+      PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
+      pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
+    }
+
+    if (do_hatchery || has_strays || s_enroute < 1) {
+
+      # Sum across LHG
+      NOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOS", s)
+      Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
+      Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
+
+    } else {
       # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
       NOS[, s, ] <- apply(Escapement_NOS[, s, , ], c(1, 3), sum)
       Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
 
       a_smolt <- 1
       Smolt_NOS[, s, ] <- Njuv_NOS[, s, a_smolt, ]
-
-      PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
-      pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
     }
 
     if (n_g > 1) {
