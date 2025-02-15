@@ -55,6 +55,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   Nage_NOS_enroute <- Nage_NOS * s_enroute
 
   # Hatchery
+  if (missing(Nage_HOS)) Nage_HOS <- matrix(0, nrow(Nage_NOS), 1)
   Nage_HOS[is.na(Nage_HOS)] <- 0
   Nage_HOS_enroute <- Nage_HOS * s_enroute
 
@@ -87,6 +88,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     )
 
   } else {
+
     broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_HOS)))
     egg_NOB <- egg_HOB <- 0
 
@@ -94,13 +96,18 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       yearling = rep(0, ncol(Nage_HOS)),
       subyearling = rep(0, ncol(Nage_HOS))
     )
+
   }
 
   # Spawners
   spawners <- calc_spawners(broodtake, Nage_NOS_enroute, Nage_HOS_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
   NOS <- spawners$NOS
   HOS <- spawners$HOS
-  HOS_effective <- spawners$HOS * hatchery_args$gamma
+  if (sum(HOS)) {
+    HOS_effective <- spawners$HOS * hatchery_args$gamma
+  } else {
+    HOS_effective <- array(0, dim(HOS))
+  }
 
   # Spawners weighted by fecundity
   if (sum(unlist(broodtake))) {
