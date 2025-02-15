@@ -352,8 +352,8 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
   }
 
   if (figure) {
-    Sind <- !is.na(S_SMSY) & S_SMSY > 0
-    Eind <- !is.na(Ex_ExMSY) & Ex_ExMSY > 0
+    Sind <- !is.na(S_SMSY) & is.finite(S_SMSY)
+    Eind <- !is.na(Ex_ExMSY) & is.finite(Ex_ExMSY)
     ind <- Sind & Eind
     npoints <- sum(ind)
 
