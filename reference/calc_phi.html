@@ -46,7 +46,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_phi</span><span class="op">(</span><span class="va">Mjuv</span>, <span class="va">p_mature</span>, <span class="va">p_female</span>, <span class="va">fec</span>, s_enroute <span class="op">=</span> <span class="fl">1</span>, <span class="va">n_g</span>, <span class="va">p_LHG</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_phi</span><span class="op">(</span><span class="va">Mjuv</span>, <span class="va">p_mature</span>, <span class="va">p_female</span>, <span class="va">fec</span>, s_enroute <span class="op">=</span> <span class="fl">1</span>, n_g <span class="op">=</span> <span class="fl">1</span>, <span class="va">p_LHG</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -54,11 +54,11 @@
 
 
 <dl><dt id="arg-mjuv">Mjuv<a class="anchor" aria-label="anchor" href="#arg-mjuv"></a></dt>
-<dd><p>Matrix <code>[maxage, n_g]</code>. Juvenile natural mortality</p></dd>
+<dd><p>Matrix <code>[maxage, n_g]</code>, but can be a vector if <code>n_g = 1</code>. Juvenile natural mortality</p></dd>
 
 
 <dt id="arg-p-mature">p_mature<a class="anchor" aria-label="anchor" href="#arg-p-mature"></a></dt>
-<dd><p>Matrix <code>[maxage, n_g]</code>. Maturity at age</p></dd>
+<dd><p>Matrix <code>[maxage, n_g]</code>, but can be a vector if <code>n_g = 1</code>. Maturity at age</p></dd>
 
 
 <dt id="arg-p-female">p_female<a class="anchor" aria-label="anchor" href="#arg-p-female"></a></dt>
@@ -66,7 +66,7 @@
 
 
 <dt id="arg-fec">fec<a class="anchor" aria-label="anchor" href="#arg-fec"></a></dt>
-<dd><p>Matrix <code>[maxage, n_g]</code>. Fecundity at age</p></dd>
+<dd><p>Matrix <code>[maxage, n_g]</code>, but can be a vector if <code>n_g = 1</code>. Fecundity at age</p></dd>
 
 
 <dt id="arg-s-enroute">s_enroute<a class="anchor" aria-label="anchor" href="#arg-s-enroute"></a></dt>
@@ -78,7 +78,7 @@
 
 
 <dt id="arg-p-lhg">p_LHG<a class="anchor" aria-label="anchor" href="#arg-p-lhg"></a></dt>
-<dd><p>Proportion Mjuv Array <code>[nsim, maxage, n_g]</code>. Juvenile natural mortality</p></dd>
+<dd><p>Vector length <code>n_g</code> of proportion of life history groups per recruit. Default is <code>rep(1/n_g, n_g)</code></p></dd>
 
 </dl></div>
 
