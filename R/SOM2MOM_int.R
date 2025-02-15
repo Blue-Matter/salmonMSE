@@ -341,15 +341,23 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
 
 #' Calculate unfished egg per smolt with life history groups
 #'
-#' @param Mjuv Matrix `[maxage, n_g]`. Juvenile natural mortality
-#' @param p_mature Matrix `[maxage, n_g]`. Maturity at age
+#' @param Mjuv Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Juvenile natural mortality
+#' @param p_mature Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Maturity at age
 #' @param p_female Numeric. Proportion female
-#' @param fec Matrix `[maxage, n_g]`. Fecundity at age
+#' @param fec Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Fecundity at age
 #' @param s_enroute Numeric, en-route survival of escapement to spawning grounds
 #' @param n_g Integer. Number of life history groups
-#' @param p_LHG Proportion Mjuv Array `[nsim, maxage, n_g]`. Juvenile natural mortality
+#' @param p_LHG Vector length `n_g` of proportion of life history groups per recruit. Default is `rep(1/n_g, n_g)`
 #' @keywords internal
-calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g, p_LHG) {
+calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG) {
+
+  if (n_g == 1) {
+    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
+    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
+    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
+  }
+  if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
+
   surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g], p_mature[, g])) # age x g
   Esc <- p_mature * surv_juv # escapement per smolt
   Egg <- p_female * Esc * s_enroute * fec

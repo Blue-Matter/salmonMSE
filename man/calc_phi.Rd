@@ -4,22 +4,22 @@
 \alias{calc_phi}
 \title{Calculate unfished egg per smolt with life history groups}
 \usage{
-calc_phi(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g, p_LHG)
+calc_phi(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG)
 }
 \arguments{
-\item{Mjuv}{Matrix \verb{[maxage, n_g]}. Juvenile natural mortality}
+\item{Mjuv}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Juvenile natural mortality}
 
-\item{p_mature}{Matrix \verb{[maxage, n_g]}. Maturity at age}
+\item{p_mature}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Maturity at age}
 
 \item{p_female}{Numeric. Proportion female}
 
-\item{fec}{Matrix \verb{[maxage, n_g]}. Fecundity at age}
+\item{fec}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Fecundity at age}
 
 \item{s_enroute}{Numeric, en-route survival of escapement to spawning grounds}
 
 \item{n_g}{Integer. Number of life history groups}
 
-\item{p_LHG}{Proportion Mjuv Array \verb{[nsim, maxage, n_g]}. Juvenile natural mortality}
+\item{p_LHG}{Vector length \code{n_g} of proportion of life history groups per recruit. Default is \code{rep(1/n_g, n_g)}}
 }
 \description{
 Calculate unfished egg per smolt with life history groups
