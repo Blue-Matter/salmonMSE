@@ -654,7 +654,7 @@ check_maxage2array <- function(object, name, maxage, nsim, years) {
   }
 
   dim_i <- dim(slot(object, name))
-  dim_check <- length(dim_i) == 3 && all(dim(slot(object, name) == c(nsim, maxage, years)))
+  dim_check <- length(dim_i) == 3 && all(dim(slot(object, name)) == c(nsim, maxage, years))
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
