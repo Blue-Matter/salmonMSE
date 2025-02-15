@@ -1,0 +1,116 @@
+
+library(salmonMSE)
+
+# See Appendix A of Mahony et al. 2021. CSAS Research Document 2021/009.
+# https://publications.gc.ca/site/eng/9.897509/publication.html
+
+maxage <- 5
+nsim <- 100
+nyears <- 2
+proyears <- 45 # 2020 to 2065
+
+Mjuv_NOS <- array(0, c(nsim, maxage, nyears + proyears))
+
+# For the PVA, we want to model:
+# Deviations in the smolt production function to get to age 1
+# To get to age 2, we need early juvenile survival (phi_ocean, stochastic), dam survival (fixed) and then SU_2 (fixed)
+# Currently salmonMSE doesn't have Ricker deviations so we include it in the age 1 mortality rate
+set.seed(1)
+Ricker_sd <- 0.53
+Ricker_dev <- rlnorm(nsim * proyears, -0.5 * Ricker_sd^2, Ricker_sd) |> matrix(nsim, proyears)
+
+phi_ocean <- 0.025
+
+# https://github.com/wchallenger/OK_CNPVA/blob/master/CNPVA/R/PopSim.fn.R#L41
+D_juv <- rnorm(nsim * proyears, 0.35, 0.09) |> matrix(nsim, proyears)
+D_juv[D_juv < 0] <- 0.01
+D_juv[D_juv > 1] <- 1
+
+SU_2 <- 0.6
+
+# Age 1 survival
+surv1 <- Ricker_dev * phi_ocean * D_juv * SU_2
+surv24 <- c(0.7, 0.8, 0.9)  # SU_3, SU_4, SU_5
+
+Mjuv_NOS[, 1, nyears + seq(1, proyears)] <- -log(surv1)
+Mjuv_NOS[, 1, seq(1, nyears)] <- array(Mjuv_NOS[, , nyears + 1], c(nsim, 1, nyears))
+
+# Age 2-4 survival
+Mjuv_NOS[, 2:4, ] <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
+
+# Arbitrary juvenile M for age 5
+Mjuv_NOS[, 5, ] <- 0.01
+
+Bio <- new(
+  "Bio",
+  maxage = maxage,
+  p_mature = c(0, 0.04, 0.26, 0.72, 1),
+  SRrel = "Ricker",
+  kappa = 136, # set phi = 1 so that kappa = alpha = 136
+  phi = 1,
+  Smax = 2400,
+  Mjuv_NOS = Mjuv_NOS,
+  p_female = 1,         # fec = 1, p_female = 1 so egg production = number of spawners
+  fec = rep(1, maxage), # fec = 1, p_female = 1 so egg production = number of spawners
+  s_enroute = 0.94      # D_adult, not stochastic in salmonMSE
+)
+
+Harvest <- new(
+  "Harvest",
+  u_preterminal = 0.28,  # HR_ocean
+  u_terminal = 0.18,     # HR_river
+  vulPT = c(0, 1, 1, 1, 1),
+  vulT = c(0, 1, 1, 1, 1)
+)
+
+Hatchery <- new(
+  "Hatchery",
+  n_yearling = 0,
+  n_subyearling = 0
+)
+
+Habitat <- new("Habitat")
+
+# Calculate initial equilibrium juvenile abundance at age such that the number of spawners = 50
+Nsp <- sapply(1:nsim, function(x) {
+  nS <- 50
+  # Per-smolt calculations
+  #Fjuv <- -log(1 - Harvest@u_preterminal) * Harvest@vulPT
+  #Fterm <- -log(1 - Harvest@u_terminal) * Harvest@vulT
+  #juv_surv <- salmonMSE:::calc_survival(Mjuv_NOS[x, , nyears + 1] + Fjuv, Bio@p_mature)
+  #esc <- juv_surv * Bio@p_mature * exp(-Fterm)
+
+  juv_surv <- salmonMSE:::calc_survival(Mjuv_NOS[x, , nyears + 1], Bio@p_mature)
+  esc <- juv_surv * Bio@p_mature
+  spawners <- esc * Bio@s_enroute
+
+  R <- nS/sum(spawners)
+  Njuv <- R * juv_surv
+  Nesc <- R * esc
+  Nsp <- R * spawners
+  Njuv
+})
+
+Njuv <- array(Nsp, c(maxage, nsim, nyears + 1)) |> aperm(c(2, 1, 3))
+
+Historical <- new(
+  "Historical",
+  HistNjuv_NOS = Njuv
+)
+
+SOM <- new("SOM",
+           Name = "Okanagan Chinook PVA",
+           nsim = nsim,
+           nyears = nyears,
+           proyears = proyears,
+           seed = 1,
+           Bio = Bio,
+           Habitat = Habitat,
+           Hatchery = Hatchery,
+           Harvest = Harvest,
+           Historical = Historical)
+
+SMSE <- salmonMSE(SOM)
+
+saveRDS(SMSE, file = "examples/Okanagan_PVA.rds")
+report(SMSE, dir = "examples", filename = "Okanagan_PVA")
