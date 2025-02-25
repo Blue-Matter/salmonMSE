@@ -17,7 +17,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
-  NOB <- HOB <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  NOB <- HOB <- HOB_import <- array(0, c(SOM@nsim, ns, SOM@proyears))
   KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -155,6 +155,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       # Broodtake & fitness
       NOB[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOB", s)
       HOB[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB", s)
+      HOB_import[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB_import", s)
 
       fitness[, s, 1, y_spawn + 1] <- filter(Ford, type == "natural") %>%
         get_salmonMSE_var(var = "fitness", s)
@@ -272,6 +273,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     Escapement_HOS = Escapement_HOS,
     NOB = NOB,
     HOB = HOB,
+    HOB_import = HOB_import,
     NOS = NOS,
     HOS = HOS,
     HOS_effective = HOS_effective,
@@ -313,14 +315,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
 #' @importFrom dplyr filter summarise
 #' @importFrom reshape2 acast
-get_salmonMSE_var <- function(d, var = "Egg_NOS", s = 1, FUN = sum) {
+get_salmonMSE_var <- function(d, var = "Egg_NOS", s = 1, FUN = function(x) sum(x, na.rm = TRUE)) {
   x <- t <- NULL
   dplyr::filter(d, .data$s %in% .env$s) %>%
     summarise(value = FUN(.data[[var]]), .by = c(x, t)) %>%
     reshape2::acast(list("x", "t"), value.var = "value")
 }
 
-get_salmonMSE_agevar <- function(d, var = "Egg_NOS", s = 1, FUN = sum) {
+get_salmonMSE_agevar <- function(d, var = "Egg_NOS", s = 1, FUN = function(x) sum(x, na.rm = TRUE)) {
   x <- a <- t <- NULL
   dplyr::filter(d, .data$s %in% .env$s) %>%
     summarise(value = FUN(.data[[var]]), .by = c(x, a, t)) %>%

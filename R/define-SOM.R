@@ -171,6 +171,7 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
+    brood_import = "numeric",
     Mjuv_HOS = "num.array",
     gamma = "numeric",
     m = "numeric",
@@ -289,8 +290,9 @@ setMethod("initialize", "SOM",
 #' @slot Return_HOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be hatchery origin spawners.
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
 #' @slot Escapement_HOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be hatchery origin spawners.
-#' @slot NOB Array `[nsim, nstocks, proyears]`. The broodtake of natural origin spawners.
-#' @slot HOB Array `[nsim, nstocks, proyears]`. The broodtake of hatchery origin spawners.
+#' @slot NOB Array `[nsim, nstocks, proyears]`. Natural origin broodtake.
+#' @slot HOB Array `[nsim, nstocks, proyears]`. Local hatchery origin broodtake.
+#' @slot HOB_import Array `[nsim, nstocks, proyears]`. Imported hatchery origin broodtake used for hatchery production.
 #' @slot NOS Array `[nsim, nstocks, proyears]`. Natural origin spawners.
 #' @slot HOS Array `[nsim, nstocks, proyears]`. Hatchery origin spawners.
 #' @slot HOS_effective Array `[nsim, nstocks, proyears]`. Hatchery origin spawners discounted by `gamma`.
@@ -373,6 +375,7 @@ setClass(
     Escapement_HOS = "array",
     NOB = "array",
     HOB = "array",
+    HOB_import = "array",
     NOS = "array",
     HOS = "array",
     HOS_effective = "array",

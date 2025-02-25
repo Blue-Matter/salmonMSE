@@ -36,6 +36,9 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
+\item{\code{brood_import}}{Matrix by age (length \code{maxage}) for the number of annual imported hatchery origin broodstock. Egg production is weighted by \code{fec_brood}.
+To meet hatchery production target releases, imported brood and local marked brood are used indiscriminately. Default imported brood is zero.}
+
 \item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_r]}.
 Natural mortality of immature hatchery origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}

@@ -60,9 +60,11 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{Escapement_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. The escapement of mature fish that will be hatchery origin spawners.}
 
-\item{\code{NOB}}{Array \verb{[nsim, nstocks, proyears]}. The broodtake of natural origin spawners.}
+\item{\code{NOB}}{Array \verb{[nsim, nstocks, proyears]}. Natural origin broodtake.}
 
-\item{\code{HOB}}{Array \verb{[nsim, nstocks, proyears]}. The broodtake of hatchery origin spawners.}
+\item{\code{HOB}}{Array \verb{[nsim, nstocks, proyears]}. Local hatchery origin broodtake.}
+
+\item{\code{HOB_import}}{Array \verb{[nsim, nstocks, proyears]}. Imported hatchery origin broodtake used for hatchery production.}
 
 \item{\code{NOS}}{Array \verb{[nsim, nstocks, proyears]}. Natural origin spawners.}
 

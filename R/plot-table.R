@@ -5,14 +5,27 @@ make_hatchery_table <- function(SMSE, s = 1) {
                       "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "ptarget_NOB",
                       "phatchery", "m")
 
-  hatch_table <- glossary[match(hatch_settings, glossary$Slot), c("Definition", "Slot")]
+  hatch_extra <- data.frame(
+    Definition = c("Maximum imported brood (assumed hatchery origin)"),
+    Slot = c("brood_import")
+  )
+
+  hatch_table <- rbind(
+    glossary[match(hatch_settings, glossary$Slot), c("Definition", "Slot")],
+    hatch_extra
+  )
 
   hatch_table$Value <- sapply(hatch_table$Slot, function(i) {
     SOM <- SMSE@Misc$SOM
     v <- slot(SOM@Hatchery[[s]], i)
-    if (!length(v)) v <- NA
+    if (!length(v)) {
+      v <- NA
+    } else if (i == "brood_import") {
+      v <- sum(v)
+    }
     return(format(v))
   })
+
   names(hatch_table)[2] <- "Parameter"
   return(hatch_table)
 }

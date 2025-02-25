@@ -25,7 +25,7 @@
 #' @section hatchery_args:
 #' Hatchery control parameters are included in a named list with the following arguments:
 #'
-#' - `egg_local` Numeric, target egg production for hatchery. Set to zero for no hatchery production.
+#' - `egg_target` Numeric, target egg production for hatchery. Set to zero for no hatchery production.
 #' - `ptarget_NOB` Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
 #' - `pmax_NOB` Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
 #' - `fec_brood` Vector `[maxage]`. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
@@ -59,17 +59,18 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   Nage_HOS[is.na(Nage_HOS)] <- 0
   Nage_HOS_enroute <- Nage_HOS * s_enroute
 
-  if (hatchery_args$egg_local > 0) {
+  if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
     Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
     Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
     broodtake <- calc_broodtake(
       NOR_escapement = Nage_NOS_avail_brood,
       HOR_escapement = Nage_HOS_avail_brood,
+      hatchery_args$brood_import,
       hatchery_args$ptarget_NOB,
       hatchery_args$pmax_NOB,
       hatchery_args$phatchery,
-      hatchery_args$egg_local,
+      hatchery_args$egg_target,
       hatchery_args$p_female,
       hatchery_args$fec_brood,
       hatchery_args$s_prespawn,
@@ -77,7 +78,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     )
 
     egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
-    egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
+    egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female) +
+      sum(broodtake$HOB_import * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
 
     hatchery_production <- calc_yearling(
       egg_NOB + egg_HOB,
@@ -89,7 +91,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
   } else {
 
-    broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_HOS)))
+    broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_HOS)), HOB_import = rep(0, nrow(Nage_NOS)))
     egg_NOB <- egg_HOB <- 0
 
     hatchery_production <- list(
@@ -100,7 +102,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   }
 
   # Spawners
-  spawners <- calc_spawners(broodtake, Nage_NOS_enroute, Nage_HOS_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
+  spawners <- calc_spawners(broodtake$NOB, Nage_NOS_enroute, Nage_HOS_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
   NOS <- spawners$NOS
   HOS <- spawners$HOS
   if (sum(HOS)) {
@@ -112,7 +114,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   # Spawners weighted by fecundity
   if (sum(unlist(broodtake))) {
     pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
-      sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB)
+      sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB,
+          hatchery_args$fec_brood * broodtake$HOB_import)
   } else {
     pNOB <- 0
   }
@@ -144,7 +147,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
           if (!length(zbar1)) stop("Cannot find zbar") # zbar1 <- fitness_args$zbar_start[1]
           zbar_brood[a, 1] <- zbar1
         }
-        if (sum(HOS_effective[a, ]) || sum(broodtake$HOB[a, ])) {
+        if (sum(HOS_effective[a, ]) || sum(broodtake$HOB[a, ]) || sum(broodtake$HOB_import[a])) {
           zbar2 <- dplyr::filter(zbar_prev, .data$t == .env$y - 2 * .env$a, .data$type == "hatchery") %>%
             pull(.data$zbar)
           if (!length(zbar2)) stop("Cannot find zbar") # zbar2 <- fitness_args$zbar_start[2]
@@ -153,7 +156,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       }
 
       zbar <- calc_zbar(
-        rowSums(NOS), rowSums(HOS_effective), rowSums(broodtake$NOB), rowSums(broodtake$HOB), fec, hatchery_args$fec_brood, zbar_brood,
+        rowSums(NOS), rowSums(HOS_effective), rowSums(broodtake$NOB), rowSums(broodtake$HOB) + broodtake$HOB_import,
+        fec, hatchery_args$fec_brood, zbar_brood,
         fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability
       )
     } else {
@@ -213,6 +217,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
         HOS = HOS[, r],
         HOS_effective = HOS_effective[, r]
       )
+      df_H$HOB_import <- if (r == 1) broodtake$HOB_import else rep(NA, nrow(Nage_HOS))
       salmonMSE_env$H <- rbind(salmonMSE_env$H, df_H)
 
       df_stateH <- data.frame(

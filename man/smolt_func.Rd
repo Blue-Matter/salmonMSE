@@ -102,7 +102,7 @@ escapement, and saves state variables to \link{salmonMSE_env}.
 
 Hatchery control parameters are included in a named list with the following arguments:
 \itemize{
-\item \code{egg_local} Numeric, target egg production for hatchery. Set to zero for no hatchery production.
+\item \code{egg_target} Numeric, target egg production for hatchery. Set to zero for no hatchery production.
 \item \code{ptarget_NOB} Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
 \item \code{pmax_NOB} Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
 \item \code{fec_brood} Vector \verb{[maxage]}. the fecundity at age schedule of broodtake to calculate the total hatchery egg production

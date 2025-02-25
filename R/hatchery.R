@@ -2,18 +2,24 @@
 ## Internal functions to predict either:
 # (b) smolt hatchery production
 # (c) smolt natural production
-calc_broodtake <- function(NOR_escapement, HOR_escapement, ptarget_NOB, pmax_NOB, phatchery, egg_local, p_female,
+calc_broodtake <- function(NOR_escapement, HOR_escapement, brood_import, ptarget_NOB, pmax_NOB, phatchery, egg_target, p_female,
                            fec_brood, s_prespawn, m) {
 
-  if (sum(HOR_escapement)) {
+  HO_avail <- cbind(
+    phatchery * HOR_escapement,
+    brood_import
+  )
+
+  if (sum(HO_avail)) {
 
     # Optimization can fail for two reasons:
     # (1) not enough unmarked fish
     # (2) more than enough but too many unmarked hatchery fish but can't solve for ptarget_NOB
     opt <- try(
       uniroot(.broodtake_func, c(1e-8, pmax_NOB),
-              NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-              fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m),
+              NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, brood_import = brood_import,
+              phatchery = phatchery, p_female = p_female,
+              fec = fec_brood, gamma = 1, egg_target = egg_target, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m),
       silent = TRUE
     )
 
@@ -25,35 +31,37 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, ptarget_NOB, pmax_NOB
     }
 
     output <- .broodtake_func(
-      ptake_unmarked, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-      fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
+      ptake_unmarked, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, brood_import = brood_import,
+      phatchery = phatchery, p_female = p_female,
+      fec = fec_brood, gamma = 1, egg_target = egg_target, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
     )
 
     egg_total <- output$egg_NOB + output$egg_HOB_unmarked + output$egg_HOB_marked
 
     # Ensure hatchery egg production doesn't exceed target
     # If it does, then optimization failed for reason (2), in which case, we use unmarked fish only to reach production target
-    if (egg_total/egg_local > 1.01) {
+    if (egg_total/egg_target > 1.01) {
       unmarked_opt <- try(
         uniroot(.egg_func, c(1e-8, pmax_NOB), N = NOR_escapement + (1 - m) * HOR_escapement,
                 gamma = 1, fec = fec_brood, p_female = p_female,
-                s_prespawn = s_prespawn, val = egg_local),
+                s_prespawn = s_prespawn, val = egg_target),
         silent = TRUE
       )
       output <- .broodtake_func(
         unmarked_opt$root, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, phatchery = phatchery, p_female = p_female,
-        fec = fec_brood, gamma = 1, egg_target = egg_local, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
+        fec = fec_brood, gamma = 1, egg_target = egg_target, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
       )
     }
 
     NOB <- output$NOB
     HOB <- output$HOB_unmarked + output$HOB_marked
+    HOB_import <- output$HOB_import
 
   } else {
 
     NOBopt <- try(
       uniroot(.egg_func, c(1e-8, pmax_NOB), N = NOR_escapement, gamma = 1, fec = fec_brood, p_female = p_female,
-              s_prespawn = s_prespawn, val = egg_local),
+              s_prespawn = s_prespawn, val = egg_target),
       silent = TRUE
     )
     if (is.character(NOBopt)) {
@@ -63,14 +71,15 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, ptarget_NOB, pmax_NOB
     }
     NOB <- ptake_NOB * NOR_escapement
     HOB <- array(0, dim(HOR_escapement))
+    HOB_import <- rep(0, nrow(NOB))
   }
 
-  list(NOB = NOB, HOB = HOB)
+  list(NOB = NOB, HOB = HOB, HOB_import = HOB_import)
 }
 
-calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, premove_HOS) {
+calc_spawners <- function(NOB, escapement_NOS, escapement_HOS, phatchery, premove_HOS) {
   spawners <- list()
-  spawners$NOS <- escapement_NOS - broodtake$NOB
+  spawners$NOS <- escapement_NOS - NOB
   if (sum(escapement_HOS)) {
     spawners$HOS <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS)
   } else {
@@ -84,7 +93,7 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, 
   sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
 }
 
-.broodtake_func <- function(ptake_NOB, NOR_escapement, HOR_escapement, phatchery, p_female, fec, gamma,
+.broodtake_func <- function(ptake_NOB, NOR_escapement, HOR_escapement, brood_import, phatchery, p_female, fec, gamma,
                             egg_target, s_prespawn, ptarget_NOB, m = 1, opt = TRUE) {
 
   NOB <- ptake_NOB * NOR_escapement
@@ -95,12 +104,17 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, 
 
   egg_HOB_marked <- egg_target - egg_NOB - egg_HOB_unmarked
 
-  if (egg_HOB_marked < 0 || !sum(HOR_escapement)) {
+  HO_avail <- cbind(
+    m * phatchery * HOR_escapement,
+    brood_import
+  )
+
+  if (egg_HOB_marked < 0 || !sum(HO_avail)) {
     ptake_marked <- 0
   } else {
     # solve for the required HOB marked
     HOBopt <- try(
-      uniroot(.egg_func, c(1e-8, 1), N = m * phatchery * HOR_escapement, gamma = gamma, fec = fec, p_female = p_female,
+      uniroot(.egg_func, c(1e-8, 1), N = HO_avail, gamma = gamma, fec = fec, p_female = p_female,
               s_prespawn = s_prespawn, val = egg_HOB_marked),
       silent = TRUE
     )
@@ -111,42 +125,43 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, phatchery, 
     }
   }
 
-  HOB_marked <- ptake_marked * m * HOR_escapement * phatchery
   egg_HOB_marked_actual <- .egg_func(
-    ptake_marked, N = m * phatchery * HOR_escapement, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
+    ptake_marked, N = HO_avail, gamma = gamma, fec = fec, p_female = p_female, s_prespawn = s_prespawn
   )
+  HOB_marked <- ptake_marked * HO_avail[, 1:ncol(HOR_escapement), drop = FALSE]
+  HOB_import <- ptake_marked * HO_avail[, ncol(HO_avail)]
 
   if (opt) {
-    p_unmarked <- sum(NOB, HOB_unmarked)/sum(NOB, HOB_unmarked, HOB_marked)
+    p_unmarked <- sum(NOB, HOB_unmarked)/sum(NOB, HOB_unmarked, HOB_marked, HOB_import)
     obj <- log(p_unmarked) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
-    pNOB <- sum(NOB)/sum(NOB, HOB_unmarked, HOB_marked)
+    pNOB <- sum(NOB)/sum(NOB, HOB_unmarked, HOB_marked, HOB_import)
     output <- list(
       egg_NOB = egg_NOB,
       egg_HOB_unmarked = egg_HOB_unmarked,
       egg_HOB_marked = egg_HOB_marked_actual,
       ptake_marked = ptake_marked,
       pNOB = pNOB,
-      NOB = NOB, HOB_unmarked = HOB_unmarked, HOB_marked = HOB_marked
+      NOB = NOB, HOB_unmarked = HOB_unmarked, HOB_marked = HOB_marked, HOB_import = HOB_import
     )
     return(output)
   }
 }
 
-calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling, p_subyearling) {
+calc_yearling <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling) {
 
   if (sum(p_yearling) == 1 || sum(p_yearling) == 0) {
     ans <- .yearling_func(
-      p_egg_yearling = sum(p_yearling), egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
+      p_egg_yearling = sum(p_yearling), egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
     )
   } else {
     opt <- uniroot(
       .yearling_func, interval = c(1e-8, 0.9999),
-      egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, p_yearling = sum(p_yearling)
+      egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, p_yearling = sum(p_yearling)
     )
     ans <- .yearling_func(
-      p_yearling = opt$root, egg_local = egg_local, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
+      p_yearling = opt$root, egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
     )
   }
 
@@ -159,9 +174,9 @@ calc_yearling <- function(egg_local, s_yearling, s_subyearling, p_yearling, p_su
   list(yearling = yearling, subyearling = subyearling)
 }
 
-.yearling_func <- function(p_egg_yearling, egg_local, s_yearling, s_subyearling, p_yearling, opt = TRUE) {
-  egg_yearling <- p_egg_yearling * egg_local
-  egg_subyearling <- egg_local - egg_yearling
+.yearling_func <- function(p_egg_yearling, egg_target, s_yearling, s_subyearling, p_yearling, opt = TRUE) {
+  egg_yearling <- p_egg_yearling * egg_target
+  egg_subyearling <- egg_target - egg_yearling
   yearling <- egg_yearling * s_yearling
   subyearling <- egg_subyearling * s_subyearling
 

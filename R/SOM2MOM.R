@@ -243,17 +243,17 @@ SOM2MOM <- function(SOM, check = TRUE) {
         # No imports
         egg_yearling <- ifelse(sum(Hatchery@n_yearling) > 0, sum(Hatchery@n_yearling)/Hatchery@s_egg_smolt, 0)
         egg_subyearling <- ifelse(sum(Hatchery@n_subyearling) > 0, sum(Hatchery@n_subyearling)/Hatchery@s_egg_subyearling, 0)
-        egg_local <- egg_yearling + egg_subyearling
+        egg_target <- egg_yearling + egg_subyearling
 
         p_yearling <- Hatchery@n_yearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
         p_subyearling <- Hatchery@n_subyearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
       } else {
-        egg_local <- p_yearling <- p_subyearling <- 0
+        egg_target <- p_yearling <- p_subyearling <- 0
       }
 
       fitness_args <- list()
       hatchery_args <- list(
-        egg_local = egg_local
+        egg_target = egg_target
       )
 
       if (do_hatchery_s || has_strays_s) {
@@ -263,7 +263,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           pmax_esc = Hatchery@pmax_esc,
           pmax_NOB = Hatchery@pmax_NOB,
           fec_brood = Hatchery@fec_brood,
-          egg_local = egg_local,
+          egg_target = egg_target,
+          brood_import = Hatchery@brood_import,
           p_female = Bio@p_female,
           s_yearling = Hatchery@s_egg_smolt,
           s_subyearling = Hatchery@s_egg_subyearling,
@@ -455,6 +456,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_smolt", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
+      Hatchery <- check_numeric(Hatchery, "brood_import", size = maxage, default = rep(0, maxage))
 
       if (length(dim(Hatchery@Mjuv_HOS)) == 3 && Hatchery@n_r == 1) {
         Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage, nsim, years)
@@ -567,7 +569,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Historical@HistNjuv_HOS)) {
         if (SOM@nyears > maxage) stop("No historical abundance was provided for hatchery origin fish. Set historical years (SOM@nyears) < maxage")
         HistNjuv_HOS <- array(0, c(nsim, maxage, SOM@nyears + 1, Hatchery@n_r))
-        for (r in seq(1:Hatchery@n_r)) HistNjuv_HOS[, 1, , ] <- 1000/n_r
+        for (r in seq(1:Hatchery@n_r)) HistNjuv_HOS[, 1, , ] <- 1000/Hatchery@n_r
         for (y in seq(2, SOM@nyears + 1)) {
           FHOS <- Harvest@vulPT[, 2:maxage - 1] * Historical@HistFPT[, y-1, 2]
           ZHOS <- array(FHOS, c(nsim, maxage-1, Hatchery@n_r)) + Hatchery@Mjuv_HOS[, 2:maxage - 1, y-1, ]

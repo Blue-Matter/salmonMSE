@@ -9,7 +9,7 @@ nsim <- 100
 nyears <- 2
 proyears <- 45 # 2020 to 2065
 
-Mjuv_NOS <- array(0, c(nsim, maxage, nyears + proyears))
+Mjuv_NOS <- Mjuv_HOS <- array(0, c(nsim, maxage, nyears + proyears))
 
 # For the PVA, we want to model:
 # Deviations in the smolt production function to get to age 1
@@ -29,17 +29,20 @@ D_juv[D_juv > 1] <- 1
 SU_2 <- 0.6
 
 # Age 1 survival
-surv1 <- Ricker_dev * phi_ocean * D_juv * SU_2
+surv1 <- phi_ocean * D_juv * SU_2
 surv24 <- c(0.7, 0.8, 0.9)  # SU_3, SU_4, SU_5
 
-Mjuv_NOS[, 1, nyears + seq(1, proyears)] <- -log(surv1)
+Mjuv_NOS[, 1, nyears + seq(1, proyears)] <- -log(surv1 * Ricker_dev)
 Mjuv_NOS[, 1, seq(1, nyears)] <- array(Mjuv_NOS[, , nyears + 1], c(nsim, 1, nyears))
 
+Mjuv_HOS[, 1, nyears + seq(1, proyears)] <- -log(surv1)
+Mjuv_HOS[, 1, seq(1, nyears)] <- array(Mjuv_HOS[, , nyears + 1], c(nsim, 1, nyears))
+
 # Age 2-4 survival
-Mjuv_NOS[, 2:4, ] <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
+Mjuv_NOS[, 2:4, ] <- Mjuv_HOS <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
 
 # Arbitrary juvenile M for age 5
-Mjuv_NOS[, 5, ] <- 0.01
+Mjuv_NOS[, 5, ] <- Mjuv_HOS <- 0.01
 
 Bio <- new(
   "Bio",
@@ -63,10 +66,30 @@ Harvest <- new(
   vulT = c(0, 1, 1, 1, 1)
 )
 
-Hatchery <- new(
+Hatchery_base <- new(
   "Hatchery",
   n_yearling = 0,
   n_subyearling = 0
+)
+
+Hatchery_500k <- new(
+  "Hatchery",
+  n_yearling = 5e5,
+  n_subyearling = 0,
+  s_prespawn = 1,
+  s_egg_smolt = 1,
+  s_egg_subyearling = 1,
+  brood_import = c(0, 0, 0, 0, 5e6),
+  Mjuv_HOS = Mjuv_NOS,
+  gamma = 1,
+  m = 0,
+  pmax_esc = 0,
+  pmax_NOB = 0,
+  ptarget_NOB = 0,
+  phatchery = 0,
+  premove_HOS = 0,
+  fec_brood = Bio@fec,
+  fitness_type = c("none", "none")
 )
 
 Habitat <- new("Habitat")
@@ -95,7 +118,8 @@ Njuv <- array(Nsp, c(maxage, nsim, nyears + 1)) |> aperm(c(2, 1, 3))
 
 Historical <- new(
   "Historical",
-  HistNjuv_NOS = Njuv
+  HistNjuv_NOS = Njuv,
+  HistNjuv_HOS = array(0, c(nsim, maxage, nyears + 1))
 )
 
 SOM <- new("SOM",
@@ -106,7 +130,7 @@ SOM <- new("SOM",
            seed = 1,
            Bio = Bio,
            Habitat = Habitat,
-           Hatchery = Hatchery,
+           Hatchery = Hatchery_base,
            Harvest = Harvest,
            Historical = Historical)
 
@@ -114,3 +138,23 @@ SMSE <- salmonMSE(SOM)
 
 saveRDS(SMSE, file = "examples/Okanagan_PVA.rds")
 report(SMSE, dir = "examples", filename = "Okanagan_PVA")
+
+
+
+
+SOM_500k <- new("SOM",
+                Name = "Okanagan Chinook PVA with 500k hatchery",
+                nsim = nsim,
+                nyears = nyears,
+                proyears = proyears,
+                seed = 1,
+                Bio = Bio,
+                Habitat = Habitat,
+                Hatchery = Hatchery_500k,
+                Harvest = Harvest,
+                Historical = Historical)
+
+SMSE_500k <- salmonMSE(SOM_500k)
+
+saveRDS(SMSE_500k, file = "examples/Okanagan_PVA_500k.rds")
+report(SMSE_500k, dir = "examples", filename = "Okanagan_PVA_500k")

@@ -13,6 +13,8 @@
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
 #' @slot s_egg_subyearling Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
+#' @slot brood_import Matrix by age (length `maxage`) for the number of annual imported hatchery origin broodstock. Egg production is weighted by `fec_brood`.
+#'  To meet hatchery production target releases, imported brood and local marked brood are used indiscriminately. Default imported brood is zero.
 #' @slot Mjuv_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears, n_r]`.
 #'  Natural mortality of immature hatchery origin fish.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
