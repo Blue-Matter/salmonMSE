@@ -41,7 +41,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   n_r <- sapply(1:ns, function(s) SOM@Hatchery[[s]]@n_r)
 
   do_hatchery <- vapply(SOM@Hatchery, function(Hatchery) sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0, logical(1))
-  has_strays <- vapply(1:ns, function(s) any(SOM@stray[-s, s] > 0), logical(1))
+  has_strays <- vapply(1:ns, function(s) any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external), logical(1))
 
   # Fleet objects (one per openMSE population/life stage) ----
   nf <- 1
@@ -293,6 +293,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           fec_brood = Hatchery@fec_brood,
           egg_target = egg_target,
           brood_import = Hatchery@brood_import,
+          stray_external = Hatchery@stray_external,
           p_female = Bio@p_female,
           s_yearling = Hatchery@s_egg_smolt,
           s_subyearling = Hatchery@s_egg_subyearling,
@@ -478,7 +479,11 @@ check_SOM <- function(SOM, silent = FALSE) {
     Hatchery <- check_numeric(Hatchery, "n_subyearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
 
     do_hatchery <- sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0)
+
+    if (!length(Hatchery@stray_external)) Hatchery@stray_external <- matrix(0, maxage, Hatchery@n_r)
+    Hatchery <- check_maxage2matrix(Hatchery, "stray_external", Hatchery@n_r, maxage)
+
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(Hatchery@stray_external)
 
     if (do_hatchery || has_strays) {
       Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
@@ -500,6 +505,7 @@ check_SOM <- function(SOM, silent = FALSE) {
         Hatchery@p_mature_HOS <- array(Hatchery@p_mature_HOS, c(dim(Hatchery@Mjuv_HOS), 1))
       }
       Hatchery <- check_maxage2garray(Hatchery, "p_mature_HOS", maxage, nsim, years, Hatchery@n_r)
+
 
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
 

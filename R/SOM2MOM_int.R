@@ -366,7 +366,7 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LH
 
 make_Stock_objects <- function(SOM, s = 1) {
   do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
-  has_strays <- any(SOM@stray[-s, s] > 0)
+  has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
 
   Stocks_g <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
     S <- list()
@@ -395,7 +395,7 @@ make_Stock_objects <- function(SOM, s = 1) {
 
 make_Fleet_objects <- function(SOM, s = 1) {
   do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
-  has_strays <- any(SOM@stray[-s, s] > 0)
+  has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
 
   Fleets_g <- lapply(1:SOM@Bio[[s]]@n_g, function(g) {
     FF <- list()
@@ -428,7 +428,7 @@ make_stock_index <- function(SOM, check = FALSE) {
   n_r <- sapply(1:ns, function(s) SOM@Hatchery[[s]]@n_r)
   np_s <- sapply(1:ns, function(s) {
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0)
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
     3 * (n_g[s] + ifelse(do_hatchery || has_strays, n_r[s], 0))
   })
   .make_stock_index(ns, n_g, n_r, np_s)

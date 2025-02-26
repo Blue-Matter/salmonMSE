@@ -53,6 +53,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
   Nage_NOS_enroute <- Nage_NOS * s_enroute
+  stray_external_enroute <- hatchery_args$stray_external * s_enroute
 
   # Hatchery
   if (missing(Nage_HOS)) Nage_HOS <- matrix(0, nrow(Nage_NOS), 1)
@@ -66,6 +67,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     broodtake <- calc_broodtake(
       NOR_escapement = Nage_NOS_avail_brood,
       HOR_escapement = Nage_HOS_avail_brood,
+      stray_external_enroute,
       hatchery_args$brood_import,
       hatchery_args$ptarget_NOB,
       hatchery_args$pmax_NOB,
@@ -77,9 +79,10 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       hatchery_args$m
     )
 
-    egg_NOB <- sum(broodtake$NOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
-    egg_HOB <- sum(broodtake$HOB * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female) +
-      sum(broodtake$HOB_import * hatchery_args$fec_brood * hatchery_args$s_prespawn * p_female)
+    egg_NOB <- broodtake$egg_NOB
+    egg_HOB <- broodtake$egg_HOB_unmarked + broodtake$egg_HOB_marked
+
+    pNOB <- broodtake$pNOB
 
     hatchery_production <- calc_yearling(
       egg_NOB + egg_HOB,
@@ -91,8 +94,21 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 
   } else {
 
-    broodtake <- list(NOB = array(0, dim(Nage_NOS)), HOB = array(0, dim(Nage_HOS)), HOB_import = rep(0, nrow(Nage_NOS)))
-    egg_NOB <- egg_HOB <- 0
+    # Check for same format as list returned by .broodtake_func
+    broodtake <- list(
+      egg_NOB = 0,
+      egg_HOB_unmarked = 0,
+      egg_HOB_marked = 0,
+      ptake_unmarked = 0,
+      ptake_marked = 0,
+      pNOB = 0,
+      NOB = array(0, dim(Nage_NOS)),
+      HOB_unmarked = array(0, dim(Nage_HOS)),
+      HOB_marked = array(0, dim(Nage_HOS)),
+      HOB_import = rep(0, nrow(Nage_NOS)),
+      HOB_stray = array(0, dim(Nage_HOS))
+    )
+    egg_NOB <- egg_HOB <- pNOB <- 0
 
     hatchery_production <- list(
       yearling = rep(0, ncol(Nage_HOS)),
@@ -102,7 +118,10 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   }
 
   # Spawners
-  spawners <- calc_spawners(broodtake$NOB, Nage_NOS_enroute, Nage_HOS_enroute, hatchery_args$phatchery, hatchery_args$premove_HOS)
+  spawners <- calc_spawners(
+    broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
+    hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$m
+  )
   NOS <- spawners$NOS
   HOS <- spawners$HOS
   if (sum(HOS)) {
@@ -112,13 +131,6 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   }
 
   # Spawners weighted by fecundity
-  if (sum(unlist(broodtake))) {
-    pNOB <- sum(hatchery_args$fec_brood * broodtake$NOB)/
-      sum(hatchery_args$fec_brood * broodtake$NOB, hatchery_args$fec_brood * broodtake$HOB,
-          hatchery_args$fec_brood * broodtake$HOB_import)
-  } else {
-    pNOB <- 0
-  }
   pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
@@ -213,7 +225,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
         a = 1:nrow(Nage_HOS),
         Esc_HOS = Nage_HOS[, r],
-        HOB = broodtake$HOB[, r],
+        HOB = broodtake$HOB_unmarked[, r] + broodtake$HOB_marked[, r] + broodtake$HOB_stray[, r],
         HOS = HOS[, r],
         HOS_effective = HOS_effective[, r]
       )

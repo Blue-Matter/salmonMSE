@@ -46,6 +46,9 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] 
 \item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_r]} for the maturity of hatchery spawners.
 Default is set equal to \code{Bio@p_mature} for all release strategies.}
 
+\item{\code{stray_external}}{Matrix by age (length \code{maxage}) and release strategy \code{n_r} that denotes the annual number of hatchery origin strays from other populations/systems
+not included in the operating model. Default is zero. For multi-population models with straying within the system, see also \code{SOM@stray} matrix.}
+
 \item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners). Default is 1.}
 
 \item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.

@@ -20,6 +20,8 @@
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
 #' @slot p_mature_HOS Vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears, n_r]` for the maturity of hatchery spawners.
 #' Default is set equal to `Bio@p_mature` for all release strategies.
+#' @slot stray_external Matrix by age (length `maxage`) and release strategy `n_r` that denotes the annual number of hatchery origin strays from other populations/systems
+#' not included in the operating model. Default is zero. For multi-population models with straying within the system, see also `SOM@stray` matrix.
 #' @slot gamma Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners). Default is 1.
 #' @slot m Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.
 #' Set m = 1 for AHA compatibility with `ptarget_NOB`. Default is zero.
