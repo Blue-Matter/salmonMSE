@@ -48,6 +48,7 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
 }
 
 # x - array by sim x age x g
+#' @importFrom graphics matlines
 plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = TRUE, LHG_names, palette = "Dark 2", surv = FALSE) {
 
   if (surv) x <- exp(-x)
