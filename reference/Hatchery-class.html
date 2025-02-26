@@ -89,10 +89,20 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>. Default is 1.</p></dd>
 
 
+<dt><code>brood_import</code></dt>
+<dd><p>Matrix by age (length <code>maxage</code>) for the number of annual imported hatchery origin broodstock. Egg production is weighted by <code>fec_brood</code>.
+To meet hatchery production target releases, imported brood and local marked brood are used indiscriminately. Default imported brood is zero.</p></dd>
+
+
 <dt><code>Mjuv_HOS</code></dt>
 <dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears, n_r]</code>.
 Natural mortality of immature hatchery origin fish.
 To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_HOS[a] = -log(SAR)</code> for the age class prior to maturation (and zero for all other ages).</p></dd>
+
+
+<dt><code>p_mature_HOS</code></dt>
+<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears, n_r]</code> for the maturity of hatchery spawners.
+Default is set equal to <code>Bio@p_mature</code> for all release strategies.</p></dd>
 
 
 <dt><code>gamma</code></dt>
@@ -191,23 +201,26 @@ an array by dimension <code>[nsim, maxage, 2]</code>, where the age slot corresp
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:       n_subyearling         s_prespawn        s_egg_smolt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   s_egg_subyearling           Mjuv_HOS              gamma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   s_egg_subyearling       brood_import           Mjuv_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric          num.array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:                   m           pmax_esc           pmax_NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_mature_HOS              gamma                  m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pmax_esc           pmax_NOB        ptarget_NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           phatchery        premove_HOS          fec_brood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        fitness_type              theta           rel_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          character            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            rel_loss         zbar_start   fitness_variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  selection_strength       heritability      fitness_floor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          zbar_start   fitness_variance selection_strength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        heritability      fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Hatchery.list"</span>
 </code></pre></div>

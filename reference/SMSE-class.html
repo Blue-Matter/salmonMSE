@@ -130,11 +130,15 @@
 
 
 <dt><code>NOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. The broodtake of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Natural origin broodtake.</p></dd>
 
 
 <dt><code>HOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. The broodtake of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Local hatchery origin broodtake.</p></dd>
+
+
+<dt><code>HOB_import</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Imported hatchery origin broodtake used for hatchery production.</p></dd>
 
 
 <dt><code>NOS</code></dt>
@@ -282,29 +286,29 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:        Njuv_HOS     Return_NOS     Return_HOS Escapement_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  Escapement_HOS            NOB            HOB            NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  Escapement_HOS            NOB            HOB     HOB_import</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOS  HOS_effective        KPT_NOS         KT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             NOS            HOS  HOS_effective        KPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         KPT_HOS         KT_HOS        DPT_NOS         DT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         DPT_HOS         DT_HOS        UPT_NOS         UT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         UPT_HOS         UT_HOS       ExPT_NOS        ExT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        ExPT_HOS        ExT_HOS        fitness           pNOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ExT_NOS       ExPT_HOS        ExT_HOS        fitness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:     pHOS_census pHOS_effective      Mjuv_loss            PNI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pNOB    pHOS_census pHOS_effective      Mjuv_loss</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          p_wild           Misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array           list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             PNI         p_wild           Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array           list</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
