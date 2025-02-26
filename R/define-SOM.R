@@ -173,6 +173,7 @@ setClass(
     s_egg_subyearling = "numeric",
     brood_import = "numeric",
     Mjuv_HOS = "num.array",
+    p_mature_HOS = "num.array",
     gamma = "numeric",
     m = "numeric",
     pmax_esc = "numeric",

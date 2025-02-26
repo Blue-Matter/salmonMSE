@@ -169,7 +169,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
           Njuv = Historical@HistNjuv_HOS[x, , , r],
           Fjuv = outer(Harvest@vulPT[x, ], Historical@HistFPT[x, , pind]),
           Fterm = outer(Harvest@vulT[x, ], Historical@HistFT[x, , pind]),
-          p_mature = Bio@p_mature[x, , ],
+          p_mature = Hatchery@p_mature_HOS[x, , , r],
           nyears = SOM@nyears,
           HistSpawner = if (length(Historical@HistSpawner_HOS)) Historical@HistSpawner_HOS[x, , , r] else NULL,
           fec = Bio@fec,

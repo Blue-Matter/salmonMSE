@@ -43,6 +43,9 @@ To meet hatchery production target releases, imported brood and local marked bro
 Natural mortality of immature hatchery origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
+\item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_r]} for the maturity of hatchery spawners.
+Default is set equal to \code{Bio@p_mature} for all release strategies.}
+
 \item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners). Default is 1.}
 
 \item{\code{m}}{Numeric. The mark rate of hatchery origin fish, which affects selective broodtake and fishery retention if mark-selective fishing is utilized.

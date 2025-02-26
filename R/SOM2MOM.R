@@ -99,29 +99,29 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
   Herm_mature <- lapply(1:ns, function(s) {
 
-    first_mature_age <- sapply(seq(1, SOM@nyears + SOM@proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) which(SOM@Bio[[s]]@p_mature[x, , y] > 0)[1])
-    })
-
-    prop_mature <- prop_escapement <- array(0, c(SOM@nsim, nage, nyears + proyears))
+    prop_mature_NOS <- prop_escapement_NOS <- array(0, c(SOM@nsim, nage, nyears + proyears))
 
     # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
-    prop_mature[, 2 * seq(1, maxage_s[s]), seq(2, nyears + proyears, 2)] <- SOM@Bio[[s]]@p_mature
+    prop_mature_NOS[, 2 * seq(1, maxage_s[s]), seq(2, nyears + proyears, 2)] <- SOM@Bio[[s]]@p_mature
 
-    Herm_mature <- sapply(1:(nyears + proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature[x, , y]))
+    Herm_mature_NOS <- sapply(1:(nyears + proyears), function(y) {
+      sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature_NOS[x, , y]))
     }, simplify = "array") %>%
       aperm(c(2, 1, 3))
 
     # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
     # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
-    prop_escapement[, 2 * seq(1, maxage_s[s]) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
+    first_mature_age <- sapply(seq(1, SOM@nyears + SOM@proyears), function(y) {
+      sapply(1:SOM@nsim, function(x) which(SOM@Bio[[s]]@p_mature[x, , y] > 0)[1])
+    })
+
+    prop_escapement_NOS[, 2 * seq(1, maxage_s[s]) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
       sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
     }, simplify = "array") %>%
       aperm(c(3, 1, 2))
 
-    Herm_escapement <- sapply(1:(nyears + proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement[x, , y]))
+    Herm_escapement_NOS <- sapply(1:(nyears + proyears), function(y) {
+      sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement_NOS[x, , y]))
     }, simplify = "array") %>%
       aperm(c(2, 1, 3))
 
@@ -133,18 +133,46 @@ SOM2MOM <- function(SOM, check = TRUE) {
       p_nat_rec <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "recruitment"]
       p_nat_juv <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "juvenile"]
 
-      Herm <- c(Herm, list(Herm_escapement, Herm_mature))
+      Herm <- c(Herm, list(Herm_escapement_NOS, Herm_mature_NOS))
       Herm_names <- c(Herm_names, paste0("H_", p_nat_esc, "_", p_nat_rec), paste0("H_", p_nat_rec, "_", p_nat_juv))
     }
 
     # HOS
     if (do_hatchery[s] || has_strays[s]) {
       for (r in 1:n_r[s]) {
+
+        prop_mature_HOS <- prop_escapement_HOS <- array(0, c(SOM@nsim, nage, nyears + proyears))
+
+        # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
+        prop_mature_HOS[, 2 * seq(1, maxage_s[s]), seq(2, nyears + proyears, 2)] <- SOM@Hatchery[[s]]@p_mature_NOS[, , , r]
+
+        Herm_mature_HOS <- sapply(1:(nyears + proyears), function(y) {
+          sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature_HOS[x, , y, r]))
+        }, simplify = "array") %>%
+          aperm(c(2, 1, 3))
+
+        # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
+        # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
+        first_mature_age <- sapply(seq(1, SOM@nyears + SOM@proyears), function(y) {
+          sapply(1:SOM@nsim, function(x) which(SOM@Hatchery[[s]]@p_mature_NOS[x, , y, r] > 0)[1])
+        })
+
+        prop_escapement_HOS[, 2 * seq(1, maxage_s[s]) + 1, seq(1, nyears + proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
+          sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
+        }, simplify = "array") %>%
+          aperm(c(3, 1, 2))
+
+        Herm_escapement_HOS <- sapply(1:(nyears + proyears), function(y) {
+          sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement_HOS[x, , y]))
+        }, simplify = "array") %>%
+          aperm(c(2, 1, 3))
+
+
         p_hat_esc <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "escapement"]
         p_hat_rec <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "recruitment"]
         p_hat_juv <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
 
-        Herm <- c(Herm, list(Herm_escapement, Herm_mature))
+        Herm <- c(Herm, list(Herm_escapement_HOS, Herm_mature_HOS))
         Herm_names <- c(Herm_names, paste0("H_", p_hat_esc, "_", p_hat_rec), paste0("H_", p_hat_rec, "_", p_hat_juv))
       }
     }
@@ -464,6 +492,15 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
       Hatchery <- check_maxage2garray(Hatchery, "Mjuv_HOS", maxage, nsim, years, Hatchery@n_r)
 
+      if (!length(Hatchery@p_mature_HOS)) {
+        Hatchery@p_mature_HOS <- array(Bio@p_mature, c(nsim, maxage, nsim, Hatchery@n_r))
+      }
+      if (length(dim(Hatchery@p_mature_HOS)) == 3 && Hatchery@n_r == 1) {
+        Hatchery <- check_maxage2array(Hatchery, "p_mature_HOS", maxage, nsim, years)
+        Hatchery@p_mature_HOS <- array(Hatchery@p_mature_HOS, c(dim(Hatchery@Mjuv_HOS), 1))
+      }
+      Hatchery <- check_maxage2garray(Hatchery, "p_mature_HOS", maxage, nsim, years, Hatchery@n_r)
+
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
 
       Hatchery <- check_numeric(Hatchery, "pmax_esc", default = 0.75)
@@ -547,7 +584,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       for (y in seq(2, SOM@nyears + 1)) {
         FNOS <- Harvest@vulPT[, 2:maxage - 1] * Historical@HistFPT[, y-1, 1]
         ZNOS <- array(FNOS, c(nsim, maxage-1, Bio@n_g)) + Bio@Mjuv_NOS[, 2:maxage - 1, y-1, ]
-        HistNjuv_NOS[, 2:maxage, y, ] <- HistNjuv_NOS[, 2:maxage - 1, y-1, ] * exp(-ZNOS)
+        HistNjuv_NOS[, 2:maxage, y, ] <- HistNjuv_NOS[, 2:maxage - 1, y-1, ] * exp(-ZNOS) * (1 - Bio@p_mature[, 2:maxage - 1, y-1])
       }
       Historical@HistNjuv_NOS <- HistNjuv_NOS
     } else if (length(dim(Historical@HistNjuv_NOS)) == 3 && Bio@n_g == 1) {
@@ -573,7 +610,7 @@ check_SOM <- function(SOM, silent = FALSE) {
         for (y in seq(2, SOM@nyears + 1)) {
           FHOS <- Harvest@vulPT[, 2:maxage - 1] * Historical@HistFPT[, y-1, 2]
           ZHOS <- array(FHOS, c(nsim, maxage-1, Hatchery@n_r)) + Hatchery@Mjuv_HOS[, 2:maxage - 1, y-1, ]
-          HistNjuv_HOS[, 2:maxage, y, ] <- HistNjuv_HOS[, 2:maxage - 1, y-1, ] * exp(-ZHOS)
+          HistNjuv_HOS[, 2:maxage, y, ] <- HistNjuv_HOS[, 2:maxage - 1, y-1, ] * exp(-ZHOS) * (1 - Hatchery@p_mature_HOS[, 2:maxage - 1, y-1, ])
         }
         Historical@HistNjuv_HOS <- HistNjuv_HOS
       } else if (length(dim(Historical@HistNjuv_HOS)) == 3 && Hatchery@n_r == 1) {
