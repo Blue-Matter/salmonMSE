@@ -39,7 +39,7 @@ rmd_natural_production <- function(s, sname) {
     "",
     "```{r, fig.cap=\"Juvenile natural survival of natural origin fish (median and 95 percent interval across simulations).\"}",
     paste0("if (SOM@Bio[[", s, "]]@n_g > 1) {"),
-    paste0("  plot_Mjuv_LHG(SOM@Bio[[", s, "]]@Mjuv_NOS[, , SOM@nyears + SOM@proyears, ], surv = TRUE)"),
+    paste0("  plot_Mjuv_LHG(SOM@Bio[[", s, "]]@Mjuv_NOS[, , SOM@nyears + SOM@proyears, ], surv = TRUE, ylab = \"Juvenile survival\")"),
     "} else {",
     paste0("  plot_SOM(SOM@Bio[[", s, "]], \"Mjuv_NOS\", type = \"age\", nsim = SOM@nsim, maxage = SOM@Bio[[", s, "]]@maxage, nyears = SOM@nyears, proyears = SOM@proyears, surv = TRUE, ylab = \"Juvenile natural survival\")"),
     "}",

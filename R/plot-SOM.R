@@ -68,7 +68,7 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
     ylim <- c(0, 1.1) * range(xplot)
     Age <- seq(1, maxage)
 
-    plot(Age, NULL, xlab = "Age", ylab = ifelse(surv, "Juvenile natural survival", "Juvenile natural mortality"), typ = "n", ylim = ylim)
+    plot(Age, NULL, xlab = "Age", ylab = ylab, typ = "n", ylim = ylim)
     for (g in 1:n_g) {
       lines(Age, xplot[2, , g], typ = "o", col = col[g], pch = 16)
       matlines(Age, t(xplot[c(1, 3), , g]), col = col[g], lty = 2)
