@@ -24,6 +24,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   Egg_NOS <- Egg_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
   NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -103,6 +104,12 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     n_r <- length(unique(pindex$r[pindex$s == s & pindex$origin == "hatchery"]))
 
     s_enroute <- SOM@Bio[[s]]@s_enroute
+    s_egg_fry <- SOM@Bio[[s]]@s_egg_fry
+
+    habitat_change <- SOM@Habitat[[s]]@kappa_improve != 1 || SOM@Habitat[[s]]@capacity_smolt_improve != 1
+
+    use_smolt_func <- do_hatchery || habitat_change ||
+       s_enroute < 1 || has_strays || n_g > 1 || s_egg_fry < 1 || n_g > 1
 
     if (do_hatchery || has_strays) {
 
@@ -150,6 +157,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       HOS_effective[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOS_effective", s)
 
       Egg_HOS[, s, y_spawn] <- get_salmonMSE_var(stateH, var = "Egg_HOS", s)
+      Fry_HOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_HOS", s)
       Smolt_HOS[, ns, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_HOS", s)
 
       # Broodtake & fitness
@@ -190,29 +198,35 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
     }
 
-    if (do_hatchery || has_strays || s_enroute < 1) {
+    if (use_smolt_func) {
 
       # Sum across LHG
       NOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOS", s)
       Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
+      Fry_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_NOS", s)
       Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
 
     } else {
       # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
       NOS[, s, ] <- apply(Escapement_NOS[, s, , ], c(1, 3), sum)
       Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
+      Fry_NOS[, s, seq(2, SOM@proyears)] <- Egg_NOS[, s, seq(2, SOM@proyears) - 1]
 
       a_smolt <- 1
       Smolt_NOS[, s, ] <- Njuv_NOS[, s, a_smolt, ]
     }
 
     if (n_g > 1) {
-      Egg_g <- Smolt_g <- array(NA_real_, c(SOM@nsim, n_g, SOM@proyears))
+      Egg_g <- Fry_g <- Smolt_g <- array(NA_real_, c(SOM@nsim, n_g, SOM@proyears))
       Esc_g <- NOS_g <- array(NA_real_, c(SOM@nsim, n_g, nage, SOM@proyears))
 
       x <- a <- g <- t <- NULL
       Egg_g[, , y_spawn] <- dplyr::filter(stateN, .data$s == .env$s) %>%
-        summarise(value = sum(.data$Egg_NOS_g), .by = c(x, g, t)) %>%
+        summarise(value = sum(.data$Egg_NOS), .by = c(x, g, t)) %>%
+        reshape2::acast(list("x", "g", "t"), value.var = "value")
+
+      Fry_g[, , y_spawn + 1] <- dplyr::filter(stateN, .data$s == .env$s) %>%
+        summarise(value = sum(.data$Fry_NOS), .by = c(x, g, t)) %>%
         reshape2::acast(list("x", "g", "t"), value.var = "value")
 
       a_smolt <- 1
@@ -224,6 +238,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       LHG[[s]] <- list(
         Egg = Egg_g,
+        Fry = Fry_g,
         Smolt = Smolt_g,
         Esc = Esc_g,
         NOS = NOS_g

@@ -38,6 +38,7 @@ setClass(
     n_g = "numeric",
     p_LHG = "numeric",
     p_mature = "num.array",
+    s_egg_fry = "numeric",
     SRrel = "character",
     capacity_smolt = "numeric",
     kappa = "numeric",
@@ -283,6 +284,8 @@ setMethod("initialize", "SOM",
 #' @slot Snames Character. Stock names
 #' @slot Egg_NOS Array `[nsim, nstocks, proyears]`. Spawning output, i.e., egg production, of natural origin spawners.
 #' @slot Egg_HOS Array `[nsim, nstocks, proyears]`. Spawning output of hatchery origin spawners.
+#' @slot Fry_NOS Array `[nsim, nstocks, proyears]`. Fry that are offspring of natural origin spawners.
+#' @slot Fry_HOS Array `[nsim, nstocks, proyears]`. Fry that are offspring of hatchery origin spawners.
 #' @slot Smolt_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners.
 #' @slot Smolt_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners.
 #' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
@@ -366,6 +369,8 @@ setClass(
     Snames = "character",
     Egg_NOS = "array",
     Egg_HOS = "array",
+    Fry_NOS = "array",
+    Fry_HOS = "array",
     Smolt_NOS = "array",
     Smolt_HOS = "array",
     Smolt_Rel = "array",

@@ -14,6 +14,7 @@ smolt_func(
   s_enroute,
   p_female,
   fec,
+  s_egg_fry,
   SRRpars,
   hatchery_args,
   fitness_args,
@@ -32,6 +33,7 @@ makeRel_smolt(
   s_enroute,
   p_female,
   fec,
+  s_egg_fry,
   SRRpars,
   hatchery_args,
   fitness_args,
@@ -58,6 +60,8 @@ that contribute to spawning.}
 \item{p_female}{Numeric, proportion female for calculating the egg production.}
 
 \item{fec}{Vector \verb{[maxage]}. The fecundity at age schedule of spawners}
+
+\item{s_egg_fry}{Numeric. Egg-fry survival}
 
 \item{SRRpars}{Data frame containing stock recruit parameters for natural smolt production.
 Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve}

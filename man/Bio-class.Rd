@@ -29,21 +29,25 @@ ten percent to the second LHG. Default is \code{rep(1/Bio@n_g, Bio@n_g)}}
 
 \item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
 
-\item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"}
+\item{\code{s_egg_fry}}{Numeric, survival of eggs to fry stage.}
+
+\item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker"}
 
 \item{\code{capacity_smolt}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
 density-dependent natural smolt production from egg production. \strong{Units of smolts.}}
 
-\item{\code{kappa}}{Vector length \code{nsim}. The adult productivity ratio for the stock-recruit function.
+\item{\code{kappa}}{Vector length \code{nsim}. The adult productivity ratio for the stock-recruit function. \strong{Units of recruits per spawner.}
 Natural per-capita production of recruits as the population approaches zero (density-independent component). \strong{Units of recruits per spawner}.
 In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The spawning output that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of egg production.}}
+\item{\code{Smax}}{Vector length \code{nsim}. The fry production that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of fry.} Equivalent to units of eggs if
+\code{s_egg_fry = 1}. Equivalent to units of spawners if \code{s_egg_fry = 1} and \code{fec = 1} for all spawners.}
 
-\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished egg production rate per smolt.
+\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Unfished fry production per smolt. \strong{Units of fry per smolt}. Equivalent to units of egg per smolt if
+\code{s_egg_fry = 1}. Equivalent to units of recruit per spawner if \code{s_egg_fry = 1} and \code{fec = 1} for all spawners.
 The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS} corresponding
-to the first year and first life history group.}
+the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, \code{s_egg_fry}, and \code{p_LHG} corresponding
+to the first year and weighted by life history groups.}
 
 \item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_g]}.
 Natural mortality of immature natural origin fish.

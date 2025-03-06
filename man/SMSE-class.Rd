@@ -42,6 +42,10 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{Egg_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Spawning output of hatchery origin spawners.}
 
+\item{\code{Fry_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Fry that are offspring of natural origin spawners.}
+
+\item{\code{Fry_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Fry that are offspring of hatchery origin spawners.}
+
 \item{\code{Smolt_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of natural origin spawners.}
 
 \item{\code{Smolt_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of hatchery origin spawners.}

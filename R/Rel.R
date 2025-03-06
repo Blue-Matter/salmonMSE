@@ -16,6 +16,7 @@
 #' @param s_enroute Numeric, en route survival of the escapement to the spawning grounds
 #' @param p_female Numeric, proportion female for calculating the egg production.
 #' @param fec Vector `[maxage]`. The fecundity at age schedule of spawners
+#' @param s_egg_fry Numeric. Egg-fry survival
 #' @param SRRpars Data frame containing stock recruit parameters for natural smolt production.
 #' Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve
 #' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
@@ -47,7 +48,7 @@
 #' - `makeRel_smolt()` returns a list that is passed to openMSE as a inter-population relationship
 #' @keywords internal
 smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hatchery"),
-                       s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
+                       s_enroute, p_female, fec, s_egg_fry, SRRpars, # Spawning (natural production)
                        hatchery_args, fitness_args, s, g, prop_LHG, r) {
 
   output <- match.arg(output)
@@ -193,14 +194,14 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     fitness_loss <- matrix(1, 2, 3)
   }
 
-  # Natural egg production after fitness loss
-  Egg_NOS_out <- Egg_NOS * fitness_loss[1, 1]
-  Egg_HOS_out <- Egg_HOS * fitness_loss[1, 1]
+  # Fry production after fitness loss
+  Fry_NOS <- Egg_NOS * s_egg_fry * fitness_loss[1, 1]
+  Fry_HOS <- Egg_HOS * s_egg_fry * fitness_loss[1, 1]
 
   # Hatchery production after fitness loss
-  yearling_out <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
-  subyearling_out <- hatchery_production$subyearling * fitness_loss[2, 1]
-  total_egg_out <- sum(Egg_NOS_out, Egg_HOS_out, subyearling_out)
+  yearling <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
+  subyearling <- hatchery_production$subyearling * fitness_loss[2, 1]
+  total_fry <- sum(Fry_NOS, Fry_HOS, subyearling)
 
   # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
   xx <- max(x, 1)
@@ -209,12 +210,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
   if (output == "hatchery") {
     smolt_subyearling_r <- calc_smolt(
-      subyearling_out[r], total_egg_out,
+      subyearling[r], total_fry,
       SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
       SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[2, 2],
       SRrel
     )
-    smolt_rel_r <- yearling_out[r] + smolt_subyearling_r
+    smolt_rel_r <- yearling[r] + smolt_subyearling_r
 
     # Save state variable for hatchery production
     if (x > 0) {
@@ -237,9 +238,9 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
         s = s,
         r = r,
         t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
-        Egg_HOS = Egg_HOS_out[r], # Spawning output by RS r of this generation
-        yearling = yearling_out[r],
-        subyearling = subyearling_out[r],
+        Egg_HOS = Egg_HOS[r], # Spawning output by RS r of this generation
+        yearling = yearling[r],
+        subyearling = subyearling[r],
         smolt_rel = smolt_rel_r
       )
       salmonMSE_env$stateH <- rbind(salmonMSE_env$stateH, df_stateH)
@@ -248,26 +249,26 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     return(smolt_rel_r)
   }
 
-  # Egg production for life history group g
-  Egg_NOS_g <- sum(Egg_NOS_out) * prop_LHG
-  Egg_HOS_g <- sum(Egg_HOS_out) * prop_LHG
+  # Fry production for life history group g
+  Fry_NOS_g <- sum(Fry_NOS) * prop_LHG
+  Fry_HOS_g <- sum(Fry_HOS) * prop_LHG
 
-  smolt_NOS_proj <- calc_smolt(
-    Egg_NOS_g, total_egg_out,
+  smolt_NOS_g <- calc_smolt(
+    Fry_NOS_g, total_fry,
     SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
     SRrel
   )
 
-  smolt_HOS_proj <- calc_smolt(
-    Egg_HOS_g, total_egg_out,
+  smolt_HOS_g <- calc_smolt(
+    Fry_HOS_g, total_fry,
     SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
     SRrel
   )
 
   # Predicted smolts from historical SRR parameters and openMSE setup
-  # if there were no hatchery production, habitat improvement, enroute mortality, or multiple LHG
+  # if there were no hatchery production, habitat improvement, enroute mortality, s_egg_fry = 1, or multiple LHG
   Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec)
   smolt_NOS_SRR <- calc_smolt(
     Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
@@ -275,7 +276,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   )
 
   # MICE parameter to be updated in operating model
-  Perr_y <- (smolt_NOS_proj + smolt_HOS_proj)/smolt_NOS_SRR
+  Perr_y <- (smolt_NOS_g + smolt_HOS_g)/smolt_NOS_SRR
 
   if (x > 0) {
     # Save state variables at age
@@ -296,11 +297,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       s = s,
       g = g,
       t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
-      Egg_NOS = Egg_NOS_out[g], # Spawning output by LHG g of this generation
-      Egg_NOS_g = Egg_NOS_g,    # Egg production assigned to LHG g for next generation
-      Egg_HOS_g = Egg_HOS_g,
-      smolt_NOS = smolt_NOS_proj,
-      smolt_HOS = smolt_HOS_proj,
+      Egg_NOS = Egg_NOS[g], # Egg production by LHG g of this generation
+      Fry_NOS = Fry_NOS_g,  # Fry production assigned to LHG g for next generation
+      Fry_HOS = Fry_HOS_g,
+      smolt_NOS = smolt_NOS_g,
+      smolt_HOS = smolt_HOS_g,
       pNOB = as.numeric(pNOB),
       pHOSeff = as.numeric(pHOSeff),
       pHOScensus = as.numeric(pHOScensus),
@@ -336,7 +337,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 #' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
 makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
                           output = c("natural", "hatchery"), s_enroute,
-                          p_female, fec, SRRpars,  # Spawning (natural production)
+                          p_female, fec, s_egg_fry, SRRpars,  # Spawning (natural production)
                           hatchery_args, fitness_args, g, prop_LHG, r) {
 
   output <- match.arg(output)
@@ -347,6 +348,7 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
   formals(.smolt_func)$s_enroute <- s_enroute
   formals(.smolt_func)$p_female <- p_female
   formals(.smolt_func)$fec <- fec
+  formals(.smolt_func)$s_egg_fry <- s_egg_fry
 
   formals(.smolt_func)$SRRpars <- SRRpars
 

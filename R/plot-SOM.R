@@ -126,11 +126,13 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
       per_recruit = TRUE
     )
   })
-  E0 <- smolt0 * SOM@Bio[[s]]@phi
 
-  Egg <- seq(0, 1.5 * max(E0), length.out = 100)
+  # E is egg production if s_egg_fry = 1, otherwise fry production
+  E0 <- smolt0 * SOM@Bio[[s]]@phi
+  E <- seq(0, 1.5 * max(E0), length.out = 100)
+
   Smolt <- sapply(1:SOM@nsim, function(x) {
-    sapply(Egg, function(N) {
+    sapply(E, function(N) {
       calc_smolt(
         N1 = N,
         kappa = SOM@Bio[[s]]@kappa[x],
@@ -145,7 +147,7 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
   })
 
   if (surv) {
-    x <- t(Smolt/Egg)
+    x <- t(Smolt/E)
     x[, 1] <- SOM@Bio[[s]]@kappa/SOM@Bio[[s]]@phi
   } else {
     x <- t(Smolt)
@@ -158,16 +160,17 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
   }
 
   if (figure && any(xplot > 0, na.rm = TRUE)) {
-    xlab <- "Egg production"
-    ylab <- ifelse(surv, "Egg-smolt survival", "Smolt production")
+    xunit <- ifelse(SOM@Bio[[s]]@s_egg_fry < 1, "Fry", "Egg")
+    xlab <- paste(xunit, "production")
+    ylab <- ifelse(surv, paste0(xunit, "-smolt survival"), "Smolt production")
 
     if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
 
     if (!quant) {
-      matplot(Egg, t(xplot), type = 'l', col = "grey40", ylim = ylim, lty = 1,
+      matplot(E, t(xplot), type = 'l', col = "grey40", ylim = ylim, lty = 1,
               xlab = xlab, ylab = ylab, ...)
     } else {
-      matplot(Egg, t(xplot), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
+      matplot(E, t(xplot), type = 'o', pch = c(NA, 1, NA), col = 1, lty = c(2, 1, 2), ylim = ylim,
               xlab = xlab, ylab = ylab, ...)
       abline(v = median(E0), lty = 3)
     }

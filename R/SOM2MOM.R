@@ -252,7 +252,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
     g_s <- n_g[s]
     r_s <- n_r[s]
 
-    use_smolt_func <- do_hatchery_s || habitat_change_s || Bio@s_enroute < 1 || has_strays_s || g_s > 1
+    use_smolt_func <- do_hatchery_s || habitat_change_s ||
+      Bio@s_enroute < 1 || has_strays_s || g_s > 1 || Bio@s_egg_fry < 1
 
     Rel_smolt_g <- list()
     Rel_hatchrel <- list()
@@ -333,7 +334,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
         Rel_smolt_g[[g]] <- makeRel_smolt(
           p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
-          output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
+          output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
+          s_egg_fry = Bio@s_egg_fry, SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args, g = g, prop_LHG = p_LHG[g]
         )
 
@@ -354,7 +356,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           # Hatchery smolt releases from NOS and HOS escapement
           Rel_hatchrel[[r]] <- makeRel_smolt(
             p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
-            output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec, SRRpars = SRRpars,
+            output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
+            s_egg_fry = Bio@s_egg_fry, SRRpars = SRRpars,
             hatchery_args = hatchery_args, fitness_args = fitness_args, r = r
           )
 
@@ -429,6 +432,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_numeric(Bio, "p_female", default = 0.5)
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
     Bio <- check_maxage(Bio, "fec", maxage)
+    Bio <- check_numeric(Bio, "s_egg_fry", default = 1)
 
     # SRR pars
     slot(Bio, "SRrel") <- match.arg(slot(Bio, "SRrel"), choices = c("BH", "Ricker"))
@@ -456,6 +460,7 @@ check_SOM <- function(SOM, silent = FALSE) {
           p_female = Bio@p_female,
           fec = matrix(Bio@fec, Bio@maxage, Bio@n_g),
           s_enroute = Bio@s_enroute,
+          s_egg_fry = Bio@s_egg_fry,
           n_g = Bio@n_g,
           p_LHG = Bio@p_LHG
         )
