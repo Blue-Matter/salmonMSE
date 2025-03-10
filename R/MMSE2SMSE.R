@@ -276,6 +276,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     Snames = sapply(1:ns, function(s) if (length(SOM@Bio[[s]]@Name)) SOM@Bio[[s]]@Name else paste("Population", s)),
     Egg_NOS = Egg_NOS,
     Egg_HOS = Egg_HOS,
+    Fry_NOS = Fry_NOS,
+    Fry_HOS = Fry_HOS,
     Smolt_NOS = Smolt_NOS,
     Smolt_HOS = Smolt_HOS,
     Smolt_Rel = Smolt_Rel,
