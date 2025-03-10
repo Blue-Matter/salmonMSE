@@ -24,12 +24,14 @@ plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = me
   if (length(LHG)) {
     var <- match.arg(var, choices = names(LHG))
     x <- LHG[[var]]
+
+    if (missing(name)) name <- paste("LHG", 1:dim(x)[2])
+    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Dark 2")
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))
+    return(invisible(x))
   }
 
-  if (missing(name)) name <- paste("LHG", 1:dim(x)[2])
-  .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Dark 2")
 }
 
 #' @rdname plot_LHG
@@ -41,12 +43,14 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
   if (length(RS)) {
     var <- match.arg(var, choices = names(RS))
     x <- RS[[var]]
+
+    if (missing(name)) name <- paste("RS", 1:dim(x)[2])
+    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Cold")
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))
+    return(invisible(x))
   }
 
-  if (missing(name)) name <- paste("RS", 1:dim(x)[2])
-  .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Cold")
 }
 
 .plot_LHG <- function(x, var, type = c("prop", "abs"), FUN, figure = TRUE, xlab = "Projection Year", ylab, name, palette = "Dark 2") {

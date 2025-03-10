@@ -99,7 +99,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     ExT_NOS[is.na(ExT_NOS)] <- 0
 
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling > 0, SOM@Hatchery[[s]]@n_yearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0)
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
     n_g <- length(unique(pindex$g[pindex$s == s & pindex$origin == "natural"]))
     n_r <- length(unique(pindex$r[pindex$s == s & pindex$origin == "hatchery"]))
 
@@ -193,6 +193,26 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       p_wild[, s, ] <- calc_pwild_age(NOS_a[, s, , ], HOScensus_a[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
 
+      if (n_r > 1) {
+        Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
+        Esc_r <- HOS_r <- array(NA_real_, c(SOM@nsim, n_r, nage, SOM@proyears))
+
+        x <- a <- r <- t <- NULL
+
+        a_smolt <- 1
+        Smolt_r[] <- apply(MMSE@N[, p_HOS_imm, a_smolt, mp, t1, , drop = FALSE], c(1, 2, 5), sum)
+        Esc_r[, , , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 2, 3, 5), sum)
+        HOS_r[, , , y_spawn] <- dplyr::filter(H, .data$s == .env$s) %>%
+          summarise(value = sum(.data$HOS), .by = c(x, r, a, t)) %>%
+          reshape2::acast(list("x", "r", "a", "t"), value.var = "value")
+
+        RS[[s]] <- list(
+          Smolt = Smolt_r,
+          Esc = Esc_r,
+          HOS = HOS_r
+        )
+      }
+
     } else {
       PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
       pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
@@ -244,27 +264,6 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
         NOS = NOS_g
       )
     }
-
-    if (n_r > 1) {
-      Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
-      Esc_r <- HOS_r <- array(NA_real_, c(SOM@nsim, n_r, nage, SOM@proyears))
-
-      x <- a <- r <- t <- NULL
-
-      a_smolt <- 1
-      Smolt_r[] <- apply(MMSE@N[, p_HOS_imm, a_smolt, mp, t1, , drop = FALSE], c(1, 2, 5), sum)
-      Esc_r[, , , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 2, 3, 5), sum)
-      HOS_r[, , , y_spawn] <- dplyr::filter(H, .data$s == .env$s) %>%
-        summarise(value = sum(.data$HOS), .by = c(x, r, a, t)) %>%
-        reshape2::acast(list("x", "r", "a", "t"), value.var = "value")
-
-      RS[[s]] <- list(
-        Smolt = Smolt_r,
-        Esc = Esc_r,
-        HOS = HOS_r
-      )
-    }
-
   }
 
   SMSE <- new(

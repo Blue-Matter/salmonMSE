@@ -119,10 +119,18 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   }
 
   # Spawners
-  spawners <- calc_spawners(
-    broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
-    hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$m
-  )
+  if (sum(Nage_NOS, Nage_HOS)) {
+    spawners <- calc_spawners(
+      broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
+      hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$m
+    )
+  } else {
+    spawners <- list(
+      NOS = array(0, dim(Nage_NOS)),
+      HOS = array(0, dim(Nage_HOS))
+    )
+  }
+
   NOS <- spawners$NOS
   HOS <- spawners$HOS
   if (sum(HOS)) {
@@ -320,6 +328,46 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
         fitness = fitness
       )
       salmonMSE_env$Ford <- rbind(salmonMSE_env$Ford, df_Ford)
+
+      # Report hatchery state variables for external strays if there is no hatchery production
+      if (!sum(unlist(hatchery_production)) && !is.null(hatchery_args$stray_external)) {
+        nr <- ncol(hatchery_args$stray_external)
+
+        df_H <- lapply(1:nr, function(r) {
+          d <- data.frame(
+            x = x,
+            s = s,
+            r = r,
+            t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+            a = 1:nrow(Nage_HOS),
+            Esc_HOS = Nage_HOS[, r],
+            HOB = broodtake$HOB_unmarked[, r] + broodtake$HOB_marked[, r] + broodtake$HOB_stray[, r],
+            HOS = HOS[, r],
+            HOS_effective = HOS_effective[, r]
+          )
+          d$HOB_import <- if (r == 1) broodtake$HOB_import else rep(NA, nrow(Nage_HOS))
+          return(d)
+        }) %>%
+          bind_rows()
+
+        salmonMSE_env$H <- rbind(salmonMSE_env$H, df_H)
+
+        df_stateH <- lapply(1:nr, function(r) {
+          data.frame(
+            x = x,
+            s = s,
+            r = r,
+            t = y, # Even time steps (remember MICE predicts Perr_y for next time step)
+            Egg_HOS = Egg_HOS[r], # Spawning output by RS r of this generation
+            yearling = yearling[r],
+            subyearling = subyearling[r],
+            smolt_rel = 0
+          )
+        }) %>%
+          bind_rows()
+        salmonMSE_env$stateH <- rbind(salmonMSE_env$stateH, df_stateH)
+      }
+
     }
   }
 
