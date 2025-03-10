@@ -47,7 +47,7 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] 
 Default is set equal to \code{Bio@p_mature} for all release strategies.}
 
 \item{\code{stray_external}}{Matrix by age (length \code{maxage}) and release strategy \code{n_r} that denotes the annual number of hatchery origin strays from other populations/systems
-not included in the operating model. Default is zero. For multi-population models with straying within the system, see also \code{SOM@stray} matrix.}
+not included in the operating model. Default is zero. External strays are added at the escapement life stage, assumed unmarked. For multi-population models with straying within the system, see also \code{SOM@stray} matrix.}
 
 \item{\code{gamma}}{Numeric. The relative reproductive success of hatchery origin spawners (relative to natural origin spawners). Default is 1.}
 
