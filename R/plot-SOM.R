@@ -73,7 +73,7 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
       lines(Age, xplot[2, , g], typ = "o", col = col[g], pch = 16)
       matlines(Age, t(xplot[c(1, 3), , g]), col = col[g], lty = 2)
     }
-    legend('topright', legend = LHG_names, col = col, lty = 1, pch = 16)
+    legend('topright', legend = LHG_names, col = col, lty = 1, pch = 16, bty = "n")
   }
 
   invisible(xplot)

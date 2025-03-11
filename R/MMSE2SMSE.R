@@ -185,7 +185,21 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       pHOS_effective[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "pHOSeff", s, FUN = unique)
       pHOS_census[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "pHOScensus", s, FUN = unique)
 
-      PNI[, s, y_spawn] <- pNOB[, s, y_spawn]/(pNOB[, s, y_spawn] + pHOS_effective[, s, y_spawn]) # Withler et al. 2018, page 17
+      # Withler et al. 2018, page 17, 21
+      h2 <- SOM@Hatchery[[s]]@heritability
+      omega2 <- local({
+        omega <- sqrt(SOM@Hatchery[[s]]@fitness_variance) * SOM@Hatchery[[s]]@selection_strength
+        omega^2
+      })
+
+      PNI[, s, y_spawn] <- ifelse(
+        pNOB[, s, y_spawn] > 0,
+        pNOB[, s, y_spawn]/(pNOB[, s, y_spawn] + pHOS_effective[, s, y_spawn]),
+        h2/(h2 + (1 - h2 + omega2) * pHOS_effective[, s, y_spawn])
+      )
+
+      # Exact PNI, see HSRG 2009, Appendix C, Eq. 33, Columbia River Hatchery Reform System-Wide Report
+      #PNI[, s, ] <- (h2 + (1 - h2 + omega2) * pNOB[, s, ])/(h2 + (1 - h2 + omega2) * (pHOS_effective[, s, ] + pNOB[, s, ]))
 
       NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
       NOS_a[, s, , y_spawn] <- get_salmonMSE_agevar(N, "NOS", s)

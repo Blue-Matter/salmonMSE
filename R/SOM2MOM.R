@@ -544,6 +544,19 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
     }
 
+    # Check for PNI_wild calculation
+    if (!do_hatchery && sum(Hatchery@stray_external)) {
+      if (!length(Hatchery@heritability)) {
+        stop("Need hatchery heritability parameter for PNI calculation (no hatchery, presence of external strays)")
+      }
+      if (!length(Hatchery@fitness_variance)) {
+        stop("Need hatchery fitness_variance parameter for PNI calculation (no hatchery, presence of external strays)")
+      }
+      if (!length(Hatchery@selection_strength)) {
+        stop("Need hatchery selection_strength parameter for PNI calculation (no hatchery, presence of external strays)")
+      }
+    }
+
     # Harvest
     Harvest <- SOM@Harvest[[s]]
     Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
