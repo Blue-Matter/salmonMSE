@@ -4,6 +4,9 @@ library(salmonMSE)
 # See Appendix A of Mahony et al. 2021. CSAS Research Document 2021/009.
 # https://publications.gc.ca/site/eng/9.897509/publication.html
 
+# Source code for original analysis is at: https://github.com/wchallenger/OK_CNPVA
+# Use parameters in the markdown document: https://github.com/wchallenger/OK_CNPVA/blob/master/PVA-analysis.nb.html
+
 maxage <- 5
 nsim <- 100
 nyears <- 2
@@ -17,16 +20,16 @@ Mjuv_NOS <- Mjuv_HOS <- array(0, c(nsim, maxage, nyears + proyears))
 # Currently salmonMSE doesn't have Ricker deviations so we include it in the age 1 mortality rate
 set.seed(1)
 Ricker_sd <- 0.53
-Ricker_dev <- rlnorm(nsim * proyears, -0.5 * Ricker_sd^2, Ricker_sd) |> matrix(nsim, proyears)
+Ricker_dev <- exp(rnorm(nsim * proyears, 0, Ricker_sd)) |> matrix(nsim, proyears)
 
-phi_ocean <- 0.025
+phi_ocean <- 0.084
 
 # https://github.com/wchallenger/OK_CNPVA/blob/master/CNPVA/R/PopSim.fn.R#L41
 D_juv <- rnorm(nsim * proyears, 0.35, 0.09) |> matrix(nsim, proyears)
 D_juv[D_juv < 0] <- 0.01
 D_juv[D_juv > 1] <- 1
 
-SU_2 <- 0.6
+SU_2 <- 1
 
 # Age 1 survival
 surv1 <- phi_ocean * D_juv * SU_2
@@ -39,10 +42,10 @@ Mjuv_HOS[, 1, nyears + seq(1, proyears)] <- -log(surv1)
 Mjuv_HOS[, 1, seq(1, nyears)] <- array(Mjuv_HOS[, , nyears + 1], c(nsim, 1, nyears))
 
 # Age 2-4 survival
-Mjuv_NOS[, 2:4, ] <- Mjuv_HOS <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
+Mjuv_NOS[, 2:4, ] <- Mjuv_HOS[, 2:4, ] <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
 
 # Arbitrary juvenile M for age 5
-Mjuv_NOS[, 5, ] <- Mjuv_HOS <- 0.01
+Mjuv_NOS[, 5, ] <- Mjuv_HOS[, 5, ] <- 0.01
 
 Bio <- new(
   "Bio",
@@ -60,8 +63,8 @@ Bio <- new(
 
 Harvest <- new(
   "Harvest",
-  u_preterminal = 0.28,  # HR_ocean
-  u_terminal = 0.18,     # HR_river
+  u_preterminal = 0.25,  # HR_ocean
+  u_terminal = 0.42,     # HR_river
   vulPT = c(0, 1, 1, 1, 1),
   vulT = c(0, 1, 1, 1, 1)
 )
@@ -80,7 +83,7 @@ Hatchery_500k <- new(
   s_egg_smolt = 1,
   s_egg_subyearling = 1,
   brood_import = c(0, 0, 0, 0, 5e6),
-  Mjuv_HOS = Mjuv_NOS,
+  Mjuv_HOS = Mjuv_HOS,
   gamma = 1,
   m = 0,
   pmax_esc = 0,
@@ -139,9 +142,6 @@ SMSE <- salmonMSE(SOM)
 saveRDS(SMSE, file = "examples/Okanagan_PVA.rds")
 report(SMSE, dir = "examples", filename = "Okanagan_PVA")
 
-
-
-
 SOM_500k <- new("SOM",
                 Name = "Okanagan Chinook PVA with 500k hatchery",
                 nsim = nsim,
@@ -158,3 +158,26 @@ SMSE_500k <- salmonMSE(SOM_500k)
 
 saveRDS(SMSE_500k, file = "examples/Okanagan_PVA_500k.rds")
 report(SMSE_500k, dir = "examples", filename = "Okanagan_PVA_500k")
+
+
+# Plot distribution of spawners
+Sp <- data.frame(
+  NOS = SMSE_500k@NOS[, 1, proyears - 1],
+  HOS = SMSE_500k@HOS[, 1, proyears - 1]
+) %>%
+  mutate(Total = NOS + HOS) %>%
+  reshape2::melt()
+
+quants <- Sp %>% filter(variable == "Total") %>% pull(value) %>%
+  quantile(c(0.025, 0.5, 0.975))
+
+g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
+  geom_density(alpha = 0.5) +
+  expand_limits(x = 0) +
+  geom_vline(xintercept = quants["50%"], linetype = 2) +
+  geom_vline(xintercept = quants[c("2.5%", "97.5%")], linetype = 3) +
+  labs(x = "Spawners", y = "Density", colour = NULL, fill = NULL) +
+  ggtitle("Long-terms spawners with 500k hatchery releases")
+ggsave("examples/PVA_spawners.png", g, height = 4.5, width = 7)
+
+
