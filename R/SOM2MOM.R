@@ -566,12 +566,12 @@ check_SOM <- function(SOM, silent = FALSE) {
     if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mort", size = 2)
     if (Harvest@u_preterminal > 0) {
       Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
-    } else if (!length(Harvest@vulPT)) {
+    } else {
       Harvest@vulPT <- matrix(0, nsim, maxage)
     }
     if (Harvest@u_terminal > 0) {
       Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
-    } else if (!length(Harvest@vulT)) {
+    } else {
       Harvest@vulT <- matrix(0, nsim, maxage)
     }
 
