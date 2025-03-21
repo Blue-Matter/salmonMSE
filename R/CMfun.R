@@ -153,26 +153,43 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1) {
 }
 
 #' @importFrom dplyr rename
-CM_maturity <- function(report, d, year1 = 1) {
-  matt <- sapply(report, getElement, "matt", simplify = 'array')
-  matt_q <- apply(matt, 1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+CM_maturity <- function(report, d, year1 = 1, brood = TRUE, annual = FALSE) {
+  if (brood) {
+    matt <- sapply(report, function(i) CY2BY(i[["matt"]]), simplify = 'array')
+  } else {
+    matt <- sapply(report, getElement, "matt", simplify = 'array')
+  }
+  matt_q <- apply(matt, 1:2, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     rename(Age = Var3) %>%
-    dplyr::filter(Age > 1)
+    reshape2::dcast(Age + Var2 + Year ~ Var1)
 
-  bmatt <- data.frame(Age = 1:d$Nages, value = d$bmatt) %>%
-    dplyr::filter(Age > 1)
+  if (annual) {
+    g <- matt_q %>%
+      ggplot(aes(Age, `50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      facet_wrap(vars(Year)) +
+      theme(
+        panel.spacing = unit(0, "in"),
+        strip.background = element_blank()
+      ) +
+      labs(x = "Age", y = "Proportion mature", title = ifelse(brood, "Brood year", "Return year"))
+  } else {
+    bmatt <- data.frame(Age = 1:d$Nages, value = d$bmatt) %>%
+      dplyr::filter(Age > 1)
 
-  g <- matt_q %>%
-    reshape2::dcast(Age + Var2 + Year ~ Var1) %>%
-    ggplot(aes(Year, `50%`, fill = factor(Age), colour = factor(Age))) +
-    geom_line() +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    geom_hline(data = bmatt, linetype = 2, aes(yintercept = value, colour = factor(Age))) +
-    labs(x = "Year", y = "Proportion mature", colour = "Age", fill = "Age")
+    g <- matt_q %>%
+      dplyr::filter(Age > 1) %>%
+      ggplot(aes(Year, `50%`, fill = factor(Age), colour = factor(Age))) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      geom_hline(data = bmatt, linetype = 2, aes(yintercept = value, colour = factor(Age))) +
+      labs(x = ifelse(brood, "Brood year", "Return year"), y = "Proportion mature", colour = "Age", fill = "Age")
+  }
+
   g
-
 }
 
 CM_vul <- function(report, type = c("vulPT", "vulT")) {

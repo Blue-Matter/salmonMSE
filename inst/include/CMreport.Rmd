@@ -226,8 +226,12 @@ CM_BYER(report, type = "PT", year1)
 
 ### Return
 
-```{r matt, fig.cap="Posterior estimates of maturity (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
-CM_maturity(report, d, year1)
+```{r matt-RY, fig.cap="Posterior estimates of maturity by age and return year (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
+CM_maturity(report, d, year1, brood = FALSE)
+```
+
+```{r matt-BY, fig.cap="Posterior estimates of maturity by age and brood year (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
+CM_maturity(report, d, year1, brood = TRUE)
 ```
 
 ```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
