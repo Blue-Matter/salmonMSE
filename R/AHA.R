@@ -71,12 +71,15 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     if (SOM@Bio[[s]]@n_g > 1) {
       warning("Multiple life history groups detected: SOM@Bio[[", s, "]]@n_g > 1. Using parameters for group 1")
     }
+    if (SOM@Hatchery[[s]]@n_r > 1) {
+      warning("Multiple hatchery release groups detected: SOM@Hatchery[[", s, "]]@n_r > 1. Using parameters for group 1")
+    }
 
     surv_NOS <- surv_HOS <- matrix(1, SOM@nsim, age_mature)
     for (a in 2:age_mature) {
       surv_NOS[, a] <- surv_NOS[, a-1] * exp(-SOM@Bio[[s]]@Mjuv_NOS[, a-1, 1, 1])
       if (do_hatchery) {
-        surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Hatchery[[s]]@Mjuv_HOS[, a-1, 1])
+        surv_HOS[, a] <- surv_HOS[, a-1] * exp(-SOM@Hatchery[[s]]@Mjuv_HOS[, a-1, 1, 1])
       }
     }
 
@@ -91,8 +94,6 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
         round(u_NOR, 3), " and ", round(u_HOR, 3), ", respectively. Catch represents kept catch + dead releases."
       )
     }
-
-    browser()
 
     output_sim <- lapply(1:SOM@nsim, .AHA_wrapper, s = s, SOM = SOM, ngen = ngen, SAR_NOS = surv_NOS[, age_mature], SAR_HOS = surv_HOS[, age_mature])
     var_report <- names(output_sim[[1]])
@@ -152,8 +153,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     RRS_HOS = Hatchery@gamma,
     p_weir_efficiency = Hatchery@premove_HOS,
     p_return_hatchery = Hatchery@phatchery,
-    n_release_yearling = Hatchery@n_yearling,
-    n_release_subyearling = Hatchery@n_subyearling,
+    n_release_yearling = sum(Hatchery@n_yearling),
+    n_release_subyearling = sum(Hatchery@n_subyearling),
     brood_import = 0,
     brood_export = 0,
     p_NOR_brood_max = Hatchery@pmax_NOB,

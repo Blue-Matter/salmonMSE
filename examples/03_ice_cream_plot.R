@@ -76,12 +76,13 @@ wrapper <- function(x, Design) {
 
   # Return of 1000 natural and hatchery fish each for the first generation
   nyears <- 2
-  HistN <- array(0, c(nsim, Bio@maxage, nyears+1, 2))
-  HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+  HistN <- array(0, c(nsim, Bio@maxage, nyears+1))
+  HistN[, 1, 1] <- HistN[, 2, 2] <- 1000/SAR
 
   Historical <- new(
     "Historical",
-    HistN = HistN
+    HistNjuv_NOS = HistN,
+    HistNjuv_HOS = HistN
   )
 
   # Stitched salmon operating model
@@ -185,6 +186,44 @@ g <- plot_tradeoff(as.matrix(PNI[, 3:5]), as.matrix(Catch[, 3:5]),
   geom_vline(xintercept = c(0.5, 0.8), linetype = 2) +
   scale_shape_manual(values = c(1, 2, 4, 16))
 ggsave("man/figures/tradeoff_plot_median_ci.png", g, height = 3, width = 4.5)
+
+# Kobe figure
+Kobe_fn <- function(x, SMSE_list, Design) {
+  out <- Design[x, ]
+
+  Sp <- SMSE_list[[x]]@NOS[, 1, 49] + SMSE_list[[x]]@HOS[, 1, 49]
+  SMSY <- SMSE_list[[x]]@Misc$Ref[[1]]["Spawners_MSY", ]
+
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+
+  RNOS <- rowSums(SMSE_list[[x]]@Return_NOS[, 1, , 49])
+  RHOS <- rowSums(SMSE_list[[x]]@Return_HOS[, 1, , 49])
+
+  U <- (KNOS + KHOS)/(RNOS + RHOS)
+  UMSY <- SMSE_list[[x]]@Misc$Ref[[1]]["UT_MSY", ]
+
+  relS <- quantile(Sp/SMSY, c(0.025, 0.5, 0.975))
+  relU <- quantile(U/UMSY, c(0.025, 0.5, 0.975))
+
+  cbind(out, data.frame(t(relS)), data.frame(t(relU)))
+  #out$lower <- val[1]
+  #out$median <- val[2]
+  #out$upper <- val[3]
+  #return(out)
+}
+Kobe <- lapply(1:nrow(Design), Kobe_fn, SMSE_list, Design = Design) %>%
+  bind_rows()
+
+
+g <- plot_tradeoff(as.matrix(Kobe[, 3:5]), as.matrix(Kobe[, 6:8]),
+                   factor(PNI$kappa), factor(PNI$hatch), expression(S/S[MSY]), expression(U/U[MSY]),
+                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
+  geom_vline(xintercept = 1, linetype = 2) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  scale_shape_manual(values = c(1, 2, 4, 16)) +
+  expand_limits(x = 0, y = 0)
+ggsave("man/figures/Kobe_plot_median_ci.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(Design), function(x) {

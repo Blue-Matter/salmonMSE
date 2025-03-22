@@ -177,7 +177,38 @@ g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
   geom_vline(xintercept = quants["50%"], linetype = 2) +
   geom_vline(xintercept = quants[c("2.5%", "97.5%")], linetype = 3) +
   labs(x = "Spawners", y = "Density", colour = NULL, fill = NULL) +
-  ggtitle("Long-terms spawners with 500k hatchery releases")
-ggsave("examples/PVA_spawners.png", g, height = 4.5, width = 7)
+  ggtitle("Long-term spawners with 500k hatchery releases")
+ggsave("examples/PVA_spawners.png", g, height = 3.5, width = 6)
+
+# Plot annual spawners
+Sp <- rbind(
+  SMSE_500k@NOS[, 1, ] %>% reshape2::melt() %>% mutate(type = "NOS"),
+  SMSE_500k@HOS[, 1, ] %>% reshape2::melt() %>% mutate(type = "HOS")
+) %>%
+  rename(Sim = Var1, Year = Var2) %>%
+  filter(Year < proyears)
+Total <- Sp %>%
+  summarise(value = sum(value), .by = c(Sim, Year)) %>%
+  mutate(type = "Total")
+
+g <- Total %>%
+  summarise(p = mean(value > 1000), .by = Year) %>%
+  ggplot(aes(Year, p)) +
+  geom_line() +
+  geom_point()
+
+g <- rbind(Sp, Total) %>%
+  summarise(med = median(value),
+            min = quantile(value, 0.025),
+            max = quantile(value, 0.975),
+            .by = c(Year, type)) %>%
+  mutate(type = factor(type, levels = c("NOS", "HOS", "Total"))) %>%
+  ggplot(aes(Year, med, colour = type)) +
+  geom_line() +
+  geom_point() +
+  geom_ribbon(aes(ymin = min, ymax = max, fill = type), alpha = 0.25) +
+  labs(x = "Year", y = "Spawners", fill = NULL, colour = NULL)
+ggsave("examples/PVA_spawners_ts.png", g, height = 3.5, width = 6)
+
 
 

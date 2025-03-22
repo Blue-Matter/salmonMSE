@@ -81,7 +81,7 @@ initialize_zbar <- function(SOM) {
     if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
 
       zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
-      data.frame(
+      df <- data.frame(
         x = zbar_start$Var1,
         s = s,
         t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
@@ -89,8 +89,30 @@ initialize_zbar <- function(SOM) {
         zbar = zbar_start$value
       )
 
+      fitness_variance <- SOM@Hatchery[[s]]@fitness_variance
+      omega2 <- local({
+        omega <- sqrt(fitness_variance) * SOM@Hatchery[[s]]@selection_strength
+        omega^2
+      })
+      fitness_floor <- SOM@Hatchery[[s]]@fitness_floor
+      fitness_type <- SOM@Hatchery[[s]]@fitness_type
+
+      df$fitness <- sapply(1:nrow(df), function(i) {
+        theta <- switch(df$type[i], "natural" = SOM@Hatchery[[s]]@theta[1], "hatchery" = SOM@Hatchery[[s]]@theta[2])
+
+        fitness_fn <- switch(df$type[i], "natural" = fitness_type[1], "hatchery" = fitness_type[2])
+
+        switch(
+          fitness_fn,
+          "Ford" = calc_fitness(df$zbar[i], theta, omega2, fitness_variance, fitness_floor),
+          "none" = 1
+        )
+      })
+
+      return(df)
+
     } else {
-      data.frame()
+      return(data.frame())
     }
   })
 
