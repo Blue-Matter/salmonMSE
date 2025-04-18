@@ -5,19 +5,50 @@
 \alias{Habitat-class}
 \title{Class \code{"Habitat"}}
 \description{
-The component of the operating model that controls habitat management.
+The component of the operating model that controls survival in the freshwater environment. Includes changes in survival from either
+environmental/climate effects or habitat mitigation.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{capacity_smolt_improve}}{Numeric. The proportional change in the smolt capacity parameter in the projection period.
-For example, 1.1 represents a 10 percent improvement. For the Beverton-Holt function, this increases the asymptote by 10 percent.
-For the Ricker function, this increases the maximum smolt production by 10 percent. Default is 1.}
+\item{\code{use_habitat}}{Logical. If \code{TRUE}, utilize stage-specific density-dependent functions from egg production from incubation mortality,
+egg-to-fry production, and fry-to-smolt production with annual deviations. Otherwise, the density-dependence is modeled for egg-to-smolt survival.
+See \code{Bio} object.}
 
-\item{\code{kappa_improve}}{Numeric. The proportional change in adult productivity, in the projection period.
-For example, 1.1 represents a 10 percent improvement. Default is 1.}
+\item{\code{egg_rel}}{Character, density-dependent function egg production from total spawning output. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+Default is "BH".}
+
+\item{\code{egg_prod}}{Numeric, capacity for egg production from total spawning output (incubation). Default is 1.
+Default if \code{Inf}.}
+
+\item{\code{egg_capacity}}{Numeric, capacity for egg production from total spawning output (incubation). Set to \code{Inf} for density-independence.
+Default is \code{Inf}.}
+
+\item{\code{fry_rel}}{Character, density-dependent function for egg-to-fry production. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+Default is "BH".}
+
+\item{\code{fry_prod}}{Numeric between 0-1, productivity for egg production from total spawning output, i.e., maximum survival as egg production approaches zero.
+Default is 0.4.}
+
+\item{\code{fry_capacity}}{Numeric, capacity for fry production from egg production. Set to \code{Inf} for density-independence.
+Default is \code{Inf}.}
+
+\item{\code{fry_sdev}}{Matrix \verb{[nsim, proyears]}, deviations from the density-dependent egg-fry survival. Can be utilized to incorporate
+time-varying environmental, climate, or habitat mitigation effects. Default is \code{matrix(1, nsim, proyears)}.}
+
+\item{\code{smolt_rel}}{Character, density-dependent function for fry-to-smolt production. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+Default is "BH".}
+
+\item{\code{smolt_prod}}{Numeric between 0-1, productivity for smolt production from fry, i.e., maximum survival as fry production approaches zero.
+Default is 1.}
+
+\item{\code{smolt_capacity}}{Numeric, capacity for smolt production from fry production. Set to \code{Inf} for density-independence.
+Default is \code{Inf}.}
+
+\item{\code{smolt_sdev}}{Matrix \verb{[nsim, proyears]}, deviations from the density-dependent fry-smolt survival. Can be utilized to incorporate
+time-varying environmental, climate, or habitat mitigation effects. Default is \code{matrix(1, nsim, proyears)}.}
 }}
 
 \section{Creating Object}{

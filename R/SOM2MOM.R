@@ -244,16 +244,14 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
     pind <- pindex[pindex$s == s, ]
 
-    # Not needed if all of the following are true: no hatchery, no habitat improvement (SRR change), no strays, s_enroute = 1, n_g = 1
+    # Not needed if all of the following are true: no hatchery, no strays, s_enroute = 1, n_g = 1
     # SRR pars in the OM should suffice in that case (the escapement is the spawning output)
     do_hatchery_s <- do_hatchery[s]
-    habitat_change_s <- Habitat@kappa_improve != 1 || Habitat@capacity_smolt_improve != 1
     has_strays_s <- has_strays[s]
     g_s <- n_g[s]
     r_s <- n_r[s]
 
-    use_smolt_func <- do_hatchery_s || habitat_change_s ||
-      Bio@s_enroute < 1 || has_strays_s || g_s > 1 || Bio@s_egg_fry < 1
+    use_smolt_func <- TRUE
 
     Rel_smolt_g <- list()
     Rel_hatchrel <- list()
@@ -281,6 +279,11 @@ SOM2MOM <- function(SOM, check = TRUE) {
       hatchery_args <- list(
         egg_target = egg_target
       )
+      habitat_args <- list(
+        use_habitat = Habitat@use_habitat
+      )
+
+      if (habitat_args$use_habitat) habitat_args$Habitat <- Habitat
 
       if (do_hatchery_s || has_strays_s) {
 
@@ -335,8 +338,9 @@ SOM2MOM <- function(SOM, check = TRUE) {
         Rel_smolt_g[[g]] <- makeRel_smolt(
           p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
           output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
-          s_egg_fry = Bio@s_egg_fry, SRRpars = SRRpars,
-          hatchery_args = hatchery_args, fitness_args = fitness_args, g = g, prop_LHG = p_LHG[g]
+          SRRpars = SRRpars,
+          hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
+          g = g, prop_LHG = p_LHG[g]
         )
 
         # Marine survival of natural origin fish
@@ -357,8 +361,9 @@ SOM2MOM <- function(SOM, check = TRUE) {
           Rel_hatchrel[[r]] <- makeRel_smolt(
             p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
             output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
-            s_egg_fry = Bio@s_egg_fry, SRRpars = SRRpars,
-            hatchery_args = hatchery_args, fitness_args = fitness_args, r = r
+            SRRpars = SRRpars,
+            hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
+            r = r
           )
 
           # Marine survival of hatchery origin fish
@@ -432,16 +437,21 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_numeric(Bio, "p_female", default = 0.5)
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
     Bio <- check_maxage(Bio, "fec", maxage)
-    Bio <- check_numeric(Bio, "s_egg_fry", default = 1)
 
-    # SRR pars
-    slot(Bio, "SRrel") <- match.arg(slot(Bio, "SRrel"), choices = c("BH", "Ricker"))
-    Bio <- check_numeric2nsim(Bio, "kappa", nsim)
+    # Habitat?
+    Habitat <- SOM@Habitat[[s]]
+    Habitat <- check_numeric(Habitat, "use_habitat", default = FALSE)
 
-    if (Bio@SRrel == "BH") {
-      Bio <- check_numeric2nsim(Bio, "capacity_smolt", nsim)
-    } else {
-      Bio <- check_numeric2nsim(Bio, "Smax", nsim)
+    if (!Habitat@use_habitat) {
+      # SRR pars
+      slot(Bio, "SRrel") <- match.arg(slot(Bio, "SRrel"), choices = c("BH", "Ricker"))
+      Bio <- check_numeric2nsim(Bio, "kappa", nsim)
+
+      if (Bio@SRrel == "BH") {
+        Bio <- check_numeric2nsim(Bio, "capacity", nsim)
+      } else {
+        Bio <- check_numeric2nsim(Bio, "Smax", nsim)
+      }
     }
 
     # Mjuv_NOS
@@ -452,26 +462,45 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_maxage2garray(Bio, "Mjuv_NOS", maxage, nsim, years, Bio@n_g)
 
     # phi
-    if (!length(Bio@phi)) {
-      Bio@phi <- sapply(1:SOM@nsim, function(x) {
-        calc_phi(
-          Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage, Bio@n_g),
-          p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
-          p_female = Bio@p_female,
-          fec = matrix(Bio@fec, Bio@maxage, Bio@n_g),
-          s_enroute = Bio@s_enroute,
-          s_egg_fry = Bio@s_egg_fry,
-          n_g = Bio@n_g,
-          p_LHG = Bio@p_LHG
-        )
-      })
+    if (!Habitat@use_habitat) {
+      if (!length(Bio@phi)) {
+        Bio@phi <- sapply(1:SOM@nsim, function(x) {
+          calc_phi(
+            Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage, Bio@n_g),
+            p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
+            p_female = Bio@p_female,
+            fec = matrix(Bio@fec, Bio@maxage, Bio@n_g),
+            s_enroute = Bio@s_enroute,
+            n_g = Bio@n_g,
+            p_LHG = Bio@p_LHG
+          )
+        })
+      }
+      Bio <- check_numeric2nsim(Bio, "phi", nsim)
     }
-    Bio <- check_numeric2nsim(Bio, "phi", nsim)
 
     # Habitat
-    Habitat <- SOM@Habitat[[s]]
-    Habitat <- check_numeric(Habitat, "capacity_smolt_improve", default = 1)
-    Habitat <- check_numeric(Habitat, "kappa_improve", default = 1)
+    if (Habitat@use_habitat) {
+      Habitat <- check_numeric(Habitat, "egg_rel", default = "BH")
+      Habitat <- check_numeric(Habitat, "egg_prod", default = 1)
+      Habitat <- check_numeric(Habitat, "egg_capacity", default = Inf)
+
+      Habitat <- check_numeric(Habitat, "fry_rel", default = "BH")
+      Habitat <- check_numeric(Habitat, "fry_prod", default = 0.4)
+      Habitat <- check_numeric(Habitat, "fry_capacity", default = Inf)
+      if (!length(Habitat@fry_sdev)) {
+        Habitat@fry_sdev <- matrix(1, nsim, SOM@proyears)
+      }
+      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", nsim, SOM@proyears)
+
+      Habitat <- check_numeric(Habitat, "smolt_rel", default = "BH")
+      Habitat <- check_numeric(Habitat, "smolt_prod", default = 1)
+      Habitat <- check_numeric(Habitat, "smolt_capacity", default = Inf)
+      if (!length(Habitat@smolt_sdev)) {
+        Habitat@smolt_sdev <- matrix(1, nsim, SOM@proyears)
+      }
+      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", nsim, SOM@proyears)
+    }
 
     # Hatchery
     Hatchery <- SOM@Hatchery[[s]]

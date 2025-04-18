@@ -4,7 +4,7 @@
 \alias{calc_SRR}
 \title{Calculate abundance from density-dependent mortality}
 \usage{
-calc_SRR(N1, N2 = N1, p, capacity, type = c("BH", "Ricker"))
+calc_SRR(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS"))
 }
 \arguments{
 \item{N1}{Numeric, the initial abundance that scales the density-independent survival term}
@@ -36,6 +36,10 @@ The Ricker stock recruit relationship is of the following form:
 where \eqn{\alpha = P}, \eqn{\beta = P/(Ce)}, \eqn{e} is Euler's number.
 
 Productivity \eqn{P} is in terms of abundance per unit of \eqn{N_1} and \eqn{N_2}.
+
+The hockey stick is of the following form:
+
+\deqn{\textrm{Smolt} = \begin{cases}p N_1 &, N_1 \le \frac{N_1}{N_2}C\\ \frac{N_1}{N_2}C &, N_1 \gt \frac{N_1}{N_2}C\end{cases}}
 }
 \seealso{
 \code{\link[=calc_SRRpars]{calc_SRRpars()}}

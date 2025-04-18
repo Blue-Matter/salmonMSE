@@ -16,9 +16,8 @@
 #' @param s_enroute Numeric, en route survival of the escapement to the spawning grounds
 #' @param p_female Numeric, proportion female for calculating the egg production.
 #' @param fec Vector `[maxage]`. The fecundity at age schedule of spawners
-#' @param s_egg_fry Numeric. Egg-fry survival
-#' @param SRRpars Data frame containing stock recruit parameters for natural smolt production.
-#' Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve
+#' @param SRRpars Data frame containing stock recruit parameters for natural smolt production from egg production.
+#' Column names include: SRrel, kappa, capacity, Smax, phi
 #' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
 #' @param fitness_args Named list containing various arguments controlling population fitness from hatchery production.
 #' Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss
@@ -48,8 +47,8 @@
 #' - `makeRel_smolt()` returns a list that is passed to openMSE as a inter-population relationship
 #' @keywords internal
 smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hatchery"),
-                       s_enroute, p_female, fec, s_egg_fry, SRRpars, # Spawning (natural production)
-                       hatchery_args, fitness_args, s, g, prop_LHG, r) {
+                       s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
+                       hatchery_args, fitness_args, habitat_args, s, g, prop_LHG, r) {
 
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
@@ -204,9 +203,40 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     fitness_loss <- matrix(1, 2, 3)
   }
 
-  # Fry production after fitness loss
-  Fry_NOS <- Egg_NOS * s_egg_fry * fitness_loss[1, 1]
-  Fry_HOS <- Egg_HOS * s_egg_fry * fitness_loss[1, 1]
+  # Egg production from egg output
+  xx <- max(x, 1)
+  t <- 0.5 * (y - 1) + 1
+  if (habitat_args$use_habitat) {
+    Habitat <- habitat_args$Habitat
+
+    Egg_prod_NOS <- calc_SRR(
+      Egg_HOS, sum(Egg_HOS, Egg_NOS),
+      p = Habitat@egg_prod, capacity = Habitat@egg_capacity,
+      type = Habitat@egg_rel
+    )
+    Egg_prod_HOS <- calc_SRR(
+      Egg_HOS, sum(Egg_HOS, Egg_NOS),
+      p = Habitat@egg_prod, capacity = Habitat@egg_capacity,
+      type = Habitat@egg_rel
+    )
+
+    # add sdev
+    Fry_NOS <- calc_SRR(
+      Egg_prod_NOS, sum(Egg_prod_NOS, Egg_prod_HOS),
+      p = Habitat@fry_prod * fitness_loss[1, 1], capacity = Habitat@fry_capacity * fitness_loss[1, 1],
+      type = Habitat@fry_rel
+    ) * Habitat@fry_sdev[xx, t]
+    Fry_HOS <- calc_SRR(
+      Egg_prod_HOS, sum(Egg_prod_NOS, Egg_prod_HOS),
+      p = Habitat@fry_prod * fitness_loss[1, 1], capacity = Habitat@fry_capacity * fitness_loss[1, 1],
+      type = Habitat@fry_rel
+    ) * Habitat@fry_sdev[xx, t]
+
+  } else {
+    # Egg and fry production from egg output
+    Fry_NOS <- Egg_prod_NOS <- Egg_NOS
+    Fry_HOS <- Egg_prod_HOS <- Egg_HOS
+  }
 
   # Hatchery production after fitness loss
   yearling <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
@@ -214,17 +244,25 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   total_fry <- sum(Fry_NOS, Fry_HOS, subyearling)
 
   # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
-  xx <- max(x, 1)
   SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
 
   # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
   if (output == "hatchery") {
-    smolt_subyearling_r <- calc_smolt(
-      subyearling[r], total_fry,
-      SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-      SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[2, 2],
-      SRrel
-    )
+
+    if (habitat_args$use_habitat) {
+      smolt_subyearling_r <- calc_SRR(
+        subyearling[r], total_fry,
+        p = Habitat@smolt_prod * fitness_loss[2, 2], capacity = Habitat@smolt_capacity * fitness_loss[2, 2],
+        type = Habitat@smolt_rel
+      )
+    } else {
+      smolt_subyearling_r <- calc_smolt(
+        subyearling[r], total_fry,
+        SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+        fitness_loss[2, 1] * fitness_loss[2, 2],
+        SRrel
+      )
+    }
     smolt_rel_r <- yearling[r] + smolt_subyearling_r
 
     # Save state variable for hatchery production
@@ -263,25 +301,39 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   Fry_NOS_g <- sum(Fry_NOS) * prop_LHG
   Fry_HOS_g <- sum(Fry_HOS) * prop_LHG
 
-  smolt_NOS_g <- calc_smolt(
-    Fry_NOS_g, total_fry,
-    SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-    SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
-    SRrel
-  )
+  if (habitat_args$use_habitat) {
+    smolt_NOS_g <- calc_SRR(
+      Fry_NOS_g, total_fry,
+      p = Habitat@smolt_prod * fitness_loss[1, 2], capacity = Habitat@smolt_capacity * fitness_loss[1, 2],
+      type = Habitat@smolt_rel
+    ) * Habitat@smolt_sdev[xx, t]
 
-  smolt_HOS_g <- calc_smolt(
-    Fry_HOS_g, total_fry,
-    SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-    SRRpars[xx, "kappa_improve"], SRRpars[xx, "capacity_smolt_improve"], fitness_loss[1, 2],
-    SRrel
-  )
+    smolt_HOS_g <- calc_SRR(
+      Fry_NOS_g, total_fry,
+      p = Habitat@smolt_prod * fitness_loss[1, 2], capacity = Habitat@smolt_capacity * fitness_loss[1, 2],
+      type = Habitat@smolt_rel
+    ) * Habitat@smolt_sdev[xx, t]
+  } else {
+    smolt_NOS_g <- calc_smolt(
+      Fry_NOS_g, total_fry,
+      SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+      fitness_loss[1, 1] * fitness_loss[1, 2],
+      SRrel
+    )
+
+    smolt_HOS_g <- calc_smolt(
+      Fry_HOS_g, total_fry,
+      SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+      fitness_loss[1, 1] * fitness_loss[1, 2],
+      SRrel
+    )
+  }
 
   # Predicted smolts from historical SRR parameters and openMSE setup
-  # if there were no hatchery production, habitat improvement, enroute mortality, s_egg_fry = 1, or multiple LHG
+  # if there were no hatchery production, habitat improvement, enroute mortality, or multiple LHG
   Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec)
   smolt_NOS_SRR <- calc_smolt(
-    Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity_smolt"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+    Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
     SRrel = SRrel
   )
 
@@ -387,8 +439,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 #' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
 makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
                           output = c("natural", "hatchery"), s_enroute,
-                          p_female, fec, s_egg_fry, SRRpars,  # Spawning (natural production)
-                          hatchery_args, fitness_args, g, prop_LHG, r) {
+                          p_female, fec, SRRpars,  # Spawning (natural production)
+                          hatchery_args, fitness_args, habitat_args, g, prop_LHG, r) {
 
   output <- match.arg(output)
 
@@ -398,12 +450,12 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
   formals(.smolt_func)$s_enroute <- s_enroute
   formals(.smolt_func)$p_female <- p_female
   formals(.smolt_func)$fec <- fec
-  formals(.smolt_func)$s_egg_fry <- s_egg_fry
 
   formals(.smolt_func)$SRRpars <- SRRpars
 
   formals(.smolt_func)$hatchery_args <- hatchery_args
   formals(.smolt_func)$fitness_args <- fitness_args
+  formals(.smolt_func)$habitat_args <- habitat_args
   formals(.smolt_func)$s <- s
 
   if (output == "natural") {

@@ -18,25 +18,45 @@ knitr::opts_chunk$set(
 library(dplyr)
 ```
 
-salmonMSE utilizes an age-structured model. The population is tracked by age and year but various dynamics correspond to the salmon life stages as described below.
+salmonMSE utilizes an age-structured model in the projections. The population is tracked by age and year but various dynamics correspond to the salmon life stages as described below.
 
-# Definitions
+# Variable definitions
+
+## Natural production
 
 *Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.*
 
-```{r param, echo = FALSE}
+```{r param-bio, echo = FALSE}
 param <- read.csv("tables/glossary.csv") %>%
   mutate(Name = paste0("$", Name, "$"))
-knitr::kable(param)
+knitr::kable(param[grepl("Natural production|Population dynamics", param$Type), ])
+```
+
+## Habitat
+
+```{r param-habitat, echo = FALSE}
+knitr::kable(param[grepl("Habitat", param$Type), ])
+```
+
+## Hatchery
+
+```{r param-hatchery, echo = FALSE}
+knitr::kable(param[grepl("Hatchery|Fitness", param$Type), ])
+```
+
+## Harvest
+
+```{r param-harvest, echo = FALSE}
+knitr::kable(param[grepl("Harvest", param$Type), ])
 ```
 
 # Natural production
 
-First, we consider natural production in the absence of fitness effects from the hatchery improvement.
+First, we consider natural production in the absence of fitness effects arising from hatchery production.
 
-## Egg production
+## Spawning output
 
-From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding egg production of the subsequent generation is calculated as:
+From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding spawning output (units of eggs) of the subsequent generation is calculated as:
 
 \begin{align}
 \textrm{Egg}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
@@ -45,13 +65,11 @@ From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding egg pr
 
 where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the superscript denotes the parentage of the progeny.
 
-## Fry
+## Smolt production - no habitat modeling
 
-Fry production is assumed to be equal to egg production, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_y = \textrm{Egg}^\textrm{HOS}_y$.
+If no habitat modeling is used, then fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_y = \textrm{Egg}^\textrm{HOS}_y$.
 
-## Smolts
-
-Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
+Survival from egg to smolt life stage is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
@@ -60,11 +78,13 @@ Survival to the smolt stage is density-dependent. With the Beverton-Holt stock-r
 \textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}
 \end{align}
 
-where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{smolt}}$, the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
+where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$, the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
 
-The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total number of fry, as well as subyearling hatchery releases (see [Hatchery](#hatchery-production) section), in the system.
+>Smolt production can be predicted from total adult spawners by setting $\textrm{Fec}_a = 1$ and $\phi = 1$.
 
-If there is knife-edge maturity, i.e., all fish mature at the same age, then the equation simplifies to $\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}$, with $\textrm{SAR}$ as the marine survival (between 0-1).
+The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total number of fry in competition with subyearling hatchery releases (see [Hatchery](#hatchery-production) section).
+
+If there is knife-edge maturity, i.e., all fish mature at the terminal age, the equation simplifies to $\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}$, with $\textrm{SAR}$ as the marine survival (between 0-1).
 
 >With the Ricker stock-recruit relationship, smolt production is
 >
@@ -75,38 +95,71 @@ If there is knife-edge maturity, i.e., all fish mature at the same age, then the
 >\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])
 >\end{align}
 >
->where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$.
+>where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$, $S_\textrm{max}$ is the egg production that maximizes smolt production.
 
-# Habitat improvement
+## Smolt production - habitat modeling
 
-Habitat improvement can improve either the productivity parameter, capacity parameter, or both. 
+Egg to smolt production can also be modeled as a series of density-dependent functions by life stage, following the approach of [Jorgensen et al. 2021](https://doi.org/10.1371/journal.pone.0256792). Three relationships are modeled.
 
-Base terms $\alpha$ and $\beta$ are used in the historical period of the model, e.g., conditioning from data.
-In the projection, the stock recruit parameters $\alpha^\prime$ and $\beta^\prime$ are updated with the improvement parameters, $I_\kappa$ or $I_C$, as specified in the operating model.
-
-The corresponding parameters in the projection is:
+The realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from the spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
 
 \begin{align}
-\alpha^\prime &= \dfrac{\kappa}{\phi}\times I_\kappa\\
-\beta^\prime &= 
-\begin{cases}
-\dfrac{\alpha^\prime}{C_\textrm{smolt} \times I_C} & \textrm{Beverton-Holt}\\
-\dfrac{1}{S_\textrm{max} \times I_C} & \textrm{Ricker}\\
-\end{cases}
+\widetilde{\textrm{Egg}}^\textrm{NOS}_y &= \frac{P^\textrm{inc} \times 
+\textrm{Egg}^\textrm{NOS}_y}{1 + \frac{P^\textrm{inc}}{C^\textrm{inc}}(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)}\\
+\widetilde{\textrm{Egg}}^\textrm{HOS}_y &= \frac{P^\textrm{inc} \times 
+\textrm{Egg}^\textrm{HOS}_y}{1 + \frac{P^\textrm{inc}}{C^\textrm{inc}}(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)}
 \end{align}
 
+where productivity $P$ is the maximum survival as spawning output approaches zero and $C$ is the asymptotic production.
 
-```{r SRR, echo = FALSE}
-knitr::include_graphics("../man/figures/SRR.png")
-```
+>Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
 
-*Comparison of the change in two density-dependent stock-recruit functions if the improvement parameter is applied to either the productivity (kappa) or capacity parameter. The base value of kappa is 3, Beverton-Holt capacity is 1000, and Ricker Smax is 500. The dotted line is the one-to-one unfished replacement line (corresponding to $1/\phi$).*
+Fry production is modeled as:
+
+\begin{align}
+\textrm{Fry}^\textrm{NOS}_{y+1} &= \frac{P^\textrm{egg-fry} \times 
+\widetilde{\textrm{Egg}}^\textrm{NOS}_y}{1 + \frac{P^\textrm{egg-fry}}{C^\textrm{egg-fry}}(\widetilde{\textrm{Egg}}^\textrm{NOS}_y + \widetilde{\textrm{Egg}}^\textrm{HOS}_y)} \times \varepsilon^\textrm{egg-fry}_y\\
+\textrm{Fry}^\textrm{HOS}_{y+1} &= \frac{P^\textrm{egg-fry} \times 
+\widetilde{\textrm{Egg}}^\textrm{HOS}_y}{1 + \frac{P^\textrm{egg-fry}}{C^\textrm{egg-fry}}(\widetilde{\textrm{Egg}}^\textrm{NOS}_y + \widetilde{\textrm{Egg}}^\textrm{HOS}_y)} \times \varepsilon^\textrm{egg-fry}_y
+\end{align}
+
+where $\varepsilon^\textrm{egg-fry}_y$ is a year-specific deviation in survival. They can be modeled as a function of a proposed time series of environmental variables $\eta$, for example, $\varepsilon^\textrm{egg-fry}_y = \prod_j f(\eta_{y,j})$ or $\varepsilon^\textrm{egg-fry}_y = \sum_j f(\eta_{y,j})$.
+
+Similarly, smolt production is modeled as:
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_y &= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)} \times \varepsilon^\textrm{fry-smolt}_y\\
+\textrm{Smolt}^\textrm{HOS}_y &= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)} \times \varepsilon^\textrm{fry-smolt}_y
+\end{align}
+
+Alternative scenarios with changes in productivity or capacity parameters can be used to evaluate changes in life stage survival from habitat improvement or mitigation measures as part of a management strategy, or from climate regimes (low productivity vs. high productivity, or low capacity vs. high capacity).
+An increase in capacity can arise from restoration which increases the area of suitable habitat.
+An increase in productivity can arise from improvement in habitat, e.g., sediment quality.
+
+Approaches such as [HARP](https://www.fisheries.noaa.gov/resource/tool-app/habitat-assessment-and-restoration-planning-harp-model) and [CEMPRA](https://www.essa.com/explore-essa/projects/cumulative-effects-model-for-priority-of-recovery-actions-cempra/) can inform productivity and capacity parameters across these life stages as quantitative relationships between habitat variables.
+
+>For all life stages, a hockey-stick formulation is also possible. For example:
+>
+>$$
+>\widetilde{\textrm{Egg}}^\textrm{NOS}_y = 
+>\begin{cases}
+>P^\textrm{inc} \times \textrm{Egg}^\textrm{NOS}_y &, \textrm{Egg}^\textrm{NOS}_y \le C^\textrm{inc*}_y/P^\textrm{inc}\\
+>C^\textrm{inc*}_y &, \textrm{otherwise}\\
+>\end{cases}
+>$$
+>
+>where $C^\textrm{inc*}_y = C^\textrm{inc} \times \textrm{Egg}^\textrm{NOS}_y/(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)$ is the capacity apportioned to natural spawners based on relative abundance.
 
 # Hatchery production
 
-Hatchery production is controlled by several sets of variables specified by the analyst.
+Hatchery production is controlled by several sets of variables specified by the analyst, roughly following the [AHA](https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/) approach.
 
 The first consideration is to specify the target number of annual releases of sub-yearlings $n^\textrm{subyearling}_\textrm{target}$ and yearlings $n^\textrm{yearling}_\textrm{target}$. 
+
+Yearlings are intended to represent hatchery releases that immediately leave freshwater environment, while subyearlings are subject to density-dependent survival in competition with natural production of fry, e.g., they reside in freshwater environment for a period of time before leaving.
+
 Going backwards, the corresponding number of eggs needed to reach the target number depends on the egg survival to those life stages.
 Finally, the corresponding number of broodtake is dependent on the brood fecundity and hatchery survival of broodtake.
 
@@ -193,8 +246,6 @@ or
 $$
 \textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \alpha \times n^\textrm{subyearling}_{y+1} \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1}))
 $$
-
-Subyearlings are subject to density-dependent survival in competition with natural production of fry.
 
 
 # Pre-terminal fishery
@@ -358,38 +409,28 @@ Effective proportions, i.e., weighting by age-class fecundity, accounts for olde
 
 ## Fitness loss
 
-Fitness can reduce survival in the egg, fry, and immature life stages:
+Fitness can reduce survival in the egg, fry, and immature life stages by reducing the productivity and capacity parameters.
+
+If modeling egg to smolt density-dependence (in the absence of habitat modeling), the productivity parameter is the product of the base value and the reduced the fitness loss function:
 
 \begin{align}
-\textrm{Fry}^\textrm{NOS}_{y+1} &= \textrm{Egg}^\textrm{NOS}_y \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}\\
-\textrm{Fry}^\textrm{HOS}_{y+1} &= \textrm{Egg}^\textrm{HOS}_y \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{egg}}
+P^\textrm{egg-smolt*}_y &= P^\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}\\
+C^\textrm{egg-smolt*}_y &= C^\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}
+M^\textrm{NOS}_{y,a} &= -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times (W^\textrm{nat.}_{y-a})^{\ell_\textrm{juv}})
 \end{align}
 
-\begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha^{\prime\prime} \times 
-\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1})}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha^{\prime\prime} \times 
-\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta^{\prime\prime} (\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1})}
-\end{align}
-
-$$
-M^\textrm{NOS}_{y,a} = -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times (W^\textrm{nat.}_{y-a})^{\ell_\textrm{smolt}})
-$$
-
-with $\ell_i$ is the proportion of the fitness loss apportioned among the three life stages, $\sum_i \ell_i = 1$, and density-dependent parameters $\alpha^{\prime\prime} = \frac{\kappa}{\phi} \times I_\kappa \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}$, $\beta^{\prime\prime} = \alpha^{\prime\prime}/[C_\textrm{smolt} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]$.
-
+with $\ell_i$ is the proportion of the fitness loss apportioned to life stage $i$ (either egg, fry, or juvenile-marine), with $\sum_i \ell_i = 1$, and density-dependent parameters.
 In the marine environment, age-specific natural survival is reduced proportional to the fitness loss term and modeled as a cohort effect.
 
->With the Ricker density-dependent survival,
->
->\begin{align}
->\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha^{\prime\prime} \times 
->\textrm{Fry}^\textrm{NOS}_{y+1} \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
->\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha^{\prime\prime} \times 
->\textrm{Fry}^\textrm{HOS}_{y+1} \times \exp(-\beta^{\prime\prime} [\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
->\end{align}
->
->with $\beta^{\prime\prime} = 1/[S_\textrm{max} \times I_C \times (W^\textrm{nat.}_{y+1})^{\ell_\textrm{fry}}]$.
+>With the Ricker density-dependent survival, the beta parameter is adjusted with 
+>$\beta^*_y = 1/[S_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]$.
+
+If habitat variables are modeled, then the egg and fry fitness losses adjust the productivity and capacity of the corresponding life stage:
+
+\begin{align}
+P^\textrm{egg-fry}_y &= P^\textrm{egg-fry} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\\
+P^\textrm{fry-smolt}_y &= P^\textrm{fry-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}
+\end{align}
 
 ## PNI
 

@@ -20,7 +20,7 @@ wrapper <- function(x, Design) {
     maxage = 3,
     p_mature = c(0, 0, 1),
     SRrel = "BH",
-    capacity_smolt = 17250,
+    capacity = 17250,
     kappa = kappa,
     Mjuv_NOS = c(0, -log(SAR), 0),
     fec = c(0, 0, 5040),
@@ -60,8 +60,7 @@ wrapper <- function(x, Design) {
 
   Habitat <- new(
     "Habitat",
-    capacity_smolt_improve = 1,
-    kappa_improve = 1
+    use_habitat = FALSE
   )
 
   Harvest <- new(
@@ -135,13 +134,13 @@ ggsave("man/figures/decision_table_catch60.png", g, height = 3, width = 3)
 
 g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability NOS > SMSY",
                          xlab =  "Hatchery releases", ylab = "Productivity")
-ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
+#ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
 # Make tradeoff plot
 g <- plot_tradeoff(pm$PNI_80, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_80", "Catch60",
                    x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
   scale_shape_manual(values = c(1, 2, 4, 16))
-ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
+#ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
 
 g <- plot_tradeoff(pm$PNI, pm$Catch, factor(pm$kappa), factor(pm$hatch), "Mean PNI", "Mean Catch",
                    x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
@@ -223,7 +222,7 @@ g <- plot_tradeoff(as.matrix(Kobe[, 3:5]), as.matrix(Kobe[, 6:8]),
   geom_hline(yintercept = 1, linetype = 2) +
   scale_shape_manual(values = c(1, 2, 4, 16)) +
   expand_limits(x = 0, y = 0)
-ggsave("man/figures/Kobe_plot_median_ci.png", g, height = 3, width = 4.5)
+#ggsave("man/figures/Kobe_plot_median_ci.png", g, height = 3, width = 4.5)
 
 # Make time series
 PNI_ts <- lapply(1:nrow(Design), function(x) {

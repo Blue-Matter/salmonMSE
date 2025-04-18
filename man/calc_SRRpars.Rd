@@ -4,7 +4,7 @@
 \alias{calc_SRRpars}
 \title{Convert density-dependent survival parameters}
 \usage{
-calc_SRRpars(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker"))
+calc_SRRpars(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker", "HS"))
 }
 \arguments{
 \item{p}{Numeric, the productivity parameter that sets the maximum survival as the initial abundance approaches zero}

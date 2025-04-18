@@ -117,17 +117,15 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
     calc_smolt(
       N1 = SOM@Bio[[s]]@phi[x],
       kappa = SOM@Bio[[s]]@kappa[x],
-      capacity = SOM@Bio[[s]]@capacity_smolt[x],
+      capacity = SOM@Bio[[s]]@capacity[x],
       Smax = SOM@Bio[[s]]@Smax[x],
       phi = SOM@Bio[[s]]@phi[x],
-      kappa_improve = SOM@Habitat[[s]]@kappa_improve,
-      capacity_improve = SOM@Habitat[[s]]@capacity_smolt_improve,
       SRrel = SOM@Bio[[s]]@SRrel,
       per_recruit = TRUE
     )
   })
 
-  # E is egg production if s_egg_fry = 1, otherwise fry production
+  # Egg production
   E0 <- smolt0 * SOM@Bio[[s]]@phi
   E <- seq(0, 1.5 * max(E0), length.out = 100)
 
@@ -136,11 +134,9 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
       calc_smolt(
         N1 = N,
         kappa = SOM@Bio[[s]]@kappa[x],
-        capacity = SOM@Bio[[s]]@capacity_smolt[x],
+        capacity = SOM@Bio[[s]]@capacity[x],
         Smax = SOM@Bio[[s]]@Smax[x],
         phi = SOM@Bio[[s]]@phi[x],
-        kappa_improve = SOM@Habitat[[s]]@kappa_improve,
-        capacity_improve = SOM@Habitat[[s]]@capacity_smolt_improve,
         SRrel = SOM@Bio[[s]]@SRrel
       )
     })
@@ -160,9 +156,8 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
   }
 
   if (figure && any(xplot > 0, na.rm = TRUE)) {
-    xunit <- ifelse(SOM@Bio[[s]]@s_egg_fry < 1, "Fry", "Egg")
-    xlab <- paste(xunit, "production")
-    ylab <- ifelse(surv, paste0(xunit, "-smolt survival"), "Smolt production")
+    xlab <- "Egg production"
+    ylab <- ifelse(surv, "Egg-smolt survival", "Smolt production")
 
     if (missing(ylim)) ylim <- c(0, 1.1) * range(xplot, na.rm = TRUE)
 

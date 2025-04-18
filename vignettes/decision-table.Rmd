@@ -25,9 +25,9 @@ We extend the [simple example](../articles/example.html) of a salmon operating m
 We will explore the effect of four hatchery production options with zero, 5000, 10000, or 15000 annual releases. In the integrated hatchery, we also assume non-selective broodtake, i.e., the mark rate is zero and hatchery/natural origin fish cannot be distinguished, and the maximum brood/escapement ratio is 0.5.
 The carrying capacity of the freshwater environment is 17,250 smolts.
 
-These four options are evaluated across three states of nature with respective to productivity: a mean value of either 3, 6, or 9. We sample productivity over 100 simulations with a lognormal standard deviation of 0.4.
+These four options are evaluated across three states of nature with respective to productivity: a mean value of either 3, 6, or 9 recruits/spawner. We sample productivity over 100 simulations with a lognormal standard deviation of 0.4.
 
-There is no habitat enhancement, i.e., no changes to the smolt production function or time-varying survival, and a fixed harvest rate is applied at 0.50 in all scenarios. The decision-making context here assumes that the harvest rate is fixed.
+A fixed harvest rate is applied at 0.50 in all scenarios, and no freshwater specific life stages are modeled (habitat features not used). The decision-making context here assumes that the harvest rate is fixed.
 
 Below is the code for performing such a simulation. We specify the various simulation conditions (natural productivity and hatchery production) in a data frame and write a wrapper function that loops over each row of the data frame.
 The simulations initialize at 1000 natural and hatchery spawners each, and project forward 50 years to obtain the system dynamics in the long-term equilibrium (the generation time is 3 years).
@@ -60,7 +60,7 @@ wrapper <- function(x, Design) {
     maxage = 3,
     p_mature = c(0, 0, 1),
     SRrel = "BH",
-    capacity_smolt = 17250,
+    capacity = 17250,
     kappa = kappa,
     Mjuv_NOS = c(0, -log(SAR), 0),
     fec = c(0, 0, 5040),
@@ -96,8 +96,7 @@ wrapper <- function(x, Design) {
 
   Habitat <- new(
     "Habitat",
-    capacity_smolt_improve = 1,
-    kappa_improve = 1
+    use_habitat = FALSE
   )
 
   Harvest <- new(

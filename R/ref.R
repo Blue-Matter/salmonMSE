@@ -139,9 +139,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       if (y < nyears) {
         Njuv[1, y+1] <- calc_smolt(
           Egg[y],
-          kappa = SRRpars["kappa"], capacity = SRRpars["capacity_smolt"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
-          kappa_improve = SRRpars["kappa_improve"], capacity_improve = SRRpars["capacity_smolt_improve"], fitness_loss = 1,
-          SRrel = as.character(SRRpars["SRrel"])
+          kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
+          fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"])
         ) %>%
           as.numeric()
         Njuv[2:maxage, y+1] <- Njuv[2:maxage - 1, y] * exp(-Mjuv[2:maxage - 1]) * (1 - p_mature[2:maxage - 1])
@@ -174,9 +173,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 
   Smolt <- calc_smolt(
     EPR,
-    kappa = SRRpars["kappa"], capacity = SRRpars["capacity_smolt"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
-    kappa_improve = SRRpars["kappa_improve"], capacity_improve = SRRpars["capacity_smolt_improve"], fitness_loss = 1,
-    SRrel = as.character(SRRpars["SRrel"]), per_recruit = TRUE
+    kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
+    fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"]), per_recruit = TRUE
   ) %>%
     as.numeric()
 

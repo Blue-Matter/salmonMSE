@@ -55,7 +55,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
     Stock@R0 <- 1
 
     SRRpars <- data.frame(x = 1:SOM@nsim)
-    SRRfun <- function(SB, SRRpars) ifelse(sum(SB), 1, 0)
+    SRRfun <- function(SB, SRRpars) if(sum(SB)) 1 else 0
     relRfun <- function(SSBpR, SRRpars) return(1)
     SPRcrashfun <- function(SSBpR0, SRRpars) return(0)
     cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)
@@ -339,18 +339,17 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
 }
 
 
-#' Calculate unfished fry per smolt with life history groups
+#' Calculate unfished egg per smolt with life history groups
 #'
 #' @param Mjuv Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Juvenile natural mortality
 #' @param p_mature Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Maturity at age
 #' @param p_female Numeric. Proportion female
 #' @param fec Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Fecundity at age
 #' @param s_enroute Numeric, en-route survival of escapement to spawning grounds
-#' @param s_egg_fry Numeric, egg-fry survival
 #' @param n_g Integer. Number of life history groups
 #' @param p_LHG Vector length `n_g` of proportion of life history groups per recruit. Default is `rep(1/n_g, n_g)`
 #' @keywords internal
-calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, s_egg_fry = 1, n_g = 1, p_LHG) {
+calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG) {
 
   if (n_g == 1) {
     if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
@@ -362,8 +361,7 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, s_egg_fry = 1
   surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g], p_mature[, g])) # age x g
   Esc <- p_mature * surv_juv # escapement per smolt
   Egg <- p_female * Esc * s_enroute * fec
-
-  s_egg_fry * sum(Egg)
+  sum(Egg)
 }
 
 make_Stock_objects <- function(SOM, s = 1) {

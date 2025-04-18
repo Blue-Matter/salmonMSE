@@ -24,9 +24,14 @@
 #'
 #' Productivity \eqn{P} is in terms of abundance per unit of \eqn{N_1} and \eqn{N_2}.
 #'
+#' The hockey stick is of the following form:
+#'
+#' \deqn{\textrm{Smolt} = \begin{cases}p N_1 &, N_1 \le \frac{N_1}{N_2}C\\ \frac{N_1}{N_2}C &, N_1 \gt \frac{N_1}{N_2}C\end{cases}}
+#'
+#'
 #' @seealso [calc_SRRpars()]
 #' @export
-calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker")) {
+calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
   type <- match.arg(type)
 
   pars <- calc_SRRpars(p, capacity)
@@ -34,8 +39,12 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker")) {
   beta <- pars[2]
   if (type == "BH") {
     out <- alpha * N1 / (1 + beta * N2)
-  } else {
+  } else if (type == "Ricker") {
     out <- alpha * N1 * exp(-beta * N2)
+  } else {
+    capacity_N1 <- N1/N2 * capacity
+    Nstar <- capacity_N1/p
+    out <- pmin(p * N1, capacity_N1)
   }
   return(out)
 }
@@ -62,13 +71,14 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker")) {
 #' \deqn{\beta = \dfrac{\alpha}{Ce}}, \eqn{e} is Euler's number.
 #' @seealso [calc_SRR()]
 #' @export
-calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker")) {
+calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker", "HS")) {
   type <- match.arg(type)
   alpha <- p/f/p_female
   beta <- switch(
     type,
     "BH" = alpha/capacity,
-    "Ricker" = exp(-1) * alpha/capacity
+    "Ricker" = exp(-1) * alpha/capacity,
+    NA
   )
   c(alpha, beta)
 }
@@ -77,16 +87,16 @@ make_SRR <- function(Bio, Habitat) {
 
   a <- Bio@kappa/Bio@phi
   if (Bio@SRrel == "BH") {
-    b <- a/Bio@capacity_smolt
+    b <- a/Bio@capacity
     SRRpars <- data.frame(
       a = a, b = b, phi = Bio@phi, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
-      capacity_smolt = Bio@capacity_smolt, kappa_improve = Habitat@kappa_improve, capacity_smolt_improve = Habitat@capacity_smolt_improve
+      capacity = Bio@capacity
     )
   } else {
     b <- 1/Bio@Smax
     SRRpars <- data.frame(
       a = a, b = b, phi = Bio@phi, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
-      Smax = Bio@Smax, kappa_improve = Habitat@kappa_improve, capacity_smolt_improve = Habitat@capacity_smolt_improve
+      Smax = Bio@Smax
     )
   }
   SRRfun <- function(SB, SRRpars) {

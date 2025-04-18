@@ -51,10 +51,10 @@ Harvest <- new("Harvest", ...)
 SOM <- new("SOM", Bio, Hatchery, Habitat, Harvest)
 ```
 
-- The `Bio` class specify the natural production, for example, maturity, fecundity, stock-recruit relationship, and marine survival.
-- The `Habitat` class specify the change in the stock-recruit relationship (density-dependent smolt production), for example, from improvements to stream habitat.
-- The `Hatchery` class specify the parameters surrounding hatchery production, such as the number of target releases, removal of hatchery spawners to maintain high proportions of natural spawners, and the population fitness parameters arising from interbreeding of hatchery and natural spawners. 
-- The `Harvest` class specify the exploitation rate and harvest control rules for the fishery.
+- The `Bio` class specifies the natural production, for example, maturity, fecundity, stock-recruit relationship, and marine survival.
+- The `Habitat` class (optional) specifies freshwater survival from egg, fry, and smolt life stages as a series of density-dependent functions, with options for time-varying survival, for example, as a function of environmental or habitat mitigation/restoration actions.
+- The `Hatchery` class specifies the parameters surrounding hatchery production, such as the number of target releases, removal of hatchery spawners to maintain high proportions of natural spawners, and the population fitness parameters arising from interbreeding of hatchery and natural spawners. 
+- The `Harvest` class specifies the exploitation rate and harvest control rules for the fishery.
 
 Additional slots in the `SOM` class control the projections, for example, the number of years and simulation replicates.
 

@@ -1,6 +1,26 @@
 
-#' @slot capacity_smolt_improve Numeric. The proportional change in the smolt capacity parameter in the projection period.
-#'  For example, 1.1 represents a 10 percent improvement. For the Beverton-Holt function, this increases the asymptote by 10 percent.
-#'  For the Ricker function, this increases the maximum smolt production by 10 percent. Default is 1.
-#' @slot kappa_improve Numeric. The proportional change in adult productivity, in the projection period.
-#'  For example, 1.1 represents a 10 percent improvement. Default is 1.
+#' @slot use_habitat Logical. If `TRUE`, utilize stage-specific density-dependent functions from egg production from incubation mortality,
+#'  egg-to-fry production, and fry-to-smolt production with annual deviations. Otherwise, the density-dependence is modeled for egg-to-smolt survival.
+#'  See `Bio` object.
+#' @slot egg_rel Character, density-dependent function egg production from total spawning output. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+#'  Default is "BH".
+#' @slot egg_prod Numeric, capacity for egg production from total spawning output (incubation). Default is 1.
+#'  Default if `Inf`.
+#' @slot egg_capacity Numeric, capacity for egg production from total spawning output (incubation). Set to `Inf` for density-independence.
+#'  Default is `Inf`.
+#' @slot fry_rel Character, density-dependent function for egg-to-fry production. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+#'  Default is "BH".
+#' @slot fry_prod Numeric between 0-1, productivity for egg production from total spawning output, i.e., maximum survival as egg production approaches zero.
+#'  Default is 0.4.
+#' @slot fry_capacity Numeric, capacity for fry production from egg production. Set to `Inf` for density-independence.
+#'  Default is `Inf`.
+#' @slot fry_sdev Matrix `[nsim, proyears]`, deviations from the density-dependent egg-fry survival. Can be utilized to incorporate
+#'  time-varying environmental, climate, or habitat mitigation effects. Default is `matrix(1, nsim, proyears)`.
+#' @slot smolt_rel Character, density-dependent function for fry-to-smolt production. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+#'  Default is "BH".
+#' @slot smolt_prod Numeric between 0-1, productivity for smolt production from fry, i.e., maximum survival as fry production approaches zero.
+#'  Default is 1.
+#' @slot smolt_capacity Numeric, capacity for smolt production from fry production. Set to `Inf` for density-independence.
+#'  Default is `Inf`.
+#' @slot smolt_sdev Matrix `[nsim, proyears]`, deviations from the density-dependent fry-smolt survival. Can be utilized to incorporate
+#'  time-varying environmental, climate, or habitat mitigation effects. Default is `matrix(1, nsim, proyears)`.

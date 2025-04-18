@@ -12,7 +12,7 @@ Bio <- lapply(1:ns, function(s) {
     maxage = 3,
     p_mature = c(0, 0, 1),
     SRrel = "BH",
-    capacity_smolt = ifelse(s == 1, 17250, 1000),     # Beverton-Holt asymptote. Not unfished capacity!!
+    capacity = ifelse(s == 1, 17250, 1000),     # Beverton-Holt asymptote. Not unfished capacity!!
     kappa = ifelse(s == 1, 3, 2),                     # Productivity in recruits per spawner
     Mjuv_NOS = c(0, -log(SAR), 0),
     fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
@@ -54,8 +54,7 @@ Hatchery <- lapply(1:ns, function(s) {
 Habitat <- lapply(1:ns, function(s) {
   new(
     "Habitat",
-    capacity_smolt_improve = 1,    # Keep carrying capacity (SR alpha/beta) constant
-    kappa_improve = 1              # Keep productivity (SR alpha) constant
+    use_habitat = FALSE
   )
 })
 

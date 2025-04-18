@@ -11,8 +11,6 @@ calc_smolt(
   capacity,
   Smax,
   phi = 1,
-  kappa_improve = 1,
-  capacity_improve = 1,
   fitness_loss = 1,
   SRrel = c("BH", "Ricker"),
   per_recruit = FALSE
@@ -32,10 +30,6 @@ and \code{Smax} is in units of spawners.}
 
 \item{phi}{Unfished egg per smolt (\code{1/phi} is the replacement line)}
 
-\item{kappa_improve}{Proportional change in kappa from habitat improvement}
-
-\item{capacity_improve}{Proportional change in capacity or Smax from habitat improvement}
-
 \item{fitness_loss}{Survival term to reduce smolt production due to fitness, between 0-1}
 
 \item{SRrel}{Character for the stock-recruit function}
@@ -46,5 +40,5 @@ and \code{Smax} is in units of spawners.}
 Numeric
 }
 \description{
-Calculate smolt production from base stock-recruit parameters, habitat improvement, and fitness loss
+Calculate smolt production from base stock-recruit parameters and fitness loss
 }

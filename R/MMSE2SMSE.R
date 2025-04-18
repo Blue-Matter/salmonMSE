@@ -104,12 +104,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     n_r <- length(unique(pindex$r[pindex$s == s & pindex$origin == "hatchery"]))
 
     s_enroute <- SOM@Bio[[s]]@s_enroute
-    s_egg_fry <- SOM@Bio[[s]]@s_egg_fry
-
-    habitat_change <- SOM@Habitat[[s]]@kappa_improve != 1 || SOM@Habitat[[s]]@capacity_smolt_improve != 1
-
-    use_smolt_func <- do_hatchery || habitat_change ||
-       s_enroute < 1 || has_strays || n_g > 1 || s_egg_fry < 1 || n_g > 1
+    use_smolt_func <- TRUE
 
     if (do_hatchery || has_strays) {
 

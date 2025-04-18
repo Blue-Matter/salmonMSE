@@ -36,7 +36,7 @@ Bio <- new(
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
-  capacity_smolt = 17250,           # Beverton-Holt asymptote. Not unfished capacity!
+  capacity = 17250,                 # Beverton-Holt asymptote. Not unfished capacity!
   kappa = 3,                        # Productivity in recruits per spawner
   Mjuv_NOS = c(0, -log(SAR), 0),    # Convert marine survival to an instantaneous mortality rate
   fec = c(0, 0, 5040),              # Spawning fecundity of NOS and HOS
@@ -47,13 +47,12 @@ Bio <- new(
 
 The next three objects control the management of the conservation unit through habitat, hatchery, and harvest options.
 
-Let's leave the habitat unchanged from the `Bio` object:
+No freshwater habitat specific features are used:
 
 ```{r, eval = FALSE}
 Habitat <- new(
   "Habitat",
-  capacity_smolt_improve = 1,    # Keep carrying capacity unchanged
-  kappa_improve = 1              # Keep productivity unchanged
+  use_habitat = FALSE
 )
 ```
 
@@ -184,7 +183,7 @@ Bio_stochastic <- new(
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
-  capacity_smolt = 17250,
+  capacity = 17250,
   kappa = kappa,
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),

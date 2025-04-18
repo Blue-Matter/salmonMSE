@@ -95,7 +95,10 @@ Hatchery_500k <- new(
   fitness_type = c("none", "none")
 )
 
-Habitat <- new("Habitat")
+Habitat <- new(
+  "Habitat",
+  use_habitat = FALSE
+)
 
 # Calculate initial equilibrium juvenile abundance at age such that the number of spawners = 50
 Nsp <- sapply(1:nsim, function(x) {
@@ -168,7 +171,7 @@ Sp <- data.frame(
   mutate(Total = NOS + HOS) %>%
   reshape2::melt()
 
-quants <- Sp %>% filter(variable == "Total") %>% pull(value) %>%
+quants <- Sp %>% dplyr::filter(variable == "Total") %>% pull(value) %>%
   quantile(c(0.025, 0.5, 0.975))
 
 g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
@@ -178,7 +181,7 @@ g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
   geom_vline(xintercept = quants[c("2.5%", "97.5%")], linetype = 3) +
   labs(x = "Spawners", y = "Density", colour = NULL, fill = NULL) +
   ggtitle("Long-term spawners with 500k hatchery releases")
-ggsave("examples/PVA_spawners.png", g, height = 3.5, width = 6)
+#ggsave("examples/PVA_spawners.png", g, height = 3.5, width = 6)
 
 # Plot annual spawners
 Sp <- rbind(
@@ -186,7 +189,7 @@ Sp <- rbind(
   SMSE_500k@HOS[, 1, ] %>% reshape2::melt() %>% mutate(type = "HOS")
 ) %>%
   rename(Sim = Var1, Year = Var2) %>%
-  filter(Year < proyears)
+  dplyr::filter(Year < proyears)
 Total <- Sp %>%
   summarise(value = sum(value), .by = c(Sim, Year)) %>%
   mutate(type = "Total")
@@ -208,7 +211,7 @@ g <- rbind(Sp, Total) %>%
   geom_point() +
   geom_ribbon(aes(ymin = min, ymax = max, fill = type), alpha = 0.25) +
   labs(x = "Year", y = "Spawners", fill = NULL, colour = NULL)
-ggsave("examples/PVA_spawners_ts.png", g, height = 3.5, width = 6)
+#ggsave("examples/PVA_spawners_ts.png", g, height = 3.5, width = 6)
 
 
 

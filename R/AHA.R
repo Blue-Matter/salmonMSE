@@ -32,8 +32,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       SOM@Bio[[s]]@SRrel <- "BH"
     }
 
-    if (!length(SOM@Bio[[s]]@capacity_smolt)) {
-      stop("Need to specify SOM@Bio[[", s, "]]@capacity_smolt")
+    if (!length(SOM@Bio[[s]]@capacity)) {
+      stop("Need to specify SOM@Bio[[", s, "]]@capacity")
     }
 
     if (SOM@Hatchery[[s]]@fitness_type[2] != "none") {
@@ -133,8 +133,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   }
 
   output <- .AHA(
-    prod_adult = Bio@kappa[x] * Habitat@kappa_improve,
-    capacity_adult = Bio@capacity_smolt[x] * Habitat@capacity_smolt_improve * SAR_NOS[x],
+    prod_adult = Bio@kappa[x],
+    capacity_adult = Bio@capacity[x] * SAR_NOS[x],
     fec_spawn = sum(Bio@fec),
     p_female = Bio@p_female,
     surv_ocean = SAR_NOS[x],

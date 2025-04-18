@@ -38,9 +38,8 @@ setClass(
     n_g = "numeric",
     p_LHG = "numeric",
     p_mature = "num.array",
-    s_egg_fry = "numeric",
     SRrel = "character",
-    capacity_smolt = "numeric",
+    capacity = "numeric",
     kappa = "numeric",
     Smax = "numeric",
     phi = "numeric",
@@ -57,7 +56,8 @@ setClass(
 # ---- Habitat Class -----
 #' Class \code{"Habitat"}
 #'
-#' The component of the operating model that controls habitat management.
+#' The component of the operating model that controls survival in the freshwater environment. Includes changes in survival from either
+#' environmental/climate effects or habitat mitigation.
 #'
 #' @name Habitat-class
 #' @docType class
@@ -75,8 +75,18 @@ setClass(
   "Habitat",
   slots = c(
     Name = "character",
-    capacity_smolt_improve = "numeric",    # Improves Beverton-Holt asymptote by 10% in projection
-    kappa_improve = "numeric"
+    use_habitat = "logical",
+    egg_rel = "character",
+    egg_prod = "numeric",
+    egg_capacity = "numeric",
+    fry_rel = "character",
+    fry_prod = "numeric",
+    fry_capacity = "numeric",
+    fry_sdev = "matrix",
+    smolt_rel = "numeric",
+    smolt_prod = "numeric",
+    smolt_capacity = "numeric",
+    smolt_sdev = "matrix"
   )
 )
 

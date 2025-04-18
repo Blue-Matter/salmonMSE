@@ -11,7 +11,7 @@ Bio <- new(
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
-  capacity_smolt = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
+  capacity = 17250,           # Beverton-Holt asymptote. Not unfished capacity!!
   kappa = 3,                  # Productivity in recruits per spawner
   Mjuv_NOS = c(0, -log(SAR), 0),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
@@ -49,8 +49,7 @@ Hatchery <- new(
 
 Habitat <- new(
   "Habitat",
-  capacity_smolt_improve = 1,    # Keep carrying capacity (SR alpha/beta) constant
-  kappa_improve = 1              # Keep productivity (SR alpha) constant
+  use_habitat = FALSE
 )
 
 Harvest <- new(

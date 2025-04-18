@@ -2,18 +2,9 @@
 % Please edit documentation in R/SOM2MOM_int.R
 \name{calc_phi}
 \alias{calc_phi}
-\title{Calculate unfished fry per smolt with life history groups}
+\title{Calculate unfished egg per smolt with life history groups}
 \usage{
-calc_phi(
-  Mjuv,
-  p_mature,
-  p_female,
-  fec,
-  s_enroute = 1,
-  s_egg_fry = 1,
-  n_g = 1,
-  p_LHG
-)
+calc_phi(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG)
 }
 \arguments{
 \item{Mjuv}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Juvenile natural mortality}
@@ -26,13 +17,11 @@ calc_phi(
 
 \item{s_enroute}{Numeric, en-route survival of escapement to spawning grounds}
 
-\item{s_egg_fry}{Numeric, egg-fry survival}
-
 \item{n_g}{Integer. Number of life history groups}
 
 \item{p_LHG}{Vector length \code{n_g} of proportion of life history groups per recruit. Default is \code{rep(1/n_g, n_g)}}
 }
 \description{
-Calculate unfished fry per smolt with life history groups
+Calculate unfished egg per smolt with life history groups
 }
 \keyword{internal}
