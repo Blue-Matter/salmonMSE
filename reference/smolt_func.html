@@ -31,8 +31,9 @@ makeRel_smolt() generates a list for openMSE to use in the simulations
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
-    <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
+    <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
+    <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -67,6 +68,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">s_enroute</span>,</span>
 <span>  <span class="va">p_female</span>,</span>
 <span>  <span class="va">fec</span>,</span>
+<span>  <span class="va">s_egg_fry</span>,</span>
 <span>  <span class="va">SRRpars</span>,</span>
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
@@ -85,6 +87,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">s_enroute</span>,</span>
 <span>  <span class="va">p_female</span>,</span>
 <span>  <span class="va">fec</span>,</span>
+<span>  <span class="va">s_egg_fry</span>,</span>
 <span>  <span class="va">SRRpars</span>,</span>
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
@@ -130,6 +133,10 @@ that contribute to spawning.</p></dd>
 
 <dt id="arg-fec">fec<a class="anchor" aria-label="anchor" href="#arg-fec"></a></dt>
 <dd><p>Vector <code>[maxage]</code>. The fecundity at age schedule of spawners</p></dd>
+
+
+<dt id="arg-s-egg-fry">s_egg_fry<a class="anchor" aria-label="anchor" href="#arg-s-egg-fry"></a></dt>
+<dd><p>Numeric. Egg-fry survival</p></dd>
 
 
 <dt id="arg-srrpars">SRRpars<a class="anchor" aria-label="anchor" href="#arg-srrpars"></a></dt>

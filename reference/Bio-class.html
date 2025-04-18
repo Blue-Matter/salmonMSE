@@ -21,8 +21,9 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
-    <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
+    <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
+    <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -79,8 +80,12 @@ ten percent to the second LHG. Default is <code>rep(1/Bio@n_g, Bio@n_g)</code></
 <dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. The proportion mature by age.</p></dd>
 
 
+<dt><code>s_egg_fry</code></dt>
+<dd><p>Numeric, survival of eggs to fry stage.</p></dd>
+
+
 <dt><code>SRrel</code></dt>
-<dd><p>Character, stock-recruit relationship for density-dependent smolt production. Either "BH" (Beverton-Holt) or "Ricker"</p></dd>
+<dd><p>Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker"</p></dd>
 
 
 <dt><code>capacity_smolt</code></dt>
@@ -89,20 +94,22 @@ density-dependent natural smolt production from egg production. <strong>Units of
 
 
 <dt><code>kappa</code></dt>
-<dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function.
+<dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function. <strong>Units of recruits per spawner.</strong>
 Natural per-capita production of recruits as the population approaches zero (density-independent component). <strong>Units of recruits per spawner</strong>.
 In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.</p></dd>
 
 
 <dt><code>Smax</code></dt>
-<dd><p>Vector length <code>nsim</code>. The spawning output that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of egg production.</strong></p></dd>
+<dd><p>Vector length <code>nsim</code>. The fry production that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of fry.</strong> Equivalent to units of eggs if
+<code>s_egg_fry = 1</code>. Equivalent to units of spawners if <code>s_egg_fry = 1</code> and <code>fec = 1</code> for all spawners.</p></dd>
 
 
 <dt><code>phi</code></dt>
-<dd><p>Optional parameter, vector length <code>nsim</code>. Unfished egg production rate per smolt.
+<dd><p>Optional parameter, vector length <code>nsim</code>. Unfished fry production per smolt. <strong>Units of fry per smolt</strong>. Equivalent to units of egg per smolt if
+<code>s_egg_fry = 1</code>. Equivalent to units of recruit per spawner if <code>s_egg_fry = 1</code> and <code>fec = 1</code> for all spawners.
 The <code>alpha</code> parameter of the stock-recruit function will be the ratio of <code>kappa</code> and <code>phi</code>. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code> corresponding
-to the first year and first life history group.</p></dd>
+the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, <code>fec</code>, <code>s_egg_fry</code>, and <code>p_LHG</code> corresponding
+to the first year and weighted by life history groups.</p></dd>
 
 
 <dt><code>Mjuv_NOS</code></dt>
@@ -141,14 +148,14 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name         maxage            n_g          p_LHG</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_mature          SRrel capacity_smolt          kappa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      num.array      character        numeric        numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_mature      s_egg_fry          SRrel capacity_smolt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      num.array        numeric      character        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Smax            phi       Mjuv_NOS            fec</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric      num.array        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_female      s_enroute</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           kappa           Smax            phi       Mjuv_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric        numeric      num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             fec       p_female      s_enroute</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Bio.list"</span>
 </code></pre></div>
