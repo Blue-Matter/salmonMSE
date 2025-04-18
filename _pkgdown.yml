@@ -13,7 +13,10 @@ navbar:
         href: articles/example.html
       - text: Decision table
         href: articles/decision-table.html
-      - text: Implementation
-        href: articles/model.html
       - text: Dynamics equations
         href: articles/equations.html
+      - text: Conditioning model
+        href: articles/conditioning.html
+      - text: Implementation
+        href: articles/model.html
+

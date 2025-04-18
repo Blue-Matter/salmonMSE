@@ -1,0 +1,230 @@
+---
+title: "Conditioning model from CWT and escapement"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conditioning model from CWT and escapement}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Typical run reconstruction uses a historical time series of spawner and recruit data to estimate the productivity of salmon populations. 
+Escapement time series may be available but catch may not be identifiable for a population of interest, for example, if the population is a conservation unit, as part of a larger stock complex and catch composition is not identified to individual CUs.
+
+[Walters and Korman (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html) demonstrated an approach for reconstruction if Coded Wire Tag (CWT) data from an indicator hatchery are assumed to be representative to life cycle parameters of a natural population.
+
+The model consists of two components.
+First, CWT data informs natural mortality, maturation, and exploitation rate in the marine environment. 
+Second, these parameters are then applied to the system of interest and informs the size and productivity of the population that has a time series of total escapement. The number of hatchery releases in the system informs hatchery production, and the difference in total escapement and hatchery production informs natural production.
+Both steps are accomplished within a single model fit, which can account for uncertainty among the various data components, and posterior distributions of parameters are obtained by MCMC.
+
+We utilize this approach as a conditioning model to inform stochastic parameters for projections in salmonMSE, although use of this model is not necessary for projections.
+
+# Life cycle parameters
+
+Life cycle parameters are informed by CWT. Mortality rates are parameterized in instantaneous units, which can be converted to survival terms.
+
+Fishing mortality $F$ is separated into a preterminal (PT) component which acts on juvenile fish and a terminal (T) component on mature fish. Separable effects are modeled where the fishing mortality is year-specific and modified by age class by a vulnerability term $v$.
+
+Survival of juvenile CWT to the next age class $a$ at the beginning of year $y$ is calculated after exploitation, maturation $m$, and natural mortality $M$:
+
+$$
+N^\textrm{juv,CWT}_{y+1,a+1} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
+$$
+
+The CWT return $R$ is the fraction of maturing juveniles after preterminal exploitation
+
+$$
+R^\textrm{CWT}_{y,a} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}
+$$
+
+The escapement is the return that survive terminal exploitation
+
+$$
+E^\textrm{CWT}_{y,a} = R^\textrm{CWT}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
+$$
+
+The catch $C$ is
+
+\begin{align}
+C^\textrm{CWT,PT}_{y,a} &= N^\textrm{juv,CWT}_{y,a}(1 - \exp(-v^\textrm{PT}_aF^\textrm{PT}_y))\\
+C^\textrm{CWT,T}_{y,a} &= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\textrm{T}_y))
+\end{align}
+
+# Hatchery and natural production
+
+The model does separate accounting is natural-origin ($\textrm{NO}$) and hatchery-origin ($\textrm{HO}$) fish in the population of interest. 
+
+The abundance of juvenile fish, recruitment, and escapement uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
+
+\begin{align}
+N^\textrm{juv,NO}_{y+1,a+1} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
+N^\textrm{juv,HO}_{y+1,a+1} &= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
+\end{align}
+
+For age 1, the age-1 HO fish is obtained from the number of releases and an assumption about survival after release: $N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}$. The age-1 NO fish is calculated from the smolt production (see below).
+
+\begin{align}
+R^\textrm{NO}_{y,a} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}\\
+R^\textrm{HO}_{y,a} &= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}
+\end{align}
+
+\begin{align}
+E^\textrm{NO}_{y,a} &= R^\textrm{NO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)\\
+E^\textrm{HO}_{y,a} &= R^\textrm{HO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
+\end{align}
+
+The number of spawners is calculated from the escapement, the en-route survival rate, and the proportion allowed to spawn. This proportion can be calculated from the ratio of broodtake to observed escapement:
+
+\begin{align}
+\textrm{NOS}_{y,a} &= E^\textrm{NO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y\\
+\textrm{HOS}_{y,a} &= E^\textrm{HO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y
+\end{align}
+
+The egg production is calculated from the proportion females and fecundity $f$ at age:
+
+$$
+\textrm{Egg}_y = p^\textrm{female}\sum_a f_a (\textrm{NOS}_{y,a} + \gamma \times \textrm{HOS}_{y,a})
+$$
+
+The smolt production is calculated from a Ricker stock-recruit function:
+
+$$
+\textrm{Smolt}_{y+1} = \alpha\times\textrm{Egg}_y \times \exp(-\beta \times
+\textrm{Egg}_y) \exp(-\delta_y)
+$$
+
+where $\delta_y$ is an annual deviation from the density-dependent function, expressed as a mortality rate.
+
+# Parameter estimation and priors
+
+## Fishing mortality
+
+Year-specific Fishing mortality is parameterized as 
+
+\begin{align}
+F^\textrm{PT}_y &= \exp(a^\textrm{PT}) F^\textrm{trend,PT}_y \exp(\omega^\textrm{FPT}_y)\\
+F^\textrm{T}_y &= \exp(a^\textrm{T}) F^\textrm{trend,T}_y \exp(\omega^\textrm{FT}_y)\\
+\end{align}
+
+where $F^\textrm{trend,PT}$ is a time series of relative exploitation provided by the analyst. The model estimates a scaling coefficient $a$ and annual deviations $\omega$ to estimate fishing mortality.
+
+The prior for the annual deviations is
+
+\begin{align}
+\omega^\textrm{FPT}_y &\sim N(0, \sigma_\textrm{FPT}^2)\\
+\omega^\textrm{FT}_y &\sim N(0, \sigma_\textrm{FT}^2)
+\end{align}
+
+with hyperpriors for $\sigma_\textrm{FPT}^2$ and $\sigma_\textrm{FT}^2$:
+
+\begin{align}
+\sigma_\textrm{FPT} &\sim \textrm{Gamma}(2, 5)\\
+\sigma_\textrm{FT} &\sim \textrm{Gamma}(2, 5)
+\end{align}
+
+## Vulnerability 
+
+Vulnerability are independent terms estimated in logit space, with relatively uninformative normal priors of mean zero and standard deviation of 1.6:
+
+\begin{align}
+\textrm{logit}(v^\textrm{PT}_a) &\sim N(0, 1.6^2)\\
+\textrm{logit}(v^\textrm{T}_a) &\sim N(0, 1.6^2)
+\end{align}
+
+Vulnerability is fixed at zero and one for the age 1 and maximum age ($A$), respectively ($v_1 = 0$ and $v_A = 1$).
+
+When transformed to normal space, the prior density is relatively uniform between 0-1 with low density at the bounds:
+
+```{r}
+x <- seq(-5, 5, 0.1)
+f_x <- dnorm(x, 0, 1.6)
+
+y <- plogis(x)
+g_y <- f_x /(y * (1 - y)) # Prior density with Jacobian transformation
+
+par(mfcol = c(1, 2), mar = c(5, 4, 1, 1))
+plot(x, f_x, typ = 'l', xlab = "logit(v)", ylab = "Prior density")
+plot(y, g_y, typ = 'l', xlab = expression(v[a]), ylab = "Prior density")
+```
+
+## Maturity
+
+Maturity is estimated in logit space as deviations from base parameters provided by the analyst. The prior density function is Gaussian with separate standard deviation $\sigma^m_a$ by age:
+
+$$
+\textrm{logit}(m_{y,a}) \sim N(\textrm{logit}(m_a^\textrm{base}), [\sigma^m_a]^2)
+$$
+
+with hyperprior $\sigma^m_a \sim \textrm{Gamma}(2, 5)$.
+
+## Natural mortality
+
+Natural mortality is parameterized as
+
+$$
+M_{y,a} = 
+\begin{cases}
+M^\textrm{base}_a + \sum_iX_{i,y}\beta_i+M^\textrm{add} + \varepsilon_y &, a = 1\\
+M^\textrm{base}_a + \sum_jX_{j,y}\beta_j &, a = 2, \ldots, A-1
+\end{cases}
+$$
+
+From base values provided by the analyst, year-specific mortality rates can be estimated from linear combination of environmental covariates $X$ and estimated coefficients $\beta$. Separate covariates are used for age-1 and age-2+ fish. 
+For age-1, an additional scalar $M^\textrm{add}$ and annual deviations $\varepsilon_y$ can be estimated.
+
+Gaussion priors are used for $\varepsilon_y$:
+
+$$
+\varepsilon_y \sim N(0, [\sigma^M]^2)
+$$
+with hyperprior $\sigma^M \sim \textrm{Gamma}(2, 5)$.
+
+## Natural production
+
+The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi_0$, where $kappa$ is productivity and $\phi_0$ is the unfished egg-per-smolt corresponding to the one-to-one recruits per spawner line $\phi_0$, with $\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
+
+$\ell_a$ is the juvenile survival at age:
+
+$$
+\ell_a = 
+\begin{cases}
+1 &, a = 1\\
+\ell_{a-1} \exp(-M^\textrm{base}_{a-1}) (1 - m^\textrm{base}_{a-1}) &, a = 2, \ldots, A
+\end{cases}
+$$
+
+The $\beta$ parameter is $\beta = \log(\kappa)/\phi_0r_0$, where $r_0$ is the unfished smolt production, first estimated from the unfished spawners $S_0$ parameter and then calculated as $r_0 = S_0/\phi'_0$.
+
+$\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the unfished spawners per smolt.
+  
+A uniform prior is used for $\log(kappa)$, and a lognormal prior is used to estimate $S_0$.
+
+The annual deviations in smolt production are estimated with prior $\delta_y \sim N(0, \sigma_\delta^2)$ and hyperprior $\sigma_\delta \sim \textrm{Gamma}(2, 5)$.
+
+# Likelihoods
+
+The likelihood of the CWT at age uses a Poisson distribution:
+
+\begin{align}
+C^\textrm{CWT,PT}_{y,a} &\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,PT}_{y,a})\\
+C^\textrm{CWT,T}_{y,a} &\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,T}_{y,a})\\
+E^\textrm{CWT}_{y,a} &\sim \textrm{Poisson}(\hat{E}^\textrm{CWT}_{y,a})
+\end{align}
+
+where the $\hat{C}$ and $\hat{E}$ symbols denote estimates of the corresponding observed quantities.
+
+The likelihood of the total escapement for the population of interest uses a lognormal distribution:
+
+$$
+\log(E_y) \sim N\left(\log\left(\sum_a(E^\textrm{NO}_{y,a} + E^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
+$$
