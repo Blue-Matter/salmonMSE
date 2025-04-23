@@ -62,7 +62,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2025-04-18</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -100,7 +100,7 @@ to maturation, i.e., age 2.</p>
 <span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
-<span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,           <span class="co"># Beverton-Holt asymptote. Not unfished capacity!</span></span>
+<span>  capacity <span class="op">=</span> <span class="fl">17250</span>,                 <span class="co"># Beverton-Holt asymptote. Not unfished capacity!</span></span>
 <span>  kappa <span class="op">=</span> <span class="fl">3</span>,                        <span class="co"># Productivity in recruits per spawner</span></span>
 <span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,    <span class="co"># Convert marine survival to an instantaneous mortality rate</span></span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,              <span class="co"># Spawning fecundity of NOS and HOS</span></span>
@@ -109,13 +109,11 @@ to maturation, i.e., age 2.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The next three objects control the management of the conservation
 unit through habitat, hatchery, and harvest options.</p>
-<p>Let’s leave the habitat unchanged from the <code>Bio</code>
-object:</p>
+<p>No freshwater habitat specific features are used:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Habitat</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Habitat"</span>,</span>
-<span>  capacity_smolt_improve <span class="op">=</span> <span class="fl">1</span>,    <span class="co"># Keep carrying capacity unchanged</span></span>
-<span>  kappa_improve <span class="op">=</span> <span class="fl">1</span>              <span class="co"># Keep productivity unchanged</span></span>
+<span>  use_habitat <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Next, we work on the hatchery dynamics.</p>
 <p>Below, we have a management target to release 10,000 yearlings
@@ -249,7 +247,7 @@ stochastic operating model.</em></p>
 <span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
-<span>  capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,</span>
+<span>  capacity <span class="op">=</span> <span class="fl">17250</span>,</span>
 <span>  kappa <span class="op">=</span> <span class="va">kappa</span>,</span>
 <span>  Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>

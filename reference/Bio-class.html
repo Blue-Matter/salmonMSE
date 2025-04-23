@@ -80,36 +80,34 @@ ten percent to the second LHG. Default is <code>rep(1/Bio@n_g, Bio@n_g)</code></
 <dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. The proportion mature by age.</p></dd>
 
 
-<dt><code>s_egg_fry</code></dt>
-<dd><p>Numeric, survival of eggs to fry stage.</p></dd>
-
-
 <dt><code>SRrel</code></dt>
-<dd><p>Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker"</p></dd>
+<dd><p>Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
+Not used if habitat component is used. See <code>Habitat</code> object.</p></dd>
 
 
-<dt><code>capacity_smolt</code></dt>
+<dt><code>capacity</code></dt>
 <dd><p>Vector length <code>nsim</code>. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from egg production. <strong>Units of smolts.</strong></p></dd>
+density-dependent natural smolt production from egg production. <strong>Units of smolts.</strong>
+Not used if habitat component is used.</p></dd>
 
 
 <dt><code>kappa</code></dt>
 <dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function. <strong>Units of recruits per spawner.</strong>
-Natural per-capita production of recruits as the population approaches zero (density-independent component). <strong>Units of recruits per spawner</strong>.
-In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.</p></dd>
+Natural per-capita production of recruits as the population approaches zero (density-independent component).
+In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
+Not used if habitat component is used.</p></dd>
 
 
 <dt><code>Smax</code></dt>
-<dd><p>Vector length <code>nsim</code>. The fry production that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of fry.</strong> Equivalent to units of eggs if
-<code>s_egg_fry = 1</code>. Equivalent to units of spawners if <code>s_egg_fry = 1</code> and <code>fec = 1</code> for all spawners.</p></dd>
+<dd><p>Vector length <code>nsim</code>. The egg production that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of eggs.</strong>
+Equivalent to units of spawners if <code>fec = 1</code> for all spawners. Not used if habitat component is used.</p></dd>
 
 
 <dt><code>phi</code></dt>
-<dd><p>Optional parameter, vector length <code>nsim</code>. Unfished fry production per smolt. <strong>Units of fry per smolt</strong>. Equivalent to units of egg per smolt if
-<code>s_egg_fry = 1</code>. Equivalent to units of recruit per spawner if <code>s_egg_fry = 1</code> and <code>fec = 1</code> for all spawners.
+<dd><p>Optional parameter, vector length <code>nsim</code>. Unfished egg production per smolt. <strong>Units of egg per smolt</strong>.
 The <code>alpha</code> parameter of the stock-recruit function will be the ratio of <code>kappa</code> and <code>phi</code>. In stage-based models,
-the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, <code>fec</code>, <code>s_egg_fry</code>, and <code>p_LHG</code> corresponding
-to the first year and weighted by life history groups.</p></dd>
+this is the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, <code>fec</code>, and <code>p_LHG</code> corresponding
+to the first year and weighted by life history groups. Not used if habitat component is used.</p></dd>
 
 
 <dt><code>Mjuv_NOS</code></dt>
@@ -144,18 +142,12 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Bio" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name         maxage            n_g          p_LHG</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_mature      s_egg_fry          SRrel capacity_smolt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      num.array        numeric      character        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           kappa           Smax            phi       Mjuv_NOS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric        numeric      num.array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             fec       p_female      s_enroute</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric        numeric        numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Name    maxage       n_g     p_LHG  p_mature     SRrel  capacity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class: character   numeric   numeric   numeric num.array character   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi  Mjuv_NOS       fec  p_female s_enroute</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric num.array   numeric   numeric   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Bio.list"</span>
 </code></pre></div>

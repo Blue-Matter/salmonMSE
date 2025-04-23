@@ -68,10 +68,10 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">s_enroute</span>,</span>
 <span>  <span class="va">p_female</span>,</span>
 <span>  <span class="va">fec</span>,</span>
-<span>  <span class="va">s_egg_fry</span>,</span>
 <span>  <span class="va">SRRpars</span>,</span>
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
+<span>  <span class="va">habitat_args</span>,</span>
 <span>  <span class="va">s</span>,</span>
 <span>  <span class="va">g</span>,</span>
 <span>  <span class="va">prop_LHG</span>,</span>
@@ -87,10 +87,10 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">s_enroute</span>,</span>
 <span>  <span class="va">p_female</span>,</span>
 <span>  <span class="va">fec</span>,</span>
-<span>  <span class="va">s_egg_fry</span>,</span>
 <span>  <span class="va">SRRpars</span>,</span>
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
+<span>  <span class="va">habitat_args</span>,</span>
 <span>  <span class="va">g</span>,</span>
 <span>  <span class="va">prop_LHG</span>,</span>
 <span>  <span class="va">r</span></span>
@@ -135,13 +135,9 @@ that contribute to spawning.</p></dd>
 <dd><p>Vector <code>[maxage]</code>. The fecundity at age schedule of spawners</p></dd>
 
 
-<dt id="arg-s-egg-fry">s_egg_fry<a class="anchor" aria-label="anchor" href="#arg-s-egg-fry"></a></dt>
-<dd><p>Numeric. Egg-fry survival</p></dd>
-
-
 <dt id="arg-srrpars">SRRpars<a class="anchor" aria-label="anchor" href="#arg-srrpars"></a></dt>
-<dd><p>Data frame containing stock recruit parameters for natural smolt production.
-Column names include: SRrel, kappa, capacity_smolt, Smax, phi, kappa_improve, capacity_smolt_improve</p></dd>
+<dd><p>Data frame containing stock recruit parameters for natural smolt production from egg production.
+Column names include: SRrel, kappa, capacity, Smax, phi</p></dd>
 
 
 <dt id="arg-hatchery-args">hatchery_args<a class="anchor" aria-label="anchor" href="#arg-hatchery-args"></a></dt>

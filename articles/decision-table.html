@@ -62,7 +62,7 @@
 
       <h1>Decision table</h1>
             
-            <h4 data-toc-skip class="date">2025-04-18</h4>
+            <h4 data-toc-skip class="date">2025-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/decision-table.Rmd" class="external-link"><code>vignettes/decision-table.Rmd</code></a></small>
       <div class="d-none name"><code>decision-table.Rmd</code></div>
@@ -85,13 +85,13 @@ hatchery/natural origin fish cannot be distinguished, and the maximum
 brood/escapement ratio is 0.5. The carrying capacity of the freshwater
 environment is 17,250 smolts.</p>
 <p>These four options are evaluated across three states of nature with
-respective to productivity: a mean value of either 3, 6, or 9. We sample
-productivity over 100 simulations with a lognormal standard deviation of
-0.4.</p>
-<p>There is no habitat enhancement, i.e., no changes to the smolt
-production function or time-varying survival, and a fixed harvest rate
-is applied at 0.50 in all scenarios. The decision-making context here
-assumes that the harvest rate is fixed.</p>
+respective to productivity: a mean value of either 3, 6, or 9
+recruits/spawner. We sample productivity over 100 simulations with a
+lognormal standard deviation of 0.4.</p>
+<p>A fixed harvest rate is applied at 0.50 in all scenarios, and no
+freshwater specific life stages are modeled (habitat features not used).
+The decision-making context here assumes that the harvest rate is
+fixed.</p>
 <p>Below is the code for performing such a simulation. We specify the
 various simulation conditions (natural productivity and hatchery
 production) in a data frame and write a wrapper function that loops over
@@ -127,7 +127,7 @@ years).</p>
 <span>    maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>    p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
-<span>    capacity_smolt <span class="op">=</span> <span class="fl">17250</span>,</span>
+<span>    capacity <span class="op">=</span> <span class="fl">17250</span>,</span>
 <span>    kappa <span class="op">=</span> <span class="va">kappa</span>,</span>
 <span>    Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>
@@ -163,8 +163,7 @@ years).</p>
 <span></span>
 <span>  <span class="va">Habitat</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>    <span class="st">"Habitat"</span>,</span>
-<span>    capacity_smolt_improve <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>    kappa_improve <span class="op">=</span> <span class="fl">1</span></span>
+<span>    use_habitat <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
