@@ -22,32 +22,32 @@ salmonMSE utilizes an age-structured model in the projections. The population is
 
 # Variable definitions
 
-## Natural production
-
 *Definition of variable names and the corresponding slots in either the input (SOM) or output (SMSE) objects in salmonMSE.*
+
+## Natural production
 
 ```{r param-bio, echo = FALSE}
 param <- read.csv("tables/glossary.csv") %>%
   mutate(Name = paste0("$", Name, "$"))
-knitr::kable(param[grepl("Natural production|Population dynamics", param$Type), ])
+knitr::kable(param[grepl("Natural production|Population dynamics", param$Type), ], row.names = FALSE)
 ```
 
 ## Habitat
 
 ```{r param-habitat, echo = FALSE}
-knitr::kable(param[grepl("Habitat", param$Type), ])
+knitr::kable(param[grepl("Habitat", param$Type), ], row.names = FALSE)
 ```
 
 ## Hatchery
 
 ```{r param-hatchery, echo = FALSE}
-knitr::kable(param[grepl("Hatchery|Fitness", param$Type), ])
+knitr::kable(param[grepl("Hatchery|Fitness", param$Type), ], row.names = FALSE)
 ```
 
 ## Harvest
 
 ```{r param-harvest, echo = FALSE}
-knitr::kable(param[grepl("Harvest", param$Type), ])
+knitr::kable(param[grepl("Harvest", param$Type), ], row.names = FALSE)
 ```
 
 # Natural production

@@ -1,0 +1,19 @@
+﻿Name,Definition
+C,Catch
+\textrm{CWT},Coded wire tag
+E,Escapement
+F,Instantaneous fishing mortality
+\textrm{HO},Hatchery origin
+\textrm{HOS},Hatchery origin spawner
+M,Instantaneous natural mortality
+N^\textrm{juv},Juvenile abundance
+\textrm{NO},Natural origin
+\textrm{NOS},Natural origin spawner
+\textrm{PT},Preterminal fishery
+R,Recruitment
+\textrm{T},Terminal fishery
+m,Proportion mature
+p^\textrm{female},Proportion female
+p^\textrm{spawn},Proportion spawning
+s^\textrm{enroute},En-route survival (escapement to spawning grounds)
+v,Fishery vulnerability

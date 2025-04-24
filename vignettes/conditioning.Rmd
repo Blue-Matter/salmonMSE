@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(dplyr)
 ```
 
 # Introduction
@@ -27,7 +28,24 @@ First, CWT data informs natural mortality, maturation, and exploitation rate in 
 Second, these parameters are then applied to the system of interest and informs the size and productivity of the population that has a time series of total escapement. The number of hatchery releases in the system informs hatchery production, and the difference in total escapement and hatchery production informs natural production.
 Both steps are accomplished within a single model fit, which can account for uncertainty among the various data components, and posterior distributions of parameters are obtained by MCMC.
 
-We utilize this approach as a conditioning model to inform stochastic parameters for projections in salmonMSE, although use of this model is not necessary for projections.
+We utilize this approach as a conditioning model to inform stochastic parameters for projections in salmonMSE, although use of this model is not necessary to set up an operating model.
+
+## Model fitting
+
+Model fitting is performed in RTMB with `fit_CM()`. 
+
+The posterior can then be sampled with `sample_CM()` through rstan. 
+
+A subset of posterior MCMC draws of parameters to reconstruct the historical population can be imported into the operating model with `CM2SOM()`.
+Further modification of the operating model and additional settings can then be added to run the projection.
+
+# Variable definitions
+
+```{r param-cm, echo = FALSE}
+param_cm <- read.csv("tables/glossary_conditioning.csv") %>%
+  mutate(Name = paste0("$", Name, "$"))
+knitr::kable(param_cm)
+```
 
 # Life cycle parameters
 
@@ -40,6 +58,8 @@ Survival of juvenile CWT to the next age class $a$ at the beginning of year $y$ 
 $$
 N^\textrm{juv,CWT}_{y+1,a+1} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 $$
+
+The age-1 CWT is assumed to be the releases specified by the user, i.e., $N^\textrm{juv,CWT}_{y,a=1}= $.
 
 The CWT return $R$ is the fraction of maturing juveniles after preterminal exploitation
 
@@ -71,7 +91,9 @@ N^\textrm{juv,NO}_{y+1,a+1} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\te
 N^\textrm{juv,HO}_{y+1,a+1} &= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 \end{align}
 
-For age 1, the age-1 HO fish is obtained from the number of releases and an assumption about survival after release: $N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}$. The age-1 NO fish is calculated from the smolt production (see below).
+For age 1, the age-1 HO fish is obtained from the number of releases and an assumption about survival after release: $N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}$. 
+
+The age-1 NO fish is equal to the smolt production: $N^\textrm{juv,NO}_{y,a=1} = \textrm{Smolt}_y$
 
 \begin{align}
 R^\textrm{NO}_{y,a} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}\\
@@ -103,13 +125,13 @@ $$
 \textrm{Egg}_y) \exp(-\delta_y)
 $$
 
-where $\delta_y$ is an annual deviation from the density-dependent function, expressed as a mortality rate.
+where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate.
 
 # Parameter estimation and priors
 
 ## Fishing mortality
 
-Year-specific Fishing mortality is parameterized as 
+Year-specific fishing mortality is parameterized as 
 
 \begin{align}
 F^\textrm{PT}_y &= \exp(a^\textrm{PT}) F^\textrm{trend,PT}_y \exp(\omega^\textrm{FPT}_y)\\
@@ -180,7 +202,8 @@ M^\textrm{base}_a + \sum_jX_{j,y}\beta_j &, a = 2, \ldots, A-1
 $$
 
 From base values provided by the analyst, year-specific mortality rates can be estimated from linear combination of environmental covariates $X$ and estimated coefficients $\beta$. Separate covariates are used for age-1 and age-2+ fish. 
-For age-1, an additional scalar $M^\textrm{add}$ and annual deviations $\varepsilon_y$ can be estimated.
+
+For age-1, an additional scalar $M^\textrm{add}$ and annual deviations $\varepsilon_y$ can be estimated from the base parameter.
 
 Gaussion priors are used for $\varepsilon_y$:
 
@@ -207,7 +230,7 @@ The $\beta$ parameter is $\beta = \log(\kappa)/\phi_0r_0$, where $r_0$ is the un
 
 $\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the unfished spawners per smolt.
   
-A uniform prior is used for $\log(kappa)$, and a lognormal prior is used to estimate $S_0$.
+A uniform prior is used for $\log(\kappa)$, and a lognormal prior is used to estimate $S_0$.
 
 The annual deviations in smolt production are estimated with prior $\delta_y \sim N(0, \sigma_\delta^2)$ and hyperprior $\sigma_\delta \sim \textrm{Gamma}(2, 5)$.
 
@@ -221,7 +244,7 @@ C^\textrm{CWT,T}_{y,a} &\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,T}_{y,a})\\
 E^\textrm{CWT}_{y,a} &\sim \textrm{Poisson}(\hat{E}^\textrm{CWT}_{y,a})
 \end{align}
 
-where the $\hat{C}$ and $\hat{E}$ symbols denote estimates of the corresponding observed quantities.
+where the $\wedge$ symbol denotes an estimate of the corresponding observed quantity.
 
 The likelihood of the total escapement for the population of interest uses a lognormal distribution:
 
