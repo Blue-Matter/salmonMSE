@@ -447,6 +447,12 @@ $$
 
 Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing the number hatchery origin spawners maintains high PNI, i.e., low rate of gene flow from the hatchery to natural environment.
 
+>If there is no natural origin broodtake, i.e., all brood is imported, then PNI is calculated with equation 6 of [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html):
+>
+>$$
+>\textrm{PNI}_{y+1} = \dfrac{h^2}{h^2 + (1 - h^2 + \omega^2) \sum_a p^{\textrm{HOSeff}}_{y,a}}
+>$$
+
 ## Wild salmon
 
 With single brood-year returns, the proportion of wild salmon, natural origin spawners whose parents were also natural spawners, can be calculated as
