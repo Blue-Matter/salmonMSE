@@ -318,10 +318,10 @@ $$
 \textrm{NOS}_{y,a} = \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}
 $$
 
-The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$, these animals are not available for brood).
+The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$ and discounted by the mark rate, these animals are not available for brood).
 
 $$
-\textrm{HOS}_{y,a} = (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal}) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
+\textrm{HOS}_{y,a} = (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
 $$
 
 # Fitness effects on survival

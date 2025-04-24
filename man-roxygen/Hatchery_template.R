@@ -34,9 +34,10 @@
 #' @slot phatchery Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
 #'  or swim-in facilities. These fish are available for broodtake. The product of `phatchery` and `premove_HOS` do not
 #'  spawn in the natural environment. Default is 0.8.
-#' @slot premove_HOS Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
-#'  ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
-#'  imperfect implementation of weir removal. This proportion of fish do not spawn in the natural environment. The product of `phatchery` and `premove_HOS` do not
+#' @slot premove_HOS Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+#'  ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., `premove_HOS * m`.
+#'  The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
+#'  imperfect implementation of weir removal. The product of `phatchery` and `premove_HOS * m` do not
 #'  spawn in the natural environment. Default is zero.
 #' @slot fec_brood Vector of length `maxage`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
 #' @slot fitness_type Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".

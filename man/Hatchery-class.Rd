@@ -67,9 +67,10 @@ this target proportion identifies the proportion of unmarked fished in the brood
 or swim-in facilities. These fish are available for broodtake. The product of \code{phatchery} and \code{premove_HOS} do not
 spawn in the natural environment. Default is 0.8.}
 
-\item{\code{premove_HOS}}{Numeric. The proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). These fish are not available for broodtake. For example, a value less than one can represent
-imperfect implementation of weir removal. This proportion of fish do not spawn in the natural environment. The product of \code{phatchery} and \code{premove_HOS} do not
+\item{\code{premove_HOS}}{Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., \code{premove_HOS * m}.
+The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
+imperfect implementation of weir removal. The product of \code{phatchery} and \code{premove_HOS * m} do not
 spawn in the natural environment. Default is zero.}
 
 \item{\code{fec_brood}}{Vector of length \code{maxage}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
