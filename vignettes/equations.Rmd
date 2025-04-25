@@ -168,7 +168,7 @@ To minimize genetic drift of the population due to hatchery production, it is de
 This is controlled by $p^\textrm{NOB}_\textrm{target}$, the desired proportion of natural broodtake relative to all broodtake (any specified amount of available imported brood is considered hatchery-origin for this purpose), but can be exceeded if there is insufficient escapement of natural origin fish.
 
 The ability to meet this target depends on the mark rate of hatchery origin fish. 
-Thus, $p^\textrm{NOB}_\textrm{target}$ represents ratio of unmarked fish in the projection (imported brood is considered marked for this calculation), and the realized $p^\textrm{NOB}$ is reduced by the mark rate.
+Thus, $p^\textrm{NOB}_\textrm{target}$ represents ratio of unmarked fish in the projection (imported brood is considered marked for this calculation, strays are considered unmarked), and the realized $p^\textrm{NOB}$ is reduced by the mark rate.
 
 Another consideration for broodtake dynamics is to maintain high spawning of natural origin fish. 
 This is controlled by $p^\textrm{NOB}_\textrm{max}$, the maximum allowable proportion of the natural origin escapement to be used as broodtake. 
@@ -193,46 +193,56 @@ From the escapement in year $y$, some proportion $p^\textrm{broodtake}$ is used 
 
 \begin{align}
 \textrm{NOB}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
+
 \textrm{HOB}^\textrm{unmarked}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times (1-m) \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
+
 \textrm{HOB}^\textrm{marked}_{y,a} &= p^\textrm{broodtake,marked}_y \times m \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}
-\textrm{Brood}^\textrm{import}_{y,a} &= p^\textrm{broodtake,marked}_y \sum_a \textrm{Brood}^\textrm{avail,import}_a
+
+\end{align}
+
+The proportion of the available hatchery fish for broodtake is also reduced by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
+
+Additionally, some proportion of imported fish and strays may be used as brood:
+
+\begin{align}
+\textrm{Brood}^\textrm{import}_{y,a} &= p^\textrm{broodtake,marked}_y \sum_a \textrm{Brood}^\textrm{avail,import}_a\\
+\textrm{HOB}^\textrm{stray}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times \textrm{Stray}_{y,a} \times s_\textrm{enroute} \\
 \end{align}
 
 The availability of both natural and hatchery origin fish depends on the escapement reduced by en-route mortality and can be capped by some proportion denoted by the $p^\textrm{esc}_\textrm{max}$ parameter.
-
-The proportion of the available hatchery fish for broodtake is also reduced by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
 
 The realized hatchery egg production is
 
 \begin{align}
 \textrm{Egg}_\textrm{y}^\textrm{NOB} &= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
 \textrm{Egg}_\textrm{y}^\textrm{HOB} &= \sum_a (\textrm{HOB}^\textrm{marked}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a}) \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
-\textrm{Egg}_\textrm{y}^\textrm{import} &= \sum_a \textrm{Brood}^\textrm{import}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a
+\textrm{Egg}_\textrm{y}^\textrm{import} &= \sum_a \textrm{Brood}^\textrm{import}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{stray} &= \sum_a \textrm{HOB}^\textrm{stray}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
 \end{align}
 
-where egg production is subject to a survival term $s^\textrm{prespawn}$ for the broodtake.
+where hatchery egg production is subject to a survival term $s^\textrm{prespawn}$.
 
 The proportion $p^\textrm{broodtake}_y$ is solved annually to satisfy the following conditions:
 
-$\dfrac{\sum_a(\textrm{NOB}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a})}{\sum_a\textrm{NOB}_{y,a} + \sum_a\textrm{HOB}_{y,a} + \sum_a\textrm{Brood}^\textrm{import}_{y,a}} = p^\textrm{NOB}_\textrm{target}$
+$\dfrac{\sum_a(\textrm{NOB}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a} + \textrm{HOB}^\textrm{stray}_{y,a})}{\sum_a(\textrm{NOB}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a} + \textrm{HOB}^\textrm{marked}_{y,a} + \textrm{HOB}^\textrm{stray}_{y,a} + \textrm{Brood}^\textrm{import}_{y,a})} = p^\textrm{NOB}_\textrm{target}$
 
 $0 < p^\textrm{broodtake,marked}_y \le 1$
 
 $0 < p^\textrm{broodtake,unmarked}_y \le p^\textrm{NOB}_\textrm{max}$
 
-$\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} + \textrm{Egg}_\textrm{y}^\textrm{import} = \textrm{Egg}_\textrm{broodtake}$
+$\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} + \textrm{Egg}_\textrm{y}^\textrm{import} + \textrm{Egg}^\textrm{stray}_y = \textrm{Egg}_\textrm{broodtake}$
 
 The target ratio $p^\textrm{NOB}_\textrm{target}$ reflects the objective to maintain a high proportion of natural origin fish in the broodtake, where its implementation is dependent on the mark rate. 
 The maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ or escapement $p^\textrm{esc}_\textrm{max}$ ensures that there is high abundance of natural origin spawners. 
 
 The total egg production in a given year can fail to reach the target if there is insufficient unmarked escapement. 
-In this case, the unmarked take is set to the maximum removal rate ($p^\textrm{broodtake,unmarked}_y = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB.
+In this case, the unmarked take is set to the maximum removal rate ($p^\textrm{broodtake,unmarked}_y = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB (including strays and imports).
 
 ## Smolt releases
 
 After the total hatchery egg production is calculated, the production of yearlings and subyearlings is calculated to ensure the annual ratio is equal to the target ratio. To do so, the parameter $p^\textrm{egg,yearling}_y$ is solved subject to the following conditions:
 
-$\textrm{Egg}_\textrm{brood,y} = \textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} + \textrm{Egg}^\textrm{import}_y$
+$\textrm{Egg}_\textrm{brood,y} = \textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} + \textrm{Egg}^\textrm{import}_y + \textrm{Egg}^\textrm{stray}_y$
 
 $n^\textrm{yearling}_{y+1} = p^\textrm{egg,yearling}_y \times \textrm{Egg}_\textrm{brood,y} \times s^\textrm{yearling}$
 
@@ -318,11 +328,13 @@ $$
 \textrm{NOS}_{y,a} = \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}
 $$
 
-The hatchery origin spawners is the escapement that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$ and discounted by the mark rate, these animals are not available for brood).
+The hatchery origin spawners is the escapement of local origin that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$ and discounted by the mark rate, these animals are not available for brood).
+Strays not used for brood are also included as hatchery spawners.
 
-$$
-\textrm{HOS}_{y,a} = (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute}
-$$
+\begin{align}
+\textrm{HOS}_{y,a} &= \textrm{HOS}^\textrm{local}_{y,a} + \textrm{HOS}^\textrm{stray}_{y,a}\\
+&= (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} + (\textrm{Stray}_{y,a} - \textrm{HOB}^\textrm{stray}_{y,a})
+\end{align}
 
 # Fitness effects on survival
 

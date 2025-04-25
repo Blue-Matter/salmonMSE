@@ -27,6 +27,8 @@ C^\textrm{fry-smolt},Capacity for density-dependent survival: fry to smolt life 
 \varepsilon^\textrm{fry-smolt}_y,Deviations in density-dependent survival: fry to smolt life stage,Habitat,SOM,smolt_sdev
 \textrm{NOB},Natural origin broodtake,Hatchery,SMSE,NOB
 \textrm{HOB},Hatchery origin broodtake,Hatchery,SMSE,HOB
+\textrm{Stray},External strays of hatchery origin fish,Hatchery,SOM,stray_external
+\textrm{HOB_stray},Broodtake from strays,Hatchery,SMSE,HOB_stray
 \textrm{Brood}^\textrm{avail,import},Available imported brood (considered 100% marked, hatchery-origin fish),Hatchery,SOM,brood_import
 \textrm{Brood}^\textrm{import},Realized imported fished used for brood (considered 100% marked, hatchery-origin fish),Hatchery,SMSE,HOB_import
 s_\textrm{yearling},Survival of hatchery eggs to yearling life stage,Hatchery,SOM,s_egg_smolt
