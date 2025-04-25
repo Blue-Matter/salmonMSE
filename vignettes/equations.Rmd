@@ -174,6 +174,8 @@ Another consideration for broodtake dynamics is to maintain high spawning of nat
 This is controlled by $p^\textrm{NOB}_\textrm{max}$, the maximum allowable proportion of the natural origin escapement to be used as broodtake. 
 This value is never exceeded.
 
+>To set up a segregated hatchery program, set $p^\textrm{NOB}_\textrm{max} = 0$. Otherwise, these equations set up an integerated hatchery.
+
 The following equations then generate the annual broodtake and hatchery production from the state variables given these constraints.
 
 ## Broodtake
@@ -210,6 +212,8 @@ Additionally, some proportion of imported fish and strays may be used as brood:
 \end{align}
 
 The availability of both natural and hatchery origin fish depends on the escapement reduced by en-route mortality and can be capped by some proportion denoted by the $p^\textrm{esc}_\textrm{max}$ parameter.
+
+>To exclusively use imported brood, set $p^\textrm{esc}_\textrm{max} = 0$.
 
 The realized hatchery egg production is
 
