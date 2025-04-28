@@ -62,9 +62,10 @@ make_harvest_table <- function(SMSE, s = 1) {
   harvest_par <- c("u_preterminal", "u_terminal", "m")
 
   harvest_extra <- data.frame(
-    Definition = c("Mark-selective fishing (both preterminal and terminal fishery)",
+    Definition = c("Mark-selective fishing (preterminal fishery)",
+                   "Mark-selective fishing (terminal fishery)",
                    "Mortality from catch and release (proportion, in preterminal and terminal fishery, respectively)"),
-    Slot = c("MSF", "release_mort")
+    Slot = c("MSF_PT", "MSF_T", "release_mort")
   )
   harvest_table <- rbind(
     glossary[match(harvest_par, glossary$Slot), c("Definition", "Slot")],

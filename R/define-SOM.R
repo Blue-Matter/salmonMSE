@@ -113,7 +113,8 @@ setClass(
     Name = "character",
     u_preterminal = "numeric",
     u_terminal = "numeric",
-    MSF = "logical",
+    MSF_PT = "logical",
+    MSF_T = "logical",
     release_mort = "numeric",
     vulPT = "num.matrix",
     vulT = "num.matrix"

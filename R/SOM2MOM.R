@@ -590,9 +590,12 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest <- SOM@Harvest[[s]]
     Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
     Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
-    Harvest <- check_numeric(Harvest, "MSF", default = FALSE)
-    if (!Harvest@MSF && !length(Harvest@release_mort)) Harvest@release_mort <- c(0, 0)
-    if (Harvest@MSF) Harvest <- check_numeric(Harvest, "release_mort", size = 2)
+    Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
+    Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
+    if (Harvest@MSF_PT || Harvest@MSF_T) {
+      if (!length(Harvest@release_mort)) Harvest@release_mort <- c(0, 0)
+      Harvest <- check_numeric(Harvest, "release_mort", size = 2)
+    }
     if (Harvest@u_preterminal > 0) {
       Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     } else {

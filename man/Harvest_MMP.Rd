@@ -10,7 +10,8 @@ Harvest_MMP(
   reps = 1,
   u_terminal,
   u_preterminal,
-  MSF = FALSE,
+  MSF_PT = FALSE,
+  MSF_T = FALSE,
   m,
   release_mort,
   p_terminal = c(2, 5),
@@ -32,13 +33,15 @@ Harvest_MMP(
 
 \item{u_preterminal}{Single numeric. Harvest rate of retained catch in the pre-terminal fishery}
 
-\item{MSF}{Logical, whether to implement mark-selective fishing}
+\item{MSF_PT}{Logical, whether to implement mark-selective fishing for the preterminal fishery}
+
+\item{MSF_T}{Logical, whether to implement mark-selective fishing for the terminal fishery}
 
 \item{m}{Numeric vector by population (s). Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 Retention in the operating model is specified in the \linkS4class{MOM} object}
 
 \item{release_mort}{Matrix \verb{[2, s]}. Release mortality of discarded fish in the pre-terminal (1st row) and terminal (2nd row) fishery. Only used
-if \code{MSF = TRUE}. Only used to calculate the fishing effort.
+if \code{MSF_PT = TRUE} or \code{MSF_T = TRUE}. Only used to calculate the fishing effort.
 Release mortality in the operating model is specified in the \linkS4class{MOM} object}
 
 \item{p_terminal}{Numeric vector. Population index (p) for the recruitment that experiences the terminal fishing mortality}

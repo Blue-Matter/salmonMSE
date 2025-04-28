@@ -83,7 +83,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       }
     }
 
-    if (SOM@Harvest[[s]]@MSF) {
+    if (SOM@Harvest[[s]]@MSF_PT || SOM@Harvest[[s]]@MSF_T) {
       .F <- get_F(u = SOM@Harvest[[s]]@u_terminal, M = 1e-8, ret = SOM@Hatchery[[s]]@m, release_mort = SOM@Harvest[[s]]@release_mort[2])
       Frel <- (1 - SOM@Hatchery[[s]]@m) * SOM@Harvest[[s]]@release_mort[2] * .F
       Fret <- SOM@Hatchery[[s]]@m * .F
@@ -122,7 +122,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   Hatchery <- SOM@Hatchery[[s]]
   Harvest <- SOM@Harvest[[s]]
 
-  if (SOM@Harvest[[s]]@MSF) {
+  if (SOM@Harvest[[s]]@MSF_PT || SOM@Harvest[[s]]@MSF_T) {
     .F <- get_F(u = Harvest@u_terminal, M = 1e-8, ret = Hatchery@m, release_mort = Harvest@release_mort[2])
     Frel <- (1 - Hatchery@m) * Harvest@release_mort[2] * .F
     Fret <- Hatchery@m * .F

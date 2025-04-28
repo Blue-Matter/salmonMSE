@@ -314,7 +314,10 @@ make_Fleet <- function(SOM, s, NOS = TRUE, stage = c("immature", "return", "esca
     cpars_fleet$V[, n_age, ] <- 1
   }
 
-  if (Harvest@MSF) {
+  MSF_PT <- stage == "immature" && Harvest@MSF_PT
+  MSF_T <- stage == "return" && Harvest@MSF_T
+
+  if (MSF_PT || MSF_T) {
     cpars_fleet$retA <- cpars_fleet$V
     retAproj <- cpars_fleet$retA[, , nyears + seq(1, proyears)]
     if (NOS) {

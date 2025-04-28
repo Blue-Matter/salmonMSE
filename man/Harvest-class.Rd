@@ -16,10 +16,12 @@ The component of the operating model that controls harvest.
 
 \item{\code{u_terminal}}{Numeric. The exploitation rate of the return in the terminal fishery.}
 
-\item{\code{MSF}}{Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.}
+\item{\code{MSF_PT}}{Logical. Whether to implement mark-selective fishing in the preterminal fishery, with no retention on unmarked fish.}
+
+\item{\code{MSF_T}}{Logical. Whether to implement mark-selective fishing in the terminal fishery, with no retention on unmarked fish.}
 
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
-Implemented to model mark-selective fishing. Not used if \code{MSF = FALSE}.}
+Implemented to model mark-selective fishing. Not used if either \code{MSF_PT} or \code{MSF_T} is \code{ FALSE}.}
 
 \item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
 

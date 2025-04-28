@@ -9,11 +9,12 @@
 #' @param reps The number of stochastic replicates to be returned by the function
 #' @param u_terminal Numeric vector by population (s). Harvest rate of retained catch in the terminal fishery
 #' @param u_preterminal Single numeric. Harvest rate of retained catch in the pre-terminal fishery
-#' @param MSF Logical, whether to implement mark-selective fishing
+#' @param MSF_PT Logical, whether to implement mark-selective fishing for the preterminal fishery
+#' @param MSF_T Logical, whether to implement mark-selective fishing for the terminal fishery
 #' @param m Numeric vector by population (s). Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 #' Retention in the operating model is specified in the \linkS4class{MOM} object
 #' @param release_mort Matrix `[2, s]`. Release mortality of discarded fish in the pre-terminal (1st row) and terminal (2nd row) fishery. Only used
-#' if `MSF = TRUE`. Only used to calculate the fishing effort.
+#' if `MSF_PT = TRUE` or `MSF_T = TRUE`. Only used to calculate the fishing effort.
 #' Release mortality in the operating model is specified in the \linkS4class{MOM} object
 #' @param p_terminal Numeric vector. Population index (p) for the recruitment that experiences the terminal fishing mortality
 #' @param p_preterminal Numeric vector. Population index (p) for immature fish that experience the pre-terminal fishing mortality
@@ -26,7 +27,7 @@
 #' @return A nested list of \linkS4class{Rec} objects, same dimension as `DataList`
 #'
 #' @keywords internal
-Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MSF = FALSE, m, release_mort,
+Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MSF_PT = FALSE, MSF_T = FALSE, m, release_mort,
                         p_terminal = c(2, 5), p_preterminal = c(1, 4), pkey = data.frame(p = 1:6, s = 1),
                         p_natural = 1:3, p_hatchery = 4:6, ...) {
   np <- length(DataList)
@@ -50,7 +51,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
       if (u_preterminal > 0 && odd_time_step) {
 
         # MSF, Specify F here, further retention and discards handled by OM
-        if (MSF) {
+        if (MSF_PT) {
           p_HOS_PT <- intersect(p_preterminal, p_hatchery)
           Nage_PT <- sapply(p_HOS_PT, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_PT <- sapply(p_HOS_PT, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
@@ -83,7 +84,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
       if (u_terminal[s_p] > 0 && even_time_step) {
 
         # Single stock fishery, specify availability of all mature fish in the same population (s)
-        if (MSF) {
+        if (MSF_T) {
           p_HOS_T_all <- intersect(p_terminal, p_hatchery)
           p_HOS_T <- intersect(p_HOS_T_all, pkey$p[pkey$s == s_p])
 
@@ -139,7 +140,8 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
   f <- Harvest_MMP
   formals(f)$u_terminal <- vapply(SOM@Harvest, slot, numeric(1), "u_terminal")   # By population
   formals(f)$u_preterminal <- SOM@Harvest[[1]]@u_preterminal                     # One number for all
-  formals(f)$MSF <- SOM@Harvest[[1]]@MSF                                         # Currently MSF for all
+  formals(f)$MSF_PT <- SOM@Harvest[[1]]@MSF_PT
+  formals(f)$MSF_T <- SOM@Harvest[[1]]@MSF_T
   formals(f)$m <- vapply(SOM@Hatchery, slot, numeric(1), "m")                    # By population
   formals(f)$release_mort <- vapply(SOM@Harvest, slot, numeric(2), "release_mort") # 2 x ns matrix
   formals(f)$p_preterminal <- pindex$p[pindex$stage == "juvenile"]
