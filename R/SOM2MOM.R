@@ -178,61 +178,13 @@ SOM2MOM <- function(SOM, check = TRUE) {
   })
   Herm_mature <- do.call(c, Herm_mature)
 
-  if (sum(diag(SOM@stray)) < ns) {
-
-    if (any(n_r > 1)) stop("Straying matrix not yet configured for multiple release strategies.")
-
-    Herm_stray <- lapply(1:ns, function(s) {
-
-      to <- SOM@stray[s, -s]
-      to_cumulative <- to # Cumulative proportion
-      dest <- c(1:ns)[-s]
-
-      if (length(to) > 1) {
-        for (i in 2:length(to_cumulative)) to_cumulative[i] <- to[i]/(1 - sum(to[seq(1, i-1)]))
-
-        #N <- Nto <- numeric(length(to) + 1)
-        #N[1] <- 100
-        #for (i in 2:length(N)) {
-        #  N[i] <- N[i-1] * (1 - to_cumulative[i-1])
-        #  Nto[i] <- N[i-1] * to_cumulative[i-1]
-        #}
-      }
-
-      H <- lapply(1:length(dest), function(i) {
-        if (to[i] > 0) {
-          prop <- numeric(nage)
-          prop[-1] <- to_cumulative[i]
-
-          pHerm <- matrix(solve_Herm(prop), SOM@nsim, nage, byrow = TRUE)
-
-          pfrom <- pindex$p[pindex$s == s & pindex$origin == "hatchery" & pindex$stage == "recruitment"]
-          pto <- pindex$p[pindex$s == dest[i] & pindex$origin == "hatchery" & pindex$stage == "recruitment"]
-
-          if (!length(pto)) stop("Population ", dest[i], " needs hatchery structure to model straying.")
-
-          structure(list(pHerm), names = paste0("H_", pto, "_", pfrom))
-        } else {
-          NULL
-        }
-      })
-      return(do.call(c, H))
-    })
-
-    Herm_stray <- do.call(c, Herm_stray)
-
-  } else {
-    Herm_stray <- NULL
-  }
-
-  MOM@SexPars <- list(SSBfrom = SSBfrom, Herm = c(Herm_mature, Herm_stray), share_par = FALSE)
+  MOM@SexPars <- list(SSBfrom = SSBfrom, Herm = Herm_mature, share_par = FALSE)
 
   # Rel
   # The predicted smolt production (juvenile NOS) is from the adult escapement (natural and hatchery)
   # Combines hatchery and habitat dynamics
   # Hatchery: Presence/absence of HOS (from strays or own system)
-  # Habitat: (A) Update Perr_y of juvenile NOS from adult escapement.
-  # Calculates spawners (after broodtake and weir removal) then recruitment deviation based on new productivity and stock parameter, relative to the historical one
+  # Habitat: Update Perr_y of juvenile NOS from adult escapement from stage specific relationships
   Rel_s <- lapply(1:ns, function(s) {
     Bio <- SOM@Bio[[s]]
     Habitat <- SOM@Habitat[[s]]
@@ -282,6 +234,18 @@ SOM2MOM <- function(SOM, check = TRUE) {
       habitat_args <- list(
         use_habitat = Habitat@use_habitat
       )
+      stray_args <- list(
+        stray_external = Hatchery@stray_external
+      )
+
+      donate_stray <- SOM@stray[s, s] < 1
+      receive_stray <- any(SOM@stray[-s, s] > 0)
+
+      if (donate_stray || receive_stray) {
+        if (any(n_r > 1)) stop("Straying matrix not yet configured for multiple release strategies.")
+        stray_args$stray_matrix <- SOM@stray
+        stray_args$p_donor <- pindex[pindex$stage == "escapement" & pindex$origin == "hatchery", c("s", "p")]
+      }
 
       if (habitat_args$use_habitat) habitat_args$Habitat <- Habitat
 
@@ -294,7 +258,6 @@ SOM2MOM <- function(SOM, check = TRUE) {
           fec_brood = Hatchery@fec_brood,
           egg_target = egg_target,
           brood_import = Hatchery@brood_import,
-          stray_external = Hatchery@stray_external,
           p_female = Bio@p_female,
           s_yearling = Hatchery@s_egg_smolt,
           s_subyearling = Hatchery@s_egg_subyearling,
@@ -337,9 +300,11 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
         Rel_smolt_g[[g]] <- makeRel_smolt(
           p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+          p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
           output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
           SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
+          stray_args = stray_args,
           g = g, prop_LHG = p_LHG[g]
         )
 
@@ -360,9 +325,11 @@ SOM2MOM <- function(SOM, check = TRUE) {
           # Hatchery smolt releases from NOS and HOS escapement
           Rel_hatchrel[[r]] <- makeRel_smolt(
             p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
+            p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
             output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
             SRRpars = SRRpars,
             hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
+            stray_args = stray_args,
             r = r
           )
 

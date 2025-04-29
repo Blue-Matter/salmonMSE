@@ -6,10 +6,12 @@
 #' - `smolt_func()` is the population dynamics function
 #' - `makeRel_smolt()` generates a list for openMSE to use in the simulations
 #'
-#' @param Nage_NOS Matrix `[n_age, n_g]` of natural escapement from openMSE. `n_g` is the number of life history groups (divisons within cohorts
+#' @param Nage_NOS Matrix `[n_age, n_g]` of natural escapement from openMSE. `n_g` is the number of life history groups (sub groups within cohorts)
 #' that contribute to spawning.
-#' @param Nage_HOS Matrix `[n_age, n_g]` of hatchery escapement from openMSE. `n_g` is the number of life history groups (divisons within cohorts
+#' @param Nage_HOS Matrix `[n_age, n_r]` of hatchery escapement from openMSE. `n_r` is the number of release strategies (sub groups within cohorts)
 #' that contribute to spawning.
+#' @param Nage_stray Matrix `[nage, n_stray]` of hatchery escapement from donor populations that will stray to the recipient population. `stray_args$stray_matrix`
+#' determines the proportions of the donor escapement that will move to the recipient population.
 #' @param x Integer, simulation number from openMSE
 #' @param y Integer, simulation year (including historical years)
 #' @param output Character, whether to predic the natural origin or hatchery origin smolt production
@@ -21,6 +23,10 @@
 #' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
 #' @param fitness_args Named list containing various arguments controlling population fitness from hatchery production.
 #' Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss
+#' @param habitat_args Named list with arguments sontrolling freshwater life stage survival.
+#' Names include: use_habitat (logical), Habitat (\linkS4class{Habitat} object)
+#' @param stray_args Named list with arguments controlling strays in and out of the local population
+#' Names include:
 #' @param s Integer, salmonMSE population index. Used to report variables to [salmonMSE::salmonMSE_env].
 #' @section hatchery_args:
 #' Hatchery control parameters are included in a named list with the following arguments:
@@ -46,19 +52,36 @@
 #' hatchery, en route mortality, or habitat improvement
 #' - `makeRel_smolt()` returns a list that is passed to openMSE as a inter-population relationship
 #' @keywords internal
-smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hatchery"),
+smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("natural", "hatchery"),
                        s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
-                       hatchery_args, fitness_args, habitat_args, s, g, prop_LHG, r) {
+                       hatchery_args, fitness_args, habitat_args, stray_args, s, g, prop_LHG, r) {
 
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
-  Nage_NOS_enroute <- Nage_NOS * s_enroute
-  stray_external_enroute <- hatchery_args$stray_external * s_enroute
 
-  # Hatchery
+  # Hatchery fish
   if (missing(Nage_HOS)) Nage_HOS <- matrix(0, nrow(Nage_NOS), 1)
   Nage_HOS[is.na(Nage_HOS)] <- 0
+
+  stray_external <- stray_args$stray_external
+  if (!missing(Nage_stray) && sum(Nage_stray)) {
+
+    # Add incoming strays
+    s_donor <- setdiff(stray_args$p_donor$s, s)
+    for (ss in s_donor) {
+      if (ss != s) {
+        p <- stray_args$p_donor$p[stray_args$p_donor$s == ss]
+        stray_external <- stray_external + stray_args$stray_matrix[ss, s] * Nage_stray[, paste0("Nage_", p)]
+      }
+    }
+
+    # Remove donor strays
+    Nage_HOS <- stray_args$stray_matrix[s, s] * Nage_HOS
+  }
+
+  Nage_NOS_enroute <- Nage_NOS * s_enroute
   Nage_HOS_enroute <- Nage_HOS * s_enroute
+  stray_external_enroute <- stray_external * s_enroute
 
   if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
@@ -246,8 +269,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
   # Smolt production (natural, but in competition with hatchery subyearlings) after fitness loss
   SRrel <- match.arg(SRRpars[xx, "SRrel"], choices = c("BH", "Ricker"))
 
-  # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
-  if (output == "hatchery") {
+  # Save state variable for hatchery production
+  has_strays <- !is.null(stray_args$stray_matrix) || sum(stray_external) > 0
+  no_hatchery <- hatchery_args$egg_target == 0
+  has_strays_no_hatchery <- has_strays && no_hatchery
+
+  if (output == "hatchery" || has_strays_no_hatchery) {
 
     if (habitat_args$use_habitat) {
       smolt_subyearling_r <- calc_SRR(
@@ -265,8 +292,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
     }
     smolt_rel_r <- yearling[r] + smolt_subyearling_r
 
-    # Save state variable for hatchery production
     if (x > 0) {
+      if (missing(r)) r <- 1
       df_H <- data.frame(
         x = x,
         s = s,
@@ -293,11 +320,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
       )
       salmonMSE_env$stateH <- rbind(salmonMSE_env$stateH, df_stateH)
     }
-
-    return(smolt_rel_r)
   }
 
-  # Fry production for life history group g
+  # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
+  if (output == "hatchery") return(smolt_rel_r)
+
+  # Natural fry production for life history group g
   Fry_NOS_g <- sum(Fry_NOS) * prop_LHG
   Fry_HOS_g <- sum(Fry_HOS) * prop_LHG
 
@@ -434,13 +462,15 @@ smolt_func <- function(Nage_NOS, Nage_HOS, x = -1, y, output = c("natural", "hat
 #' if spawning is from multiple life history groups
 #' @param p_hatchery Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
 #' if there are multiple release strategies. Set to `NULL` for no hatchery production
+#' @param p_stray Integer vector, population index for the hatchery strays in multi-system models
 #' @param g Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if `output = "natural"`)
 #' @param prop_LHG Numeric, proportion of the egg production assign to life history group `g` corresponding to `p_smolt` for the next generation (only used if `output = "natural"`)
 #' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
 makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
+                          p_stray = NULL,
                           output = c("natural", "hatchery"), s_enroute,
                           p_female, fec, SRRpars,  # Spawning (natural production)
-                          hatchery_args, fitness_args, habitat_args, g, prop_LHG, r) {
+                          hatchery_args, fitness_args, habitat_args, stray_args, g, prop_LHG, r) {
 
   output <- match.arg(output)
 
@@ -456,6 +486,7 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
   formals(.smolt_func)$hatchery_args <- hatchery_args
   formals(.smolt_func)$fitness_args <- fitness_args
   formals(.smolt_func)$habitat_args <- habitat_args
+  formals(.smolt_func)$stray_args <- stray_args
   formals(.smolt_func)$s <- s
 
   if (output == "natural") {
@@ -467,20 +498,23 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
   maxage <- length(fec)
   N_natural <- matrix(1, maxage, length(p_natural))
 
-  if (!is.null(p_hatchery)) {
+  if (!is.null(p_hatchery)) { # Need p_hatchery to use p_stray
     N_hatchery <- matrix(0, maxage, length(p_hatchery))
+    N_stray <- matrix(0, maxage, length(p_stray))
 
     Perr_y <- .smolt_func(N_natural, N_hatchery, x = -1, y = 1)
-    model <- c(Perr_y = Perr_y, colSums(N_natural), colSums(N_hatchery), x = -1, y = 1)
-    input <- paste0("Nage_", c(p_natural, p_hatchery))
+    model <- c(Perr_y = Perr_y, colSums(N_natural), colSums(N_hatchery), colSums(N_stray), x = -1, y = 1)
+    input <- paste0("Nage_", c(p_natural, p_hatchery, p_stray))
 
-    natural_origin <- c(rep(TRUE, length(p_natural)), rep(FALSE, length(p_hatchery)))
+    natural_origin <- c(rep(TRUE, length(p_natural)), rep(FALSE, length(c(p_hatchery, p_stray))))
+    stray <- c(rep(FALSE, length(c(p_natural, p_hatchery))), rep(TRUE, length(p_stray)))
   } else {
     Perr_y <- .smolt_func(N_natural, x = -1, y = 1)
     model <- c(Perr_y = Perr_y, colSums(N_natural), x = -1, y = 1)
     input <- paste0("Nage_", p_natural)
 
     natural_origin <- rep(TRUE, length(p_natural))
+    stray <- rep(FALSE, length(p_natural))
   }
 
   response <- paste0("Perr_y_", p_smolt)
@@ -497,7 +531,8 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
     Rel = switch(output,
                  "natural" = "Smolt natural production from escapement",
                  "hatchery" = "Smolt hatchery releases from escapement"),
-    natural_origin = natural_origin
+    natural_origin = natural_origin,
+    stray = stray
   )
   structure(out, class = "RelSmolt")
 }
@@ -513,7 +548,8 @@ predict.RelSmolt <- function(object, newdata, ...) {
   vars_Rel <- names(object$model)[-1]
   Nage <- vars_Rel[grepl("Nage", vars_Rel)]
   Nage_NOS <- Nage[object$natural_origin]
-  Nage_HOS <- Nage[!object$natural_origin]
+  Nage_HOS <- Nage[!object$natural_origin & !object$stray]
+  if (any(object$stray)) Nage_stray <- Nage[object$stray]
 
   do_hatchery <- length(Nage_HOS) > 0
 
@@ -526,12 +562,19 @@ predict.RelSmolt <- function(object, newdata, ...) {
     if (do_hatchery) {
       Esc_HOS <- sapply(Nage_HOS, function(j) as.numeric(newdata[i, grepl(j, vars)]))
       if (sum(Esc_HOS[!a, ])) stop("Internal salmonMSE error: there is hatchery escapement in even age classes")
+      if (any(object$stray)) {
+        Esc_stray <- sapply(Nage_stray, function(j) as.numeric(newdata[i, grepl(j, vars)]))
+        if (sum(Esc_stray[!a, ])) stop("Internal salmonMSE error: there are hatchery strays in even age classes")
+      } else {
+        Esc_stray <- matrix(0, n_age, 1)
+      }
     } else {
-      Esc_HOS <- matrix(0, n_age, 1)
+      Esc_HOS <- Esc_stray <- matrix(0, n_age, 1)
     }
     x <- newdata[i, "x"]
     y <- newdata[i, "y"]
-    object$func(Nage_NOS = Esc_NOS[a, , drop = FALSE], Nage_HOS = Esc_HOS[a, , drop = FALSE], x = x, y = y)
+    object$func(Nage_NOS = Esc_NOS[a, , drop = FALSE], Nage_HOS = Esc_HOS[a, , drop = FALSE],
+                Nage_stray = Esc_stray[a, , drop = FALSE], x = x, y = y)
   })
 
   return(val)

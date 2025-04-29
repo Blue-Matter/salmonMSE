@@ -55,7 +55,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
     Stock@R0 <- 1
 
     SRRpars <- data.frame(x = 1:SOM@nsim)
-    SRRfun <- function(SB, SRRpars) if(sum(SB)) 1 else 0
+    SRRfun <- function(SB, SRRpars) if(sum(SB, na.rm = TRUE)) 1 else 0
     relRfun <- function(SSBpR, SRRpars) return(1)
     SPRcrashfun <- function(SSBpR0, SRRpars) return(0)
     cpars_bio$SRR <- list(SRRfun = SRRfun, SRRpars = SRRpars, relRfun = relRfun, SPRcrashfun = SPRcrashfun)

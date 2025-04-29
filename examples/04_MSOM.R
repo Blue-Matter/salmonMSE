@@ -3,9 +3,10 @@ library(salmonMSE)
 
 class?SOM # Definition of inputs
 
-SAR <- 0.01
 ns <- 2
 nsim <- 3
+SAR <- 0.01
+
 Bio <- lapply(1:ns, function(s) {
   new(
     "Bio",
@@ -18,7 +19,6 @@ Bio <- lapply(1:ns, function(s) {
     fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
     p_female = 0.49,
     s_enroute = 1
-    #strays = 0
   )
 })
 
@@ -64,8 +64,9 @@ Harvest <- lapply(1:ns, function(s) {
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
-    MSF = FALSE,
-    release_mort = c(0.1, 0.1),
+    MSF_PT = FALSE,
+    MSF_T = FALSE,
+    release_mort = c(0, 0),
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
   )
@@ -75,16 +76,17 @@ Harvest <- lapply(1:ns, function(s) {
 nyears <- 2
 
 Historical <- lapply(1:ns, function(s) {
-  HistN <- array(0, c(nsim, Bio[[s]]@maxage, nyears+1, 2))
+  HistNjuv_NOS <- HistNjuv_HOS <- array(0, c(nsim, Bio[[s]]@maxage, nyears+1))
   if (s == 1) {
-    HistN[, 1, 1, ] <- HistN[, 2, 2, ] <- 1000/SAR
+    HistNjuv_NOS[, 1, 1] <- HistNjuv_HOS[, 2, 2] <- 1000/SAR
   } else {
-    HistN[, 1, 1, 1] <- HistN[, 2, 2, 1] <- 100/SAR
+    HistNjuv_NOS[, 1, 1] <- 100/SAR
   }
 
   new(
     "Historical",
-    HistN = HistN
+    HistNjuv_NOS = HistNjuv_NOS,
+    HistNjuv_HOS = HistNjuv_HOS
   )
 })
 
@@ -105,3 +107,7 @@ saveRDS(out, file = 'examples/MSOM.rds')
 
 report(out, dir = 'examples', filename = 'MSOM')
 
+png("man/figures/multipop_spawners.png", height = 3.5, width = 4.5, units = "in", res = 400)
+par(mar = c(5, 4, 1, 1))
+plot_spawners(out, s = 2, prop = FALSE) # Spawner composition
+dev.off()

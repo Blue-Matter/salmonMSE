@@ -13,6 +13,8 @@ navbar:
         href: articles/example.html
       - text: Decision table
         href: articles/decision-table.html
+      - text: Multi-population model
+        href: articles/example-multi.html
       - text: Dynamics equations
         href: articles/equations.html
       - text: Conditioning model

@@ -8,6 +8,7 @@
 smolt_func(
   Nage_NOS,
   Nage_HOS,
+  Nage_stray,
   x = -1,
   y,
   output = c("natural", "hatchery"),
@@ -18,6 +19,7 @@ smolt_func(
   hatchery_args,
   fitness_args,
   habitat_args,
+  stray_args,
   s,
   g,
   prop_LHG,
@@ -29,6 +31,7 @@ makeRel_smolt(
   s = 1,
   p_natural,
   p_hatchery = NULL,
+  p_stray = NULL,
   output = c("natural", "hatchery"),
   s_enroute,
   p_female,
@@ -37,17 +40,21 @@ makeRel_smolt(
   hatchery_args,
   fitness_args,
   habitat_args,
+  stray_args,
   g,
   prop_LHG,
   r
 )
 }
 \arguments{
-\item{Nage_NOS}{Matrix \verb{[n_age, n_g]} of natural escapement from openMSE. \code{n_g} is the number of life history groups (divisons within cohorts
+\item{Nage_NOS}{Matrix \verb{[n_age, n_g]} of natural escapement from openMSE. \code{n_g} is the number of life history groups (sub groups within cohorts)
 that contribute to spawning.}
 
-\item{Nage_HOS}{Matrix \verb{[n_age, n_g]} of hatchery escapement from openMSE. \code{n_g} is the number of life history groups (divisons within cohorts
+\item{Nage_HOS}{Matrix \verb{[n_age, n_r]} of hatchery escapement from openMSE. \code{n_r} is the number of release strategies (sub groups within cohorts)
 that contribute to spawning.}
+
+\item{Nage_stray}{Matrix \verb{[nage, n_stray]} of hatchery escapement from donor populations that will stray to the recipient population. \code{stray_args$stray_matrix}
+determines the proportions of the donor escapement that will move to the recipient population.}
 
 \item{x}{Integer, simulation number from openMSE}
 
@@ -69,6 +76,12 @@ Column names include: SRrel, kappa, capacity, Smax, phi}
 \item{fitness_args}{Named list containing various arguments controlling population fitness from hatchery production.
 Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss}
 
+\item{habitat_args}{Named list with arguments sontrolling freshwater life stage survival.
+Names include: use_habitat (logical), Habitat (\linkS4class{Habitat} object)}
+
+\item{stray_args}{Named list with arguments controlling strays in and out of the local population
+Names include:}
+
 \item{s}{Integer, salmonMSE population index. Used to report variables to \link{salmonMSE_env}.}
 
 \item{g}{Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if \code{output = "natural"})}
@@ -84,6 +97,8 @@ if spawning is from multiple life history groups}
 
 \item{p_hatchery}{Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
 if there are multiple release strategies. Set to \code{NULL} for no hatchery production}
+
+\item{p_stray}{Integer vector, population index for the hatchery strays in multi-system models}
 }
 \value{
 \itemize{
