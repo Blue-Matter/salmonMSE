@@ -62,13 +62,17 @@
 <dd><p>Numeric. The exploitation rate of the return in the terminal fishery.</p></dd>
 
 
-<dt><code>MSF</code></dt>
-<dd><p>Logical. Whether to implement mark-selective fishing, with no retention on unmarked fish.</p></dd>
+<dt><code>MSF_PT</code></dt>
+<dd><p>Logical. Whether to implement mark-selective fishing in the preterminal fishery, with no retention on unmarked fish.</p></dd>
+
+
+<dt><code>MSF_T</code></dt>
+<dd><p>Logical. Whether to implement mark-selective fishing in the terminal fishery, with no retention on unmarked fish.</p></dd>
 
 
 <dt><code>release_mort</code></dt>
 <dd><p>Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
-Implemented to model mark-selective fishing. Not used if <code>MSF = FALSE</code>.</p></dd>
+Implemented to model mark-selective fishing. Not used if either <code>MSF_PT</code> or <code>MSF_T</code> is <code> FALSE</code>.</p></dd>
 
 
 <dt><code>vulPT</code></dt>
@@ -94,11 +98,11 @@ Implemented to model mark-selective fishing. Not used if <code>MSF = FALSE</code
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name u_preterminal    u_terminal           MSF  release_mort</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       logical       numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          vulPT          vulT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    num.matrix    num.matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name u_preterminal    u_terminal        MSF_PT         MSF_T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       logical       logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   release_mort         vulPT          vulT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       numeric    num.matrix    num.matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Harvest.list"</span>
 </code></pre></div>

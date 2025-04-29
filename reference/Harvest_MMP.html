@@ -56,7 +56,8 @@ salmonMSE updates the arguments of this function from the salmon operating model
 <span>  reps <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">u_terminal</span>,</span>
 <span>  <span class="va">u_preterminal</span>,</span>
-<span>  MSF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  MSF_PT <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  MSF_T <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">m</span>,</span>
 <span>  <span class="va">release_mort</span>,</span>
 <span>  p_terminal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -92,8 +93,12 @@ salmonMSE updates the arguments of this function from the salmon operating model
 <dd><p>Single numeric. Harvest rate of retained catch in the pre-terminal fishery</p></dd>
 
 
-<dt id="arg-msf">MSF<a class="anchor" aria-label="anchor" href="#arg-msf"></a></dt>
-<dd><p>Logical, whether to implement mark-selective fishing</p></dd>
+<dt id="arg-msf-pt">MSF_PT<a class="anchor" aria-label="anchor" href="#arg-msf-pt"></a></dt>
+<dd><p>Logical, whether to implement mark-selective fishing for the preterminal fishery</p></dd>
+
+
+<dt id="arg-msf-t">MSF_T<a class="anchor" aria-label="anchor" href="#arg-msf-t"></a></dt>
+<dd><p>Logical, whether to implement mark-selective fishing for the terminal fishery</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>
@@ -103,7 +108,7 @@ Retention in the operating model is specified in the MOM object</p></dd>
 
 <dt id="arg-release-mort">release_mort<a class="anchor" aria-label="anchor" href="#arg-release-mort"></a></dt>
 <dd><p>Matrix <code>[2, s]</code>. Release mortality of discarded fish in the pre-terminal (1st row) and terminal (2nd row) fishery. Only used
-if <code>MSF = TRUE</code>. Only used to calculate the fishing effort.
+if <code>MSF_PT = TRUE</code> or <code>MSF_T = TRUE</code>. Only used to calculate the fishing effort.
 Release mortality in the operating model is specified in the MOM object</p></dd>
 
 
