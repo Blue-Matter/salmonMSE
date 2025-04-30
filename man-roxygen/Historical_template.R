@@ -1,6 +1,9 @@
 
-#' @slot HistSpawner_NOS Array by `[nsim, maxage, nyears, n_g]`. Natural origin spawners at age in the natural environment. *Optional*
-#' @slot HistSpawner_HOS Array by `[nsim, maxage, nyears, n_r]`. Hatchery origin spawners at age in the natural environment. *Optional*
+#' @slot HistSpawner_NOS Natural origin spawners at age. Either a numeric to specify the total natural spawners (in the oldest age class)
+#'   at the beginning of the projection, otherwise, an array by `[nsim, maxage, nyears, n_g]`. Default is 1,000 spawners.
+#' @slot HistSpawner_HOS Hatchery origin spawners at age. Either a numeric to specify the total hatchery spawners (in the oldest age class)
+#'   at the beginning of the projection, otherwise, an array by `[nsim, maxage, nyears, n_r]`.
+#'   Default is 1,000 spawners if there is hatchery production or zero otherwise.
 #' @slot HistNjuv_NOS Array by `[nsim, maxage, nyears+1, n_g]`. The abundance of immature natural origin fish at the beginning of the annual time step.
 #' Default assumes 1000 smolts (age-1) fish annually.
 #' @slot HistNjuv_HOS Array by `[nsim, maxage, nyears+1, n_r]`. The abundance of immature hatchery origin fish at the beginning of the annual time step.

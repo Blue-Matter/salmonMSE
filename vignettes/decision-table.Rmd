@@ -111,16 +111,11 @@ wrapper <- function(x, Design) {
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
   )
-
-  # Return of 1000 natural and hatchery fish each for the first generation
-  nyears <- 2
-  HistN <- array(0, c(nsim, Bio@maxage, nyears+1))
-  HistN[, 1, 1] <- HistN[, 2, 2] <- 1000/SAR
-
+  
   Historical <- new(
     "Historical",
-    HistNjuv_NOS = HistN,
-    HistNjuv_HOS = HistN
+    HistSpawner_NOS = 1000,
+    HistSpawner_HOS = 1000
   )
 
   # Stitched salmon operating model

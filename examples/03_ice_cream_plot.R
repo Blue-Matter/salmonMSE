@@ -67,21 +67,18 @@ wrapper <- function(x, Design) {
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.5,              # Specify fixed harvest rate of mature fish
-    MSF = FALSE,
+    MSF_PT = FALSE,
+    MSF_T = FALSE,
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
   )
 
-  # Return of 1000 natural and hatchery fish each for the first generation
-  nyears <- 2
-  HistN <- array(0, c(nsim, Bio@maxage, nyears+1))
-  HistN[, 1, 1] <- HistN[, 2, 2] <- 1000/SAR
-
+  # 1000 natural and hatchery spawners each for the first generation
   Historical <- new(
     "Historical",
-    HistNjuv_NOS = HistN,
-    HistNjuv_HOS = HistN
+    HistSpawner_NOS = 1000,
+    HistSpawner_HOS = 1000
   )
 
   # Stitched salmon operating model

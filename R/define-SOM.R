@@ -125,7 +125,14 @@ setClass(
 # ---- Historical Class -----
 #' Class \code{"Historical"}
 #'
-#' The component of the operating model that specifies the historical dynamics.
+#' Optional component of the operating model that specifies the historical dynamics.
+#'
+#' Several approaches are possible:
+#' - No set up. Default option sets 1000 natural-origin juveniles (age 1), and 1000 hatchery-origin juveniles (age 1) if there is hatchery production (otherwise, zero).
+#' - *Recommended option*: specify the initial spawning abundance in the terminal age class.
+#' - Detailed setup that reconstructs a historical population by specifying the juvenile abundance (at the beginning of the year),
+#' annual fishing mortality rates, and spawner abundance. Typically used if there an estimation/conditioning model is used to inform
+#' parameters of the operating model.
 #'
 #' @name Historical-class
 #' @docType class
@@ -143,8 +150,8 @@ setClass(
   "Historical",
   slots = c(
     Name = "character",
-    HistSpawner_NOS = "array",
-    HistSpawner_HOS = "array",
+    HistSpawner_NOS = "num.array",
+    HistSpawner_HOS = "num.array",
     HistNjuv_NOS = "array",
     HistNjuv_HOS = "array",
     HistFPT = "num.array",

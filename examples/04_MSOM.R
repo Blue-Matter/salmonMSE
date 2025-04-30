@@ -72,23 +72,15 @@ Harvest <- lapply(1:ns, function(s) {
   )
 })
 
-# Return of 1000 natural and hatchery fish each for the first generation
-nyears <- 2
-
 Historical <- lapply(1:ns, function(s) {
-  HistNjuv_NOS <- HistNjuv_HOS <- array(0, c(nsim, Bio[[s]]@maxage, nyears+1))
-  if (s == 1) {
-    HistNjuv_NOS[, 1, 1] <- HistNjuv_HOS[, 2, 2] <- 1000/SAR
-  } else {
-    HistNjuv_NOS[, 1, 1] <- 100/SAR
-  }
-
   new(
     "Historical",
-    HistNjuv_NOS = HistNjuv_NOS,
-    HistNjuv_HOS = HistNjuv_HOS
+    HistSpawner_NOS = ifelse(s == 1, 1000, 100),
+    HistSpawner_HOS = ifelse(s == 1, 1000, 0)
   )
 })
+
+
 
 # Stitched salmon operating model
 SOM <- new("SOM",

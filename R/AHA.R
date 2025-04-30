@@ -83,14 +83,14 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       }
     }
 
-    if (SOM@Harvest[[s]]@MSF_PT || SOM@Harvest[[s]]@MSF_T) {
+    if (SOM@Harvest[[s]]@MSF_T) {
       .F <- get_F(u = SOM@Harvest[[s]]@u_terminal, M = 1e-8, ret = SOM@Hatchery[[s]]@m, release_mort = SOM@Harvest[[s]]@release_mort[2])
       Frel <- (1 - SOM@Hatchery[[s]]@m) * SOM@Harvest[[s]]@release_mort[2] * .F
       Fret <- SOM@Hatchery[[s]]@m * .F
       u_NOR <- 1 - exp(-Frel)
       u_HOR <- 1 - exp(-Frel - Fret)
       message(
-        "Mark-selective fishing detected. For AHA, setting harvest rate of natural and hatchery fish = ",
+        "Mark-selective fishing for terminal fishery detected. For AHA, setting harvest rate of natural and hatchery fish = ",
         round(u_NOR, 3), " and ", round(u_HOR, 3), ", respectively. Catch represents kept catch + dead releases."
       )
     }
@@ -122,7 +122,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   Hatchery <- SOM@Hatchery[[s]]
   Harvest <- SOM@Harvest[[s]]
 
-  if (SOM@Harvest[[s]]@MSF_PT || SOM@Harvest[[s]]@MSF_T) {
+  if (SOM@Harvest[[s]]@MSF_T) {
     .F <- get_F(u = Harvest@u_terminal, M = 1e-8, ret = Hatchery@m, release_mort = Harvest@release_mort[2])
     Frel <- (1 - Hatchery@m) * Harvest@release_mort[2] * .F
     Fret <- Hatchery@m * .F

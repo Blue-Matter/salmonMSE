@@ -80,7 +80,8 @@ Harvest <- lapply(1:ns, function(s) {
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
-    MSF = FALSE,
+    MSF_PT = FALSE,
+    MSF_T = FALSE,
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
@@ -89,16 +90,10 @@ Harvest <- lapply(1:ns, function(s) {
 
 # Return of 1000 natural and hatchery fish each for the first generation
 Historical <- lapply(1:ns, function(s) {
-  HistNjuv_NOS <- array(0, c(nsim, Bio[[s]]@maxage, nyears+1, Bio[[s]]@n_g))
-  HistNjuv_HOS <- array(0, c(nsim, Bio[[s]]@maxage, nyears+1))
-
-  HistNjuv_NOS[, 1, 1, ] <- HistNjuv_NOS[, 2, 2, ] <- 1000/SAR[s]
-  HistNjuv_HOS[, 1, 1] <- HistNjuv_HOS[, 2, 2] <- 1000/SAR[s]
-
   new(
     "Historical",
-    HistNjuv_NOS = HistNjuv_NOS,
-    HistNjuv_HOS = HistNjuv_HOS
+    HistSpawner_NOS = 1000,
+    HistSpawner_HOS = 1000
   )
 })
 

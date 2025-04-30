@@ -68,22 +68,18 @@ Harvest <- new(
   vulT = c(1, 1, 1)
 )
 
-# Return of 1000 natural and hatchery fish each for the first generation
-nyears <- 2
-HistN <- array(0, c(nsim, Bio@maxage, nyears+1))
-HistN[, 1, 1] <- HistN[, 2, 2] <- 1000/SAR
-
+# 1000 natural and hatchery spawners each for the first generation
 Historical <- new(
   "Historical",
-  HistNjuv_NOS = HistN,
-  HistNjuv_HOS = HistN
+  HistSpawner_NOS = 1000,
+  HistSpawner_HOS = 1000
 )
 
 # Stitched salmon operating model
 SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
            nsim = nsim, nyears = 2, proyears = 50)
-
+SOM <- check_SOM(SOM)
 # run salmonMSE
 #MOM <- SOM2MOM(SOM)
 #H <- MSEtool::SimulateMOM(MOM, parallel = FALSE)
