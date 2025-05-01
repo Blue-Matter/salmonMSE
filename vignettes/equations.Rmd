@@ -67,7 +67,7 @@ where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the supersc
 
 ## Smolt production - no habitat modeling
 
-If no habitat modeling is used, then fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_y = \textrm{Egg}^\textrm{HOS}_y$.
+If no habitat modeling is used, then fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y$.
 
 Survival from egg to smolt life stage is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
 
@@ -430,21 +430,38 @@ Effective proportions, i.e., weighting by age-class fecundity, accounts for olde
 
 ## Fitness loss
 
-Fitness can reduce survival in the egg, fry, and immature life stages by reducing the productivity and capacity parameters.
+Fitness can reduce survival in the egg, fry, and immature life stages.
 
-If modeling egg to smolt density-dependence (in the absence of habitat modeling), the productivity parameter is the product of the base value and the reduced the fitness loss function:
+If no habitat model is used, then the egg-fry survival is reduced by the fitness loss function:
 
 \begin{align}
-P^\textrm{egg-smolt*}_y &= P^\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}\\
-C^\textrm{egg-smolt*}_y &= C^\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}
-M^\textrm{NOS}_{y,a} &= -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times (W^\textrm{nat.}_{y-a})^{\ell_\textrm{juv}})
+\textrm{Fry}^\textrm{NOS}_{y+1} &= \textrm{Egg}^\textrm{NOS}_y \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}\\
+\textrm{Fry}^\textrm{HOS}_{y+1} &= \textrm{Egg}^\textrm{HOS}_y \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}}
 \end{align}
 
-with $\ell_i$ is the proportion of the fitness loss apportioned to life stage $i$ (either egg, fry, or juvenile-marine), with $\sum_i \ell_i = 1$, and density-dependent parameters.
-In the marine environment, age-specific natural survival is reduced proportional to the fitness loss term and modeled as a cohort effect.
+and the smolt production function is adjusted by loss in productivity and capacity, with $\alpha$ and $\beta$ adjusted accordingly as:
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha'_{y+1} \times 
+\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta'_{y+1}(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha'_{y+1} \times 
+\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta'_{y+1}(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}
+\end{align}
+
+with $\alpha'_{y+1} = (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}\times\kappa/\phi$ and $\beta'_{y+1} = \alpha/(C_\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}})$.
 
 >With the Ricker density-dependent survival, the beta parameter is adjusted with 
->$\beta^*_y = 1/[S_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{egg}} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]$.
+>$\beta^*_y = 1/[S_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]$.
+
+In the marine life stage, the increase in natural mortality is:
+
+$$
+M^\textrm{NOS}_{y,a} = -\log(\exp(-M^\textrm{base,NOS}_{y,a}) \times (W^\textrm{nat.}_{y-a})^{\ell_\textrm{juv}})
+$$
+
+In the marine environment, age-specific natural survival is reduced proportional to the fitness loss term and modeled as a cohort effect.
+
+Parameter $\ell_i$ is the proportion of the fitness loss apportioned to life stage $i$ (either egg, fry, or juvenile-marine), with $\sum_i \ell_i = 1$.
 
 If habitat variables are modeled, then the egg and fry fitness losses adjust the productivity and capacity of the corresponding life stage:
 

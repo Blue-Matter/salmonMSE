@@ -257,8 +257,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
   } else {
     # Egg and fry production from egg output
-    Fry_NOS <- Egg_prod_NOS <- Egg_NOS
-    Fry_HOS <- Egg_prod_HOS <- Egg_HOS
+    Egg_prod_NOS <- Egg_NOS
+    Egg_prod_HOS <- Egg_HOS
+
+    Fry_NOS <- fitness_loss[1, 1] * Egg_prod_NOS
+    Fry_HOS <- fitness_loss[1, 1] * Egg_prod_HOS
   }
 
   # Hatchery production after fitness loss
@@ -345,14 +348,14 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     smolt_NOS_g <- calc_smolt(
       Fry_NOS_g, total_fry,
       SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-      fitness_loss[1, 1] * fitness_loss[1, 2],
+      fitness_loss[1, 2],
       SRrel
     )
 
     smolt_HOS_g <- calc_smolt(
       Fry_HOS_g, total_fry,
       SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-      fitness_loss[1, 1] * fitness_loss[1, 2],
+      fitness_loss[1, 2],
       SRrel
     )
   }
