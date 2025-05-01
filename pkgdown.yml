@@ -5,10 +5,11 @@ articles:
   conditioning: conditioning.html
   decision-table: decision-table.html
   equations: equations.html
+  example-multi: example-multi.html
   example: example.html
   introduction: introduction.html
   model: model.html
-last_built: 2025-05-01T15:17Z
+last_built: 2025-05-01T20:09Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles

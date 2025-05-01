@@ -36,6 +36,7 @@
 <li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
+    <li><a class="dropdown-item" href="../articles/example-multi.html">Multi-population model</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
     <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
@@ -179,24 +180,15 @@ component). No hatchery fish are marked.</p>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>To start the projection, we specify the conditions for the spool-up
-with the Historical object. We will have a two-year spool-up with an
-escapement of 1000 natural origin fish and 1000 hatchery origin fish
-each in the first generation (for all simulations). This is accomplished
-by setting a spool-up period of 2 years (<code>nyears</code>) and
-specify the immature abundance of age 1 fish at the beginning of year 1
-and age 2 fish at the start of year 2. Since we model ocean survival
-during age 2, abundance of the cohort doesn’t change.</p>
+<p>To start the projection, we can specify the number of spawners at the
+beginning of the projection in the Historical object. Here, we specify
+1000 natural origin fish and 1000 hatchery origin fish each in the first
+generation (for all simulations):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Return of 1000 natural and hatchery fish each for the first generation</span></span>
-<span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="va">Bio</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
-<span></span>
-<span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
-<span>  HistNjuv_NOS <span class="op">=</span> <span class="va">HistN</span>,</span>
-<span>  HistNjuv_HOS <span class="op">=</span> <span class="va">HistN</span></span>
+<span>  HistSpawner_NOS <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  HistSpawner_HOS <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s stitch together the operating model and run the simulation
 for 50 projection years (<code>proyears</code>).</p>
@@ -256,14 +248,10 @@ stochastic operating model.</em></p>
 <span>  s_enroute <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span><span class="va">HistN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="va">Bio_stochastic</span><span class="op">@</span><span class="va">maxage</span>, <span class="va">nyears</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">HistN</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">HistN</span><span class="op">[</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1000</span><span class="op">/</span><span class="va">SAR</span></span>
-<span></span>
 <span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
-<span>  HistNjuv_NOS <span class="op">=</span> <span class="va">HistN</span>,</span>
-<span>  HistNjuv_HOS <span class="op">=</span> <span class="va">HistN</span></span>
+<span>  HistSpawner_NOS <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  HistSpawner_HOS <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">SOM_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>

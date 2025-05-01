@@ -31,6 +31,7 @@ makeRel_smolt() generates a list for openMSE to use in the simulations
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
+    <li><a class="dropdown-item" href="../articles/example-multi.html">Multi-population model</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
     <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
@@ -62,6 +63,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">smolt_func</span><span class="op">(</span></span>
 <span>  <span class="va">Nage_NOS</span>,</span>
 <span>  <span class="va">Nage_HOS</span>,</span>
+<span>  <span class="va">Nage_stray</span>,</span>
 <span>  x <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
 <span>  <span class="va">y</span>,</span>
 <span>  output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"natural"</span>, <span class="st">"hatchery"</span><span class="op">)</span>,</span>
@@ -72,6 +74,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
 <span>  <span class="va">habitat_args</span>,</span>
+<span>  <span class="va">stray_args</span>,</span>
 <span>  <span class="va">s</span>,</span>
 <span>  <span class="va">g</span>,</span>
 <span>  <span class="va">prop_LHG</span>,</span>
@@ -83,6 +86,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  s <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">p_natural</span>,</span>
 <span>  p_hatchery <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_stray <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"natural"</span>, <span class="st">"hatchery"</span><span class="op">)</span>,</span>
 <span>  <span class="va">s_enroute</span>,</span>
 <span>  <span class="va">p_female</span>,</span>
@@ -91,6 +95,7 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 <span>  <span class="va">hatchery_args</span>,</span>
 <span>  <span class="va">fitness_args</span>,</span>
 <span>  <span class="va">habitat_args</span>,</span>
+<span>  <span class="va">stray_args</span>,</span>
 <span>  <span class="va">g</span>,</span>
 <span>  <span class="va">prop_LHG</span>,</span>
 <span>  <span class="va">r</span></span>
@@ -102,13 +107,18 @@ escapement, and saves state variables to <a href="salmonMSE_env.html">salmonMSE_
 
 
 <dl><dt id="arg-nage-nos">Nage_NOS<a class="anchor" aria-label="anchor" href="#arg-nage-nos"></a></dt>
-<dd><p>Matrix <code>[n_age, n_g]</code> of natural escapement from openMSE. <code>n_g</code> is the number of life history groups (divisons within cohorts
+<dd><p>Matrix <code>[n_age, n_g]</code> of natural escapement from openMSE. <code>n_g</code> is the number of life history groups (sub groups within cohorts)
 that contribute to spawning.</p></dd>
 
 
 <dt id="arg-nage-hos">Nage_HOS<a class="anchor" aria-label="anchor" href="#arg-nage-hos"></a></dt>
-<dd><p>Matrix <code>[n_age, n_g]</code> of hatchery escapement from openMSE. <code>n_g</code> is the number of life history groups (divisons within cohorts
+<dd><p>Matrix <code>[n_age, n_r]</code> of hatchery escapement from openMSE. <code>n_r</code> is the number of release strategies (sub groups within cohorts)
 that contribute to spawning.</p></dd>
+
+
+<dt id="arg-nage-stray">Nage_stray<a class="anchor" aria-label="anchor" href="#arg-nage-stray"></a></dt>
+<dd><p>Matrix <code>[nage, n_stray]</code> of hatchery escapement from donor populations that will stray to the recipient population. <code>stray_args$stray_matrix</code>
+determines the proportions of the donor escapement that will move to the recipient population.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -149,6 +159,16 @@ Column names include: SRrel, kappa, capacity, Smax, phi</p></dd>
 Names include: fitness_type, omega2, theta, fitness_variance, heritability, zbar_start, fitness_floor, rel_loss</p></dd>
 
 
+<dt id="arg-habitat-args">habitat_args<a class="anchor" aria-label="anchor" href="#arg-habitat-args"></a></dt>
+<dd><p>Named list with arguments sontrolling freshwater life stage survival.
+Names include: use_habitat (logical), Habitat (<a href="Habitat-class.html">Habitat</a> object)</p></dd>
+
+
+<dt id="arg-stray-args">stray_args<a class="anchor" aria-label="anchor" href="#arg-stray-args"></a></dt>
+<dd><p>Named list with arguments controlling strays in and out of the local population
+Names include:</p></dd>
+
+
 <dt id="arg-s">s<a class="anchor" aria-label="anchor" href="#arg-s"></a></dt>
 <dd><p>Integer, salmonMSE population index. Used to report variables to <a href="salmonMSE_env.html">salmonMSE_env</a>.</p></dd>
 
@@ -177,6 +197,10 @@ if spawning is from multiple life history groups</p></dd>
 <dt id="arg-p-hatchery">p_hatchery<a class="anchor" aria-label="anchor" href="#arg-p-hatchery"></a></dt>
 <dd><p>Integer vector, the population index for the hatchery origin escapement in the openMSE model. Can be more than one
 if there are multiple release strategies. Set to <code>NULL</code> for no hatchery production</p></dd>
+
+
+<dt id="arg-p-stray">p_stray<a class="anchor" aria-label="anchor" href="#arg-p-stray"></a></dt>
+<dd><p>Integer vector, population index for the hatchery strays in multi-system models</p></dd>
 
 </dl></div>
     <div class="section level2">

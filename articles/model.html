@@ -36,6 +36,7 @@
 <li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
+    <li><a class="dropdown-item" href="../articles/example-multi.html">Multi-population model</a></li>
     <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
     <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
@@ -70,30 +71,32 @@
 
     
     
-<p>This article documents the implementation of a salmon operating model
-in openMSE and is intended for readers familiar with the internal
-structure of the MSEtool package, e.g., developers and advanced
+<p>This article documents the implementation of a semelparous salmon
+operating model in openMSE and is intended for readers familiar with the
+internal structure of the MSEtool package, e.g., developers and advanced
 users.</p>
 <div class="section level2">
 <h2 id="multimse">multiMSE<a class="anchor" aria-label="anchor" href="#multimse"></a>
 </h2>
 <p>salmonMSE takes advantage of the functionality of the <a href="https://openmse.com/features-multimse/" class="external-link">multiMSE</a> function in
 MSEtool. <code>multiMSE</code> is intended for multi-population,
-multi-fleet modeling where the “population” unit can be envisioned to be
-any combination of a sex-specific single species model, multi-species
-model, or multi-stock model. Relevant features include:</p>
+multi-fleet operationg models (class <code>MOM</code>) where the
+“population” unit can be envisioned to be any combination of a
+sex-specific single species model, multi-species model, or multi-stock
+model. Relevant features include:</p>
 <ol style="list-style-type: decimal">
 <li><p>Two-sex models where the spawning output to predict recruitment
 for a population is a linear combination of the spawning output from the
-set of populations in the model</p></li>
+set of populations in the model (using
+<code>MOM@SexPars$SSBfrom</code>)</p></li>
 <li><p>Hermaphroditism in the sex dynamics such that either females or
 males switch sexes. Mechanistically, the abundance moves from one
 population to another at the beginning of the time step based on a
-specified age schedule</p></li>
+specified age schedule (using <code>MOM@SexPars$Herm</code>)</p></li>
 <li><p>Inter-population and intra-population dynamics where the
 biological parameter for one population is updated by the abundance or
-biomass of a set through a custom written function (“MICE”
-modeling)</p></li>
+biomass of a set through a custom written function (“MICE” modeling
+using <code>MOM@Rel</code>)</p></li>
 <li><p>Multi-fleet model that can be used to allocate catches among
 populations and fleets</p></li>
 </ol>
@@ -101,31 +104,43 @@ populations and fleets</p></li>
 functionalities:</p>
 <ol start="5" style="list-style-type: decimal">
 <li><p>Multi-population models are used to model salmon life stages. For
-each salmon conservation unit (CU), three populations are modeled to
-represent the immature, mature (recruitment), and escapement life stage.
-Natural and hatchery fish are also separately modeled, thus, there are 6
-population units are needed if there is a hatchery for the CU and 3
-population units if there is no hatchery.</p></li>
+each salmon population, three populations are modeled to represent the
+immature, mature (recruitment), and escapement life stage. Natural and
+hatchery fish are also separately modeled, thus, there are 6 population
+units are needed if there is a hatchery for a single population and 3
+population units if there is no hatchery. The escapement population is
+used to predict the production of the next cohort of juveniles. The
+<code>MOM@SexPars$SSBfrom</code> feature is used to predict the juvenile
+population abundance at age 1 from the spawning from the escapement
+pouplation unit.</p></li>
 <li><p>Fish progress through the populations, i.e., life stages, based
 on maturity status. Movement of fish from the recruitment to the
 escapement life stage occurs in the year after maturity. While the
 cohorts will advance to the next age class, the life cycle ‘catches up’
 such that the generation time remains true to the real dynamics. More
-about this in the next section.</p></li>
+about this in the next section. The openMSE feature intended for
+hermaphroditism is utilized here.</p></li>
 <li><p>Total natural smolt production (immature natural origin fish) is
 predicted by the spawning output of the natural and hatchery spawners
 (two population units) by a function written in salmonMSE and passed to
-openMSE. This function also implements the fitness dynamics the reduces
-productivity based on the ratio of hatchery spawners and the ratio of
-natural broodtake.</p></li>
+openMSE as a MICE Rel (see <code>salmonMSE:::makeRel_smolt()</code> and
+<code>salmonMSE:::smolt_func()</code>). This function also implements
+the fitness dynamics the reduces productivity based on the ratio of
+hatchery spawners and the ratio of natural broodtake.</p></li>
 <li><p>This same function also implements the hatchery dynamics by
 removing natural and hatchery broodtake from the respective escapement
 and specifies the hatchery smolt releases as immature hatchery origin
 fish.</p></li>
+<li><p>This function also updates the number of hatchery spawners if
+there are external strays (annual fixed number) or from strays leaving
+the system.</p></li>
 <li><p>Another custom function specifies the reduction in marine
-survival due to fitness loss</p></li>
+survival due to fitness loss (see <code>salmonMSE:::makeRel_SAR()</code>
+and <code>salmonMSE:::SAR_fitness()</code>).</p></li>
 <li><p>A multi-fleet model specifies the harvest rates for the
-pre-terminal and terminal fisheries</p></li>
+pre-terminal and terminal fisheries. Retention is specified within
+openMSE from the mark rate if mark-selective fishing is
+utilized.</p></li>
 </ol>
 <p><img src="../reference/figures/model-life-cycle.png"><!-- --></p>
 <p><em>Representation of the life cycle stages (blue) modeled in
@@ -144,25 +159,27 @@ density-dependent survival occurs in the time step when spawning occurs.
 However, smolt production occurs in the year after spawning. Therefore,
 we advance the age structure of the escapement one extra year in openMSE
 in order to ensure smolt production occurs in the correct time step. In
-the reporting array, the escapement, abundance of spawners, broodtake,
-and the egg production are adjusted back to the appropriate biological
+the reporting, i.e., converting openMSE output back to salmon specific
+output, the escapement, abundance of spawners, broodtake, and the egg
+production are adjusted back to the appropriate biological
 year.</p></li>
 <li><p>In the absence of a hatchery, the escapement is the number of
 spawners. In such a scenario, the spawning output and the smolt
 production can be calculated entirely within openMSE. With a hatchery,
-the escapement is subject to broodtake and removal of hatchery fish from
-the spawning grounds. openMSE sees none of the hatchery dynamics.
-Instead, a MICE function created by salmonMSE will read in the natural
-and hatchery escapement from openMSE, calculate the broodtake, removal
-of hatchery fish from spawning grounds, calculate fitness, adjust the
-stock-recruit parameters, apply fitness to the egg and smolt production,
-and return the natural smolt production as a “recruitment deviation” to
-openMSE. This is a multiplicative term that adjusts the natural smolt
-production that would have been created if there were no hatchery (note
-‘recruitment’ is used to refer to the life stage after density-dependent
-survival, as commonly used in a marine fisheries context, and not the
-salmon return). This function will also calculate the hatchery smolt
-releases as an absolute number for openMSE.</p></li>
+the escapement is subject to broodtake and removal of hatchery fish, and
+entry of strays from the spawning grounds. openMSE sees none of the
+hatchery dynamics. Instead, a MICE function created by salmonMSE will
+read in the natural and hatchery escapement from openMSE, calculate the
+broodtake, removal of hatchery fish from spawning grounds, calculate
+fitness, adjust the stock-recruit parameters, apply fitness to the egg
+and smolt production, and return the natural smolt production as a
+“recruitment deviation” to openMSE. This is a multiplicative term that
+adjusts the natural smolt production that would have been created if
+there were no hatchery (note ‘recruitment’ is used to refer to the life
+stage after density-dependent survival, as commonly used in a marine
+fisheries context, and not the salmon return). This function will also
+calculate the hatchery smolt releases as an absolute number for
+openMSE.</p></li>
 <li><p>The hermaphroditism feature in openMSE, used by salmonMSE to
 assign maturity, occurs at the beginning of the time step. At the same
 time, fishing mortality occurs over the course of the time step
@@ -223,7 +240,8 @@ the pre-terminal seasonal fishery occurs in the first half of the year
 and ocean mortality occurs in the second half of the year. For salmon
 that mature, vulnerability to the terminal seasonal fishery occurs in
 the second half of the year. The component of the cohort that matures
-does not experience ocean mortality during the last year of life.</p>
+does not experience ocean mortality during the last year of life
+(semelparous life history).</p>
 <p><img src="../reference/figures/model-age-structure-openMSE.png"><!-- --></p>
 <p><em>Salmon age structure as implemented in openMSE. Missing state
 variables are stored in a data frame in salmonMSE during the
