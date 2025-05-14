@@ -117,19 +117,25 @@ CM_covariate(d[["covariate"]], cov_names, year1, ylab = "M covariates (age 2+)")
 ### CWT
 
 ```{r cwt-rel, fig.cap="Total CWT releases."}
-CM_data(d$cwtrelease, year, ylab = "CWT release")
+CM_CWTrel(d$cwtrelease, year1, rs_names)
 ```
 
 ```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_CWTesc(report, d, year1)
+CM_fit_CWTesc(report, d, year1, rs_names)
 ```
 
 ```{r fit-cwt-catpt, fig.cap="Observed coded wire tag preterminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_CWTcatch(report, d, PT = TRUE, year1)
+CM_fit_CWTcatch(report, d, PT = TRUE, year1, rs_names)
 ```
 
 ```{r fit-cwt-catt, fig.cap="Observed coded wire tag terminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_CWTcatch(report, d, PT = FALSE, year1)
+CM_fit_CWTcatch(report, d, PT = FALSE, year1, rs_names)
+```
+
+```{r mat-cwt-rs, fig.cap="Brood year maturity by release strategy."}
+if (d$n_r > 1) {
+  CM_maturity(report, d, year1, rs_names = rs_names, annual = TRUE)
+}
 ```
 
 ## State variables {.tabset}
@@ -216,22 +222,22 @@ CM_vul(report, type = "vulPT")
 CM_F(report, PT = TRUE, year1)
 ```
 
-```{r CYER-PT, fig.cap="Calendar year preterminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_CYER(report, type = "PT", year1)
+```{r CYER-PT, fig.cap="Return year preterminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_ER(report, brood = FALSE, type = "PT", year1, r = d$r_matt)
 ```
 
 ```{r BYER-PT, fig.cap="Brood year preterminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_BYER(report, type = "PT", year1)
+CM_ER(report, brood = TRUE, type = "PT", year1, r = d$r_matt)
 ```
 
 ### Return
 
 ```{r matt-RY, fig.cap="Posterior estimates of maturity by age and return year (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
-CM_maturity(report, d, year1, brood = FALSE)
+CM_maturity(report, d, year1, r = d$r_matt, brood = FALSE, rs_names = rs_names)
 ```
 
 ```{r matt-BY, fig.cap="Posterior estimates of maturity by age and brood year (medians and 95% prediction interval). Dashed, horizontal lines represent prior means."}
-CM_maturity(report, d, year1, brood = TRUE)
+CM_maturity(report, d, year1, r = d$r_matt, brood = TRUE, rs_names = rs_names)
 ```
 
 ```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
@@ -248,12 +254,12 @@ CM_vul(report, type = "vulT")
 CM_F(report, PT = FALSE, year1)
 ```
 
-```{r CYER-T, fig.cap="Calendar year terminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_CYER(report, type = "T", year1)
+```{r CYER-T, fig.cap="Return year terminal exploitation rate at age (medians and 95% prediction interval)."}
+CM_ER(report, brood = FALSE, type = "T", year1, r = d$r_matt)
 ```
 
 ```{r BYER-T, fig.cap="Brood year terminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_BYER(report, type = "T", year1)
+CM_ER(report, brood = TRUE, type = "T", year1, r = d$r_matt)
 ```
 
 ### Escapement

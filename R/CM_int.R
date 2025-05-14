@@ -72,15 +72,16 @@ CM_int <- function(p, d) {
   # predicted spawners
   # predicted cwt catches for year
   # predicted cwt spawners for the year
-  survPT <- ccwtPT <- survT <- ccwtT <- ecwt <- matrix(NA_real_, d$Ldyr, d$Nages)
+  survPT <- survT <- matrix(NA_real_, d$Ldyr, d$Nages)
   cyearPT <- cyearT <- recr <- syear <- escyear <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
+  ccwtPT <- ccwtT <- ecwt <- array(NA_real_, c(d$Ldyr, d$Nages, d$n_r))
 
   spawners <- catchPT <- catchT <- egg <- megg <- logpredesc <- moplot <- FPT <- FT <- numeric(d$Ldyr)
-  matt <- matrix(0, d$Ldyr, d$Nages)
-  matt[, d$Nages] <- 1
+  matt <- array(0, c(d$Ldyr, d$Nages, d$n_r))
+  matt[, d$Nages, ] <- 1
 
   N <- array(0, c(d$Ldyr+1, d$Nages, 2)) # Array slice 1 = natural origin fish, 2 = hatchery fish
-  Ncwt <- matrix(0, d$Ldyr+1, d$Nages)
+  Ncwt <- array(0, c(d$Ldyr+1, d$Nages, d$n_r))
 
   # Initialize mean phenotype, fitness, etc.
   brood <- array(NA_real_, c(d$Ldyr, d$Nages, 2))
@@ -120,9 +121,12 @@ CM_int <- function(p, d) {
       mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)]
     }
 
-    Ncwt[t, 1] <- d$cwtrelease[t] * d$hatchsurv
+    Ncwt[t, 1, ] <- d$cwtrelease[t, ] * d$hatchsurv
 
-    matt[t, 2:(d$Nages-1)] <- plogis(p$logit_matt[t, ])
+    matt[t, 2:(d$Nages-1), 1] <- plogis(p$logit_matt[t, ])
+    if (d$n_r > 1) {
+      for (r in 2:d$n_r) matt[t, 2:(d$Nages-1), r] <- plogis(p$logit_matt[t, ] + p$matt_offset[, r-1])
+    }
 
     # set age-specific survival rates through fishing
     survPT[t, ] <- exp(-vulPT * FPT[t])
@@ -130,18 +134,18 @@ CM_int <- function(p, d) {
 
     # predict preterminal catch at age for the year
     cyearPT[t, , ] <- N[t, , ] * (1 - survPT[t, ])
-    ccwtPT[t, ] <- Ncwt[t, ] * (1 - survPT[t, ])
+    ccwtPT[t, , ] <- Ncwt[t, , ] * (1 - survPT[t, ])
 
     # predict recruitment at age for the year
-    recr[t, , ] <- N[t, , ] * survPT[t, ] * matt[t, ]
+    recr[t, , ] <- N[t, , ] * survPT[t, ] * matt[t, , d$r_matt]
 
     # predict terminal catch at age for the year
     cyearT[t, , ] <- recr[t, , ] * (1 - survT[t, ])
-    ccwtT[t, ] <- Ncwt[t, ] * survPT[t, ] * matt[t, ] * (1 - survT[t, ])
+    ccwtT[t, , ] <- Ncwt[t, , ] * survPT[t, ] * matt[t, , ] * (1 - survT[t, ])
 
     # predict escapement at age for the year
     escyear[t, , ] <- recr[t, , ] * survT[t, ]
-    ecwt[t, ] <- Ncwt[t, ] * survPT[t, ] * matt[t, ] * survT[t, ]
+    ecwt[t, , ] <- Ncwt[t, , ] * survPT[t, ] * matt[t, , ] * survT[t, ]
 
     # predict spawners at age for the year
     syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ] * d$s_enroute
@@ -182,8 +186,8 @@ CM_int <- function(p, d) {
     }
 
     # survive fish over the year, removing maturing fish that will spawn
-    N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
-    Ncwt[t+1, 2:d$Nages] <- Ncwt[t, 2:d$Nages - 1] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1])
+    N[t+1, 2:d$Nages, ] <- N[t, 2:d$Nages - 1, ] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1, d$r_matt])
+    Ncwt[t+1, 2:d$Nages, ] <- Ncwt[t, 2:d$Nages - 1, ] * survPT[t, 2:d$Nages - 1] * exp(-mo[t, 2:d$Nages - 1]) * (1 - matt[t, 2:d$Nages - 1, ])
 
     if (d$fitness) {
       egg_fitness <- egg[t] * fitness[t, 1]^d$rel_loss[1]
@@ -209,13 +213,13 @@ CM_int <- function(p, d) {
 
   # Convert predicted cwt catches and escapement from calendar year to brood year for likelihoods
   # data are in brood year format
-  cbroodPT <- cbroodT <- ebrood <- matrix(tiny, d$Ldyr, d$Nages)
+  cbroodPT <- cbroodT <- ebrood <- array(tiny, c(d$Ldyr, d$Nages, d$n_r))
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {
       if (t+a-1 <= d$Ldyr) {
-        cbroodPT[t, a] <- d$cwtExp * ccwtPT[t+a-1, a] + tiny
-        cbroodT[t, a] <- d$cwtExp * ccwtT[t+a-1, a] + tiny
-        ebrood[t, a] <- d$cwtExp * ecwt[t+a-1, a] + tiny
+        cbroodPT[t, a, ] <- d$cwtExp * ccwtPT[t+a-1, a, ] + tiny
+        cbroodT[t, a, ] <- d$cwtExp * ccwtT[t+a-1, a, ] + tiny
+        ebrood[t, a, ] <- d$cwtExp * ecwt[t+a-1, a, ] + tiny
       }
     }
   }
@@ -396,6 +400,9 @@ make_CMpars <- function(p, d) {
 
   if (is.null(p$logit_matt)) p$logit_matt <- matrix(qlogis(d$bmatt[-c(1, d$Nages)]), d$Ldyr, d$Nages - 2, byrow = TRUE)
   if (is.null(p$sd_matt)) p$sd_matt <- rep(0.5, d$Nages - 2)
+  if (is.null(p$matt_offset) && d$n_r > 1) {
+    p$matt_offset <- array(0, c(d$Nages - 2, d$n_r - 1))
+  }
 
   if (is.null(p$wt_sd)) p$wt_sd <- 1
   if (is.null(p$wto_sd)) p$wto_sd <- 1
@@ -427,31 +434,36 @@ check_data <- function(data) {
   if (is.null(data$Ldyr)) stop("data$Ldyr not found")
   if (is.null(data$lht)) data$lht <- 1
 
-  if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
-  if (is.null(data$gamma)) data$gamma <- 1
-  if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
+  if (is.null(data$n_r)) data$n_r <- 1
 
-  if (is.null(data$finitPT)) data$finitPT <- 0
-  if (is.null(data$finitT)) data$finitT <- 0
+  if (is.null(data$cwtrelease)) stop("data$cwtrelease should be a matrix Ldyr x n_r")
 
-  if (is.null(data$bmatt) || length(data$bmatt) != data$Nages) {
-    stop("data$bmatt should be a vector length Nages")
+  if (data$n_r == 1 && is.null(dim(data$cwtrelease))) {
+    if (length(data$cwtrelease) != data$Ldyr) {
+      stop("data$cwtrelease should be a matrix Ldyr x n_r")
+    }
+    data$cwtrelease <- matrix(data$cwtrelease, data$Ldyr, data$n_r)
+  }
+  if (!is.matrix(data$cwtrelease)) {
+    stop("data$cwtrelease should be a matrix Ldyr x n_r")
   }
 
-  if (is.null(data$fec) || length(data$fec) != data$Nages) {
-    stop("data$fec should be a vector length Nages")
+  if (is.null(data$cwtcatPT)) {
+    data$cwtcatPT <- array(0, c(data$Ldyr, data$Nages, data$n_r))
   }
-
-  if (is.null(data$cwtcatPT) || !is.matrix(data$cwtcatPT)) {
-    stop("data$cwtcatPT should be a matrix: Ldyr (by brood year) x Nages")
+  if (!is.array(data$cwtcatPT)) {
+    stop("data$cwtcatPT should be an array: Ldyr (by brood year) x Nages x n_r")
   }
-  if (is.null(data$cwtcatT) || !is.matrix(data$cwtcatT)) {
-    stop("data$cwtcatT should be a matrix: Ldyr (by brood year) x Nages")
+  if (is.null(data$cwtcatT)) {
+    data$cwtcatT <- array(0, c(data$Ldyr, data$Nages, data$n_r))
+  }
+  if (!is.array(data$cwtcatT)) {
+    stop("data$cwtcatT should be an array: Ldyr (by brood year) x Nages x n_r")
   }
 
   FPT <- sum(data$cwtcatPT)
   FT <- sum(data$cwtcatT)
-  if (!FPT && !FT) stop("No CWT preterminal or terminal catch found")
+  if (!FPT && !FT) stop("No CWT catch found")
 
   if (FPT) {
     if (is.null(data$bvulPT) || length(data$bvulPT) != data$Nages) {
@@ -477,13 +489,30 @@ check_data <- function(data) {
     data$RelRegFT <- rep(0, data$Ldyr)
   }
 
+  if (is.null(data$bmatt) || length(data$bmatt) != data$Nages) {
+    stop("data$bmatt should be a vector length Nages")
+  }
+
   if (is.null(data$mobase) || length(data$mobase) != data$Nages) {
     stop("data$mobase should be a vector length Nages")
   }
 
-  if (is.null(data$cwtrelease) || length(data$cwtrelease) != data$Ldyr) {
-    stop("data$cwtrelease should be a vector length Ldyr")
+  if (!is.null(data$covariate1)) {
+    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
   }
+  if (!is.null(data$covariate)) {
+    if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
+  }
+
+  if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
+  if (is.null(data$gamma)) data$gamma <- 1
+  if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
+
+  if (is.null(data$fec) || length(data$fec) != data$Nages) {
+    stop("data$fec should be a vector length Nages")
+  }
+
+  if (is.null(data$r_matt)) data$r_matt <- 1L
 
   if (is.null(data$obsescape) || length(data$obsescape) != data$Ldyr) {
     stop("data$obsescape should be a vector length Ldyr")
@@ -499,18 +528,13 @@ check_data <- function(data) {
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
 
-  if (!is.null(data$covariate1)) {
-    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
-  }
-
-  if (!is.null(data$covariate)) {
-    if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
-  }
-
   if (is.null(data$s_enroute)) data$s_enroute <- 1
 
   if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
   if (is.null(data$so_sd)) data$so_sd <- 0.5
+
+  if (is.null(data$finitPT)) data$finitPT <- 0
+  if (is.null(data$finitT)) data$finitT <- 0
 
   if (is.null(data$fitness)) data$fitness <- FALSE
 

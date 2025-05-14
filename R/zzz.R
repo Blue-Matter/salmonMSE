@@ -14,7 +14,7 @@ if(getRversion() >= "2.15.1") {
       "p",
       "Design1", "Design2",
       "glossary", "pm1_lower", "pm1_upper", "pm2_lower", "pm2_upper",
-      "Covariate"
+      "Covariate", "Release Strategy"
     )
   )
 }
