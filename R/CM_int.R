@@ -448,16 +448,19 @@ check_data <- function(data) {
     stop("data$cwtrelease should be a matrix Ldyr x n_r")
   }
 
+  if (is.null(data$cwtesc) || is.matrix(data$cwtesc) || !is.array(data$cwtesc)) {
+    stop("data$cwtesc should be an array: Ldyr (by brood year) x Nages x n_r")
+  }
+
   if (is.null(data$cwtcatPT)) {
     data$cwtcatPT <- array(0, c(data$Ldyr, data$Nages, data$n_r))
-  }
-  if (!is.array(data$cwtcatPT)) {
+  } else if (is.matrix(data$cwtcatPT) || !is.array(data$cwtcatPT)) {
     stop("data$cwtcatPT should be an array: Ldyr (by brood year) x Nages x n_r")
   }
+
   if (is.null(data$cwtcatT)) {
     data$cwtcatT <- array(0, c(data$Ldyr, data$Nages, data$n_r))
-  }
-  if (!is.array(data$cwtcatT)) {
+  } else if (is.matrix(data$cwtcatT) || !is.array(data$cwtcatT)) {
     stop("data$cwtcatT should be an array: Ldyr (by brood year) x Nages x n_r")
   }
 
