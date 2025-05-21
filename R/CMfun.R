@@ -210,9 +210,6 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
   n_r <- d$n_r
   if (missing(rs_names)) rs_names <- seq(1, n_r)
 
-  bmatt <- data.frame(Age = 1:d$Nages, value = d$bmatt) %>%
-    dplyr::filter(Age > 1)
-
   if (annual) {
 
     if (brood) {
@@ -251,6 +248,9 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
         scale_fill_manual(values = "grey")
     }
   } else {
+
+    bmatt <- data.frame(Age = 1:d$Nages, value = d$bmatt) %>%
+      dplyr::filter(Age > 1)
 
     if (brood) {
       matt <- sapply(report, function(i) CY2BY(i[["matt"]][, , r]), simplify = 'array')
