@@ -83,7 +83,7 @@ setClass(
     fry_prod = "numeric",
     fry_capacity = "numeric",
     fry_sdev = "matrix",
-    smolt_rel = "numeric",
+    smolt_rel = "character",
     smolt_prod = "numeric",
     smolt_capacity = "numeric",
     smolt_sdev = "matrix"
