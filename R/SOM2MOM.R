@@ -451,7 +451,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Habitat@fry_sdev)) {
         Habitat@fry_sdev <- matrix(1, nsim, SOM@proyears)
       }
-      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", nsim, SOM@proyears)
+      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", SOM@proyears, nsim)
 
       Habitat <- check_numeric(Habitat, "smolt_rel", default = "BH")
       Habitat <- check_numeric(Habitat, "smolt_prod", default = 1)
@@ -459,7 +459,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Habitat@smolt_sdev)) {
         Habitat@smolt_sdev <- matrix(1, nsim, SOM@proyears)
       }
-      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", nsim, SOM@proyears)
+      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", SOM@proyears, nsim)
     }
 
     ### Check Hatchery ----
