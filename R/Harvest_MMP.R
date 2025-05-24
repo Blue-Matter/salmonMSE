@@ -89,7 +89,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
           p_HOS_T <- intersect(p_HOS_T_all, pkey$p[pkey$s == s_p])
 
           Nage_T <- sapply(p_HOS_T, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
-          V_T <- sapply(p_HOS_PT, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
+          V_T <- sapply(p_HOS_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
           s_T <- pkey$s[match(p_HOS_T, pkey$p)]
 
           Effort <- get_F(
