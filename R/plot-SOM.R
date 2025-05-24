@@ -6,6 +6,8 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
   type <- match.arg(type)
   x <- slot(object, var)
 
+  if (!length(x)) return(invisible())
+
   if (surv) x <- exp(-x)
 
   quant <- c(0.025, 0.5, 0.975)

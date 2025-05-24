@@ -142,7 +142,7 @@ get_statevar <- function(SMSE, var, s) {
 
   if (var == "Smolt") x <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
 
-  if (var == "NOS/SMSY") {
+  if (var == "NOS/SMSY" && length(SMSE@Misc$Ref[[s]])) {
     x <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
       SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
@@ -150,7 +150,7 @@ get_statevar <- function(SMSE, var, s) {
     })
   }
 
-  if (var == "S/SMSY") {
+  if (var == "S/SMSY" && length(SMSE@Misc$Ref[[s]])) {
     x <- local({
       S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
       SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
@@ -158,7 +158,7 @@ get_statevar <- function(SMSE, var, s) {
     })
   }
 
-  if (var == "NOS/Sgen") {
+  if (var == "NOS/Sgen" && length(SMSE@Misc$Ref[[s]])) {
     x <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
       Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
@@ -342,6 +342,8 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
                       xlab = expression(NOS/S[MSY]), ylab = expression(U/U[MSY]), type = c("T", "PT")) {
 
   type <- match.arg(type)
+
+  if (!length(SMSE@Misc$Ref) || !length(SMSE@Misc$Ref[[s]])) return(invisible(data.frame()))
 
   S_SMSY <- apply(SMSE@NOS[, s, ]/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
   if (type == "T") {
