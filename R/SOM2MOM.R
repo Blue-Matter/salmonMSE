@@ -247,7 +247,10 @@ SOM2MOM <- function(SOM, check = TRUE) {
         stray_args$p_donor <- pindex[pindex$stage == "escapement" & pindex$origin == "hatchery", c("s", "p")]
       }
 
-      if (habitat_args$use_habitat) habitat_args$Habitat <- Habitat
+      if (habitat_args$use_habitat) {
+        habitat_args$Habitat <- Habitat
+        habitat_args$nyears_om <- 2 * SOM@nyears
+      }
 
       if (do_hatchery_s || has_strays_s) {
 

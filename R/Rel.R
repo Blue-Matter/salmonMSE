@@ -165,11 +165,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
   pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
 
-  # Natural egg production in the absence of fitness effects
+  # Natural egg production in the absence of fitness effects by life cycle group (NOS) and release strategy (HOS)
   Egg_NOS <- colSums(NOS * p_female * fec)
   Egg_HOS <- colSums(HOS_effective * p_female * fec)
 
-  total_egg <- sum(Egg_NOS, Egg_HOS)
+  total_egg <- sum(Egg_NOS, Egg_HOS) # numeric
   if (output == "natural" && !total_egg) return(0) # Perr_y = 0
   if (output == "hatchery" && !sum(unlist(hatchery_production))) return(0) # Perr_y = 0
 
@@ -228,27 +228,30 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
   # Egg production from egg output
   xx <- max(x, 1)
-  t <- 0.5 * (y - 1) + 1
   if (habitat_args$use_habitat) {
+    t <- max(1, 0.5 * (y - habitat_args$nyears_om))
     Habitat <- habitat_args$Habitat
 
+    # By parental life cycle group
     Egg_prod_NOS <- calc_SRR(
       Egg_HOS, sum(Egg_HOS, Egg_NOS),
       p = Habitat@egg_prod, capacity = Habitat@egg_capacity,
       type = Habitat@egg_rel
     )
+    # By parental release strategy
     Egg_prod_HOS <- calc_SRR(
       Egg_HOS, sum(Egg_HOS, Egg_NOS),
       p = Habitat@egg_prod, capacity = Habitat@egg_capacity,
       type = Habitat@egg_rel
     )
 
-    # add sdev
+    # By parental life cycle group
     Fry_NOS <- calc_SRR(
       Egg_prod_NOS, sum(Egg_prod_NOS, Egg_prod_HOS),
       p = Habitat@fry_prod * fitness_loss[1, 1], capacity = Habitat@fry_capacity * fitness_loss[1, 1],
       type = Habitat@fry_rel
     ) * Habitat@fry_sdev[xx, t]
+    # By parental release strategy
     Fry_HOS <- calc_SRR(
       Egg_prod_HOS, sum(Egg_prod_NOS, Egg_prod_HOS),
       p = Habitat@fry_prod * fitness_loss[1, 1], capacity = Habitat@fry_capacity * fitness_loss[1, 1],
@@ -256,7 +259,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     ) * Habitat@fry_sdev[xx, t]
 
   } else {
-    # Egg and fry production from egg output
+    # Egg and fry production from egg output (by parental life cycle group/release strategy)
     Egg_prod_NOS <- Egg_NOS
     Egg_prod_HOS <- Egg_HOS
 
@@ -264,7 +267,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     Fry_HOS <- fitness_loss[1, 1] * Egg_prod_HOS
   }
 
-  # Hatchery production after fitness loss
+  # Hatchery production after fitness loss by release strategy (next generation)
   yearling <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
   subyearling <- hatchery_production$subyearling * fitness_loss[2, 1]
   total_fry <- sum(Fry_NOS, Fry_HOS, subyearling)
@@ -328,7 +331,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   # Return total hatchery smolt releases after density-dependent survival of subyearlings for release strategy r
   if (output == "hatchery") return(smolt_rel_r)
 
-  # Natural fry production for life history group g
+  # Natural fry production for life history group g (next generation)
   Fry_NOS_g <- sum(Fry_NOS) * prop_LHG
   Fry_HOS_g <- sum(Fry_HOS) * prop_LHG
 
@@ -363,10 +366,15 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   # Predicted smolts from historical SRR parameters and openMSE setup
   # if there were no hatchery production, habitat improvement, enroute mortality, or multiple LHG
   Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec)
-  smolt_NOS_SRR <- calc_smolt(
-    Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
-    SRrel = SRrel
-  )
+
+  if (habitat_args$use_habitat) {
+    smolt_NOS_SRR <- 1
+  } else {
+    smolt_NOS_SRR <- calc_smolt(
+      Egg_openMSE, Egg_openMSE, SRRpars[xx, "kappa"], SRRpars[xx, "capacity"], SRRpars[xx, "Smax"], SRRpars[xx, "phi"],
+      SRrel = SRrel
+    )
+  }
 
   # MICE parameter to be updated in operating model
   Perr_y <- (smolt_NOS_g + smolt_HOS_g)/smolt_NOS_SRR

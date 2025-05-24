@@ -28,7 +28,10 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
   }
 
   ref_s <- lapply(1:ns, function(s) {
-    SRR <- make_SRR(SOM@Bio[[s]], SOM@Habitat[[s]])
+
+    if (SOM@Habitat[[s]]@use_habitat) return(matrix(0, 0, 0))
+
+    SRR <- make_SRR(SOM@Bio[[s]])
 
     Mjuv_NOS <- SOM@Bio[[s]]@Mjuv_NOS
     p_female <- SOM@Bio[[s]]@p_female

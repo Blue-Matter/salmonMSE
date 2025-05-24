@@ -83,7 +83,7 @@ calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricke
   c(alpha, beta)
 }
 
-make_SRR <- function(Bio, Habitat) {
+make_SRR <- function(Bio) {
 
   a <- Bio@kappa/Bio@phi
   if (Bio@SRrel == "BH") {
