@@ -70,11 +70,11 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{HOB_import}}{Array \verb{[nsim, nstocks, proyears]}. Imported hatchery origin broodtake used for hatchery production.}
 
-\item{\code{NOS}}{Array \verb{[nsim, nstocks, proyears]}. Natural origin spawners.}
+\item{\code{NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Natural origin spawners.}
 
-\item{\code{HOS}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners.}
+\item{\code{HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin spawners.}
 
-\item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
+\item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin spawners discounted by \code{gamma}.}
 
 \item{\code{KPT_NOS}}{Array \verb{[nsim, nstocks, proyears]}. Pre-terminal fishery kept catch of natural origin spawners.}
 

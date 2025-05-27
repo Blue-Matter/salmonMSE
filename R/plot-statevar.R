@@ -105,12 +105,19 @@ get_statevar <- function(SMSE, var, s) {
   x <- matrix(NA, SMSE@nsim, SMSE@proyears)
 
   if (var %in% slotNames(SMSE)) {
-    x <- slot(SMSE, var)[, s, ]
+
+    .x <- slot(SMSE, var)
+    if (length(dim(.x)) == 4) {
+      x[] <- apply(.x[, s, , ], c(1, 3), sum)
+    } else if (length(dim(.x)) == 3) {
+      x[] <- .x[, s, ]
+    } else {
+      stop("Dimension of slot ", var, " is not 3 or 4")
+    }
     return(x)
   }
 
   if (var == "ESS") {
-    x <- matrix(NA_real_, SMSE@nsim, SMSE@proyears)
     x[, seq(2, SMSE@proyears)] <- local({
       Smolt <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
       Egg <- SMSE@Egg_NOS[, s, ] + SMSE@Egg_HOS[, s, ]
@@ -120,7 +127,7 @@ get_statevar <- function(SMSE, var, s) {
   }
 
   if (var == "pbrood") {
-    x <- local({
+    x[] <- local({
       Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
       (SMSE@NOB[, s, ] + SMSE@HOB[, s, ])/(Esc_NOS + Esc_HOS)
@@ -128,30 +135,32 @@ get_statevar <- function(SMSE, var, s) {
   }
 
   if (var == "pNOSesc") {
-    x <- local({
+    x[] <- local({
       Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
-      SMSE@NOS[, s, ]/Esc_NOS
+      NOS <- apply(SMSE@NOS[, s, , ], c(1, 3), sum)
+      NOS/Esc_NOS
     })
   }
   if (var == "pHOSesc") {
-    x <- local({
+    x[] <- local({
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
-      SMSE@HOS[, s, ]/Esc_HOS
+      HOS <- apply(SMSE@HOS[, s, , ], c(1, 3), sum)
+      HOS/Esc_HOS
     })
   }
 
-  if (var == "Smolt") x <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
+  if (var == "Smolt") x[] <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
 
   if (var == "NOS/SMSY" && length(SMSE@Misc$Ref[[s]])) {
-    x <- local({
-      NOS <- slot(SMSE, "NOS")[, s, ]
+    x[] <- local({
+      NOS <- apply(slot(SMSE, "NOS")[, s, , ], c(1, 3), sum)
       SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
       NOS/SMSY
     })
   }
 
   if (var == "S/SMSY" && length(SMSE@Misc$Ref[[s]])) {
-    x <- local({
+    x[] <- local({
       S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
       SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
       S/SMSY
@@ -159,7 +168,7 @@ get_statevar <- function(SMSE, var, s) {
   }
 
   if (var == "NOS/Sgen" && length(SMSE@Misc$Ref[[s]])) {
-    x <- local({
+    x[] <- local({
       NOS <- slot(SMSE, "NOS")[, s, ]
       Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
       NOS/Sgen
@@ -180,14 +189,18 @@ get_statevar <- function(SMSE, var, s) {
 plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim) {
   Year <- 1:SMSE@proyears
 
-  HOS <- apply(SMSE@HOS[, s, ], 2, FUN)
-  NOS <- apply(SMSE@NOS[, s, ], 2, FUN)
+  .HOS <- apply(SMSE@HOS[, s, , ], c(1, 3), sum)
+  HOS <- apply(.HOS, 2, FUN)
+
+  .NOS <- apply(SMSE@NOS[, s, , ], c(1, 3), sum)
+  NOS <- apply(.NOS, 2, FUN)
+
   p_wild <- SMSE@p_wild[, s, ]
   p_wild[is.na(p_wild)] <- 0
 
   Spawners <- HOS + NOS
-  WILD <- apply(p_wild * SMSE@NOS[, s, ], 2, FUN)
-  NOS_notWILD <- apply((1 - p_wild) * SMSE@NOS[, s, ], 2, FUN)
+  WILD <- apply(p_wild * .NOS, 2, FUN)
+  NOS_notWILD <- apply((1 - p_wild) * .NOS, 2, FUN)
 
   x <- rbind(WILD, NOS_notWILD, HOS)
 
@@ -345,7 +358,9 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 
   if (!length(SMSE@Misc$Ref) || !length(SMSE@Misc$Ref[[s]])) return(invisible(data.frame()))
 
-  S_SMSY <- apply(SMSE@NOS[, s, ]/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
+  NOS <- apply(SMSE@NOS[, s, , ], c(1, 3), sum)
+
+  S_SMSY <- apply(NOS/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
   if (type == "T") {
     Ex_ExMSY <- apply(SMSE@ExT_NOS[, s, ]/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
   } else {

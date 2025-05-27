@@ -40,7 +40,7 @@ WILD50 <- function(SMSE, Ref = 0.50, Yrs = NULL) {
 SMSY85 <- function(SMSE, Ref = 0.85, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
   y <- seq(Yrs[1], Yrs[2])
-  NOS <- SMSE@NOS[, , y, drop = FALSE]
+  NOS <- apply(SMSE@NOS[, , , y, drop = FALSE], c(1, 2, 4), sum)
   SMSY <- sapply(1:SMSE@nstocks, function(s) SMSE@Misc$Ref[[s]]["Spawners_MSY", ]) %>%
     array(c(SMSE@nsim, SMSE@nstocks, length(y)))
   ratio <- NOS/SMSY
@@ -52,7 +52,7 @@ SMSY85 <- function(SMSE, Ref = 0.85, Yrs = NULL) {
 Sgen100 <- function(SMSE, Ref = 1, Yrs = NULL) {
   if (is.null(Yrs)) Yrs <- c(1, SMSE@proyears)
   y <- seq(Yrs[1], Yrs[2])
-  NOS <- SMSE@NOS[, , y, drop = FALSE]
+  NOS <- apply(SMSE@NOS[, , , y, drop = FALSE], c(1, 2, 4), sum)
   Sgen <- sapply(1:SMSE@nstocks, function(s) SMSE@Misc$Ref[[s]]["Sgen", ]) %>%
     array(c(SMSE@nsim, SMSE@nstocks, length(y)))
   ratio <- NOS/Sgen

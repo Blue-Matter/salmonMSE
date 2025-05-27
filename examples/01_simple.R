@@ -113,7 +113,9 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
 compare(SAHA$Egg_NOS[, 1, ], SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 200000))
 
 png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
-compare(SAHA$NOS[, 1, ], SMSE@NOS[, 1, ], "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 1, 20])
+NOS_AHA <- SAHA$NOS[, 1, ]
+NOS_SMSE <- apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
+compare(NOS_AHA, NOS_SMSE, "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 1, 20])
 dev.off()
 
 
@@ -195,11 +197,10 @@ SAHA$HOB
 SMSE@NOB[, 1, ] + SMSE@HOB[, 1, ]
 SAHA$NOB + SAHA$HOB
 
-SMSE@NOS[, 1, ]
+apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
 SAHA$NOS
 
-SMSE@HOS[, 1, ]
-
+apply(SMSE@HOS[, 1, , ], c(1, 3), sum)
 SAHA$HOS
 
 SMSE@Egg_HOS[, 1, ]

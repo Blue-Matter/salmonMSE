@@ -316,9 +316,9 @@ setMethod("initialize", "SOM",
 #' @slot NOB Array `[nsim, nstocks, proyears]`. Natural origin broodtake.
 #' @slot HOB Array `[nsim, nstocks, proyears]`. Local hatchery origin broodtake.
 #' @slot HOB_import Array `[nsim, nstocks, proyears]`. Imported hatchery origin broodtake used for hatchery production.
-#' @slot NOS Array `[nsim, nstocks, proyears]`. Natural origin spawners.
-#' @slot HOS Array `[nsim, nstocks, proyears]`. Hatchery origin spawners.
-#' @slot HOS_effective Array `[nsim, nstocks, proyears]`. Hatchery origin spawners discounted by `gamma`.
+#' @slot NOS Array `[nsim, nstocks, nage, proyears]`. Natural origin spawners.
+#' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners.
+#' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners discounted by `gamma`.
 #' @slot KPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of natural origin spawners.
 #' @slot KT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of natural origin spawners.
 #' @slot KPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of hatchery origin spawners.

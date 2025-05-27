@@ -143,7 +143,7 @@ SAHA <- AHA(SOM, ngen = 20)
 
 # Compare NOS
 SAHA$NOS[, 1, ]
-SMSE@NOS[, 1, ]
+apply(SMSE@NOS[, 1, , ], c(1, 3), sum) # sum across ages
 ```
 
 ```{r, eval = TRUE, echo = FALSE}

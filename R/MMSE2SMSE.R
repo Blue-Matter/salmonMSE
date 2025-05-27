@@ -27,7 +27,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
-  NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   fitness <- array(NA_real_, c(SOM@nsim, ns, 2, SOM@proyears))
 
   pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
@@ -148,8 +148,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       if (length(y_spawn) != ngen) warning("Number of generations in salmonMSE state variables does not match generations in openMSE")
 
       # Sum across RS
-      HOS[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOS", s)
-      HOS_effective[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOS_effective", s)
+      HOS[, s, , y_spawn] <- get_salmonMSE_agevar(H, var = "HOS", s)
+      HOS_effective[, s, , y_spawn] <- get_salmonMSE_agevar(H, var = "HOS_effective", s)
 
       Egg_HOS[, s, y_spawn] <- get_salmonMSE_var(stateH, var = "Egg_HOS", s)
       Fry_HOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_HOS", s)
@@ -230,14 +230,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     if (use_smolt_func) {
 
       # Sum across LHG
-      NOS[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOS", s)
+      NOS[, s, , y_spawn] <- get_salmonMSE_agevar(N, var = "NOS", s)
       Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
       Fry_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_NOS", s)
       Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
 
     } else {
       # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
-      NOS[, s, ] <- apply(Escapement_NOS[, s, , ], c(1, 3), sum)
+      NOS[, s, , ] <- Escapement_NOS[, s, , ]
       Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
       Fry_NOS[, s, seq(2, SOM@proyears)] <- Egg_NOS[, s, seq(2, SOM@proyears) - 1]
 

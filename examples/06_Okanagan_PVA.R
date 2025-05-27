@@ -165,8 +165,8 @@ report(SMSE_500k, dir = "examples", filename = "Okanagan_PVA_500k")
 
 # Plot distribution of spawners
 Sp <- data.frame(
-  NOS = SMSE_500k@NOS[, 1, proyears - 1],
-  HOS = SMSE_500k@HOS[, 1, proyears - 1]
+  NOS = apply(SMSE_500k@NOS[, 1, , proyears - 1], c(1, 3), sum),
+  HOS = apply(SMSE_500k@HOS[, 1, , proyears - 1], c(1, 3), sum)
 ) %>%
   mutate(Total = NOS + HOS) %>%
   reshape2::melt()
@@ -185,8 +185,8 @@ g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
 
 # Plot annual spawners
 Sp <- rbind(
-  SMSE_500k@NOS[, 1, ] %>% reshape2::melt() %>% mutate(type = "NOS"),
-  SMSE_500k@HOS[, 1, ] %>% reshape2::melt() %>% mutate(type = "HOS")
+  apply(SMSE_500k@NOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "NOS"),
+  apply(SMSE_500k@HOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "HOS")
 ) %>%
   rename(Sim = Var1, Year = Var2) %>%
   dplyr::filter(Year < proyears)

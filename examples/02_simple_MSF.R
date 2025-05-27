@@ -104,6 +104,8 @@ compare <- function(x, y, ylab = "y", ylim, yline) {
 }
 
 compare(SAHA$Egg_NOS, SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 150000))
-compare(SAHA$NOS, SMSE@NOS[, 1, ], "NOS", ylim = c(0, 60), yline = 28.9731)
+NOS_AHA <- SAHA$NOS[, 1, ]
+NOS_SMSE <- apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
+compare(NOS_AHA, NOS_SMSE, "NOS", ylim = c(0, 60), yline = 28.9731)
 
 

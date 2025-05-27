@@ -187,7 +187,7 @@ ggsave("man/figures/tradeoff_plot_median_ci.png", g, height = 3, width = 4.5)
 Kobe_fn <- function(x, SMSE_list, Design) {
   out <- Design[x, ]
 
-  Sp <- SMSE_list[[x]]@NOS[, 1, 49] + SMSE_list[[x]]@HOS[, 1, 49]
+  Sp <- rowSums(SMSE_list[[x]]@NOS[, 1, , 49] + SMSE_list[[x]]@HOS[, 1, , 49])
   SMSY <- SMSE_list[[x]]@Misc$Ref[[1]]["Spawners_MSY", ]
 
   KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
