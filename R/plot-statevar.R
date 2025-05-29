@@ -14,7 +14,7 @@
 #' @param SMSE Class \linkS4class{SMSE} object returned by [salmonMSE()]
 #' @param var Character. Slot for the state variable in `SMSE` object. See `slotNames(SMSE)` for options. Additional supported options are:
 #' `"ESS"` (egg-smolt survival), `"pbrood"` (broodtake to escapement ratio), `"pNOSesc"` (NOS/natural escapement), `"pHOSesc"` (HOS/hatchery escapement),
-#' `NOS/SMSY`, `S/SMSY`, and `NOS/Sgen`.
+#' `Total Spawners` (NOS + HOS), `NOS/SMSY`, `S/SMSY`, and `NOS/Sgen`.
 #' @param s Integer. Population index for multi-population model (e.g., `s = 1` is the first population in the model)
 #' @param xlab Character. Name of time variable for the figure
 #' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
@@ -151,6 +151,8 @@ get_statevar <- function(SMSE, var, s) {
 
   if (var == "Smolt") x[] <- SMSE@Smolt_NOS[, s, ] + SMSE@Smolt_HOS[, s, ]
 
+  if (var == "Total Spawners") x[] <- apply(slot(SMSE, "NOS")[, s, , ] + slot(SMSE, "HOS")[, s, , ], c(1, 3), sum)
+
   if (var == "NOS/SMSY" && length(SMSE@Misc$Ref[[s]])) {
     x[] <- local({
       NOS <- apply(slot(SMSE, "NOS")[, s, , ], c(1, 3), sum)
@@ -161,7 +163,7 @@ get_statevar <- function(SMSE, var, s) {
 
   if (var == "S/SMSY" && length(SMSE@Misc$Ref[[s]])) {
     x[] <- local({
-      S <- slot(SMSE, "NOS")[, s, ] + slot(SMSE, "HOS")[, s, ]
+      S <- apply(slot(SMSE, "NOS")[, s, , ] + slot(SMSE, "HOS")[, s, , ], c(1, 3), sum)
       SMSY <- SMSE@Misc$Ref[[s]]["Spawners_MSY", ]
       S/SMSY
     })
@@ -169,7 +171,7 @@ get_statevar <- function(SMSE, var, s) {
 
   if (var == "NOS/Sgen" && length(SMSE@Misc$Ref[[s]])) {
     x[] <- local({
-      NOS <- slot(SMSE, "NOS")[, s, ]
+      NOS <- apply(slot(SMSE, "NOS")[, s, , ], c(1, 3), sum)
       Sgen <- SMSE@Misc$Ref[[s]]["Sgen", ]
       NOS/Sgen
     })
