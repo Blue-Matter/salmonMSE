@@ -14,7 +14,8 @@ plot_LHG(
   figure = TRUE,
   xlab = "Projection Year",
   ylab,
-  name
+  name,
+  ylim
 )
 
 plot_RS(
@@ -26,7 +27,8 @@ plot_RS(
   figure = TRUE,
   xlab = "Projection Year",
   ylab,
-  name
+  name,
+  ylim
 )
 }
 \arguments{
@@ -47,6 +49,8 @@ plot_RS(
 \item{ylab}{Character. Name of the state variable for the figure}
 
 \item{name}{Character. Vector of names for the life history groups or release strategies}
+
+\item{ylim}{Vector length 2, y-axis limits}
 }
 \value{
 Base graphics figure, barplot of distribution or total numbers by LHG or RS. Returns invisibly the matrix of plotted values

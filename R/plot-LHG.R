@@ -12,13 +12,14 @@
 #' @param figure Logical, whether to generate a figure (set to FALSE if only using the function to return the data matrix)
 #' @param ylab Character. Name of the state variable for the figure
 #' @param name Character. Vector of names for the life history groups or release strategies
+#' @param ylim Vector length 2, y-axis limits
 #' @importFrom grDevices hcl.colors
 #' @seealso [plot_statevar_ts()]
 #' @export
 #' @return Base graphics figure, barplot of distribution or total numbers by LHG or RS. Returns invisibly the matrix of plotted values
 #' @importFrom graphics box
 plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = median, figure = TRUE, xlab = "Projection Year",
-                     ylab, name) {
+                     ylab, name, ylim) {
 
   LHG <- SMSE@Misc$LHG[[s]]
   if (length(LHG)) {
@@ -26,7 +27,7 @@ plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = me
     x <- LHG[[var]]
 
     if (missing(name)) name <- paste("LHG", 1:dim(x)[2])
-    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Dark 2")
+    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Dark 2", ylim)
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))
     return(invisible(x))
@@ -37,7 +38,7 @@ plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = me
 #' @rdname plot_LHG
 #' @export
 plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = median, figure = TRUE, xlab = "Projection Year",
-                    ylab, name) {
+                    ylab, name, ylim) {
 
   RS <- SMSE@Misc$RS[[s]]
   if (length(RS)) {
@@ -45,7 +46,7 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
     x <- RS[[var]]
 
     if (missing(name)) name <- paste("RS", 1:dim(x)[2])
-    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Cold")
+    .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Cold", ylim)
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))
     return(invisible(x))
@@ -53,7 +54,7 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
 
 }
 
-.plot_LHG <- function(x, var, type = c("prop", "abs"), FUN, figure = TRUE, xlab = "Projection Year", ylab, name, palette = "Dark 2") {
+.plot_LHG <- function(x, var, type = c("prop", "abs"), FUN, figure = TRUE, xlab = "Projection Year", ylab, name, palette = "Dark 2", ylim) {
 
   type <- match.arg(type)
 
@@ -74,10 +75,10 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
     col <- grDevices::hcl.colors(nrow(xplot), palette = palette)
 
     if (type == "abs") {
-      ylim <- c(0, 1.1) * range(colSums(xplot, na.rm = TRUE))
+      if (missing(ylim)) ylim <- c(0, 1.1) * range(colSums(xplot, na.rm = TRUE))
       if (missing(ylab)) ylab <- var
     } else {
-      ylim <- c(0, 1)
+      if (missing(ylim)) ylim <- c(0, 1)
       if (missing(ylab)) ylab <- paste("Proportion", var)
     }
     plot(Year, NULL, xlim = range(Year) + c(-1, 0),

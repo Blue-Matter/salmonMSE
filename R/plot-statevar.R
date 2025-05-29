@@ -225,6 +225,7 @@ plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE,
          typ = "n", ylim = ylim, xaxs = "i", yaxs = "i")
     barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year),
             col = col, border = "grey40", add = TRUE, xpd = FALSE)
+    box()
   }
 
   invisible(x)
