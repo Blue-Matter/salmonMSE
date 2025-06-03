@@ -251,6 +251,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       p = Habitat@fry_prod * fitness_loss[1, 1], capacity = Habitat@fry_capacity * fitness_loss[1, 1],
       type = Habitat@fry_rel
     ) * Habitat@fry_sdev[xx, t]
+
     # By parental release strategy
     Fry_HOS <- calc_SRR(
       Egg_prod_HOS, sum(Egg_prod_NOS, Egg_prod_HOS),
@@ -299,7 +300,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     smolt_rel_r <- yearling[r] + smolt_subyearling_r
 
     if (x > 0) {
-      if (missing(r)) r <- 1
+      if (no_hatchery) r <- 1
       df_H <- data.frame(
         x = x,
         s = s,
