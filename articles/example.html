@@ -63,7 +63,7 @@
 
       <h1>Simple salmonMSE example</h1>
             
-            <h4 data-toc-skip class="date">2025-05-01</h4>
+            <h4 data-toc-skip class="date">2025-06-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -207,7 +207,7 @@ slowly equilibriating to approximately 70.</p>
 <span></span>
 <span><span class="co"># Compare NOS</span></span>
 <span><span class="va">SAHA</span><span class="op">$</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span>
-<span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, , <span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="co"># sum across ages</span></span></code></pre></div>
 <p><img src="../reference/figures/example-NOS.png"><!-- --></p>
 <p><em>Comparison of the abundance of NOS between AHA (by generation)
 and salmonMSE (by year) given identical biological parameters, hatchery
@@ -304,7 +304,7 @@ productivity:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
