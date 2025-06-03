@@ -251,3 +251,25 @@ The likelihood of the total escapement for the population of interest uses a log
 $$
 \log(E_y) \sim N\left(\log\left(\sum_a(E^\textrm{NO}_{y,a} + E^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
 $$
+
+# Release strategies
+
+The equations above assume that CWT come from a single release strategy, for example, fed fry, smolts, or yearlings (see [James et al. 2021](https://www.marinescience.psf.ca/wp-content/uploads/2022/03/2021PSF-HatcheryReleaseStrategies-BCReview-FinalReport-Web.pdf) for a review). 
+
+The conditioning model can accommodate multiple release strategies. The number of CWT releases are specified by brood year and release strategy, and the model is fitted to CWT catch by year, age, and release strategy. 
+
+Fishing and natural mortality rates are identical by year and age but maturity differs by release strategy. 
+
+The maturity is estimated by year and age for a particular release strategy indexed by $r = 1$:
+
+$$
+\textrm{logit}(m_{y,a,r}) \sim N(\textrm{logit}(m_a^\textrm{base}), [\sigma^m_a]^2)
+$$
+
+For all other release strategies $r = 2,\dots,n_r$, logit deviations by age (constant with time) are estimated as fixed effects:
+
+$$
+\textrm{logit}(m_{y,a,r}) = \textrm{logit}(m_{y,a,1}) + \delta_{a,r}
+$$
+
+The user then specifies the release strategy from which the maturity estimates then apply towards the population of interest.

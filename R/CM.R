@@ -3,12 +3,19 @@
 
 #' Fit conditioning model to historical data
 #'
-#' Bayesian stock reconstruction model of natural and hatchery origin fish,
-#' fitted to coded wire tag data, observed escapement, and hatchery releases ([Korman and Walters 2024](https://publications.gc.ca/site/eng/9.940685/publication.html)).
-#' Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
-#' assumed between age 1 vs. ages 2+).
-#' The model includes either a preterminal fishery, terminal fishery, or both (see Data and start sections of the documentation).
+#' @description{
+#' Bayesian stock reconstruction model of natural and hatchery origin fish population.
+#' Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
+#' A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
+#' informed by natural mortality and maturity from CWT ([Korman and Walters 2024](https://publications.gc.ca/site/eng/9.940685/publication.html)).
+#' The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
+#' for age 1 vs. ages 2+).
+#' The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).
+#'
 #' `fit_CM()` generates the RTMB model from data which can then be passed to `sample_CM()` to run the MCMC in Stan.
+#'
+#' More information is available on the [salmonMSE](https://docs.salmonmse.com/articles/conditioning.html) website
+#' }
 #'
 #' @param data  A list containing data inputs. See details.
 #' @param start An optional list containing parameter starting values. See details.
@@ -32,7 +39,7 @@
 #' - `Nages` Integer, number of age classes in the model
 #' - `Ldyr` Integer, number of years in the model
 #' - `lht` Integer, life history type. Should be 1 for now
-#' - `n_r` Integer, number of release strategies for CWT. Default is 1.
+#' - `n_r` Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.
 #' - `cwtrelease` Matrix `[Ldyr, n_r]`, coded wire tag (CWT) releases by year and release strategy
 #' - `cwtesc` Array `[Ldyr, Nages, n_r]`. CWT escapement **by brood year, age, and release strategy**. Poisson likelhood.
 #' - `cwtcatPT` Array `[Ldyr, Nages, n_r]`. CWT preterminal catch (juvenile fish), **by brood year, age, and release strategy**. Poisson likelhood. Set all values to zero to turn off
@@ -62,7 +69,7 @@
 #'
 #' - `fec` Vector length `Nages`. Fecundity, egg production at age
 #'
-#' - `r_matt` Integer, the release strategy for which to use maturity parameter for the natural system. Deafult is 1.
+#' - `r_matt` Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
 #' - `obsescape` Vector length `Ldyr`, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released

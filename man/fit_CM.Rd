@@ -48,12 +48,19 @@ and parameter bounds (\code{lower} and \code{upper})
 }
 }
 \description{
-Bayesian stock reconstruction model of natural and hatchery origin fish,
-fitted to coded wire tag data, observed escapement, and hatchery releases (\href{https://publications.gc.ca/site/eng/9.940685/publication.html}{Korman and Walters 2024}).
-Estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
-assumed between age 1 vs. ages 2+).
-The model includes either a preterminal fishery, terminal fishery, or both (see Data and start sections of the documentation).
+{
+Bayesian stock reconstruction model of natural and hatchery origin fish population.
+Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
+A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
+informed by natural mortality and maturity from CWT (\href{https://publications.gc.ca/site/eng/9.940685/publication.html}{Korman and Walters 2024}).
+The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
+for age 1 vs. ages 2+).
+The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).
+
 \code{fit_CM()} generates the RTMB model from data which can then be passed to \code{sample_CM()} to run the MCMC in Stan.
+
+More information is available on the \href{https://docs.salmonmse.com/articles/conditioning.html}{salmonMSE} website
+}
 }
 \section{Data}{
 
@@ -62,7 +69,7 @@ Data should passed through a named list with the following entries.
 \item \code{Nages} Integer, number of age classes in the model
 \item \code{Ldyr} Integer, number of years in the model
 \item \code{lht} Integer, life history type. Should be 1 for now
-\item \code{n_r} Integer, number of release strategies for CWT. Default is 1.
+\item \code{n_r} Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.
 \item \code{cwtrelease} Matrix \verb{[Ldyr, n_r]}, coded wire tag (CWT) releases by year and release strategy
 \item \code{cwtesc} Array \verb{[Ldyr, Nages, n_r]}. CWT escapement \strong{by brood year, age, and release strategy}. Poisson likelhood.
 \item \code{cwtcatPT} Array \verb{[Ldyr, Nages, n_r]}. CWT preterminal catch (juvenile fish), \strong{by brood year, age, and release strategy}. Poisson likelhood. Set all values to zero to turn off
@@ -84,7 +91,7 @@ the equilibrium spawners at age.
 \item \code{gamma} \emph{Optional}. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 \item \code{ssum} Numeric, proportion of spawners that is female
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
-\item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Deafult is 1.
+\item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
 \item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
