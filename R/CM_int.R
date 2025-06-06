@@ -90,8 +90,6 @@ CM_int <- function(p, d) {
   if (d$fitness) {
     zbar <- matrix(0, d$Ldyr, 2)
     fitness <- matrix(1, d$Ldyr, 2)
-    omega <- sqrt(d$fitness_variance) * d$selection_strength
-    omega2 <- omega * omega
   }
 
   # Initialize N ----
@@ -180,9 +178,9 @@ CM_int <- function(p, d) {
       zbar[t, ] <- calc_zbar(
         syear[t, , 1], d$gamma * syear[t, , 2], brood[t, , 1], brood[t, , 2],
         d$fec, d$fec, zbar_brood,
-        omega2, d$theta, d$fitness_variance, d$heritability
+        d$fitness_variance, d$theta, d$phenotype_variance, d$heritability
       )
-      fitness[t, ] <- exp(-0.5 * (zbar[t, ] - d$theta)^2/(omega2 + d$fitness_variance)) # fitness_floor not used here!
+      fitness[t, ] <- exp(-0.5 * (zbar[t, ] - d$theta)^2/(d$fitness_variance + d$phenotype_variance)) # fitness_floor not used here!
     }
 
     # survive fish over the year, removing maturing fish that will spawn
@@ -545,8 +543,8 @@ check_data <- function(data) {
     if (is.null(data$theta)) data$theta <- c(100, 80)
     if (is.null(data$rel_loss)) data$rel_loss <- c(0.3, 0.2, 0.5)
     if (is.null(data$zbar_start)) data$zbar_start <- c(100, 100)
-    if (is.null(data$fitness_variance)) data$fitness_variance <- 10
-    if (is.null(data$selection_strength)) data$selection_strength <- 3
+    if (is.null(data$fitness_variance)) data$fitness_variance <- 100
+    if (is.null(data$phenotype_variance)) data$phenotype_variance <- 10
     if (is.null(data$heritability)) data$heritability <- 0.5
     if (is.null(data$fitness_floor)) data$fitness_floor <- 0.5
   }

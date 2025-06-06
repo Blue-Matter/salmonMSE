@@ -206,8 +206,8 @@ setClass(
     theta = "numeric",
     rel_loss = "numeric",
     zbar_start = "num.array",
+    phenotype_variance = "numeric",
     fitness_variance = "numeric",
-    selection_strength = "numeric",
     heritability = "numeric",
     fitness_floor = "numeric"
   )

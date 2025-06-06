@@ -59,8 +59,8 @@ Hatchery <- lapply(1:ns, function(s) {
     fec_brood = c(0, 0, 5040),
     fitness_type = c("Ford", "none"),
     zbar_start = if (s == 1) c(93.1, 92) else c(100, 92),
-    fitness_variance = 10,
-    selection_strength = 3,
+    fitness_variance = 100,
+    phenotype_variance = 10,
     heritability = 0.5,
     fitness_floor = 0.5
   )

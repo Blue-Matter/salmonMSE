@@ -46,8 +46,8 @@
 #' set to zero to set fitness loss to zero for that specific life stage (survival is one).
 #' @slot zbar_start Vector length 2. The mean phenotype value in the natural and hatchery populations at the start of the projection. Alternatively,
 #' an array by dimension `[nsim, maxage, 2]`, where the age slot corresponds to cohort.
-#' @slot fitness_variance Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments.
-#' @slot selection_strength Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.
-#' @slot heritability Numeric or vector length `[nsim]`. The heritability (h-squared) of the phenotypic trait. Between 0-1.
+#' @slot fitness_variance Numeric. The variance (omega-squared) of the fitness function. Assumed identical between the natural and hatchery environments. Default is 100.
+#' @slot phenotype_variance Numeric. The variance (sigma-squared) of the phenotypic trait (theta). Assumed identical between the natural and hatchery environments. Default is 10.
+#' @slot heritability Numeric or vector length `[nsim]`. The heritability (h-squared) of the phenotypic trait. Between 0-1. Default is 0.5
 #' @slot fitness_floor Numeric. The minimum fitness value in the natural and hatchery environments, i.e., fitness cannot drop below this threshold. Default is 0.5.
 

@@ -167,8 +167,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     rel_loss_fry = Hatchery@rel_loss[2],
     rel_loss_smolt = Hatchery@rel_loss[3],
     Zpop_start = c(Hatchery@zbar_start[x, 1, ], 100),
-    fitness_variance = Hatchery@fitness_variance,
-    selection_strength = Hatchery@selection_strength,
+    phenotype_variance = Hatchery@phenotype_variance,
+    selection_strength = sqrt(Hatchery@fitness_variance/Hatchery@phenotype_variance),
     heritability = Hatchery@heritability[x],
     fitness_floor = Hatchery@fitness_floor,
     strays_total = 0,
@@ -249,7 +249,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
                  rel_loss_fry = 0.4,
                  rel_loss_smolt = 0.1,
                  Zpop_start = c(93.1, 92, 90),
-                 fitness_variance = 10,
+                 phenotype_variance = 10,
                  selection_strength = 3,
                  heritability = 0.5,
                  fitness_floor = 0.5,
@@ -307,9 +307,9 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
                              surv_adult_return_of_subyearling_applied * p_subyearling)/surv_smolt_adult_base
 
   # Calc fitness variables (80,81)
-  omega <- sqrt(fitness_variance) * selection_strength
+  omega <- sqrt(phenotype_variance) * selection_strength
   omega2 <- omega * omega
-  A <- 1 - heritability * fitness_variance/(omega2 + fitness_variance)
+  A <- 1 - heritability * phenotype_variance/(omega2 + phenotype_variance)
 
   egg_per_spawner <- fec_brood * surv_pre_spawn * p_female # E
   surv_egg_release <- surv_egg_subyearling * p_subyearling + surv_egg_smolt * p_yearling # F
@@ -368,7 +368,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
       strays_total,
       RRS_HOS,
       p_HOS_goal,
-      fitness_type, Zpop_start, theta, omega2, A, fitness_variance, fitness_floor, heritability,
+      fitness_type, Zpop_start, theta, omega2, A, phenotype_variance, fitness_floor, heritability,
       pbar_prev = if (g == 1) NA else pbar[, g-1],
       rel_loss_egg, rel_loss_fry, rel_loss_smolt,
       prod_spawn_em, prod_em_smolt, prod_smolt_adult,
@@ -396,7 +396,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
                       p_HOS_goal,
                       fitness_type,
                       Zpop_start,
-                      theta, omega2, A, fitness_variance, fitness_floor, heritability, pbar_prev,
+                      theta, omega2, A, phenotype_variance, fitness_floor, heritability, pbar_prev,
                       rel_loss_egg, rel_loss_fry, rel_loss_smolt,
                       prod_spawn_em, prod_em_smolt, prod_smolt_adult,
                       capacity_spawn_em, capacity_em_smolt, capacity_smolt_adult,
@@ -457,7 +457,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
 
       pbar <- Zpop_start[1:2]
       fitness <- local({
-        x <- exp(-0.5 * (pbar[1] - theta[1])^2/(omega2+fitness_variance))
+        x <- exp(-0.5 * (pbar[1] - theta[1])^2/(omega2 + phenotype_variance))
         max(fitness_floor, x)
       })
 
@@ -471,7 +471,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
   } else if (fitness_type == "Ford") {
 
     do_fitness <- calc_Ford_fitness(pNOB, pHOS = 1 - pNOS, pbar_prev,
-                                    theta, omega2, fitness_variance, A, fitness_floor, heritability)
+                                    theta, omega2, phenotype_variance, A, fitness_floor, heritability)
     pbar <- do_fitness$pbar
     fitness <- do_fitness$fitness
 

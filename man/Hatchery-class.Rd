@@ -85,11 +85,11 @@ set to zero to set fitness loss to zero for that specific life stage (survival i
 \item{\code{zbar_start}}{Vector length 2. The mean phenotype value in the natural and hatchery populations at the start of the projection. Alternatively,
 an array by dimension \verb{[nsim, maxage, 2]}, where the age slot corresponds to cohort.}
 
-\item{\code{fitness_variance}}{Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments.}
+\item{\code{fitness_variance}}{Numeric. The variance (omega-squared) of the fitness function. Assumed identical between the natural and hatchery environments. Default is 100.}
 
-\item{\code{selection_strength}}{Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.}
+\item{\code{phenotype_variance}}{Numeric. The variance (sigma-squared) of the phenotypic trait (theta). Assumed identical between the natural and hatchery environments. Default is 10.}
 
-\item{\code{heritability}}{Numeric or vector length \verb{[nsim]}. The heritability (h-squared) of the phenotypic trait. Between 0-1.}
+\item{\code{heritability}}{Numeric or vector length \verb{[nsim]}. The heritability (h-squared) of the phenotypic trait. Between 0-1. Default is 0.5}
 
 \item{\code{fitness_floor}}{Numeric. The minimum fitness value in the natural and hatchery environments, i.e., fitness cannot drop below this threshold. Default is 0.5.}
 }}

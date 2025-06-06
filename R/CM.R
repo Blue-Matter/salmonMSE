@@ -91,9 +91,9 @@
 #' - `rel_loss` Vector length 3, the loss in fitness apportioned between the egg, fry (both prior to density-dependence), and smolt (after density-dependence) life stage. The three values should sum to 1.
 #' - `zbar_start` Vector length 2, the mean phenotype of the spawners and broodtake in the natural and hatchery environment, respectively, at the start of the model. Default values of 100 and 100, implying maximum fitness at
 #' for the natural environment at the start of the model.
-#' - `fitness_variance` Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments. Default is 10.
-#' - `selection_strength` Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation. Default is 3.
-#' - `heritability` Numeric. The heritability of the phenotypic trait. Between 0-1. Default is 0.5.
+#' - `fitness_variance` Numeric. The variance (omega-squared) of the fitness function. Assumed identical between the natural and hatchery environments. Default is 100.
+#' - `phenotype_variance` Numeric. The variance (sigma-squared) of the phenotypic trait (with optimum theta). Assumed identical between the natural and hatchery environments. Default is 10.
+#' - `heritability` Numeric. The heritability (h-squared) of the phenotypic trait. Between 0-1. Default is 0.5.
 #' - `fitness_floor` Numeric. The minimum fitness value in the natural and hatchery environments. Default is 0.5.
 #'
 #' @section start:
@@ -294,8 +294,8 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
       aperm(c(3, 1, 2))
     Hatchery@zbar_start <- zbar[, nyears - seq(1, data$Nages) + 1, ]
 
+    Hatchery@phenotype_variance <- data$phenotype_variance
     Hatchery@fitness_variance <- data$fitness_variance
-    Hatchery@selection_strength <- data$selection_strength
     Hatchery@heritability <- data$heritability
     Hatchery@fitness_floor <- data$fitness_floor
   } else {

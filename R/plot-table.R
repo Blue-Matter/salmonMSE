@@ -33,7 +33,7 @@ make_hatchery_table <- function(SMSE, s = 1) {
 
 make_fitness_table <- function(SMSE, s = 1) {
 
-  fitness_settings <- c("gamma", "fitness_variance", "selection_strength", "heritability", "theta")
+  fitness_settings <- c("gamma", "phenotype_variance", "fitness_variance", "heritability", "theta")
 
   fitness_extra <- data.frame(
     Definition = c("Fitness function for the natural and hatchery environments", "Minimum population fitness value"),

@@ -49,8 +49,8 @@ p^\textrm{HOS}_\textrm{removal},"Proportion of hatchery origin escapement remove
 \gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery,SOM,gamma
 \bar{z},Mean phenotypic value of cohort in natural and hatchery environments,Fitness,Internal state variable and SOM,zbar_start
 \theta,Optimal phenotypic value for natural and hatchery environments,Fitness,SOM,theta
-\sigma^2,Variance of phenotypic traits in population,Fitness,SOM,fitness_variance
-\Omega,Selection strength: fitness variance relative to phenotypic variance,Fitness,SOM,selection_strength
+\sigma^2,Variance of phenotypic traits in population,Fitness,SOM,phenotype_variance
+\omega^2,Variance of fitness function,Fitness,SOM,fitness_variance
 h^2,Heritability of phenotypic traits,Fitness,SOM,heritability
 \bar{W},Population fitness in the natural and hatchery environments,Fitness,SMSE,fitness
 \ell_i,"Relative fitness loss at the life stage i (egg, fry, smolt)",Fitness,SOM,rel_loss

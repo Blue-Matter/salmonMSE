@@ -394,7 +394,7 @@ Similarly, the mean trait value in the hatchery environment $\bar{z}^\textrm{hat
 
 where $p^\textrm{NOB} = \textrm{NOB}/(\textrm{NOB} + \textrm{HOB})$.
 
-The fitness variance $\omega^2$ and phenotype variance $\sigma^2$ are assumed constant between the two environments. The fitness variance is parameterized relative to the variance of the phenotype, i.e., $\omega = \Omega \sigma$ where $\Omega$ is the "selection strength".
+The fitness variance $\omega^2$ and phenotype variance $\sigma^2$ are identical in the two environments.
 
 The mean fitness of generation $g$ in the natural environment is then:
 

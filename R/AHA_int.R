@@ -1,16 +1,16 @@
 
 # pbar Vector length 2. Pbar value from the previous generation.
 # First value is for the natural population and the second value for the hatchery
-calc_Ford_fitness <- function(pNOB, pHOS, pbar_prev, theta, omega2, fitness_variance, A, fitness_floor, heritability) {
+calc_Ford_fitness <- function(pNOB, pHOS, pbar_prev, theta, fitness_variance, phenotype_variance, A, fitness_floor, heritability) {
 
   pbar <- numeric(2)
 
   pbar[1] <- local({
     qHOS <- 1 - pHOS
 
-    aa <- (pbar_prev[1] * omega2 + theta[1] * fitness_variance)/(omega2+fitness_variance)
+    aa <- (pbar_prev[1] * fitness_variance + theta[1] * phenotype_variance)/(fitness_variance + phenotype_variance)
     bb <- qHOS * (pbar_prev[1] + (aa - pbar_prev[1]) * heritability)
-    cc <- (pbar_prev[2] * omega2 + theta[1] * fitness_variance)/(omega2+fitness_variance)
+    cc <- (pbar_prev[2] * fitness_variance + theta[1] * phenotype_variance)/(fitness_variance + phenotype_variance)
     dd <- pHOS * (pbar_prev[2] + (cc - pbar_prev[2]) * heritability)
 
     bb + dd
@@ -19,18 +19,15 @@ calc_Ford_fitness <- function(pNOB, pHOS, pbar_prev, theta, omega2, fitness_vari
   pbar[2] <- local({
     qNOB <- 1 - pNOB
 
-    aa <- (pbar_prev[2] * omega2 + theta[2] * fitness_variance)/(omega2+fitness_variance)
+    aa <- (pbar_prev[2] * fitness_variance + theta[2] * phenotype_variance)/(fitness_variance + phenotype_variance)
     bb <- qNOB * (pbar_prev[2] + (aa - pbar_prev[2]) * heritability)
-    cc <- (pbar_prev[1] * omega2 + theta[2] * fitness_variance)/(omega2+fitness_variance)
+    cc <- (pbar_prev[1] * fitness_variance + theta[2] * phenotype_variance)/(fitness_variance + phenotype_variance)
     dd <- pNOB * (pbar_prev[1] + (cc - pbar_prev[1]) * heritability)
 
     bb + dd
   })
 
-  fitness <- local({
-    x <- exp(-0.5 * (pbar[1] - theta[1])^2/(omega2+fitness_variance))
-    max(fitness_floor, x)
-  })
+  fitness <- pmax(fitness_floor, exp(-0.5 * (pbar[1] - theta[1])^2/(fitness_variance + phenotype_variance)))
 
   return(list(pbar = pbar, fitness = fitness))
 }

@@ -1,7 +1,7 @@
 
 
 calc_zbar <- function(NOS, HOS_effective, NOB, HOB, fec, fec_brood,
-                      zbar_prev, omega2, theta, fitness_variance, heritability) {
+                      zbar_prev, fitness_variance, theta, phenotype_variance, heritability) {
 
   tiny <- 1e-8
 
@@ -12,8 +12,8 @@ calc_zbar <- function(NOS, HOS_effective, NOB, HOB, fec, fec_brood,
   pHOB <- HOB * fec_brood/sum(fec_brood * (NOB + HOB) + tiny)
 
   # Trait value after selection
-  zprime_natural <- (zbar_prev * omega2 + theta[1] * fitness_variance)/(omega2 + fitness_variance)
-  zprime_hatchery <- (zbar_prev * omega2 + theta[2] * fitness_variance)/(omega2 + fitness_variance)
+  zprime_natural <- (zbar_prev * fitness_variance + theta[1] * phenotype_variance)/(fitness_variance + phenotype_variance)
+  zprime_hatchery <- (zbar_prev * fitness_variance + theta[2] * phenotype_variance)/(fitness_variance + phenotype_variance)
 
   # Change in trait value in the next generation, indexed by environment and brood year
   znext_natural <- zbar_prev + (zprime_natural - zbar_prev) * heritability
@@ -27,8 +27,8 @@ calc_zbar <- function(NOS, HOS_effective, NOB, HOB, fec, fec_brood,
 }
 
 
-calc_fitness <- function(zbar, theta, omega2, fitness_variance, fitness_floor) {
-  W <- exp(-0.5 * (zbar - theta)^2/(omega2 + fitness_variance))
+calc_fitness <- function(zbar, theta, fitness_variance, phenotype_variance, fitness_floor) {
+  W <- exp(-0.5 * (zbar - theta)^2/(fitness_variance + phenotype_variance))
   pmax(W, fitness_floor)
 }
 

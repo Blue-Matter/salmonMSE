@@ -203,7 +203,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         rowSums(NOS), rowSums(HOS_effective), rowSums(broodtake$NOB),
         rowSums(broodtake$HOB_marked + broodtake$HOB_unmarked) + broodtake$HOB_import,
         fec, hatchery_args$fec_brood, zbar_brood,
-        fitness_args$omega2, fitness_args$theta, fitness_args$fitness_variance, fitness_args$heritability[x]
+        fitness_args$fitness_variance, fitness_args$theta, fitness_args$phenotype_variance, fitness_args$heritability[x]
       )
     } else {
       zbar <- fitness_args$zbar_start
@@ -214,8 +214,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     for (i in 1:2) {
       if (fitness_args$fitness_type[i] == "Ford") {
         fitness[i] <- calc_fitness(
-          zbar[i], fitness_args$theta[i], fitness_args$omega2,
-          fitness_args$fitness_variance, fitness_args$fitness_floor
+          zbar[i], fitness_args$theta[i], fitness_args$fitness_variance,
+          fitness_args$phenotype_variance, fitness_args$fitness_floor
         )
       }
     }

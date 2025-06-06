@@ -89,22 +89,21 @@ initialize_zbar <- function(SOM) {
         zbar = zbar_start$value
       )
 
-      fitness_variance <- SOM@Hatchery[[s]]@fitness_variance
-      omega2 <- local({
-        omega <- sqrt(fitness_variance) * SOM@Hatchery[[s]]@selection_strength
-        omega^2
-      })
-      fitness_floor <- SOM@Hatchery[[s]]@fitness_floor
       fitness_type <- SOM@Hatchery[[s]]@fitness_type
+      theta <- SOM@Hatchery[[s]]@theta
+
+      fitness_variance <- SOM@Hatchery[[s]]@fitness_variance
+      phenotype_variance <- SOM@Hatchery[[s]]@phenotype_variance
+
+      fitness_floor <- SOM@Hatchery[[s]]@fitness_floor
 
       df$fitness <- sapply(1:nrow(df), function(i) {
-        theta <- switch(df$type[i], "natural" = SOM@Hatchery[[s]]@theta[1], "hatchery" = SOM@Hatchery[[s]]@theta[2])
-
+        theta <- switch(df$type[i], "natural" = theta[1], "hatchery" = theta[2])
         fitness_fn <- switch(df$type[i], "natural" = fitness_type[1], "hatchery" = fitness_type[2])
 
         switch(
           fitness_fn,
-          "Ford" = calc_fitness(df$zbar[i], theta, omega2, fitness_variance, fitness_floor),
+          "Ford" = calc_fitness(df$zbar[i], theta, fitness_variance, phenotype_variance, fitness_floor),
           "none" = 1
         )
       })

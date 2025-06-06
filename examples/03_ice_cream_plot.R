@@ -52,8 +52,8 @@ wrapper <- function(x, Design) {
     fec_brood = c(0, 0, 5040),
     fitness_type = c("Ford", "none"),
     zbar_start = c(93.1, 92),
-    fitness_variance = 10,
-    selection_strength = 3,
+    fitness_variance = 100,
+    phenotype_variance = 10,
     heritability = 0.5,
     fitness_floor = 0.5
   )

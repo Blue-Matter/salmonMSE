@@ -277,10 +277,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           fitness_args <- list(
             fitness_type = Hatchery@fitness_type,
             rel_loss = Hatchery@rel_loss,
-            omega2 = local({
-              omega <- sqrt(Hatchery@fitness_variance) * Hatchery@selection_strength
-              omega^2
-            }),
+            phenotype_variance = Hatchery@phenotype_variance,
             fitness_variance = Hatchery@fitness_variance,
             fitness_floor = Hatchery@fitness_floor,
             heritability = Hatchery@heritability,
@@ -527,8 +524,8 @@ check_SOM <- function(SOM, silent = FALSE) {
           Hatchery <- check_array(Hatchery, "zbar_start", c(nsim, maxage, 2))
         }
 
-        Hatchery <- check_numeric(Hatchery, "fitness_variance")
-        Hatchery <- check_numeric(Hatchery, "selection_strength")
+        Hatchery <- check_numeric(Hatchery, "fitness_variance", default = 100)
+        Hatchery <- check_numeric(Hatchery, "phenotype_variance", default = 10)
 
         if (length(Hatchery@heritability) == 1) {
           Hatchery@heritability <- rep(Hatchery@heritability, nsim)
@@ -545,11 +542,11 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Hatchery@heritability)) {
         stop("Need hatchery heritability parameter for PNI calculation (no hatchery, presence of external strays)")
       }
+      if (!length(Hatchery@phenotype_variance)) {
+        stop("Need hatchery phenotype_variance parameter for PNI calculation (no hatchery, presence of external strays)")
+      }
       if (!length(Hatchery@fitness_variance)) {
         stop("Need hatchery fitness_variance parameter for PNI calculation (no hatchery, presence of external strays)")
-      }
-      if (!length(Hatchery@selection_strength)) {
-        stop("Need hatchery selection_strength parameter for PNI calculation (no hatchery, presence of external strays)")
       }
     }
 
