@@ -137,17 +137,16 @@ this target proportion identifies the proportion of unmarked fished in the brood
 
 
 <dt><code>phatchery</code></dt>
-<dd><p>Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
-or swim-in facilities. These fish are available for broodtake. The product of <code>phatchery</code> and <code>premove_HOS</code> do not
-spawn in the natural environment. Default is 0.8.</p></dd>
+<dd><p>Numeric. Optional parameter (default is <code>NA</code>). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
+With the default option, <code>NA</code> allows all hatchery origin escapement that is not used brood to go to the spawning grounds.</p></dd>
 
 
 <dt><code>premove_HOS</code></dt>
 <dd><p>Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
 ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., <code>premove_HOS * m</code>.
 The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
-imperfect implementation of weir removal. The product of <code>phatchery</code> and <code>premove_HOS * m</code> do not
-spawn in the natural environment. Default is zero.</p></dd>
+imperfect implementation of weir removal. Default is zero.</p></dd>
 
 
 <dt><code>fec_brood</code></dt>
@@ -219,7 +218,7 @@ an array by dimension <code>[nsim, maxage, 2]</code>, where the age slot corresp
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric        num.logical            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
