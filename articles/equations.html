@@ -63,7 +63,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2025-06-03</h4>
+            <h4 data-toc-skip class="date">2025-06-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -545,15 +545,14 @@ environments</td>
 <td align="left">Variance of phenotypic traits in population</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
-<td align="left">fitness_variance</td>
+<td align="left">phenotype_variance</td>
 </tr>
 <tr class="odd">
-<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math></td>
-<td align="left">Selection strength: fitness variance relative to
-phenotypic variance</td>
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ω</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\omega^2</annotation></semantics></math></td>
+<td align="left">Variance of fitness function</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
-<td align="left">selection_strength</td>
+<td align="left">fitness_variance</td>
 </tr>
 <tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>h</mi><mn>2</mn></msup><annotation encoding="application/x-tex">h^2</annotation></semantics></math></td>
@@ -1117,8 +1116,8 @@ where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(z)</annotation></semantics></math>
 is the Gaussian probability density function. The solution is
 proportional to</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>W</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>z</mi><mo accent="true">‾</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ω</mi><mo>+</mo><mi>σ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\bar{W}(z) \propto \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega+\sigma)^2}\right)
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>W</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>z</mi><mo accent="true">‾</mo></mover><mo>−</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ω</mi><mn>2</mn></msup><mo>+</mo><msup><mi>σ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\bar{W}(z) \propto \exp\left(\dfrac{-(\bar{z}-\theta)^2}{2(\omega^2+\sigma^2)}\right)
 </annotation></semantics></math></p>
 <p>The mean phenotype
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math>
@@ -1176,17 +1175,12 @@ with optimum trait value
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ω</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\omega^2</annotation></semantics></math>
 and phenotype variance
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>
-are assumed constant between the two environments. The fitness variance
-is parameterized relative to the variance of the phenotype, i.e.,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ω</mi><mo>=</mo><mi>Ω</mi><mi>σ</mi></mrow><annotation encoding="application/x-tex">\omega = \Omega \sigma</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math>
-is the “selection strength”.</p>
+are identical in the two environments.</p>
 <p>The mean fitness of generation
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
 in the natural environment is then:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>W</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>−</mo><msup><mi>θ</mi><mtext mathvariant="normal">natural</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ω</mi><mo>+</mo><mi>σ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega+\sigma)^2}\right)
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>W</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>z</mi><mo accent="true">‾</mo></mover><mi>g</mi><mtext mathvariant="normal">natural</mtext></msubsup><mo>−</mo><msup><mi>θ</mi><mtext mathvariant="normal">natural</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ω</mi><mn>2</mn></msup><mo>+</mo><msup><mi>σ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega^2+\sigma^2)}\right)
 </annotation></semantics></math></p>
 <div class="section level3">
 <h3 id="mixed-brood-year-return">Mixed brood-year return<a class="anchor" aria-label="anchor" href="#mixed-brood-year-return"></a>
