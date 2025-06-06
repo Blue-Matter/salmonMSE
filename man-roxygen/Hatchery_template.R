@@ -48,6 +48,6 @@
 #' an array by dimension `[nsim, maxage, 2]`, where the age slot corresponds to cohort.
 #' @slot fitness_variance Numeric. The variance of the phenotypic trait. Assumed identical between the natural and hatchery environments.
 #' @slot selection_strength Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.
-#' @slot heritability Numeric. The heritability of the phenotypic trait. Between 0-1.
+#' @slot heritability Numeric or vector length `[nsim]`. The heritability (h-squared) of the phenotypic trait. Between 0-1.
 #' @slot fitness_floor Numeric. The minimum fitness value in the natural and hatchery environments, i.e., fitness cannot drop below this threshold. Default is 0.5.
 

@@ -529,7 +529,11 @@ check_SOM <- function(SOM, silent = FALSE) {
 
         Hatchery <- check_numeric(Hatchery, "fitness_variance")
         Hatchery <- check_numeric(Hatchery, "selection_strength")
-        Hatchery <- check_numeric(Hatchery, "heritability")
+
+        if (length(Hatchery@heritability) == 1) {
+          Hatchery@heritability <- rep(Hatchery@heritability, nsim)
+        }
+        Hatchery <- check_numeric(Hatchery, "heritability", size = nsim, default = rep(0.5, nsim))
         Hatchery <- check_numeric(Hatchery, "fitness_floor", default = 0.5)
       }
     } else {

@@ -182,6 +182,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       # Withler et al. 2018, page 17, 21
       h2 <- SOM@Hatchery[[s]]@heritability
+
       omega2 <- local({
         omega <- sqrt(SOM@Hatchery[[s]]@fitness_variance) * SOM@Hatchery[[s]]@selection_strength
         omega^2

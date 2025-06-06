@@ -89,7 +89,7 @@ an array by dimension \verb{[nsim, maxage, 2]}, where the age slot corresponds t
 
 \item{\code{selection_strength}}{Numeric. The ratio between the fitness standard deviation and the phenotype standard deviation.}
 
-\item{\code{heritability}}{Numeric. The heritability of the phenotypic trait. Between 0-1.}
+\item{\code{heritability}}{Numeric or vector length \verb{[nsim]}. The heritability (h-squared) of the phenotypic trait. Between 0-1.}
 
 \item{\code{fitness_floor}}{Numeric. The minimum fitness value in the natural and hatchery environments, i.e., fitness cannot drop below this threshold. Default is 0.5.}
 }}

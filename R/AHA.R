@@ -169,7 +169,7 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     Zpop_start = c(Hatchery@zbar_start[x, 1, ], 100),
     fitness_variance = Hatchery@fitness_variance,
     selection_strength = Hatchery@selection_strength,
-    heritability = Hatchery@heritability,
+    heritability = Hatchery@heritability[x],
     fitness_floor = Hatchery@fitness_floor,
     strays_total = 0,
     ngen = ngen
