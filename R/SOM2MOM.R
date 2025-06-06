@@ -508,7 +508,7 @@ check_SOM <- function(SOM, silent = FALSE) {
 
       Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
 
-      Hatchery <- check_numeric(Hatchery, "phatchery", default = 0.8)
+      Hatchery <- check_numeric(Hatchery, "phatchery", default = NA)
       Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
 
       Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
@@ -643,8 +643,13 @@ check_SOM <- function(SOM, silent = FALSE) {
         HistNjuv_HOS <- array(0, c(nsim, maxage, SOM@nyears + 1, Hatchery@n_r))
 
         HistNjuv_HOS[, maxage, SOM@nyears + 1, ] <- local({
-          init_Njuv <- init_HOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)/
-            (1 - Hatchery@phatchery)/(1 - Hatchery@premove_HOS * Hatchery@m)
+
+          if (is.na(Hatchery@phatchery)) {
+            init_Njuv <- init_HOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)/(1 - Hatchery@premove_HOS * Hatchery@m)
+          } else {
+            init_Njuv <- init_HOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)/
+              (1 - Hatchery@phatchery)/(1 - Hatchery@premove_HOS * Hatchery@m)
+          }
           outer(init_Njuv, 1/Hatchery@n_r) # matrix nsim x n_r
         })
 

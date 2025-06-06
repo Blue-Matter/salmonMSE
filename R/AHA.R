@@ -61,6 +61,8 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     if (do_hatchery) {
       fec_brood <- SOM@Hatchery[[s]]@fec_brood[age_mature]
       message("Fecundity of broodtake assumed to be: ", fec_brood)
+
+      if (is.na(SOM@Hatchery[[s]]@phatchery)) stop("Need value for SOM@Hatchery[[", s, "]]@phatchery")
     } else {
       fec_brood <- 0
     }

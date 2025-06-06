@@ -5,11 +5,19 @@
 calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, ptarget_NOB, pmax_NOB, phatchery, egg_target, p_female,
                            fec_brood, s_prespawn, m) {
 
-  HO_avail <- cbind(
-    phatchery * HOR_escapement,
-    stray,
-    brood_import
-  )
+  if (is.na(phatchery)) {
+    HO_avail <- cbind(
+      HOR_escapement,
+      stray,
+      brood_import
+    )
+  } else {
+    HO_avail <- cbind(
+      phatchery * HOR_escapement,
+      stray,
+      brood_import
+    )
+  }
 
   if (sum(HO_avail)) {
 
@@ -101,8 +109,13 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
   spawners <- list()
   spawners$NOS <- escapement_NOS - broodtake$NOB
   if (sum(escapement_HOS, stray)) {
-    spawners$HOS <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS * m) +
-      (stray - broodtake$HOB_stray)
+    if (is.na(phatchery)) {
+      spawners$HOS <- (escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked) * (1 - premove_HOS * m) +
+        (stray - broodtake$HOB_stray)
+    } else {
+      spawners$HOS <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS * m) +
+        (stray - broodtake$HOB_stray)
+    }
   } else {
     spawners$HOS <- array(0, dim(escapement_HOS))
   }
@@ -118,18 +131,26 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
                             egg_target, s_prespawn, ptarget_NOB, m = 1, opt = TRUE) {
 
   NOB <- ptake_unmarked * NOR_escapement
-  HOB_unmarked <- ptake_unmarked * phatchery * (1 - m) * HOR_escapement
+
+  if (is.na(phatchery)) {
+    HOB_unmarked <- ptake_unmarked * (1 - m) * HOR_escapement
+    HO_avail_marked <- cbind(
+      m * HOR_escapement,
+      brood_import
+    )
+  } else {
+    HOB_unmarked <- ptake_unmarked * phatchery * (1 - m) * HOR_escapement
+    HO_avail_marked <- cbind(
+      m * phatchery * HOR_escapement,
+      brood_import
+    )
+  }
   HOB_stray <- ptake_unmarked * stray
 
   egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
   egg_HOB_unmarked <- sum((HOB_unmarked + HOB_stray) * s_prespawn * fec * p_female)
 
   egg_HOB_marked <- egg_target - egg_NOB - egg_HOB_unmarked
-
-  HO_avail_marked <- cbind(
-    m * phatchery * HOR_escapement,
-    brood_import
-  )
 
   if (egg_HOB_marked < 0 || !sum(HO_avail_marked)) {
     ptake_marked <- 0

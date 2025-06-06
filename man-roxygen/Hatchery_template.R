@@ -31,14 +31,13 @@
 #' @slot ptarget_NOB Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
 #' can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate < 1, then
 #' this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement. Default is 0.9.
-#' @slot phatchery Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
-#'  or swim-in facilities. These fish are available for broodtake. The product of `phatchery` and `premove_HOS` do not
-#'  spawn in the natural environment. Default is 0.8.
+#' @slot phatchery Numeric. Optional parameter (default is `NA`). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+#'  or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
+#'  With the default option, `NA` allows all hatchery origin escapement that is not used brood to go to the spawning grounds.
 #' @slot premove_HOS Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
 #'  ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., `premove_HOS * m`.
 #'  The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
-#'  imperfect implementation of weir removal. The product of `phatchery` and `premove_HOS * m` do not
-#'  spawn in the natural environment. Default is zero.
+#'  imperfect implementation of weir removal. Default is zero.
 #' @slot fec_brood Vector of length `maxage`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
 #' @slot fitness_type Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.

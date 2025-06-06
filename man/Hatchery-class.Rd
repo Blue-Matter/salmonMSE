@@ -63,15 +63,14 @@ is limited by \code{pmax_esc < 1}, then this parameter should be 1. Default is 1
 can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate < 1, then
 this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement. Default is 0.9.}
 
-\item{\code{phatchery}}{Numeric. The proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
-or swim-in facilities. These fish are available for broodtake. The product of \code{phatchery} and \code{premove_HOS} do not
-spawn in the natural environment. Default is 0.8.}
+\item{\code{phatchery}}{Numeric. Optional parameter (default is \code{NA}). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
+With the default option, \code{NA} allows all hatchery origin escapement that is not used brood to go to the spawning grounds.}
 
 \item{\code{premove_HOS}}{Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
 ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., \code{premove_HOS * m}.
 The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
-imperfect implementation of weir removal. The product of \code{phatchery} and \code{premove_HOS * m} do not
-spawn in the natural environment. Default is zero.}
+imperfect implementation of weir removal. Default is zero.}
 
 \item{\code{fec_brood}}{Vector of length \code{maxage}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
 

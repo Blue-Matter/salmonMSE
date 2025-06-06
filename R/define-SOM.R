@@ -8,6 +8,7 @@
 NULL
 
 setClassUnion("num.array", c("numeric", "array"))
+setClassUnion("num.logical", c("numeric", "logical"))
 setClassUnion("num.matrix", c("numeric", "matrix"))
 
 # ---- Bio Class -----
@@ -199,7 +200,7 @@ setClass(
     pmax_esc = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
-    phatchery = "numeric",
+    phatchery = "num.logical",
     premove_HOS = "numeric",
     fec_brood = "numeric",
     fitness_type = "character",
@@ -212,6 +213,16 @@ setClass(
     fitness_floor = "numeric"
   )
 )
+
+setMethod("initialize", "Hatchery",
+          function(.Object, ...) {
+            dots <- list(...)
+            for (i in names(dots)) {
+              if (.hasSlot(.Object, i)) slot(.Object, i) <- dots[[i]]
+            }
+            if (!length(.Object@phatchery)) .Object@phatchery <- NA_real_
+            return(.Object)
+          })
 
 
 setClassUnion("Bio.list", c("Bio", "list"))
