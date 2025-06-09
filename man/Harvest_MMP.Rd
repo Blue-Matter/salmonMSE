@@ -10,6 +10,10 @@ Harvest_MMP(
   reps = 1,
   u_terminal,
   u_preterminal,
+  K_PT,
+  K_T,
+  type_PT = "u",
+  type_T = "u",
   MSF_PT = FALSE,
   MSF_T = FALSE,
   m,
@@ -32,6 +36,14 @@ Harvest_MMP(
 \item{u_terminal}{Numeric vector by population (s). Harvest rate of retained catch in the terminal fishery}
 
 \item{u_preterminal}{Single numeric. Harvest rate of retained catch in the pre-terminal fishery}
+
+\item{K_PT}{Numeric vector by population (s). Total retained catch in the pre-terminal fishery}
+
+\item{K_T}{Numeric vector by population (s). Total retained catch in the terminal fishery}
+
+\item{type_PT}{Character vector by population (s) containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries}
+
+\item{type_T}{Character vector by population (s), containing either "catch" or "u". indicates whether to manage by harvest rate or total catch numbers for terminal fisheries}
 
 \item{MSF_PT}{Logical, whether to implement mark-selective fishing for the preterminal fishery}
 

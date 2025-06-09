@@ -12,9 +12,17 @@ The component of the operating model that controls harvest.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{u_preterminal}}{Numeric. The exploitation rate of the immature stock in the pre-terminal fishery.}
+\item{\code{type_PT}}{Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
 
-\item{\code{u_terminal}}{Numeric. The exploitation rate of the return in the terminal fishery.}
+\item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
+
+\item{\code{u_preterminal}}{Numeric. If \code{type_PT = "u"}, the exploitation rate of the immature stock in the pre-terminal fishery.}
+
+\item{\code{u_terminal}}{Numeric. If \code{type_T = "u"}, The exploitation rate of the return in the terminal fishery.}
+
+\item{\code{K_PT}}{Numeric. If \code{type_PT = "catch"}, the catch target of the immature stock in the pre-terminal fishery.}
+
+\item{\code{K_T}}{Numeric. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.}
 
 \item{\code{MSF_PT}}{Logical. Whether to implement mark-selective fishing in the preterminal fishery, with no retention on unmarked fish.}
 

@@ -9,6 +9,10 @@
 #' @param reps The number of stochastic replicates to be returned by the function
 #' @param u_terminal Numeric vector by population (s). Harvest rate of retained catch in the terminal fishery
 #' @param u_preterminal Single numeric. Harvest rate of retained catch in the pre-terminal fishery
+#' @param K_PT Numeric vector by population (s). Total retained catch in the pre-terminal fishery
+#' @param K_T Numeric vector by population (s). Total retained catch in the terminal fishery
+#' @param type_PT Character vector by population (s) containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries
+#' @param type_T Character vector by population (s), containing either "catch" or "u". indicates whether to manage by harvest rate or total catch numbers for terminal fisheries
 #' @param MSF_PT Logical, whether to implement mark-selective fishing for the preterminal fishery
 #' @param MSF_T Logical, whether to implement mark-selective fishing for the terminal fishery
 #' @param m Numeric vector by population (s). Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
@@ -27,28 +31,31 @@
 #' @return A nested list of \linkS4class{Rec} objects, same dimension as `DataList`
 #'
 #' @keywords internal
-Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MSF_PT = FALSE, MSF_T = FALSE, m, release_mort,
+Harvest_MMP <- function(x = 1, DataList, reps = 1,
+                        u_terminal, u_preterminal, K_PT, K_T,
+                        type_PT = "u", type_T = "u", MSF_PT = FALSE, MSF_T = FALSE, m, release_mort,
                         p_terminal = c(2, 5), p_preterminal = c(1, 4), pkey = data.frame(p = 1:6, s = 1),
                         p_natural = 1:3, p_hatchery = 4:6, ...) {
+
+  type_PT <- match.arg(type_PT, choices = c("u", "catch"), several.ok = TRUE)
+  type_T <- match.arg(type_T, choices = c("u", "catch"), several.ok = TRUE)
+
   np <- length(DataList)
   nf <- length(DataList[[1]])
 
-  #p_preterminal <- intersect(1:np, p_preterminal)
-  #p_terminal <- intersect(1:np, p_terminal)
+  y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
+  nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
+
+  odd_time_step <- as.logical(y %% 2)
 
   multiRec <- lapply(1:np, function(p) {
-    y <- max(DataList[[1]][[1]]@Year) - DataList[[1]][[1]]@LHYear + 1
-    nyears <- length(DataList[[1]][[1]]@Misc$FleetPars$Find[x, ])
+
+    Effort <- 0 # Stays at zero unless otherwise
 
     Nage_p <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ], na.rm = TRUE)
 
-    if (!sum(Nage_p)) {
-      Effort <- 0
-    } else if (p %in% p_preterminal) {
-
-      odd_time_step <- y %% 2
-
-      if (u_preterminal > 0 && odd_time_step) {
+    if (sum(Nage_p)) {
+      if (odd_time_step && p %in% p_preterminal) {
 
         # MSF, Specify F here, further retention and discards handled by OM
         if (MSF_PT) {
@@ -58,7 +65,7 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
           s_PT <- pkey$s[match(p_HOS_PT, pkey$p)]
 
           Effort <- get_F(
-            u = u_preterminal, M = array(0, dim(Nage_PT)), N = Nage_PT, # Kept catch of HOS
+            u = u_preterminal, K = K_PT, type = type_PT, M = array(0, dim(Nage_PT)), N = Nage_PT, # Kept catch of HOS
             vul = V_PT, ret = m[s_PT], release_mort = release_mort[1, s_PT]
           )
         } else {
@@ -67,53 +74,41 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1, u_terminal, u_preterminal, MS
           V_PT <- sapply(p_preterminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
           Effort <- get_F(
-            u = u_preterminal, M = array(0, dim(Nage_PT)), N = Nage_PT,
+            u = u_preterminal, K = K_PT, type = type_PT, M = array(0, dim(Nage_PT)), N = Nage_PT,
             vul = V_PT, ret = 1
           )
         }
-
-      } else {
-        Effort <- 0
-      }
-    } else if (p %in% p_terminal) {
-
-      even_time_step <- !y %% 2
-
-      s_p <- pkey$s[match(p, pkey$p)]
-
-      if (u_terminal[s_p] > 0 && even_time_step) {
+      } else if (!odd_time_step && p %in% p_terminal) {
 
         # Single stock fishery, specify availability of all mature fish in the same population (s)
+        s_T <- pkey$s[match(p, pkey$p)]
+
         if (MSF_T) {
           p_HOS_T_all <- intersect(p_terminal, p_hatchery)
-          p_HOS_T <- intersect(p_HOS_T_all, pkey$p[pkey$s == s_p])
+          p_HOS_T <- intersect(p_HOS_T_all, pkey$p[pkey$s == s_T])
 
           Nage_T <- sapply(p_HOS_T, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_T <- sapply(p_HOS_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
-          s_T <- pkey$s[match(p_HOS_T, pkey$p)]
+          s_T <- unique(pkey$s[match(p_HOS_T, pkey$p)])
+          if (length(s_T) > 1) stop("length(s_T) > 1")
 
           Effort <- get_F(
-            u = u_terminal[s_p], M = array(0, dim(Nage_T)), N = Nage_T, # Kept catch of HOS
+            u = u_terminal[s_T], K = K_T[s_T], type = type_T, M = array(0, dim(Nage_T)), N = Nage_T, # Kept catch of HOS
             vul = V_T, ret = m[s_T], release_mort = release_mort[2, s_T]
           )
         } else {
 
-          p_T <- intersect(p_terminal, pkey$p[pkey$s == s_p])
+          p_T <- intersect(p_terminal, pkey$p[pkey$s == s_T])
 
           Nage_T <- sapply(p_T, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_T <- sapply(p_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
           Effort <- get_F(
-            u = u_terminal[s_p], M = array(0, dim(Nage_T)), N = Nage_T,
+            u = u_terminal[s_T], K = K_T[s_T], type = type_T, M = array(0, dim(Nage_T)), N = Nage_T,
             vul = V_T, ret = 1
           )
         }
-
-      } else {
-        Effort <- 0
       }
-    } else { # Escapement
-      Effort <- 0
     }
 
     lapply(1:nf, function(f) {
@@ -140,6 +135,10 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
   f <- Harvest_MMP
   formals(f)$u_terminal <- vapply(SOM@Harvest, slot, numeric(1), "u_terminal")   # By population
   formals(f)$u_preterminal <- SOM@Harvest[[1]]@u_preterminal                     # One number for all
+  formals(f)$K_PT <- vapply(SOM@Harvest, slot, numeric(1), "K_PT")
+  formals(f)$K_T <- vapply(SOM@Harvest, slot, numeric(1), "K_T")
+  formals(f)$type_PT <- vapply(SOM@Harvest, slot, character(1), "type_PT")
+  formals(f)$type_T <- vapply(SOM@Harvest, slot, character(1), "type_T")
   formals(f)$MSF_PT <- SOM@Harvest[[1]]@MSF_PT
   formals(f)$MSF_T <- SOM@Harvest[[1]]@MSF_T
   formals(f)$m <- vapply(SOM@Hatchery, slot, numeric(1), "m")                    # By population
@@ -155,9 +154,12 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
 
 #' Calculate F from harvest rate
 #'
-#' Solves for apical instantaneous fishing mortality rate from harvest rate (total retained catch over total abundance).
+#' Solves for apical instantaneous fishing mortality rate (F), proportional to fishing effort, from harvest rate (total retained catch over total abundance).
+#' The apical F can be greater than the realized F, if retention < 1.
 #'
 #' @param u Harvest rate, between 0-1
+#' @param K Catch, between 0-Inf
+#' @param type Character, either `"catch"`, or `"u"`, whether to solve for catch or harvest rate, respectively
 #' @param M Instantaneous natural mortality rate
 #' @param N Abundance
 #' @param vul Vulnerability
@@ -169,28 +171,44 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
 #' @keywords internal
 #'
 #' @importFrom stats uniroot
-get_F <- function(u = 0, M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20) {
-  if (u > 0) {
+get_F <- function(u = 0, K = 0, type = c("u", "catch"), M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20) {
+  type <- match.arg(type)
+  Fout <- 0
+
+  solve_u <- type == "u" && u > 0
+  solve_K <- type == "catch" && K > 0
+
+  if (solve_u || solve_K) {
     .F <- try(
-      uniroot(F_solver, interval = c(1e-8, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u),
+      uniroot(F_solver, interval = c(1e-8, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u, K = K, type),
       silent = TRUE
     )
+
     if (is.character(.F)) {
-      return(Fmax)
+      Fout <- Fmax
     } else {
-      return(.F$root)
+      Fout <- .F$root
     }
-  } else {
-    return(0)
   }
+
+  return(Fout)
 }
 
-F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0) {
+F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0, K = 0, type = c("u", "catch")) {
+  type <- match.arg(type)
+
   F_ret <- vul * ret * .F
   F_rel <- vul * (1 - ret) * release_mort * .F
   Z <- F_ret + F_rel + M
   catch_ret <- F_ret/Z * (1 - exp(-Z)) * N
   catch_ret[is.na(catch_ret)] <- 0
-  sum(catch_ret)/sum(vul * N) - u
+
+  if (type == "u") {
+    fn <- sum(catch_ret)/sum(vul * N) - u
+  } else {
+    fn <- sum(catch_ret)/K - 1
+  }
+  return(fn)
+
 }
 

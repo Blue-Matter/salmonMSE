@@ -112,8 +112,12 @@ setClass(
   "Harvest",
   slots = c(
     Name = "character",
+    type_PT = "character",
+    type_T = "character",
     u_preterminal = "numeric",
     u_terminal = "numeric",
+    K_PT = "numeric",
+    K_T = "numeric",
     MSF_PT = "logical",
     MSF_T = "logical",
     release_mort = "numeric",

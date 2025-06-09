@@ -552,20 +552,41 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     ### Check Harvest ----
     Harvest <- SOM@Harvest[[s]]
-    Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
-    Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+
+    Harvest <- check_numeric(Harvest, "type_PT", default = "u")
+    Harvest <- check_numeric(Harvest, "type_T", default = "u")
+
+    Harvest@type_PT <- match.arg(Harvest@type_PT, choices = c("u", "catch"))
+    Harvest@type_T <- match.arg(Harvest@type_T, choices = c("u", "catch"))
+
+    if (Harvest@type_PT == "u") {
+      Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+      Harvest <- check_numeric(Harvest, "K_PT", default = NA_real_)
+    } else {
+      Harvest <- check_numeric(Harvest, "u_preterminal", default = NA_real_)
+      Harvest <- check_numeric(Harvest, "K_PT", default = 0)
+    }
+
+    if (Harvest@type_T == "u") {
+      Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+      Harvest <- check_numeric(Harvest, "K_T", default = NA_real_)
+    } else {
+      Harvest <- check_numeric(Harvest, "u_terminal", default = NA_real_)
+      Harvest <- check_numeric(Harvest, "K_T", default = 0)
+    }
+
     Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
     Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
     if (Harvest@MSF_PT || Harvest@MSF_T) {
       if (!length(Harvest@release_mort)) Harvest@release_mort <- c(0, 0)
       Harvest <- check_numeric(Harvest, "release_mort", size = 2)
     }
-    if (Harvest@u_preterminal > 0) {
+    if (Harvest@u_preterminal > 0 || Harvest@K_PT) {
       Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     } else {
       Harvest@vulPT <- matrix(0, nsim, maxage)
     }
-    if (Harvest@u_terminal > 0) {
+    if (Harvest@u_terminal > 0 || Harvest@K_T) {
       Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
     } else {
       Harvest@vulT <- matrix(0, nsim, maxage)
