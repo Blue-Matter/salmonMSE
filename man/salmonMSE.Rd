@@ -20,12 +20,12 @@ salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
 \value{
 If \code{Hist = TRUE}: if \code{convert = TRUE}, a \linkS4class{SHist} object or if \code{convert = FALSE}, a multiHist object (list).
 
-If \code{Hist = FALSE}: if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \linkS4class{MMSE} object.
+If \code{Hist = FALSE}: if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \link[MSEtool:MMSE-class]{MSEtool::MMSE} object.
 }
 \description{
 \code{salmonMSE()} runs a salmon management strategy evaluation through the following steps:
 \itemize{
-\item Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via \code{\link[=SOM2MOM]{SOM2MOM()}}
+\item Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\link[MSEtool:MOM-class]{MSEtool::MOM}) via \code{\link[=SOM2MOM]{SOM2MOM()}}
 \item Creates a harvest management procedure specifying the harvest control rule
 \item Generates the historical reconstruction of the state variables
 \item Runs projection (if \code{Hist = FALSE})

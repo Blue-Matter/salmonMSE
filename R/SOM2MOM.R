@@ -3,9 +3,9 @@
 #' @title Internal salmonMSE functions for converting operating model inputs and outputs
 #'
 #' @description
-#' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
-#' - [make_Stock()] creates the \linkS4class{Stock} object (openMSE) corresponding to salmon life stage
-#' - [make_Fleet()] creates the \linkS4class{Fleet} object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
+#' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model ([MSEtool::MOM-class])
+#' - [make_Stock()] creates the [MSEtool::Stock-class] object (openMSE) corresponding to salmon life stage
+#' - [make_Fleet()] creates the [MSEtool::Fleet-class] object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
 #' - [multiHist2SHist()] converts the openMSE historical reconstruction into a salmon Hist object (\linkS4class{SHist})
 #' - [MMSE2SMSE()] converts the openMSE projection output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
 #' - [make_Harvest_MMP()] creates a multi-stock management procedure for the harvest component of the operating model by
@@ -17,7 +17,7 @@
 #' @param check Logical, whether to check the `SOM` object using [check_SOM()]
 #' @export
 #' @return
-#' `SOM2MOM`: \linkS4class{MOM} object
+#' `SOM2MOM`: [MSEtool::MOM-class] object
 SOM2MOM <- function(SOM, check = TRUE) {
   if (check) SOM <- check_SOM(SOM)
 

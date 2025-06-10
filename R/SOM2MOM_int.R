@@ -6,7 +6,7 @@
 #' @param r Integer, the hatchery release group for which to create the Stock object. Not relevant if `NOS = TRUE`
 #' @param stage Character indicating the corresponding salmon life stage of the Stock or Fleet object
 #' @return
-#' `make_Stock`: List containing a \linkS4class{Stock} object and accompanying custom parameters list
+#' `make_Stock`: List containing a [MSEtool::Stock-class] object and accompanying custom parameters list
 #' @export
 make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature", "return", "escapement")) {
   stage <- match.arg(stage)
@@ -210,7 +210,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
 
 #' @rdname salmonMSE-int
 #' @return
-#' `make_Stock`: List containing a \linkS4class{Fleet} object and accompanying custom parameters list
+#' `make_Stock`: List containing a [MSEtool::Fleet-class] object and accompanying custom parameters list
 #' @export
 make_Fleet <- function(SOM, s, NOS = TRUE, stage = c("immature", "return", "escapement")) {
   stage <- match.arg(stage)

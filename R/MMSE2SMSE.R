@@ -1,6 +1,6 @@
 
 #' @rdname salmonMSE-int
-#' @param MMSE Object of class \linkS4class{MMSE} returned from MSEtool
+#' @param MMSE Object of class [MSEtool::MMSE-class] returned from MSEtool
 #' @param Harvest_MMP Optional harvest function created by [make_Harvest_MMP()]
 #' @param N Data frame of natural origin abundance at age saved in the [salmonMSE_env] environment during the simulation
 #' @param stateN Data frame of natural origin state variables saved in the [salmonMSE_env] environment during the simulation

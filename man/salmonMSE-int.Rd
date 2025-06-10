@@ -35,7 +35,7 @@ multiHist2SHist(multiHist, SOM, check = TRUE)
 
 \item{check}{Logical, whether to check the \code{SOM} object using \code{\link[=check_SOM]{check_SOM()}}}
 
-\item{MMSE}{Object of class \linkS4class{MMSE} returned from MSEtool}
+\item{MMSE}{Object of class \link[MSEtool:MMSE-class]{MSEtool::MMSE} returned from MSEtool}
 
 \item{Harvest_MMP}{Optional harvest function created by \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}}}
 
@@ -66,19 +66,19 @@ multiHist2SHist(multiHist, SOM, check = TRUE)
 
 \code{MMSE2SMSE}: \linkS4class{SMSE} object
 
-\code{SOM2MOM}: \linkS4class{MOM} object
+\code{SOM2MOM}: \link[MSEtool:MOM-class]{MSEtool::MOM} object
 
-\code{make_Stock}: List containing a \linkS4class{Stock} object and accompanying custom parameters list
+\code{make_Stock}: List containing a \link[MSEtool:Stock-class]{MSEtool::Stock} object and accompanying custom parameters list
 
-\code{make_Stock}: List containing a \linkS4class{Fleet} object and accompanying custom parameters list
+\code{make_Stock}: List containing a \link[MSEtool:Fleet-class]{MSEtool::Fleet} object and accompanying custom parameters list
 
 \code{multiHist2SHist}: \linkS4class{SHist} object
 }
 \description{
 \itemize{
-\item \code{\link[=SOM2MOM]{SOM2MOM()}} converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM})
-\item \code{\link[=make_Stock]{make_Stock()}} creates the \linkS4class{Stock} object (openMSE) corresponding to salmon life stage
-\item \code{\link[=make_Fleet]{make_Fleet()}} creates the \linkS4class{Fleet} object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
+\item \code{\link[=SOM2MOM]{SOM2MOM()}} converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\link[MSEtool:MOM-class]{MSEtool::MOM})
+\item \code{\link[=make_Stock]{make_Stock()}} creates the \link[MSEtool:Stock-class]{MSEtool::Stock} object (openMSE) corresponding to salmon life stage
+\item \code{\link[=make_Fleet]{make_Fleet()}} creates the \link[MSEtool:Fleet-class]{MSEtool::Fleet} object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
 \item \code{\link[=multiHist2SHist]{multiHist2SHist()}} converts the openMSE historical reconstruction into a salmon Hist object (\linkS4class{SHist})
 \item \code{\link[=MMSE2SMSE]{MMSE2SMSE()}} converts the openMSE projection output, along with additional state variables recorded in \link{salmonMSE_env}, into a salmon MSE object (\linkS4class{SMSE})
 \item \code{\link[=make_Harvest_MMP]{make_Harvest_MMP()}} creates a multi-stock management procedure for the harvest component of the operating model by

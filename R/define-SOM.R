@@ -218,6 +218,7 @@ setClass(
   )
 )
 
+#' @importFrom methods .hasSlot
 setMethod("initialize", "Hatchery",
           function(.Object, ...) {
             dots <- list(...)

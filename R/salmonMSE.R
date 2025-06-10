@@ -4,7 +4,7 @@
 #'
 #' @description
 #' `salmonMSE()` runs a salmon management strategy evaluation through the following steps:
-#' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\linkS4class{MOM}) via [SOM2MOM()]
+#' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model ([MSEtool::MOM-class]) via [SOM2MOM()]
 #' - Creates a harvest management procedure specifying the harvest control rule
 #' - Generates the historical reconstruction of the state variables
 #' - Runs projection (if `Hist = FALSE`)
@@ -17,7 +17,7 @@
 #' @return
 #' If `Hist = TRUE`: if `convert = TRUE`, a \linkS4class{SHist} object or if `convert = FALSE`, a multiHist object (list).
 #'
-#' If `Hist = FALSE`: if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a \linkS4class{MMSE} object.
+#' If `Hist = FALSE`: if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a [MSEtool::MMSE-class] object.
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 
