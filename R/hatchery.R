@@ -108,17 +108,22 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
 calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phatchery, premove_HOS, m) {
   spawners <- list()
   spawners$NOS <- escapement_NOS - broodtake$NOB
-  if (sum(escapement_HOS, stray)) {
+
+  if (sum(stray)) {
+    spawners$HOS_stray <- stray - broodtake$HOB_stray # Assume unmarked so not subject to premove_HOS!
+  } else {
+    spawners$HOS_stray <- array(0, dim(escapement_HOS))
+  }
+  if (sum(escapement_HOS)) {
     if (is.na(phatchery)) {
-      spawners$HOS <- (escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked) * (1 - premove_HOS * m) +
-        (stray - broodtake$HOB_stray)
+      HOS_local <- (escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked) * (1 - premove_HOS * m)
     } else {
-      spawners$HOS <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS * m) +
-        (stray - broodtake$HOB_stray)
+      HOS_local <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS * m)
     }
   } else {
-    spawners$HOS <- array(0, dim(escapement_HOS))
+    HOS_local <- array(0, dim(escapement_HOS))
   }
+  spawners$HOS <- HOS_local + spawners$HOS_stray
   return(spawners)
 }
 

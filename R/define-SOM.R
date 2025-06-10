@@ -329,11 +329,13 @@ setMethod("initialize", "SOM",
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
 #' @slot Escapement_HOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be hatchery origin spawners.
 #' @slot NOB Array `[nsim, nstocks, proyears]`. Natural origin broodtake.
-#' @slot HOB Array `[nsim, nstocks, proyears]`. Local hatchery origin broodtake.
+#' @slot HOB Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (local + strays).
+#' @slot HOB_stray Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (strays only).
 #' @slot HOB_import Array `[nsim, nstocks, proyears]`. Imported hatchery origin broodtake used for hatchery production.
 #' @slot NOS Array `[nsim, nstocks, nage, proyears]`. Natural origin spawners.
-#' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners.
-#' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners discounted by `gamma`.
+#' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (local + strays).
+#' @slot HOS_stray Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (strays only).
+#' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (local + strays) discounted by `gamma`.
 #' @slot KPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of natural origin spawners.
 #' @slot KT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of natural origin spawners.
 #' @slot KPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of hatchery origin spawners.
@@ -415,9 +417,11 @@ setClass(
     Escapement_HOS = "array",
     NOB = "array",
     HOB = "array",
+    HOB_stray = "array",
     HOB_import = "array",
     NOS = "array",
     HOS = "array",
+    HOS_stray = "array",
     HOS_effective = "array",
     KPT_NOS = "array",
     KT_NOS = "array",

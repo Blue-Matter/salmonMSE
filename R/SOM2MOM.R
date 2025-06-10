@@ -27,7 +27,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   MOM@nsim <- SOM@nsim
   MOM@interval <- 1
   MOM@pstar <- 0.5
-  MOM@maxF <- 4.61 #-log(0.01) # Harvest rate can't exceed 0.99
+  MOM@maxF <- 20
   MOM@reps <- 1
 
   # Stock objects

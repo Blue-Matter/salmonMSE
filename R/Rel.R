@@ -154,7 +154,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   }
 
   NOS <- spawners$NOS
-  HOS <- spawners$HOS
+  HOS <- spawners$HOS # Includes local and strays!
   if (sum(HOS)) {
     HOS_effective <- spawners$HOS * hatchery_args$gamma
   } else {
@@ -309,7 +309,9 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         a = 1:nrow(Nage_HOS),
         Esc_HOS = Nage_HOS[, r],
         HOB = broodtake$HOB_unmarked[, r] + broodtake$HOB_marked[, r] + broodtake$HOB_stray[, r],
+        HOB_stray = broodtake$HOB_stray[, r],
         HOS = HOS[, r],
+        HOS_stray = spawners$HOS_stray[, r],
         HOS_effective = HOS_effective[, r]
       )
       df_H$HOB_import <- if (r == 1) broodtake$HOB_import else rep(NA, nrow(Nage_HOS))

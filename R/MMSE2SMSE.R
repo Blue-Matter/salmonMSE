@@ -17,7 +17,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
-  NOB <- HOB <- HOB_import <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  NOB <- HOB <- HOB_stray <- HOB_import <- array(0, c(SOM@nsim, ns, SOM@proyears))
   KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -27,7 +27,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Smolt_NOS <- Smolt_HOS <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@proyears))
 
-  NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
+  NOS <- HOS <- HOS_stray <- HOS_effective <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
   fitness <- array(NA_real_, c(SOM@nsim, ns, 2, SOM@proyears))
 
   pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(SOM@nsim, ns, SOM@proyears))
@@ -106,6 +106,23 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     s_enroute <- SOM@Bio[[s]]@s_enroute
     use_smolt_func <- TRUE
 
+    if (use_smolt_func) {
+      # Sum across LHG
+      NOS[, s, , y_spawn] <- get_salmonMSE_agevar(N, var = "NOS", s)
+      Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
+      Fry_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_NOS", s)
+      Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
+
+    } else {
+      # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
+      NOS[, s, , ] <- Escapement_NOS[, s, , ]
+      Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
+      Fry_NOS[, s, seq(2, SOM@proyears)] <- Egg_NOS[, s, seq(2, SOM@proyears) - 1]
+
+      a_smolt <- 1
+      Smolt_NOS[, s, ] <- Njuv_NOS[, s, a_smolt, ]
+    }
+
     if (do_hatchery || has_strays) {
 
       # HOS state variables from MMSE object
@@ -149,6 +166,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       # Sum across RS
       HOS[, s, , y_spawn] <- get_salmonMSE_agevar(H, var = "HOS", s)
+      HOS_stray[, s, , y_spawn] <- get_salmonMSE_agevar(H, var = "HOS_stray", s)
       HOS_effective[, s, , y_spawn] <- get_salmonMSE_agevar(H, var = "HOS_effective", s)
 
       Egg_HOS[, s, y_spawn] <- get_salmonMSE_var(stateH, var = "Egg_HOS", s)
@@ -158,6 +176,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       # Broodtake & fitness
       NOB[, s, y_spawn] <- get_salmonMSE_var(N, var = "NOB", s)
       HOB[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB", s)
+      HOB_stray[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB_stray", s)
       HOB_import[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB_import", s)
 
       fitness[, s, 1, y_spawn + 1] <- filter(Ford, .data$type == "natural", .data$t > 2 * SOM@nyears) %>%
@@ -193,11 +212,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       #PNI[, s, ] <- (h2 + (1 - h2 + fitness_variance) * pNOB[, s, ])/(h2 + (1 - h2 + fitness_variance) * (pHOS_effective[, s, ] + pNOB[, s, ]))
 
-      NOS_a <- HOScensus_a <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
-      NOS_a[, s, , y_spawn] <- get_salmonMSE_agevar(N, "NOS", s)
-      HOScensus_a[, s, , y_spawn] <- get_salmonMSE_agevar(H, "HOS", s)
-
-      p_wild[, s, ] <- calc_pwild_age(NOS_a[, s, , ], HOScensus_a[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
+      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
 
       if (n_r > 1) {
         Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
@@ -222,24 +237,6 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     } else {
       PNI[, s, y_spawn] <- p_wild[, s, y_spawn] <- 1
       pHOS_census[, s, y_spawn] <- pHOS_effective[, s, y_spawn] <- 0
-    }
-
-    if (use_smolt_func) {
-
-      # Sum across LHG
-      NOS[, s, , y_spawn] <- get_salmonMSE_agevar(N, var = "NOS", s)
-      Egg_NOS[, s, y_spawn] <- get_salmonMSE_var(stateN, var = "Egg_NOS", s)
-      Fry_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "Fry_NOS", s)
-      Smolt_NOS[, s, y_spawn + 1] <- get_salmonMSE_var(stateN, var = "smolt_NOS", s)
-
-    } else {
-      # If no hatchery, the NOS escapement is also the NOS, Egg_NOS is the spawning output
-      NOS[, s, , ] <- Escapement_NOS[, s, , ]
-      Egg_NOS[, s, y_spawn] <- apply(MMSE@SSB[, p_NOS_escapement, mp, y_spawnOM, drop = FALSE], c(1, 4), sum) # -1 from 1-year lag
-      Fry_NOS[, s, seq(2, SOM@proyears)] <- Egg_NOS[, s, seq(2, SOM@proyears) - 1]
-
-      a_smolt <- 1
-      Smolt_NOS[, s, ] <- Njuv_NOS[, s, a_smolt, ]
     }
 
     if (n_g > 1) {
@@ -295,9 +292,11 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     Escapement_HOS = Escapement_HOS,
     NOB = NOB,
     HOB = HOB,
+    HOB = HOB_stray,
     HOB_import = HOB_import,
     NOS = NOS,
     HOS = HOS,
+    HOS_stray = HOS_stray,
     HOS_effective = HOS_effective,
     KPT_NOS = KPT_NOS,
     KT_NOS = KT_NOS,
