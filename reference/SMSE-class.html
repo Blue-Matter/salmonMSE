@@ -144,7 +144,11 @@
 
 
 <dt><code>HOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Local hatchery origin broodtake.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin broodtake (local + strays).</p></dd>
+
+
+<dt><code>HOB_stray</code></dt>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin broodtake (strays only).</p></dd>
 
 
 <dt><code>HOB_import</code></dt>
@@ -156,11 +160,15 @@
 
 
 <dt><code>HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners (local + strays).</p></dd>
+
+
+<dt><code>HOS_stray</code></dt>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners (strays only).</p></dd>
 
 
 <dt><code>HOS_effective</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners discounted by <code>gamma</code>.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin spawners (local + strays) discounted by <code>gamma</code>.</p></dd>
 
 
 <dt><code>KPT_NOS</code></dt>
@@ -299,29 +307,29 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:      Return_HOS Escapement_NOS Escapement_HOS            NOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOB     HOB_import            NOS            HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOB      HOB_stray     HOB_import            NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   HOS_effective        KPT_NOS         KT_NOS        KPT_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_HOS        DPT_NOS         DT_NOS        DPT_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          DT_HOS        UPT_NOS         UT_NOS        UPT_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          UT_HOS       ExPT_NOS        ExT_NOS       ExPT_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ExT_HOS        fitness           pNOB    pHOS_census</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ExT_NOS       ExPT_HOS        ExT_HOS        fitness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  pHOS_effective      Mjuv_loss            PNI         p_wild</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pNOB    pHOS_census pHOS_effective      Mjuv_loss</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             PNI         p_wild           Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array           list</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

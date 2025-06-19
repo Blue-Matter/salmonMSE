@@ -55,12 +55,28 @@
 <dd><p>Character. Identifying name</p></dd>
 
 
+<dt><code>type_PT</code></dt>
+<dd><p>Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",</p></dd>
+
+
+<dt><code>type_T</code></dt>
+<dd><p>Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",</p></dd>
+
+
 <dt><code>u_preterminal</code></dt>
-<dd><p>Numeric. The exploitation rate of the immature stock in the pre-terminal fishery.</p></dd>
+<dd><p>Numeric. If <code>type_PT = "u"</code>, the exploitation rate of the immature stock in the pre-terminal fishery.</p></dd>
 
 
 <dt><code>u_terminal</code></dt>
-<dd><p>Numeric. The exploitation rate of the return in the terminal fishery.</p></dd>
+<dd><p>Numeric. If <code>type_T = "u"</code>, The exploitation rate of the return in the terminal fishery.</p></dd>
+
+
+<dt><code>K_PT</code></dt>
+<dd><p>Numeric. If <code>type_PT = "catch"</code>, the catch target of the immature stock in the pre-terminal fishery.</p></dd>
+
+
+<dt><code>K_T</code></dt>
+<dd><p>Numeric. If <code>type_T = "catch"</code>, the catch target of the return in the terminal fishery.</p></dd>
 
 
 <dt><code>MSF_PT</code></dt>
@@ -99,11 +115,14 @@ Implemented to model mark-selective fishing. Not used if either <code>MSF_PT</co
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name u_preterminal    u_terminal        MSF_PT         MSF_T</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character       numeric       numeric       logical       logical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   release_mort         vulPT          vulT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       numeric    num.matrix    num.matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name       type_PT        type_T u_preterminal    u_terminal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character     character     character       numeric       numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           K_PT           K_T        MSF_PT         MSF_T  release_mort</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       numeric       numeric       logical       logical       numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          vulPT          vulT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    num.matrix    num.matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Harvest.list"</span>
 </code></pre></div>
