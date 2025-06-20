@@ -148,6 +148,14 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
   formals(f)$p_natural <- pindex$p[pindex$origin == "natural"]
   formals(f)$p_hatchery <- pindex$p[pindex$origin == "hatchery"]
   formals(f)$pkey <- pindex[, c("s", "p")]
+
+  if (formals(f)$MSF_PT && !length(formals(f)$p_hatchery)) {
+    stop("Mark-selective fishing is TRUE for preterminal fishery but there are no hatchery populations")
+  }
+  if (formals(f)$MSF_T && !length(formals(f)$p_hatchery)) {
+    stop("Mark-selective fishing is TRUE for terminal fishery but there are no hatchery populations")
+  }
+
   class(f) <- "MMP"
   return(f)
 }
