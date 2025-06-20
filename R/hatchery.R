@@ -56,8 +56,13 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
                 s_prespawn = s_prespawn, val = egg_target),
         silent = TRUE
       )
+      if (is.character(unmarked_opt)) {
+        ptake_unmarked <- pmax_NOB
+      } else {
+        ptake_unmarked <- unmarked_opt$root
+      }
       output <- .broodtake_func(
-        unmarked_opt$root, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, stray = stray, brood_import = brood_import,
+        ptake_unmarked, NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, stray = stray, brood_import = brood_import,
         phatchery = phatchery, p_female = p_female,
         fec = fec_brood, gamma = 1, egg_target = egg_target, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m, opt = FALSE
       )
