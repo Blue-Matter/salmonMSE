@@ -76,7 +76,7 @@ initialize_zbar <- function(SOM) {
 
   zbar_df <- lapply(1:ns, function(s) {
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0)
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
 
     if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
 

@@ -174,7 +174,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   if (output == "hatchery" && !sum(unlist(hatchery_production))) return(0) # Perr_y = 0
 
   # Fitness
-  if (x > 0 && any(fitness_args$fitness_type == "Ford")) {
+  if (x > 0 && nrow(salmonMSE_env$Ford) && any(fitness_args$fitness_type == "Ford")) {
 
     # Get zbar from salmonMSE_env
     zbar_prev <- filter(salmonMSE_env$Ford, .data$x == .env$x, .data$s == .env$s)
