@@ -188,7 +188,7 @@ get_F <- function(u = 0, K = 0, type = c("u", "catch"), M, N = 1, vul = 1, ret =
 
   if (solve_u || solve_K) {
     .F <- try(
-      uniroot(F_solver, interval = c(1e-8, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u, K = K, type),
+      uniroot(F_solver, interval = c(0, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u, K = K, type),
       silent = TRUE
     )
 
