@@ -18,7 +18,7 @@ calc_SRRpars(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker", "HS"))
 \item{type}{Character, the functional form of the stock-recruit relationship}
 }
 \value{
-A vector for alpha and beta value, respectively
+Numeric vector length 2 for alpha and beta value, respectively
 }
 \description{
 Converts from capacity/productivity parameters to alpha/beta stock-recruit parameters where productivity is in terms

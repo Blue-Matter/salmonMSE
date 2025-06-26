@@ -9,10 +9,8 @@
 #' @param p Numeric, the productivity parameter that sets the maximum survival as the initial abundance approaches zero
 #' @param capacity Numeric, the capacity parameter that set the maximum survivors
 #' @param type Character, the functional form of the stock-recruit relationship
-#' @returns
-#' - `calc_SRR` calculates the abundance of survivors
-#' - `calc_SRRpars` calculates the alpha and beta terms when the productivity parameter is in terms of abundance but N1 and N2 is in terms of
-#'
+#' @return
+#' Numeric, the abundance of survivors
 #' @details
 #' The Beverton-Holt stock recruit relationship is of the following form:
 #' \deqn{\textrm{Smolt} = \dfrac{\alpha N_1}{1 + \beta N_2}}
@@ -26,8 +24,13 @@
 #'
 #' The hockey stick is of the following form:
 #'
-#' \deqn{\textrm{Smolt} = \begin{cases}p N_1 &, N_1 \le \frac{N_1}{N_2}C\\ \frac{N_1}{N_2}C &, N_1 \gt \frac{N_1}{N_2}C\end{cases}}
-#'
+#' \deqn{
+#' \textrm{Smolt} =
+#' \begin{cases}
+#' p N_1 &, N_1 \le \frac{N_1}{N_2} \times C\\
+#' \frac{N_1}{N_2} \times C &, \textrm{otherwise}
+#' \end{cases}
+#' }
 #'
 #' @seealso [calc_SRRpars()]
 #' @export
@@ -60,7 +63,7 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
 #' @param f Fecundity, the spawning output per mature female
 #' @param p_female The proportion of females per spawner
 #' @param type Character, the functional form of the stock-recruit relationship
-#' @returns A vector for alpha and beta value, respectively
+#' @returns Numeric vector length 2 for alpha and beta value, respectively
 #' @details
 #' \deqn{\alpha = \dfrac{P}{f \times p_{female}}}
 #'

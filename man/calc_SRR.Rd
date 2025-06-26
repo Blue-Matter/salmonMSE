@@ -18,10 +18,7 @@ calc_SRR(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS"))
 \item{type}{Character, the functional form of the stock-recruit relationship}
 }
 \value{
-\itemize{
-\item \code{calc_SRR} calculates the abundance of survivors
-\item \code{calc_SRRpars} calculates the alpha and beta terms when the productivity parameter is in terms of abundance but N1 and N2 is in terms of
-}
+Numeric, the abundance of survivors
 }
 \description{
 Calculates the abundance of survivors after applying either a Beverton-Holt or Ricker stock-recruit relationship.
@@ -39,7 +36,13 @@ Productivity \eqn{P} is in terms of abundance per unit of \eqn{N_1} and \eqn{N_2
 
 The hockey stick is of the following form:
 
-\deqn{\textrm{Smolt} = \begin{cases}p N_1 &, N_1 \le \frac{N_1}{N_2}C\\ \frac{N_1}{N_2}C &, N_1 \gt \frac{N_1}{N_2}C\end{cases}}
+\deqn{
+\textrm{Smolt} =
+\begin{cases}
+p N_1 &, N_1 \le \frac{N_1}{N_2} \times C\\
+\frac{N_1}{N_2} \times C &, \textrm{otherwise}
+\end{cases}
+}
 }
 \seealso{
 \code{\link[=calc_SRRpars]{calc_SRRpars()}}
