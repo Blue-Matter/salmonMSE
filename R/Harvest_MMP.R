@@ -9,16 +9,16 @@
 #' @param reps The number of stochastic replicates to be returned by the function
 #' @param u_terminal Numeric vector by population (s). Harvest rate of retained catch in the terminal fishery
 #' @param u_preterminal Single numeric. Harvest rate of retained catch in the pre-terminal fishery
-#' @param K_PT Numeric vector by population (s). Total retained catch in the pre-terminal fishery
+#' @param K_PT Single numeric. Total retained catch in the pre-terminal fishery
 #' @param K_T Numeric vector by population (s). Total retained catch in the terminal fishery
-#' @param type_PT Character vector by population (s) containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries
+#' @param type_PT Single character, containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries
 #' @param type_T Character vector by population (s), containing either "catch" or "u". indicates whether to manage by harvest rate or total catch numbers for terminal fisheries
-#' @param MSF_PT Logical, whether to implement mark-selective fishing for the preterminal fishery
-#' @param MSF_T Logical, whether to implement mark-selective fishing for the terminal fishery
+#' @param MSF_PT Single logical, whether to implement mark-selective fishing for the preterminal fishery
+#' @param MSF_T Logical vector by population (s), whether to implement mark-selective fishing for the terminal fishery
 #' @param m Numeric vector by population (s). Mark rate of hatchery origin fish, as a proxy for fishery retention. Only used to calculate the fishing effort.
 #' Retention in the operating model is specified in the [MSEtool::MOM-class] object
 #' @param release_mort Matrix `[2, s]`. Release mortality of discarded fish in the pre-terminal (1st row) and terminal (2nd row) fishery. Only used
-#' if `MSF_PT = TRUE` or `MSF_T = TRUE`. Only used to calculate the fishing effort.
+#' if `MSF_PT = TRUE` or `MSF_T[s] = TRUE`. Only used to calculate the fishing effort.
 #' Release mortality in the operating model is specified in the [MSEtool::MOM-class] object
 #' @param p_terminal Numeric vector. Population index (p) for the recruitment that experiences the terminal fishing mortality
 #' @param p_preterminal Numeric vector. Population index (p) for immature fish that experience the pre-terminal fishing mortality
@@ -55,59 +55,73 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1,
     Nage_p <- rowSums(DataList[[p]][[1]]@Misc$StockPars$N_P[x, , y, ], na.rm = TRUE)
 
     if (sum(Nage_p)) {
+
+      #### Preterminal is mixed stock fishery ----
       if (odd_time_step && p %in% p_preterminal) {
 
-        # MSF, Specify F here, further retention and discards handled by OM
         if (MSF_PT) {
-          p_HOS_PT <- intersect(p_preterminal, p_hatchery)
+          # MSF, solve for effort based on kept catch of all HO juveniles
+          p_HOS_PT <- intersect(p_preterminal, p_hatchery) # Identify HO juveniles in openMSE (p)
+          s_PT <- pkey$s[match(p_HOS_PT, pkey$p)] # Identify salmonMSE population (s) corresponding to p
+
+          # Abundance and vulnerability
           Nage_PT <- sapply(p_HOS_PT, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_PT <- sapply(p_HOS_PT, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
-          s_PT <- pkey$s[match(p_HOS_PT, pkey$p)]
 
-          Effort <- get_F(
-            u = u_preterminal, K = K_PT, type = type_PT, M = array(0, dim(Nage_PT)), N = Nage_PT, # Kept catch of HOS
-            vul = V_PT, ret = m[s_PT], release_mort = release_mort[1, s_PT]
-          )
+          # Mark rate (as retention) and release mortality
+          m_s <- matrix(m[s_PT], ncol(Nage_PT), nrow(Nage_PT), byrow = TRUE)
+          relmort_s <- matrix(release_mort[1, s_PT], ncol(Nage_PT), nrow(Nage_PT), byrow = TRUE)
         } else {
-          # Mixed stock fishery, specify availability of all immature fish
+          # No MSF, solve for effort based on kept catch of all juveniles (NO + HO)
           Nage_PT <- sapply(p_preterminal, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_PT <- sapply(p_preterminal, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
-          Effort <- get_F(
-            u = u_preterminal, K = K_PT, type = type_PT, M = array(0, dim(Nage_PT)), N = Nage_PT,
-            vul = V_PT, ret = 1
-          )
+          m_s <- 1
+          relmort_s <- 0
         }
+
+        Effort <- get_F(
+          u = u_preterminal, K = K_PT, type = type_PT,
+          M = array(0, dim(Nage_PT)), N = Nage_PT,
+          vul = V_PT, ret = m_s, release_mort = relmort_s
+        )
+
       } else if (!odd_time_step && p %in% p_terminal) {
 
-        # Single stock fishery, specify availability of all mature fish in the same population (s)
+        #### Terminal fishery is a single stock fishery ----
+        # Identify salmonMSE population s corresponding openMSE population p
         s_T <- pkey$s[match(p, pkey$p)]
+        if (length(s_T) > 1) stop("length(s_T) > 1")
 
-        if (MSF_T) {
+        if (MSF_T[s_T]) {
+          # MSF, solve for effort based on kept catch of HO return corresponding to s
           p_HOS_T_all <- intersect(p_terminal, p_hatchery)
           p_HOS_T <- intersect(p_HOS_T_all, pkey$p[pkey$s == s_T])
 
+          # Abundance and vulnerability
           Nage_T <- sapply(p_HOS_T, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_T <- sapply(p_HOS_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
-          s_T <- unique(pkey$s[match(p_HOS_T, pkey$p)])
-          if (length(s_T) > 1) stop("length(s_T) > 1")
 
-          Effort <- get_F(
-            u = u_terminal[s_T], K = K_T[s_T], type = type_T, M = array(0, dim(Nage_T)), N = Nage_T, # Kept catch of HOS
-            vul = V_T, ret = m[s_T], release_mort = release_mort[2, s_T]
-          )
+          # Mark rate (as retention) and release mortality
+          m_s <- matrix(m[s_T], ncol(Nage_T), nrow(Nage_T))
+          relmort_s <- matrix(release_mort[2, s_T], ncol(Nage_T), nrow(Nage_T))
+
         } else {
-
+          # No MSF, solve for effort based on kept catch of all return (NO + HO) corresponding to s
           p_T <- intersect(p_terminal, pkey$p[pkey$s == s_T])
 
           Nage_T <- sapply(p_T, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
           V_T <- sapply(p_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
-          Effort <- get_F(
-            u = u_terminal[s_T], K = K_T[s_T], type = type_T, M = array(0, dim(Nage_T)), N = Nage_T,
-            vul = V_T, ret = 1
-          )
+          m_s <- 1
+          relmort_s <- 0
         }
+
+        Effort <- get_F(
+          u = u_terminal[s_T], K = K_T[s_T], type = type_T[s_T],
+          M = array(0, dim(Nage_T)), N = Nage_T,
+          vul = V_T, ret = m_s, release_mort = relmort_s
+        )
       }
     }
 
@@ -133,16 +147,22 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
   pindex <- make_stock_index(SOM)
 
   f <- Harvest_MMP
-  formals(f)$u_terminal <- vapply(SOM@Harvest, slot, numeric(1), "u_terminal")   # By population
-  formals(f)$u_preterminal <- SOM@Harvest[[1]]@u_preterminal                     # One number for all
-  formals(f)$K_PT <- vapply(SOM@Harvest, slot, numeric(1), "K_PT")
-  formals(f)$K_T <- vapply(SOM@Harvest, slot, numeric(1), "K_T")
-  formals(f)$type_PT <- vapply(SOM@Harvest, slot, character(1), "type_PT")
+
+  # Terminal fishery, specific to population
   formals(f)$type_T <- vapply(SOM@Harvest, slot, character(1), "type_T")
+  formals(f)$u_terminal <- vapply(SOM@Harvest, slot, numeric(1), "u_terminal")
+  formals(f)$K_T <- vapply(SOM@Harvest, slot, numeric(1), "K_T")
+  formals(f)$MSF_T <- vapply(SOM@Harvest, slot, logical(1), "MSF_T")
+
+  formals(f)$m <- vapply(SOM@Hatchery, slot, numeric(1), "m")
+  formals(f)$release_mort <- vapply(SOM@Harvest, slot, numeric(2), "release_mort")
+
+  # Pre-terminal fishery, shared for all populations
+  formals(f)$type_PT <- SOM@Harvest[[1]]@type_PT
+  formals(f)$u_preterminal <- SOM@Harvest[[1]]@u_preterminal
+  formals(f)$K_PT <- SOM@Harvest[[1]]@K_PT
   formals(f)$MSF_PT <- SOM@Harvest[[1]]@MSF_PT
-  formals(f)$MSF_T <- SOM@Harvest[[1]]@MSF_T
-  formals(f)$m <- vapply(SOM@Hatchery, slot, numeric(1), "m")                    # By population
-  formals(f)$release_mort <- vapply(SOM@Harvest, slot, numeric(2), "release_mort") # 2 x ns matrix
+
   formals(f)$p_preterminal <- pindex$p[pindex$stage == "juvenile"]
   formals(f)$p_terminal <- pindex$p[pindex$stage == "recruitment"]
   formals(f)$p_natural <- pindex$p[pindex$origin == "natural"]
@@ -152,8 +172,17 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
   if (formals(f)$MSF_PT && !length(formals(f)$p_hatchery)) {
     stop("Mark-selective fishing is TRUE for preterminal fishery but there are no hatchery populations")
   }
-  if (formals(f)$MSF_T && !length(formals(f)$p_hatchery)) {
-    stop("Mark-selective fishing is TRUE for terminal fishery but there are no hatchery populations")
+  if (any(formals(f)$MSF_T)) {
+    ns <- length(SOM@Bio)
+
+    for (s in 1:ns) {
+      MSF_s <- formals(f)$MSF_T[s]
+      p_hatchery <- pindex[pindex$s == s & pindex$origin == "hatchery", ]
+
+      if (MSF_s && !nrow(p_hatchery)) {
+        stop("Mark-selective fishing is TRUE for terminal fishery but there is no hatchery for population ", s)
+      }
+    }
   }
 
   class(f) <- "MMP"
@@ -180,6 +209,8 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
 #'
 #' @importFrom stats uniroot
 get_F <- function(u = 0, K = 0, type = c("u", "catch"), M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20) {
+  type <- unique(type)
+
   type <- match.arg(type)
   Fout <- 0
 
