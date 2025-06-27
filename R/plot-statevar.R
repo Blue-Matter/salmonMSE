@@ -419,11 +419,11 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 #' @export
 plot_decision_table <- function(x, y, z, title, xlab, ylab) {
   dt <- data.frame(x = x, y = y, z = z)
-  dt$txt <- txt <- format(round(z, 2))
+  dt$txt <- format(round(z, 2))
 
-  g <- ggplot(dt, aes(factor(x), factor(y), fill = z)) +
+  g <- ggplot(dt, aes(factor(.data$x), factor(.data$y), fill = .data$z)) +
     geom_tile(colour = "grey20", alpha = 0.6) +
-    geom_text(aes(label = txt)) +
+    geom_text(aes(label = .data$txt)) +
     coord_cartesian(expand = FALSE) +
     guides(fill = "none") +
     theme_bw() +
@@ -473,9 +473,9 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab) {
     x2 = x2
   )
 
-  g <- ggplot(dt, aes(pm1, pm2, colour = x1, shape = x2)) +
-    geom_linerange(aes(xmin = pm1_lower, xmax = pm1_upper), linewidth = 0.25) +
-    geom_linerange(aes(ymin = pm2_lower, ymax = pm2_upper), linewidth = 0.25) +
+  g <- ggplot(dt, aes(.data$pm1, .data$pm2, colour = .data$x1, shape = .data$x2)) +
+    geom_linerange(aes(xmin = .data$pm1_lower, xmax = .data$pm1_upper), linewidth = 0.25) +
+    geom_linerange(aes(ymin = .data$pm2_lower, ymax = .data$pm2_upper), linewidth = 0.25) +
     geom_point() +
     theme_bw()
 

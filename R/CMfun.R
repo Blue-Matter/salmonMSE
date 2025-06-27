@@ -22,7 +22,7 @@ stan_trace <- function(stanfit, vars) {
     bind_rows()
 
   if (nrow(val)) {
-    g <- ggplot(val, aes(Iteration, value, colour = factor(Chain))) +
+    g <- ggplot(val, aes(.data$Iteration, .data$value, colour = factor(.data$Chain))) +
       geom_line() +
       facet_wrap(vars(variable), scales = "free_y") +
       labs(colour = "Chain")
@@ -101,7 +101,7 @@ CM_CWTrel <- function(obs, year1, rs_names) {
     reshape2::melt() %>%
     mutate(`Release Strategy` = factor(`Release Strategy`, rs_names))
 
-  g <- ggplot(dat, aes(Year, value, colour = `Release Strategy`)) +
+  g <- ggplot(dat, aes(.data$Year, .data$value, colour = .data$`Release Strategy`)) +
     geom_point() +
     geom_line() +
     labs(y = "CWT release") +
@@ -141,12 +141,12 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
     mutate(Age = paste("Age", Age), `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
     dplyr::filter(value > 0)
 
-  g <- ggplot(ebrood, aes(Year, colour = `Release Strategy`, fill = `Release Strategy`)) +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
-    geom_line(aes(y = `50%`), linewidth = 0.75) +
+  g <- ggplot(ebrood, aes(.data$Year, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
+    geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
+    geom_line(aes(y = .data$`50%`), linewidth = 0.75) +
     facet_wrap(vars(Age), scales = "free_y") +
-    geom_point(data = cwtesc, aes(y = value)) +
-    geom_line(data = cwtesc, aes(y = value), linetype = 3) +
+    geom_point(data = cwtesc, aes(y = .data$value)) +
+    geom_line(data = cwtesc, aes(y = .data$value), linetype = 3) +
     labs(x = "Brood year", y = "CWT Escapement") +
     theme(legend.position = "bottom")
 
@@ -185,12 +185,12 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1, rs_names) {
       mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
       reshape2::dcast(Age + Year + `Release Strategy` ~ Var1, value.var = "value")
 
-    g <- ggplot(cbrood, aes(Year, colour = `Release Strategy`, fill = `Release Strategy`)) +
-      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
-      geom_line(aes(y = `50%`), linewidth = 0.75) +
+    g <- ggplot(cbrood, aes(.data$Year, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
+      geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
+      geom_line(aes(y = .data$`50%`), linewidth = 0.75) +
       facet_wrap(vars(Age), scales = "free_y") +
-      geom_point(data = cwtcat, aes(y = value)) +
-      geom_line(data = cwtcat, aes(y = value), linetype = 3) +
+      geom_point(data = cwtcat, aes(y = .data$value)) +
+      geom_line(data = cwtcat, aes(y = .data$value), linetype = 3) +
       labs(x = "Brood year", y = ifelse(PT, "CWT preterminal catch", "CWT terminal catch")) +
       theme(legend.position = "bottom")
 
@@ -228,7 +228,7 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
       filter(!is.na(`50%`))
 
     g <- matt_q %>%
-      ggplot(aes(Age, `50%`, colour = `Release Strategy`, fill = `Release Strategy`)) +
+      ggplot(aes(Age, .data$`50%`, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
       geom_line() +
       geom_point() +
       geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
@@ -266,10 +266,10 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
 
     g <- matt_q %>%
       dplyr::filter(Age > 1) %>%
-      ggplot(aes(Year, `50%`, fill = factor(Age), colour = factor(Age))) +
+      ggplot(aes(Year, .data$`50%`, fill = factor(.data$Age), colour = factor(.data$Age))) +
       geom_line() +
       geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-      geom_hline(data = bmatt, linetype = 2, aes(yintercept = value, colour = factor(Age))) +
+      geom_hline(data = bmatt, linetype = 2, aes(yintercept = .data$value, colour = factor(.data$Age))) +
       labs(x = ifelse(brood, "Brood year", "Return year"), y = "Proportion mature", colour = "Age", fill = "Age")
 
     if (n_r > 1) {
@@ -293,9 +293,9 @@ CM_vul <- function(report, type = c("vulPT", "vulT")) {
       reshape2::dcast(list("Age", "Var1"), value.var = "value")
 
     g <- vul_q %>%
-      ggplot(aes(Age, `50%`)) +
+      ggplot(aes(.data$Age, .data$`50%`)) +
       geom_line() +
-      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2) +
       labs(x = "Age", y = ifelse(type == "vulPT", "Preterminal vulnerability", "Terminal vulnerability"))
     g
   }
@@ -365,8 +365,8 @@ CM_SRR <- function(report, year1 = 1, gg = TRUE) {
         mutate(Age = paste("Age", Var3)) %>%
         reshape2::dcast(Year + Age + Origin ~ Var1, value.var = "value")
 
-      g <- ggplot(df, aes(Year, fill = Origin)) +
-        geom_line(aes(y = `50%`, colour = Origin)) +
+      g <- ggplot(df, aes(.data$Year, .data$`50%`, fill = .data$Origin, colour = .data$Origin)) +
+        geom_line() +
         facet_wrap(vars(Age), scales = scales) +
         labs(x = xlab, y = ylab) +
         expand_limits(y = 0)
@@ -380,14 +380,14 @@ CM_SRR <- function(report, year1 = 1, gg = TRUE) {
         mutate(Age = paste("Age", Var3)) %>%
         reshape2::dcast(Year + Age ~ Var1, value.var = "value")
 
-      g <- ggplot(df, aes(Year)) +
-        geom_line(aes(y = `50%`)) +
+      g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+        geom_line() +
         facet_wrap(vars(Age), scales = scales) +
         labs(x = xlab, y = ylab) +
         expand_limits(y = 0)
     }
 
-    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
+    if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2)
     g
 
   }
@@ -406,12 +406,12 @@ CM_ts_origin <- function(report, year1 = 1, ci = TRUE, var = "Spawners", ylab = 
     mutate(Year = Var2 + year1 - 1, Origin = ifelse(Var3 == 1, "Natural", "Hatchery")) %>%
     reshape2::dcast(Year + Origin ~ Var1, value.var = "value")
 
-  g <- ggplot(df, aes(Year, colour = Origin, fill = Origin)) +
-    geom_line(aes(y = `50%`)) +
+  g <- ggplot(df, aes(.data$Year, .data$`50%`, colour = .data$Origin, fill = .data$Origin)) +
+    geom_line() +
     labs(x = xlab, y = ylab) +
     expand_limits(y = 0)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2)
+  if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2)
   g
 }
 
@@ -423,13 +423,13 @@ CM_M <- function(report, year1 = 1, ci = TRUE) {
     mutate(Age = paste("Age", Var3)) %>%
     reshape2::dcast(Year + Age ~ Var1, value.var = "value")
 
-  g <- ggplot(df, aes(Year)) +
-    geom_line(aes(y = `50%`)) +
+  g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+    geom_line() +
     facet_wrap(vars(Age), scales = "free_y") +
     labs(x = "Year", y = "Natural mortality") +
     expand_limits(y = 0)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+  if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
   g
 }
 
@@ -445,12 +445,12 @@ CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-  g <- ggplot(df, aes(Year)) +
-    geom_line(aes(y = `50%`)) +
+  g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+    geom_line() +
     labs(x = "Year", y = ifelse(surv, "Egg-smolt survival", "Egg-smolt mortality")) +
     expand_limits(y = 0)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+  if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
   g
 }
 
@@ -486,12 +486,12 @@ CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
     reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
   if (sum(ts$`50%`, na.rm = TRUE)) {
-    g <- ggplot(ts, aes(Year)) +
-      geom_line(aes(y = `50%`)) +
+    g <- ggplot(ts, aes(.data$Year, .data$`50%`)) +
+      geom_line() +
       labs(x = xlab, y = ylab) +
       expand_limits(y = 0)
 
-    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+    if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
   }
 }
@@ -504,13 +504,13 @@ CM_surv <- function(report, year1 = 1, ci = TRUE) {
     mutate(Age = paste("Age", Var3)) %>%
     reshape2::dcast(Year + Age ~ Var1, value.var = "value")
 
-  g <- ggplot(df, aes(Year)) +
-    geom_line(aes(y = `50%`)) +
+  g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+    geom_line() +
     facet_wrap(vars(Age), scales = "free_y") +
     labs(x = "Year", y = "Natural survival") +
     expand_limits(y = 0)
 
-  if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+  if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
   g
 }
 
@@ -525,13 +525,13 @@ CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
       mutate(Year = Var2 + year1 - 1) %>%
       reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-    g <- ggplot(ts, aes(Year, `50%`)) +
+    g <- ggplot(ts, aes(.data$Year, .data$`50%`)) +
       geom_line() +
       geom_point() +
       geom_hline(yintercept = 0, linetype = 2) +
       labs(x = "Year", y = "Egg mortality deviation")
 
-    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+    if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
   }
 
@@ -548,13 +548,13 @@ CM_wto <- function(stanfit, year1 = 1, ci = TRUE) {
       mutate(Year = Var2 + year1 - 1) %>%
       reshape2::dcast(list("Year", "Var1"), value.var = "value")
 
-    g <- ggplot(ts, aes(Year, `50%`)) +
+    g <- ggplot(ts, aes(.data$Year, .data$`50%`)) +
       geom_line() +
       geom_point() +
       geom_hline(yintercept = 0, linetype = 2) +
       labs(x = "Year", y = "Age 1 mortality deviation")
 
-    if (ci) g <- g + geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), fill = alpha("grey", 0.5))
+    if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
   }
 
@@ -746,7 +746,7 @@ CM_CWT_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 
       filter(value == TRUE)
 
     g <- left_join(has_rel, ts, by = c("Year", "Release Strategy")) %>%
-      ggplot(aes(Year, `50%`, colour = `Release Strategy`)) +
+      ggplot(aes(.data$Year, .data$`50%`, colour = .data$`Release Strategy`)) +
       geom_line() +
       geom_point() +
       labs(x = ifelse(brood, "Brood year", "Return year"),
@@ -761,7 +761,7 @@ CM_CWT_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 
 
     if (ci) {
       g <- g +
-        geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`, fill = `Release Strategy`),
+        geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`, fill = `Release Strategy`),
                     alpha = ifelse(n_r > 1, 0.25, 0.5))
     }
 
@@ -788,7 +788,7 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 
       g <- structure(x, dimnames = list(Year = 1:nrow(x) + year1 - 1, Covariate = names)) %>%
         reshape2::melt() %>%
-        ggplot(aes(Year, value, colour = Covariate)) +
+        ggplot(aes(.data$Year, .data$value, colour = .data$Covariate)) +
         geom_line() +
         geom_point() +
         labs(y = ylab, colour = NULL) +
@@ -820,9 +820,9 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
         reshape2::melt() %>%
         mutate(Covariate = names[Var2], Year = Var3 + year1 - 1) %>%
         reshape2::dcast(Year + Covariate ~ Var1, value.var = "value") %>%
-        ggplot(aes(Year, `50%`, colour = Covariate, fill = Covariate)) +
+        ggplot(aes(.data$Year, .data$`50%`, colour = .data$Covariate, fill = .data$Covariate)) +
         geom_line() +
-        geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+        geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2) +
         labs(y = ylab, colour = NULL, fill = NULL) +
         expand_limits(y = 0) +
         theme(legend.position = "bottom")

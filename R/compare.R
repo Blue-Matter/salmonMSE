@@ -42,7 +42,7 @@ compare_spawners <- function(SMSE_list, Design, prop = FALSE, FUN = median) {
   if (prop) {
     Sp <- mutate(Sp, p = value/sum(value), .by = c(Year, Design1, Design2))
 
-    g <- ggplot(Sp, aes(Year, p, fill = Var1)) +
+    g <- ggplot(Sp, aes(.data$Year, .data$p, fill = .data$Var1)) +
       geom_area() +
       facet_grid(vars(Design1), vars(Design2)) +
       labs(x = "Projection Year", y = "Proportion", fill = NULL) +
@@ -52,7 +52,7 @@ compare_spawners <- function(SMSE_list, Design, prop = FALSE, FUN = median) {
             legend.position = "bottom") +
       scale_fill_brewer(palette = "PuBuGn")
   } else {
-    g <- ggplot(Sp, aes(Year, value, fill = Var1)) +
+    g <- ggplot(Sp, aes(.data$Year, .data$value, fill = .data$Var1)) +
       geom_area() +
       facet_grid(vars(Design1), vars(Design2)) +
       labs(x = "Projection Year", y = "Spawners", fill = NULL) +
@@ -78,7 +78,7 @@ compare_fitness <- function(SMSE_list, Design, FUN = median) {
     rename(Year = Var1) %>%
     dplyr::filter(value > 0)
 
-  g <- ggplot(fitness, aes(Year, value, colour = Var2)) +
+  g <- ggplot(fitness, aes(.data$Year, .data$value, colour = .data$Var2)) +
     geom_line(linewidth = 1) +
     facet_grid(vars(Design1), vars(Design2)) +
     labs(x = "Projection Year", y = "Median", colour = "Metric") +
@@ -112,7 +112,7 @@ compare_escapement <- function(SMSE_list, Design, FUN = median) {
     dplyr::filter(value > 0) %>%
     mutate(Var2 = sapply(as.character(Var2), label_fn))
 
-  g <- ggplot(esc, aes(Year, value, colour = Var2)) +
+  g <- ggplot(esc, aes(.data$Year, .data$value, colour = .data$Var2)) +
     geom_line(linewidth = 1) +
     facet_grid(vars(Design1), vars(Design2)) +
     labs(x = "Projection Year", y = "Median proportion", colour = "Metric") +
