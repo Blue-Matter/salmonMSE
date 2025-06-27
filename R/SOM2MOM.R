@@ -356,6 +356,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
   return(MOM)
 }
 
+NAor0 <- function(x) !length(x) || is.na(x) || !x
 
 #' Check inputs to SOM object
 #'
@@ -581,12 +582,12 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Harvest@release_mort)) Harvest@release_mort <- c(0, 0)
       Harvest <- check_numeric(Harvest, "release_mort", size = 2)
     }
-    if (Harvest@u_preterminal > 0 || Harvest@K_PT) {
+    if (!NAor0(Harvest@u_preterminal > 0) || !NAor0(Harvest@K_PT)) {
       Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     } else {
       Harvest@vulPT <- matrix(0, nsim, maxage)
     }
-    if (Harvest@u_terminal > 0 || Harvest@K_T) {
+    if (!NAor0(Harvest@u_terminal > 0) || !NAor0(Harvest@K_T)) {
       Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
     } else {
       Harvest@vulT <- matrix(0, nsim, maxage)
