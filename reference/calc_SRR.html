@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,10 +77,8 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-
-<ul><li><p><code>calc_SRR</code> calculates the abundance of survivors</p></li>
-<li><p><code>calc_SRRpars</code> calculates the alpha and beta terms when the productivity parameter is in terms of abundance but N1 and N2 is in terms of</p></li>
-</ul></div>
+    <p>Numeric, the abundance of survivors</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The Beverton-Holt stock recruit relationship is of the following form:
@@ -91,7 +89,13 @@ $$\textrm{Smolt} = \alpha N_1 \exp(-\beta N_2)$$
 where \(\alpha = P\), \(\beta = P/(Ce)\), \(e\) is Euler's number.</p>
 <p>Productivity \(P\) is in terms of abundance per unit of \(N_1\) and \(N_2\).</p>
 <p>The hockey stick is of the following form:</p>
-<p>$$\textrm{Smolt} = \begin{cases}p N_1 &amp;, N_1 \le \frac{N_1}{N_2}C\\ \frac{N_1}{N_2}C &amp;, N_1 \gt \frac{N_1}{N_2}C\end{cases}$$</p>
+<p>$$
+\textrm{Smolt} =
+\begin{cases}
+p N_1 &amp;, N_1 \le \frac{N_1}{N_2} \times C\\
+\frac{N_1}{N_2} \times C &amp;, \textrm{otherwise}
+\end{cases}
+$$</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

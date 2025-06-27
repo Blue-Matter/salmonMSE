@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Salmonid Management Strategy Evaluation • salmonMSE</title>
+<title>Management Strategy Evaluation for Salmon Species • salmonMSE</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Salmonid Management Strategy Evaluation">
-<meta name="description" content="Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and habitat actions. The backend utilizes openMSE, but typical users of salmonMSE will not need to see the internal conversion.">
-<meta property="og:description" content="Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and habitat actions. The backend utilizes openMSE, but typical users of salmonMSE will not need to see the internal conversion.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Management Strategy Evaluation for Salmon Species">
+<meta name="description" content="Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and habitat actions.">
+<meta property="og:description" content="Simulation tools for the evaluation of salmon management strategies, including habitat, harvest, and habitat actions.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,20 +61,30 @@
 <div class="page-header"><h1 id="salmonmse">salmonMSE<a class="anchor" aria-label="anchor" href="#salmonmse"></a>
 </h1></div>
 <blockquote>
-<p>Salmonid management strategy evaluation</p>
+<p>Management Strategy Evaluation for Salmon Species</p>
 </blockquote>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <p>salmonMSE is a decision-support tool for Pacific salmon focusing on strategic trade-offs among harvest, hatchery and habitat management levers.</p>
 <p>Funding for the development of salmonMSE is provided through the <a href="https://www.dfo-mpo.gc.ca/campaign-campagne/pss-ssp/index-eng.html" class="external-link">Pacific Salmon Strategy Initiative</a> in collaboration with the Department of Fisheries and Oceans Canada.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Currently, <code>salmonMSE</code> requires the developmental version of <code>MSEtool</code>. Both can be installed from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>salmonMSE can be downloaded from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"salmonMSE"</span><span class="op">)</span></span></code></pre></div>
+<p>And the development version is available on <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Blue-Matter/MSEtool"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Blue-Matter/salmonMSE"</span><span class="op">)</span></span></code></pre></div>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Smolt</mtext><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mi>p</mi><msub><mi>N</mi><mn>1</mn></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><msub><mi>N</mi><mn>1</mn></msub><mo>≤</mo><mfrac><msub><mi>N</mi><mn>1</mn></msub><msub><mi>N</mi><mn>2</mn></msub></mfrac><mi>C</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mfrac><msub><mi>N</mi><mn>1</mn></msub><msub><mi>N</mi><mn>2</mn></msub></mfrac><mi>C</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><msub><mi>N</mi><mn>1</mn></msub><mo>&gt;</mo><mfrac><msub><mi>N</mi><mn>1</mn></msub><msub><mi>N</mi><mn>2</mn></msub></mfrac><mi>C</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+\textrm{Smolt} =
+\begin{cases}
+p N_1 &amp;, N_1 \le \frac{N_1}{N_2}C\\
+\frac{N_1}{N_2}C &amp;, N_1 \gt \frac{N_1}{N_2}C
+\end{cases}
+</annotation></semantics></math></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -111,9 +121,9 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://CRAN.R-project.org/package=salmonMSE" class="external-link"><img src="https://www.r-pkg.org/badges/version/salmonMSE" alt="CRAN status"></a></li>
+<li><a href="https://cran.r-project.org/package=salmonMSE" class="external-link"><img src="https://www.r-pkg.org/badges/version/salmonMSE" alt="CRAN status"></a></li>
 <li><a href="https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://cran.r-project.org/web/licenses/GPL-3" class="external-link"><img src="https://img.shields.io/badge/license-GPL%20(%3E=%203)-blue.svg" alt="License: GPL (&gt;= 3)"></a></li>
 </ul>
 </div>
 

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2025-06-20</h4>
+            <h4 data-toc-skip class="date">2025-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -321,11 +321,11 @@ life stage</td>
 </h3>
 <table class="table">
 <colgroup>
-<col width="14%">
-<col width="50%">
+<col width="16%">
+<col width="49%">
 <col width="12%">
 <col width="13%">
-<col width="8%">
+<col width="7%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Name</th>
@@ -398,7 +398,8 @@ density-dependent</td>
 </tr>
 <tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Stray</mtext><annotation encoding="application/x-tex">\textrm{Stray}</annotation></semantics></math></td>
-<td align="left">External strays of hatchery origin fish</td>
+<td align="left">External strays of hatchery origin fish (considered 0%
+marked)</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">stray_external</td>
@@ -409,6 +410,22 @@ density-dependent</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">HOB_stray</td>
+</tr>
+<tr class="odd">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Brood</mtext><mtext mathvariant="normal">avail,import</mtext></msup><annotation encoding="application/x-tex">\textrm{Brood}^\textrm{avail,import}</annotation></semantics></math></td>
+<td align="left">Available imported brood (considered 100% marked HO
+fish)</td>
+<td align="left">Hatchery</td>
+<td align="left">SOM</td>
+<td align="left">brood_import</td>
+</tr>
+<tr class="even">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mtext mathvariant="normal">Brood</mtext><mtext mathvariant="normal">import</mtext></msup><annotation encoding="application/x-tex">\textrm{Brood}^\textrm{import}</annotation></semantics></math></td>
+<td align="left">Realized imported fished used for brood (considered
+100% marked HO)</td>
+<td align="left">Hatchery</td>
+<td align="left">SMSE</td>
+<td align="left">HOB_import</td>
 </tr>
 <tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msub><annotation encoding="application/x-tex">s_\textrm{yearling}</annotation></semantics></math></td>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@
 
       <h1>Multi-population model</h1>
             
-            <h4 data-toc-skip class="date">2025-06-20</h4>
+            <h4 data-toc-skip class="date">2025-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
       <div class="d-none name"><code>example-multi.Rmd</code></div>
@@ -191,8 +191,18 @@ objects.</p>
 </h2>
 <p>Here, a terminal harvest rate of 0.203 is specified for both
 populations.</p>
+<blockquote>
+<p>It is assumed that the preterminal fishery is a mixed-population
+fishery. Therefore, the harvest rate of the first population applies for
+all populations.</p>
+</blockquote>
+<blockquote>
+<p>It is assumed that the terminal fishery is a single-population
+fishery, and thus, it is possible to control of individual
+populations.</p>
+</blockquote>
 <p>Currently, salmonMSE assumes equal catchability of all populations by
-the fishery and</p>
+the fishery:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">new</span><span class="op">(</span></span>
@@ -218,8 +228,8 @@ second population.</p>
 <code class="sourceCode R"><span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">new</span><span class="op">(</span></span>
 <span>    <span class="st">"Historical"</span>,</span>
-<span>    HistSpawner_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1000</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span>    HistSpawner_HOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1000</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span>    HistSpawner_NOS <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    HistSpawner_HOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">100</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -241,6 +251,10 @@ rate of hatchery-origin escapement among populations. Columns in the
 square matrix denote origin (donor) population and the rows denote
 recipient populations. The diagonal in the matrix is the retention rate
 (hatchery-origin escapement that do not stray).</p>
+<blockquote>
+<p>The straying matrix is applied to the escapement (after the terminal
+fishery operates).</p>
+</blockquote>
 <p>Here, 25 percent of the hatchery fish escapement from the first
 population will stray to the second population:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -261,10 +275,9 @@ generate the Markdown report:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></code></pre></div>
-<p>We can see that the second population transitions from a natural
-population to a hatchery-dominated system due to strays from the first
-population. The population roughly equilibriates after 4
-generations:</p>
+<p>We can see that the second population rapidly transitions from a
+natural population to a hatchery-dominated system due to strays from the
+first population. The population equilibriates after 4 generations:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">out</span>, s <span class="op">=</span> <span class="fl">2</span>, prop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="../reference/figures/multipop_spawners.png"><!-- --></p>

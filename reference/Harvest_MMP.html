@@ -9,7 +9,7 @@ salmonMSE updates the arguments of this function from the salmon operating model
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,7 +99,7 @@ salmonMSE updates the arguments of this function from the salmon operating model
 
 
 <dt id="arg-k-pt">K_PT<a class="anchor" aria-label="anchor" href="#arg-k-pt"></a></dt>
-<dd><p>Numeric vector by population (s). Total retained catch in the pre-terminal fishery</p></dd>
+<dd><p>Single numeric. Total retained catch in the pre-terminal fishery</p></dd>
 
 
 <dt id="arg-k-t">K_T<a class="anchor" aria-label="anchor" href="#arg-k-t"></a></dt>
@@ -107,7 +107,7 @@ salmonMSE updates the arguments of this function from the salmon operating model
 
 
 <dt id="arg-type-pt">type_PT<a class="anchor" aria-label="anchor" href="#arg-type-pt"></a></dt>
-<dd><p>Character vector by population (s) containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries</p></dd>
+<dd><p>Single character, containing either "catch" or "u". Indicates whether to manage by harvest rate or total catch numbers for preterminal fisheries</p></dd>
 
 
 <dt id="arg-type-t">type_T<a class="anchor" aria-label="anchor" href="#arg-type-t"></a></dt>
@@ -115,11 +115,11 @@ salmonMSE updates the arguments of this function from the salmon operating model
 
 
 <dt id="arg-msf-pt">MSF_PT<a class="anchor" aria-label="anchor" href="#arg-msf-pt"></a></dt>
-<dd><p>Logical, whether to implement mark-selective fishing for the preterminal fishery</p></dd>
+<dd><p>Single logical, whether to implement mark-selective fishing for the preterminal fishery</p></dd>
 
 
 <dt id="arg-msf-t">MSF_T<a class="anchor" aria-label="anchor" href="#arg-msf-t"></a></dt>
-<dd><p>Logical, whether to implement mark-selective fishing for the terminal fishery</p></dd>
+<dd><p>Logical vector by population (s), whether to implement mark-selective fishing for the terminal fishery</p></dd>
 
 
 <dt id="arg-m">m<a class="anchor" aria-label="anchor" href="#arg-m"></a></dt>
@@ -129,7 +129,7 @@ Retention in the operating model is specified in the <a href="https://msetool.op
 
 <dt id="arg-release-mort">release_mort<a class="anchor" aria-label="anchor" href="#arg-release-mort"></a></dt>
 <dd><p>Matrix <code>[2, s]</code>. Release mortality of discarded fish in the pre-terminal (1st row) and terminal (2nd row) fishery. Only used
-if <code>MSF_PT = TRUE</code> or <code>MSF_T = TRUE</code>. Only used to calculate the fishing effort.
+if <code>MSF_PT = TRUE</code> or <code>MSF_T[s] = TRUE</code>. Only used to calculate the fishing effort.
 Release mortality in the operating model is specified in the <a href="https://msetool.openmse.com/reference/MOM-class.html" class="external-link">MSEtool::MOM</a> object</p></dd>
 
 
