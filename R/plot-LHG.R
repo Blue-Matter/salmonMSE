@@ -83,7 +83,7 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
     }
     plot(Year, NULL, xlim = range(Year) + c(-1, 0),
          xlab = "Projection Year", ylab = ylab,
-         typ = "n", ylim = ylim, xaxs = "i", yaxs = "i")
+         type = "n", ylim = ylim, xaxs = "i", yaxs = "i")
     barplot(xplot, legend.text = name, space = 0, xlim = range(Year),
             col = col, border = "grey40", add = TRUE, xpd = FALSE)
     box()

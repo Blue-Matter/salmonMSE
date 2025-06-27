@@ -222,7 +222,7 @@ plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE,
     col <- c("#004533", "#76A6D0", "#FFF7FD") #grDevices::hcl.colors(3, palette = "PuBuGn")
     plot(Year, Spawners, xlim = range(Year) + c(-1, 0),
          xlab = "Projection Year", ylab = ifelse(prop, "Proportion", "Spawners"),
-         typ = "n", ylim = ylim, xaxs = "i", yaxs = "i")
+         type = "n", ylim = ylim, xaxs = "i", yaxs = "i")
     barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year),
             col = col, border = "grey40", add = TRUE, xpd = FALSE)
     box()
@@ -253,7 +253,7 @@ plot_fitness <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
     pch <- c(1, 4, 16, 18)
     for (i in 1:ncol(x)) {
       x_i <- x[, i]
-      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i], pch = pch[i])
+      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], type = "o", col = col[i], pch = pch[i])
     }
     legend("bottomleft", legend = colnames(x), col = col, pch = pch, lwd = 1, bty = "n")
   }
@@ -289,7 +289,7 @@ plot_escapement <- function(SMSE, s = 1, FUN = median, figure = TRUE, ylim) {
     pch <- c(1, 4, 16, 18)
     for (i in 1:ncol(x)) {
       x_i <- x[, i]
-      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], typ = "o", col = col[i], pch = pch[i])
+      lines(Year[!is.na(x_i)], x_i[!is.na(x_i)], type = "o", col = col[i], pch = pch[i])
     }
     legend("bottomleft", legend = legnames, col = col, pch = pch, lwd = 1, bty = "n")
   }

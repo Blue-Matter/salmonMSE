@@ -175,7 +175,7 @@ y <- plogis(x)
 g_y <- f_x /(y * (1 - y)) # Prior density with Jacobian transformation
 
 par(mfcol = c(1, 2), mar = c(5, 4, 1, 1))
-plot(x, f_x, typ = 'l', xlab = "logit(v)", ylab = "Prior density")
+plot(x, f_x, type = "l", xlab = "logit(v)", ylab = "Prior density")
 plot(y, g_y, typ = 'l', xlab = expression(v[a]), ylab = "Prior density")
 ```
 
