@@ -75,8 +75,8 @@ Harvest <- lapply(1:ns, function(s) {
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
-    HistSpawner_NOS = ifelse(s == 1, 1000, 100),
-    HistSpawner_HOS = ifelse(s == 1, 1000, 0)
+    HistSpawner_NOS = 100,
+    HistSpawner_HOS = ifelse(s == 1, 100, 0)
   )
 })
 
@@ -95,11 +95,18 @@ SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
 MOM <- SOM2MOM(SOM)
 
 out <- salmonMSE(SOM)
-saveRDS(out, file = 'examples/MSOM.rds')
+saveRDS(out, file = "examples/SMSE/SMSE_MSOM.rds")
 
-report(out, dir = 'examples', filename = 'MSOM')
+report(out, dir = "examples/reports", filename = "MSOM")
 
-png("man/figures/multipop_spawners.png", height = 3.5, width = 4.5, units = "in", res = 400)
-par(mar = c(5, 4, 1, 1))
-plot_spawners(out, s = 2, prop = FALSE) # Spawner composition
-dev.off()
+if (FALSE) {
+
+  png("man/figures/multipop_spawners.png", height = 3.5, width = 4.5, units = "in", res = 400)
+  par(mar = c(5, 4, 1, 1))
+  plot_spawners(out, s = 2, prop = TRUE) # Spawner composition
+  dev.off()
+
+  # As of June 26, 2025
+  max(out@p_wild[, 2, ], na.rm = TRUE) %>% round(3) # 0.444
+  max(out@p_wild[, 1, ], na.rm = TRUE) %>% round(3) # 0.626
+}

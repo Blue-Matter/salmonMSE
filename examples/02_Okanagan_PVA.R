@@ -142,8 +142,8 @@ SOM <- new("SOM",
 
 SMSE <- salmonMSE(SOM)
 
-saveRDS(SMSE, file = "examples/Okanagan_PVA.rds")
-report(SMSE, dir = "examples", filename = "Okanagan_PVA")
+saveRDS(SMSE, file = "examples/SMSE/Okanagan_PVA.rds")
+report(SMSE, dir = "examples/reports", filename = "Okanagan_PVA")
 
 SOM_500k <- new("SOM",
                 Name = "Okanagan Chinook PVA with 500k hatchery",
@@ -159,59 +159,60 @@ SOM_500k <- new("SOM",
 
 SMSE_500k <- salmonMSE(SOM_500k)
 
-saveRDS(SMSE_500k, file = "examples/Okanagan_PVA_500k.rds")
-report(SMSE_500k, dir = "examples", filename = "Okanagan_PVA_500k")
+saveRDS(SMSE_500k, file = "examples/SMSE/Okanagan_PVA_500k.rds")
+report(SMSE_500k, dir = "examples/reports", filename = "Okanagan_PVA_500k")
 
+if (FALSE) {
 
-# Plot distribution of spawners
-Sp <- data.frame(
-  NOS = apply(SMSE_500k@NOS[, 1, , proyears - 1], c(1, 3), sum),
-  HOS = apply(SMSE_500k@HOS[, 1, , proyears - 1], c(1, 3), sum)
-) %>%
-  mutate(Total = NOS + HOS) %>%
-  reshape2::melt()
+  # Plot distribution of spawners
+  Sp <- data.frame(
+    NOS = apply(SMSE_500k@NOS[, 1, , proyears - 1], 1, sum),
+    HOS = apply(SMSE_500k@HOS[, 1, , proyears - 1], 1, sum)
+  ) %>%
+    mutate(Total = NOS + HOS) %>%
+    reshape2::melt()
 
-quants <- Sp %>% dplyr::filter(variable == "Total") %>% pull(value) %>%
-  quantile(c(0.025, 0.5, 0.975))
+  quants <- Sp %>% dplyr::filter(variable == "Total") %>% pull(value) %>%
+    quantile(c(0.025, 0.5, 0.975))
+  #quants # 1993, 2766, 3487 as of June 26, 2025
 
-g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
-  geom_density(alpha = 0.5) +
-  expand_limits(x = 0) +
-  geom_vline(xintercept = quants["50%"], linetype = 2) +
-  geom_vline(xintercept = quants[c("2.5%", "97.5%")], linetype = 3) +
-  labs(x = "Spawners", y = "Density", colour = NULL, fill = NULL) +
-  ggtitle("Long-term spawners with 500k hatchery releases")
-#ggsave("examples/PVA_spawners.png", g, height = 3.5, width = 6)
+  g <- ggplot(Sp, aes(value, colour = variable, fill = variable)) +
+    geom_density(alpha = 0.5) +
+    expand_limits(x = 0) +
+    geom_vline(xintercept = quants["50%"], linetype = 2) +
+    geom_vline(xintercept = quants[c("2.5%", "97.5%")], linetype = 3) +
+    labs(x = "Spawners", y = "Density", colour = NULL, fill = NULL) +
+    ggtitle("Long-term spawners with 500k hatchery releases")
+  #ggsave("examples/PVA_spawners.png", g, height = 3.5, width = 6)
 
-# Plot annual spawners
-Sp <- rbind(
-  apply(SMSE_500k@NOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "NOS"),
-  apply(SMSE_500k@HOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "HOS")
-) %>%
-  rename(Sim = Var1, Year = Var2) %>%
-  dplyr::filter(Year < proyears)
-Total <- Sp %>%
-  summarise(value = sum(value), .by = c(Sim, Year)) %>%
-  mutate(type = "Total")
+  # Plot annual spawners
+  Sp <- rbind(
+    apply(SMSE_500k@NOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "NOS"),
+    apply(SMSE_500k@HOS[, 1, , ], c(1, 3), sum) %>% reshape2::melt() %>% mutate(type = "HOS")
+  ) %>%
+    rename(Sim = Var1, Year = Var2) %>%
+    dplyr::filter(Year < proyears)
+  Total <- Sp %>%
+    summarise(value = sum(value), .by = c(Sim, Year)) %>%
+    mutate(type = "Total")
 
-g <- Total %>%
-  summarise(p = mean(value > 1000), .by = Year) %>%
-  ggplot(aes(Year, p)) +
-  geom_line() +
-  geom_point()
+  g <- Total %>%
+    summarise(p = mean(value > 1000), .by = Year) %>%
+    ggplot(aes(Year, p)) +
+    geom_line() +
+    geom_point()
 
-g <- rbind(Sp, Total) %>%
-  summarise(med = median(value),
-            min = quantile(value, 0.025),
-            max = quantile(value, 0.975),
-            .by = c(Year, type)) %>%
-  mutate(type = factor(type, levels = c("NOS", "HOS", "Total"))) %>%
-  ggplot(aes(Year, med, colour = type)) +
-  geom_line() +
-  geom_point() +
-  geom_ribbon(aes(ymin = min, ymax = max, fill = type), alpha = 0.25) +
-  labs(x = "Year", y = "Spawners", fill = NULL, colour = NULL)
-#ggsave("examples/PVA_spawners_ts.png", g, height = 3.5, width = 6)
+  g <- rbind(Sp, Total) %>%
+    summarise(med = median(value),
+              min = quantile(value, 0.025),
+              max = quantile(value, 0.975),
+              .by = c(Year, type)) %>%
+    mutate(type = factor(type, levels = c("NOS", "HOS", "Total"))) %>%
+    ggplot(aes(Year, med, colour = type)) +
+    geom_line() +
+    geom_point() +
+    geom_ribbon(aes(ymin = min, ymax = max, fill = type), alpha = 0.25) +
+    labs(x = "Year", y = "Spawners", fill = NULL, colour = NULL)
+  #ggsave("examples/PVA_spawners_ts.png", g, height = 3.5, width = 6)
 
-
-
+}

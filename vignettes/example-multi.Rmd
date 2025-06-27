@@ -114,7 +114,11 @@ Habitat <- lapply(1:ns, function(s) {
 
 Here, a terminal harvest rate of 0.203 is specified for both populations.
 
-Currently, salmonMSE assumes equal catchability of all populations by the fishery and 
+>It is assumed that the preterminal fishery is a mixed-population fishery. Therefore, the harvest rate of the first population applies for all populations.
+
+>It is assumed that the terminal fishery is a single-population fishery, and thus, it is possible to control of individual populations.
+
+Currently, salmonMSE assumes equal catchability of all populations by the fishery:
 
 ```{r}
 Harvest <- lapply(1:ns, function(s) {
@@ -139,8 +143,8 @@ The operating model is initialized with a return of 1000 natural-origin and hatc
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
-    HistSpawner_NOS = ifelse(s == 1, 1000, 100),
-    HistSpawner_HOS = ifelse(s == 1, 1000, 0)
+    HistSpawner_NOS = 100,
+    HistSpawner_HOS = ifelse(s == 1, 100, 0)
   )
 })
 ```
@@ -162,6 +166,8 @@ SOM <- new(
 An additional slot in the `SOM` object specifies the stray rate of hatchery-origin escapement among populations.
 Columns in the square matrix denote origin (donor) population and the rows denote recipient populations.
 The diagonal in the matrix is the retention rate (hatchery-origin escapement that do not stray).
+
+>The straying matrix is applied to the escapement (after the terminal fishery operates).
 
 Here, 25 percent of the hatchery fish escapement from the first population will stray to the second population:
 
@@ -188,7 +194,7 @@ out <- salmonMSE(SOM)
 report(out)
 ```
 
-We can see that the second population transitions from a natural population to a hatchery-dominated system due to strays from the first population. The population roughly equilibriates after 4 generations:
+We can see that the second population rapidly transitions from a natural population to a hatchery-dominated system due to strays from the first population. The population equilibriates after 4 generations:
 
 ```{r eval = FALSE}
 plot_spawners(out, s = 2, prop = FALSE)

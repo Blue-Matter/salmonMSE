@@ -1,11 +1,11 @@
 
-# Simple example, used to compare salmonMSE and AHA outputs
 
-# Install packages
-remotes::install_github("Blue-Matter/MSEtool")
-remotes::install_github("Blue-Matter/salmonMSE")
+#### Install packages ----
 
+#remotes::install_github("Blue-Matter/MSEtool")
+#remotes::install_github("Blue-Matter/salmonMSE")
 
+#### Simple example, used to compare salmonMSE and AHA outputs ----
 library(salmonMSE)
 
 class?SOM # Definition of inputs
@@ -79,48 +79,63 @@ Historical <- new(
 SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
            nsim = nsim, nyears = 2, proyears = 50)
-SOM <- check_SOM(SOM)
-# run salmonMSE
-#MOM <- SOM2MOM(SOM)
-#H <- MSEtool::SimulateMOM(MOM, parallel = FALSE)
-#MMSE <- salmonMSE(SOM, convert = FALSE)
-
-#N <- apply(MMSE@N, c(1, 2, 3, 5), sum)
-#N[1, 1, , ]
-
-#MMSE@Misc$MICE$M_ageArray[1, 1, , 1, ]
 
 SMSE <- salmonMSE(SOM)
-class?SMSE # Definitions of arrays
+saveRDS(SMSE, "examples/SMSE/SMSE_simple.rds")
+class?SMSE
 
 # run AHA - list of vectors by generation
 SAHA <- AHA(SOM, ngen = 20)
 
 # Compare AHA (x) and salmonMSE (y) output
-compare <- function(x, y, ylab = "y", ylim, yline) {
-  y[y < 1e-8] <- NA
-  if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
-  par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
-  matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
-          panel.first = graphics::grid())
-  if (!missing(yline)) abline(h = yline, lty = 2)
-  matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
-          ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
-          panel.first = graphics::grid())
-  if (!missing(yline)) abline(h = yline, lty = 2)
+if (FALSE) {
+
+  compare <- function(x, y, ylab = "y", ylim, yline) {
+    y[y < 1e-8] <- NA
+    if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
+    par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
+    matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+            panel.first = graphics::grid())
+    if (!missing(yline)) abline(h = yline, lty = 2)
+    matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
+            ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+            panel.first = graphics::grid())
+    if (!missing(yline)) abline(h = yline, lty = 2)
+  }
+
+  compare(SAHA$Egg_NOS[, 1, ], SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 200000))
+
+  png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
+  NOS_AHA <- SAHA$NOS[, 1, ]
+  NOS_SMSE <- apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
+  compare(NOS_AHA, NOS_SMSE, "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 1, 20])
+  dev.off()
+
 }
 
-compare(SAHA$Egg_NOS[, 1, ], SMSE@Egg_NOS[, 1, ], "Egg_NOS", ylim = c(0, 200000))
+#### MSF example ----
+Harvest_MSF <- new(
+  "Harvest",
+  u_preterminal = 0,             # No pre-terminal fishery
+  u_terminal = 0.203,            # Specify fixed harvest rate of mature fish
+  MSF_PT = FALSE,
+  MSF_T = TRUE,
+  release_mort = c(0.1, 0.1),
+  vulPT = c(0, 0, 0),
+  vulT = c(1, 1, 1)
+)
 
-png("man/figures/example-NOS.png", height = 3, width = 7, res = 300, units = 'in')
-NOS_AHA <- SAHA$NOS[, 1, ]
-NOS_SMSE <- apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
-compare(NOS_AHA, NOS_SMSE, "NOS", ylim = c(0, 100), yline = SAHA$NOS[1, 1, 20])
-dev.off()
+# Stitched salmon operating model
+SOM_MSF <- new("SOM",
+               Bio, Habitat, Hatchery, Harvest_MSF, Historical,
+               nsim = nsim, nyears = 2, proyears = 50)
+
+SMSE_MSF <- salmonMSE(SOM_MSF)
+saveRDS(SMSE_MSF, "examples/SMSE/SMSE_MSF.rds")
 
 
 
-# Stochastic example
+#### Stochastic example ----
 SAR <- 0.01
 nsim_stochastic <- 100
 
@@ -142,21 +157,7 @@ Bio_stochastic <- new(
   #strays = 0
 )
 
-nyears <- 2
-HistNjuv <- array(0, c(nsim_stochastic, Bio@maxage, nyears+1))
-HistNjuv[, 1, 1] <- HistNjuv[, 2, 2] <- 1000/SAR
-
-Historical <- new(
-  "Historical",
-  HistNjuv_NOS = HistNjuv,
-  HistNjuv_HOS = HistNjuv
-)
-
-png("man/figures/example-kappa.png", height = 4, width = 6, res = 300, units = 'in')
-par(mar = c(5, 4, 1, 1))
-hist(kappa, main = NULL)
-dev.off()
-
+# Run simulation
 SOM_stochastic <- new("SOM",
                       Bio_stochastic, Habitat, Hatchery, Harvest, Historical,
                       nsim = nsim_stochastic, nyears = 2, proyears = 50)
@@ -164,86 +165,42 @@ SOM_stochastic <- new("SOM",
 tictoc::tic()
 SMSE_stochastic <- salmonMSE(SOM_stochastic)
 tictoc::toc()
-saveRDS(SMSE_stochastic, "examples/SMSE_stochastic.rds")
 
-report(SMSE_stochastic, dir = "scratch", filename = "SMSE_stochastic")
+# Save simulation object
+saveRDS(SMSE_stochastic, "examples/SMSE/SMSE_stochastic.rds")
 
-png("man/figures/example-PNI-ts.png", height = 4, width = 6, res = 300, units = 'in')
-par(mar = c(5, 4, 1, 1))
-plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
-dev.off()
+# Make markdown report
+report(SMSE_stochastic, dir = "examples/reports", filename = "SMSE_stochastic")
 
-png("man/figures/example-PNI-hist.png", height = 4, width = 6, res = 300, units = 'in')
-par(mar = c(5, 4, 1, 1))
-plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.9))
-dev.off()
+if (FALSE) {
 
-PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
-mean(PNI_LT >= 0.8)
-quantile(PNI_LT, c(0.025, 0.5, 0.975))
+  # Plot productivity
+  png("man/figures/example-kappa.png", height = 4, width = 6, res = 300, units = 'in')
+  par(mfrow = c(1, 1), mar = c(5, 4, 1, 1))
+  hist(kappa, main = NULL)
+  dev.off()
 
-png("man/figures/example-PNI-kappa.png", height = 4, width = 6, res = 300, units = 'in')
-par(mar = c(5, 4, 1, 1))
-plot(kappa, PNI_LT, xlim = c(1, 7), ylim = c(0.5, 1), panel.first = grid(), pch = 16)
-dev.off()
+  # Plot PNI time series
+  png("man/figures/example-PNI-ts.png", height = 4, width = 6, res = 300, units = 'in')
+  par(mar = c(5, 4, 1, 1))
+  plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
+  dev.off()
 
-# Extra debugging stuff
-SMSE@NOB[, 1, seq(1, 49, 3)]/
-  SAHA$NOB[, 1:17]
+  # Plot PNI histogram
+  png("man/figures/example-PNI-hist.png", height = 4, width = 6, res = 300, units = 'in')
+  par(mar = c(5, 4, 1, 1))
+  plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.9))
+  dev.off()
 
-SMSE@HOB[, 1, seq(1, 49, 3)]/SAHA$HOB[, 1:17]
-SAHA$HOB
+  # Probability PNI > 0.8
+  PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
+  mean(PNI_LT >= 0.8)
+  quantile(PNI_LT, c(0.025, 0.5, 0.975))
 
-SMSE@NOB[, 1, ] + SMSE@HOB[, 1, ]
-SAHA$NOB + SAHA$HOB
+  # PNI vs kappa
+  png("man/figures/example-PNI-kappa.png", height = 4, width = 6, res = 300, units = 'in')
+  par(mar = c(5, 4, 1, 1))
+  plot(kappa, PNI_LT, xlim = c(1, 7), ylim = c(0.5, 1), panel.first = grid(), pch = 16)
+  dev.off()
 
-apply(SMSE@NOS[, 1, , ], c(1, 3), sum)
-SAHA$NOS
-
-apply(SMSE@HOS[, 1, , ], c(1, 3), sum)
-SAHA$HOS
-
-SMSE@Egg_HOS[, 1, ]
-SAHA$Egg_HOS
-
-SMSE@Egg_NOS[, 1, ]
-SAHA$Egg_NOS
-
-SMSE@Smolt_NOS[, 1, ]
-SAHA$Smolt_NOS
-
-SMSE@Smolt_HOS[, 1, ]
-SAHA$Smolt_HOS
-
-Smolt_all <- SMSE@Smolt_NOS[, 1, ] + SMSE@Smolt_HOS[, 1, ]
-
-SMSE@Return_NOS[, 1, 3, ]
-SAHA$Return_NOS
-
-SMSE@Return_HOS[, 1, 3, ]
-SAHA$Return_HOS
-
-surv <- SAHA$Return_HOS[, 2:20]/SAHA$Smolt_Rel[, -1]
-surv <- SMSE@Return_HOS[, 1, 3, seq(4, 49, 3)]/SMSE@Smolt_Rel[, 1, seq(2, 49, 3)]
-
-SAHA$Smolt_NOS + SAHA$Smolt_HOS
-SMSE@Smolt_NOS[, 1, ] + SMSE@Smolt_HOS[, 1, ]
-
-surv <- SAHA$Return_NOS[, 2:20]/(SAHA$Smolt_NOS[, -1] + SAHA$Smolt_HOS[, -1])
-surv <- SMSE@Return_NOS[, 1, 3, seq(4, 49, 3)]/(SMSE@Smolt_NOS[, 1, seq(2, 49, 3)] + SMSE@Smolt_HOS[, 1, seq(2, 49, 3)])
-
-plot(surv[1, ], typ = 'o', ylim = c(0.009, 0.01))
-
-exp(-SMSE@Mjuv_loss[, 1, 2, ])[1, ] %>% plot(typ = 'o', ylim = c(0.009, 0.01))
-SMSE@fitness[, 1, ]
-SAHA$fitness
-
-SOM <- salmonMSE:::check_SOM(SOM)
-MOM <- SOM2MOM(SOM)
-
-SAHA$alpha
-salmonMSE_env$state %>% reshape2::acast(list("x", "t"), value.var = "alpha")
-
-SAHA$beta
-salmonMSE_env$state %>% reshape2::acast(list("x", "t"), value.var = "beta")
-
+}
