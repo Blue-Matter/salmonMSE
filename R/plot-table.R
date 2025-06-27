@@ -40,8 +40,8 @@ make_fitness_table <- function(SMSE, s = 1) {
     Slot = c("fitness_type", "fitness_floor")
   )
   fitness_table <- rbind(
-    glossary[match(fitness_settings, glossary$Slot), c("Definition", "Slot")],
-    fitness_extra
+    fitness_extra,
+    glossary[match(fitness_settings, glossary$Slot), c("Definition", "Slot")]
   )
   fitness_table$Value <- sapply(fitness_table$Slot, function(i) {
     SOM <- SMSE@Misc$SOM
