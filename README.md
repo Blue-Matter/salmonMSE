@@ -40,11 +40,3 @@ And the development version is available on
 # install.packages("remotes")
 remotes::install_github("Blue-Matter/salmonMSE")
 ```
-
-$$
-\textrm{Smolt} =
-\begin{cases}
-p N_1 &, N_1 \le \frac{N_1}{N_2}C\\
-\frac{N_1}{N_2}C &, N_1 \gt \frac{N_1}{N_2}C
-\end{cases}
-$$
