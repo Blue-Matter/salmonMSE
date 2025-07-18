@@ -69,8 +69,8 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1,
           V_PT <- sapply(p_HOS_PT, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
           # Mark rate (as retention) and release mortality
-          m_s <- matrix(m[s_PT], ncol(Nage_PT), nrow(Nage_PT), byrow = TRUE)
-          relmort_s <- matrix(release_mort[1, s_PT], ncol(Nage_PT), nrow(Nage_PT), byrow = TRUE)
+          m_s <- matrix(m[s_PT], nrow(Nage_PT), ncol(Nage_PT), byrow = TRUE)
+          relmort_s <- matrix(release_mort[1, s_PT], nrow(Nage_PT), ncol(Nage_PT), byrow = TRUE)
         } else {
           # No MSF, solve for effort based on kept catch of all juveniles (NO + HO)
           Nage_PT <- sapply(p_preterminal, function(pp) rowSums(DataList[[pp]][[1]]@Misc$StockPars$N_P[x, , y, ]))
@@ -103,8 +103,8 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1,
           V_T <- sapply(p_HOS_T, function(pp) DataList[[pp]][[1]]@Misc$FleetPars$V[x, , nyears + y])
 
           # Mark rate (as retention) and release mortality
-          m_s <- matrix(m[s_T], ncol(Nage_T), nrow(Nage_T))
-          relmort_s <- matrix(release_mort[2, s_T], ncol(Nage_T), nrow(Nage_T))
+          m_s <- matrix(m[s_T], nrow(Nage_T), ncol(Nage_T))
+          relmort_s <- matrix(release_mort[2, s_T], nrow(Nage_T), ncol(Nage_T))
 
         } else {
           # No MSF, solve for effort based on kept catch of all return (NO + HO) corresponding to s
