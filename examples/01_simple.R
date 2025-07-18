@@ -94,7 +94,7 @@ if (FALSE) {
     y[y < 1e-8] <- NA
     if (missing(ylim)) ylim <- range(x, y, na.rm = TRUE)
     par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
-    matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+    matplot(t(x), xlab = "Generation", ylab = paste("AHA:", ylab), ylim = ylim, type = 'o', pch = 1, lwd = 1, col = 1,
             panel.first = graphics::grid())
     if (!missing(yline)) abline(h = yline, lty = 2)
     matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
