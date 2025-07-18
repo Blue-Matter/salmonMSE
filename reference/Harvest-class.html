@@ -64,11 +64,13 @@
 
 
 <dt><code>u_preterminal</code></dt>
-<dd><p>Numeric. If <code>type_PT = "u"</code>, the exploitation rate of the immature stock in the pre-terminal fishery.</p></dd>
+<dd><p>Numeric. If <code>type_PT = "u"</code>, the exploitation rate of the immature stock in the pre-terminal fishery. This will be converted
+to an instantaneous fishing mortality rate, i.e., <code>F_preterminal = -log(1 - u_preterminal)</code>.</p></dd>
 
 
 <dt><code>u_terminal</code></dt>
-<dd><p>Numeric. If <code>type_T = "u"</code>, The exploitation rate of the return in the terminal fishery.</p></dd>
+<dd><p>Numeric. If <code>type_T = "u"</code>, The exploitation rate of the return in the terminal fishery. This will be converted
+to an instantaneous fishing mortality rate, i.e., <code>F_terminal = -log(1 - u_terminal)</code>.</p></dd>
 
 
 <dt><code>K_PT</code></dt>
@@ -93,11 +95,13 @@ Implemented to model mark-selective fishing. Not used if either <code>MSF_PT</co
 
 
 <dt><code>vulPT</code></dt>
-<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the preterminal fishery.</p></dd>
+<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the preterminal fishery. Values indicate
+the proportion of fishing mortality experienced by each age class, where <code>F_preterminal = -log(1 - u_preterminal)</code>.</p></dd>
 
 
 <dt><code>vulT</code></dt>
-<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the terminal fishery.</p></dd>
+<dd><p>Vector length <code>maxage</code> or matrix <code>[nsim, maxage]</code>. Vulnerability schedule (between 0-1) in the terminal fishery. Values indicate
+the proportion of fishing mortality experienced by each age class, where <code>F_terminal = -log(1 - u_terminal)</code>.</p></dd>
 
 
 </dl></div>

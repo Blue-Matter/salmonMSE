@@ -78,6 +78,7 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 <span>  quant <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="va">var</span>,</span>
 <span>  <span class="va">ylim</span>,</span>
+<span>  agg.fun <span class="op">=</span> <span class="va">sum</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -149,6 +150,11 @@ plot_fishery() produces a summary figure of metrics related to the fishery, e.g.
 
 <dt id="arg-ylim">ylim<a class="anchor" aria-label="anchor" href="#arg-ylim"></a></dt>
 <dd><p>Vector. Y-axis limits</p></dd>
+
+
+<dt id="arg-agg-fun">agg.fun<a class="anchor" aria-label="anchor" href="#arg-agg-fun"></a></dt>
+<dd><p>Function. Defines how to aggregate state variables that are reported by age. Typically, <code>sum</code> is used but <code>max</code> is also
+possible for reporting apical exploitation rates.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
