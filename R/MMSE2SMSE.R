@@ -20,8 +20,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   NOB <- HOB <- HOB_stray <- HOB_import <- array(0, c(SOM@nsim, ns, SOM@proyears))
   KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
-  UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
-  ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
+  UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
+  ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
 
   Egg_NOS <- Egg_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
   Fry_NOS <- Fry_HOS <- array(0, c(SOM@nsim, ns, SOM@proyears))
@@ -78,25 +78,25 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     DPT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum) - KPT_NOS[, s, ]
     DT_NOS[, s, ] <- apply(MMSE@Removals[, p_NOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum) - KT_NOS[, s, ]
 
-    # Harvest rate from kept catch
-    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(SOM@nsim, nage, length(t1)))
-    vulNOS_imm <- apply(vulPT * Njuv_NOS[, s, , ], c(1, 3), sum)
-    UPT_NOS[, s, ] <- KPT_NOS[, s, ]/vulNOS_imm
-    UPT_NOS[is.na(UPT_NOS)] <- 0
-
-    vulT <- array(SOM@Harvest[[s]]@vulT, c(SOM@nsim, nage, length(t2)))
-    vulNOS_ret <- apply(vulT * Return_NOS[, s, , ], c(1, 3), sum)
-    UT_NOS[, s, ] <- KT_NOS[, s, ]/vulNOS_ret
-    UT_NOS[is.na(UT_NOS)] <- 0
-
     # Exploitation rate from kept + dead discards (DD)
+    vulPT <- array(SOM@Harvest[[s]]@vulPT, c(SOM@nsim, nage, length(t1)))
     DDPT_NOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_NOS[, s, ]
-    ExPT_NOS[, s, ] <- (KPT_NOS[, s, ] + DDPT_NOS)/vulNOS_imm
+    FPT_NOS <- MMSE@FM[, p_NOS_imm, f, mp, t1]
+    FaPT_NOS <- sapply(1:length(t1), function(t) vulPT[, , t] * FPT_NOS[, t], simplify = "array")
+    ExPT_NOS[, s, , ] <- (1 - exp(-FaPT_NOS)) * Njuv_NOS[, s, , ]/Njuv_NOS[, s, , ]
     ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
+    vulT <- array(SOM@Harvest[[s]]@vulT, c(SOM@nsim, nage, length(t2)))
     DDT_NOS <- SOM@Harvest[[s]]@release_mort[2] * DT_NOS[, s, ]
-    ExT_NOS[, s, ] <- (KT_NOS[, s, ] + DDT_NOS)/vulNOS_ret
+    FT_NOS <- MMSE@FM[, p_NOS_return, f, mp, t2]
+    FaT_NOS <- sapply(1:length(t2), function(t) vulT[, , t] * FT_NOS[, t], simplify = "array")
+
+    ExT_NOS[, s, , ] <- (1 - exp(-FaT_NOS)) * Escapement_NOS[, s, , ]/Escapement_NOS[, s, , ]
     ExT_NOS[is.na(ExT_NOS)] <- 0
+
+    # Harvest rate from kept catch
+    if (all(!DDPT_NOS)) UPT_NOS[, s, , ] <- ExPT_NOS[, s, , ]
+    if (all(!DDT_NOS)) UT_NOS[, s, , ] <- ExT_NOS[, s, , ]
 
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling > 0, SOM@Hatchery[[s]]@n_yearling) > 0
     has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
@@ -142,23 +142,31 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       DPT_HOS[, s, ] <- apply(MMSE@Removals[, p_HOS_imm, f, mp, t1, drop = FALSE], c(1, 5), sum) - KPT_HOS[, s, ]
       DT_HOS[, s, ] <- apply(MMSE@Removals[, p_HOS_return, f, mp, t2, drop = FALSE], c(1, 5), sum) - KT_HOS[, s, ]
 
-      # Harvest rate from kept catch
-      vulHOS_imm <- apply(vulPT * Njuv_HOS[, s, , ], c(1, 3), sum)
-      UPT_HOS[, s, ] <- KPT_HOS[, s, ]/vulHOS_imm
-      UPT_HOS[is.na(UPT_HOS)] <- 0
-
-      vulHOS_ret <- apply(vulT * Return_HOS[, s, , ], c(1, 3), sum)
-      UT_HOS[, s, ] <- KT_HOS[, s, ]/vulHOS_ret
-      UT_HOS[is.na(UT_HOS)] <- 0
-
       # Exploitation rate from kept + dead discards (DD)
       DDPT_HOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_HOS[, s, ]
-      ExPT_HOS[, s, ] <- (KPT_HOS[, s, ] + DDPT_HOS)/vulHOS_imm
+      FPT_HOS <- MMSE@FM[, p_HOS_imm, f, mp, t1]
+      FaPT_HOS <- sapply(1:length(t1), function(t) vulPT[, , t] * FPT_HOS[, t], simplify = "array")
+      ExPT_HOS[, s, , ] <- (1 - exp(-FaPT_HOS)) * Njuv_HOS[, s, , ]/Njuv_HOS[, s, , ]
       ExPT_HOS[is.na(ExPT_HOS)] <- 0
 
       DDT_HOS <- SOM@Harvest[[s]]@release_mort[2] * DT_HOS[, s, ]
-      ExT_HOS[, s, ] <- (KT_HOS[, s, ] + DDT_HOS)/vulHOS_ret
+      FT_HOS <- MMSE@FM[, p_HOS_return, f, mp, t2]
+      FaT_HOS <- sapply(1:length(t2), function(t) vulT[, , t] * FT_HOS[, t], simplify = "array")
+      ExT_HOS[, s, , ] <- (1 - exp(-FaT_HOS)) * Escapement_HOS[, s, , ]/Escapement_HOS[, s, , ]
       ExT_HOS[is.na(ExT_HOS)] <- 0
+
+      # Harvest rate from kept catch
+      if (all(!DDPT_HOS)) {
+        UPT_HOS[, s, , ] <- ExPT_HOS[, s, , ]
+      } else {
+        stop("Dead discards of hatchery fish found")
+      }
+
+      if (all(!DDT_HOS)) {
+        UT_HOS[, s, , ] <- ExT_HOS[, s, , ]
+      } else {
+        stop("Dead discards of hatchery fish found")
+      }
 
       # NOS + HOS state variables from salmonMSE
       ngen <- length(unique(salmonMSE_env$N$t))

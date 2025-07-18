@@ -345,14 +345,14 @@ setMethod("initialize", "SOM",
 #' @slot DT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) of natural origin spawners.
 #' @slot DPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery released catch (live and dead) of hatchery origin spawners.
 #' @slot DT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) hatchery origin spawners.
-#' @slot UPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate (from kept catch) of natural origin spawners.
-#' @slot UT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of natural origin spawners.
-#' @slot UPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
-#' @slot UT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of hatchery origin spawners.
-#' @slot ExPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation rate (from kept catch and dead releases) of natural origin spawners.
-#' @slot ExT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate of natural origin spawners.
-#' @slot ExPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation rate of hatchery origin spawners.
-#' @slot ExT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate of hatchery origin spawners.
+#' @slot UPT_NOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery harvest rate (from kept catch) of natural origin spawners.
+#' @slot UT_NOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery harvest rate of natural origin spawners.
+#' @slot UPT_HOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
+#' @slot UT_HOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery harvest rate of hatchery origin spawners.
+#' @slot ExPT_NOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery exploitation rate (from kept catch and dead releases) of natural origin spawners.
+#' @slot ExT_NOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery exploitation rate of natural origin spawners.
+#' @slot ExPT_HOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery exploitation rate of hatchery origin spawners.
+#' @slot ExT_HOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery exploitation rate of hatchery origin spawners.
 #' @slot fitness Array `[nsim, nstocks, 2, proyears]`. Fitness of the population in the natural (1) and hatchery (2) environments.
 #' @slot pNOB Array `[nsim, nstocks, proyears]`. Proportion of natural fish in the brood.
 #' @slot pHOS_census Array `[nsim, nstocks, proyears]`. Proportion of spawners of hatchery origin, weighted by age class fecundity.

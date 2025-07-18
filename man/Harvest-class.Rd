@@ -16,9 +16,11 @@ The component of the operating model that controls harvest.
 
 \item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
 
-\item{\code{u_preterminal}}{Numeric. If \code{type_PT = "u"}, the exploitation rate of the immature stock in the pre-terminal fishery.}
+\item{\code{u_preterminal}}{Numeric. If \code{type_PT = "u"}, the exploitation rate of the immature stock in the pre-terminal fishery. This will be converted
+to an instantaneous fishing mortality rate, i.e., \code{F_preterminal = -log(1 - u_preterminal)}.}
 
-\item{\code{u_terminal}}{Numeric. If \code{type_T = "u"}, The exploitation rate of the return in the terminal fishery.}
+\item{\code{u_terminal}}{Numeric. If \code{type_T = "u"}, The exploitation rate of the return in the terminal fishery. This will be converted
+to an instantaneous fishing mortality rate, i.e., \code{F_terminal = -log(1 - u_terminal)}.}
 
 \item{\code{K_PT}}{Numeric. If \code{type_PT = "catch"}, the catch target of the immature stock in the pre-terminal fishery.}
 
@@ -31,9 +33,11 @@ The component of the operating model that controls harvest.
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
 Implemented to model mark-selective fishing. Not used if either \code{MSF_PT} or \code{MSF_T} is \code{ FALSE}.}
 
-\item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery.}
+\item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery. Values indicate
+the proportion of fishing mortality experienced by each age class, where \code{F_preterminal = -log(1 - u_preterminal)}.}
 
-\item{\code{vulT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the terminal fishery.}
+\item{\code{vulT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the terminal fishery. Values indicate
+the proportion of fishing mortality experienced by each age class, where \code{F_terminal = -log(1 - u_terminal)}.}
 }}
 
 \section{Creating Object}{

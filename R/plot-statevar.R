@@ -21,6 +21,8 @@
 #' @param quant Logical, whether to plot individual simulations (FALSE) or the median with 95 percent confidence intervals (TRUE)
 #' @param ylab Character. Name of the state variable for the figure
 #' @param ylim Vector. Y-axis limits
+#' @param agg.fun Function. Defines how to aggregate state variables that are reported by age. Typically, `sum` is used but `max` is also
+#' possible for reporting apical exploitation rates.
 #' @return Functions return the matrix of plotted values invisibly. Figure plotted from base graphics
 #' @importFrom graphics matplot grid legend
 #' @importFrom methods slot
@@ -28,10 +30,11 @@
 #' @importFrom grDevices hcl.colors
 #' @seealso [plot_decision_table()] [plot_LHG()]
 #' @export
-plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim, ...) {
+plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim,
+                             agg.fun = sum, ...) {
 
   if (length(s) > 1) {
-    x <- sapply(s, function(i) get_statevar(SMSE, var, i), simplify = "array")
+    x <- sapply(s, function(i) get_statevar(SMSE, var, i, agg.fun = agg.fun), simplify = "array")
     xplot <- apply(x, 2:3, quantile, 0.5, na.rm = TRUE)
 
     if (figure && any(xplot > 0, na.rm = TRUE)) {
@@ -50,7 +53,7 @@ plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Pr
 
   } else {
 
-    x <- get_statevar(SMSE, var, s)
+    x <- get_statevar(SMSE, var, s, agg.fun = agg.fun)
 
     if (!quant) {
       xplot <- x
@@ -100,7 +103,7 @@ plot_statevar_hist <- function(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab 
   invisible(xplot)
 }
 
-get_statevar <- function(SMSE, var, s) {
+get_statevar <- function(SMSE, var, s, agg.fun = sum) {
 
   x <- matrix(NA, SMSE@nsim, SMSE@proyears)
 
@@ -108,7 +111,7 @@ get_statevar <- function(SMSE, var, s) {
 
     .x <- slot(SMSE, var)
     if (length(dim(.x)) == 4) {
-      x[] <- apply(.x[, s, , ], c(1, 3), sum)
+      x[] <- apply(.x[, s, , ], c(1, 3), agg.fun)
     } else if (length(dim(.x)) == 3) {
       x[] <- .x[, s, ]
     } else {
@@ -315,7 +318,7 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
     as.character()
 
   x <- sapply(var_vec, function(i) {
-    plot_statevar_ts(SMSE, var = paste0(var, i), s = s, figure = FALSE, quant = FALSE)
+    plot_statevar_ts(SMSE, var = paste0(var, i), s = s, figure = FALSE, quant = FALSE, agg.fun = max)
   }, simplify = "array") %>%
     apply(2:3, FUN)
 
@@ -333,7 +336,7 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
       )
     }
 
-    plot(Year, NULL, typ = 'n', col = "grey40", ylim = ylim, xlab = "Projection Year",
+    plot(Year, NULL, type = 'n', col = "grey40", ylim = ylim, xlab = "Projection Year",
          ylab = ylab, ...)
     col <- 1:length(var_vec)
 
@@ -365,9 +368,11 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 
   S_SMSY <- apply(NOS/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
   if (type == "T") {
-    Ex_ExMSY <- apply(SMSE@ExT_NOS[, s, ]/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
+    Ex <- apply(SMSE@ExT_NOS[, s, , ], c(1, 3), max)
+    Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
   } else {
-    Ex_ExMSY <- apply(SMSE@ExPT_NOS[, s, ]/SMSE@Misc$Ref[[s]]["UPT_MSY", ], 2, FUN)
+    Ex <- apply(SMSE@ExPT_NOS[, s, , ], c(1, 3), max)
+    Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UPT_MSY", ], 2, FUN)
   }
 
   if (figure) {

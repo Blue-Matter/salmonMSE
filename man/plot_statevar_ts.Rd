@@ -19,6 +19,7 @@ plot_statevar_ts(
   quant = FALSE,
   ylab = var,
   ylim,
+  agg.fun = sum,
   ...
 )
 
@@ -71,6 +72,9 @@ plot_Kobe(
 \item{ylab}{Character. Name of the state variable for the figure}
 
 \item{ylim}{Vector. Y-axis limits}
+
+\item{agg.fun}{Function. Defines how to aggregate state variables that are reported by age. Typically, \code{sum} is used but \code{max} is also
+possible for reporting apical exploitation rates.}
 
 \item{...}{Additional arguments to base plot function}
 

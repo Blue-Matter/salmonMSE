@@ -243,7 +243,7 @@ F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0, K 
   catch_ret[is.na(catch_ret)] <- 0
 
   if (type == "u") {
-    fn <- sum(catch_ret)/sum(vul * N) - u
+    fn <- (1 - exp(-max(F_ret))) - u
   } else {
     fn <- sum(catch_ret)/K - 1
   }
