@@ -49,30 +49,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage, n_g)
       p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
 
-      opt <- optimize(
-        .calc_eq, interval = c(1e-8, 3),
-        Mjuv = Mjuv,
-        fec = fec,
-        p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT[x, ], vulT = vulT[x, ],
-        p_mature = p_mature,
-        s_enroute = s_enroute,
-        n_g = n_g,
-        p_LHG = p_LHG,
-        SRRpars = SRR$SRRpars[x, ],
-        maximum = TRUE
-      )
-      ref <- .calc_eq(
-        .F = opt$maximum,
-        Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-        vulPT = vulPT[x ,], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
-        n_g = n_g, p_LHG = p_LHG,
-        SRRpars = SRR$SRRpars[x, ], opt = FALSE
-      ) %>% unlist()
-
-      names(ref) <- paste0(names(ref), "_MSY")
-      if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
-      if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
+      ref <- calc_MSY(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
+                      SRR$SRRpars[x, ])
 
       if (any(ref < 0, na.rm = TRUE)) {
 
@@ -80,47 +58,87 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
         ref["Sgen"] <- 0
 
       } else {
-
-        opt_Sgen <- try(
-          uniroot(
-            .calc_Sgen, interval = c(1, 100) * opt$maximum,
-            Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
-            n_g = n_g, p_LHG = p_LHG,
-            SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"]
-          ),
-          silent = TRUE
-        )
-
-        if (is.character(opt_Sgen)) {
-          ref["Sgen"] <- NA
-        } else {
-          Sgen_out <- .calc_Sgen(
-            .F = opt_Sgen$root,
-            Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F_s[[s]],
-            vulPT = vulPT[x, ], vulT = vulT[x, ], p_mature = p_mature, s_enroute = s_enroute,
-            n_g = n_g, p_LHG = p_LHG,
-            SRRpars = SRR$SRRpars[x, ], SMSY = ref["Spawners"], opt = FALSE
-          )
-
-          ref["Sgen"] <- sum(Sgen_out$Spawners)
-        }
-
+        Sgen <- calc_Sgen(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
+                          SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"])
+        ref["Sgen"] <- Sgen
       }
       return(ref)
     })
 
     return(val)
-
   })
 
   return(ref_s)
 }
 
+calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
+                     SRRpars) {
+
+  opt <- optimize(
+    .calc_eq, interval = c(1e-8, 5),
+    Mjuv = Mjuv,
+    fec = fec,
+    p_female = p_female, rel_F = rel_F,
+    vulPT = vulPT, vulT = vulT,
+    p_mature = p_mature,
+    s_enroute = s_enroute,
+    n_g = n_g,
+    p_LHG = p_LHG,
+    SRRpars = SRRpars,
+    maximum = TRUE
+  )
+
+  ref <- .calc_eq(
+    .F = opt$maximum,
+    Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
+    vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
+    n_g = n_g, p_LHG = p_LHG,
+    SRRpars = SRRpars, opt = FALSE
+  ) %>% unlist()
+
+  names(ref) <- paste0(names(ref), "_MSY")
+  if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
+  if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
+
+  return(ref)
+
+}
+
+calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
+                      SRRpars, SMSY, F_range = c(1e-8, 100)) {
+
+  opt_Sgen <- try(
+    uniroot(
+      .calc_Sgen, interval = F_range,
+      Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
+      vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
+      n_g = n_g, p_LHG = p_LHG,
+      SRRpars = SRRpars, SMSY = SMSY
+    ),
+    silent = TRUE
+  )
+
+  if (is.character(opt_Sgen)) {
+    Sgen <- NA
+  } else {
+    Sgen_out <- .calc_Sgen(
+      .F = opt_Sgen$root,
+      Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
+      vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
+      n_g = n_g, p_LHG = p_LHG,
+      SRRpars = SRRpars, SMSY = SMSY, opt = FALSE
+    )
+
+    Sgen <- sum(Sgen_out$Spawners)
+  }
+
+  return(Sgen)
+}
 
 .calc_Sgen <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1,
                        n_g, p_LHG, SRRpars, popt = 1, SMSY, opt = TRUE) {
 
+  # Equilibrium quantities at .F
   Sgen_ref <- .calc_eq(
     .F, Mjuv, fec, p_female, gamma, rel_F, vulPT, vulT, p_mature, s_enroute, n_g, p_LHG,
     SRRpars, opt = FALSE, aggregate_age = FALSE
@@ -129,32 +147,33 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
   if (Sgen_ref$Egg <= 0) {
     Sgen_plusone <- 0
   } else {
-    nyears <- maxage <- length(Mjuv)
+    nyears <- maxage <- length(fec)
 
-    Njuv <- Spawner <- matrix(0, maxage, nyears)
+    Njuv <- Spawner <- array(0, c(maxage, nyears, n_g))
     Egg <- rep(0, nyears)
-    Njuv[, 1] <- Sgen_ref$Njuv
+    Njuv[, 1, ] <- Sgen_ref$Njuv
 
     for (y in 1:nyears) {
-      Spawner[, y] <- Njuv[, y] * p_mature * s_enroute
-      Egg[y] <- sum(Spawner[, y] * gamma * p_female * fec)
+      Spawner[, y, ] <- Njuv[, y, ] * p_mature * s_enroute # sum across LHG
+      Egg[y] <- sum(Spawner[, y, ] * gamma * p_female * fec)
 
       if (y < nyears) {
-        Njuv[1, y+1] <- calc_smolt(
+        Smolt <- calc_smolt(
           Egg[y],
           kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
           fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"])
         ) %>%
           as.numeric()
-        Njuv[2:maxage, y+1] <- Njuv[2:maxage - 1, y] * exp(-Mjuv[2:maxage - 1]) * (1 - p_mature[2:maxage - 1])
+        Njuv[1, y+1, ] <- p_LHG * Smolt
+        Njuv[2:maxage, y+1, ] <- Njuv[2:maxage - 1, y, ] * exp(-Mjuv[2:maxage - 1, ]) * (1 - p_mature[2:maxage - 1, ])
       }
     }
 
-    Sgen_plusone <- sum(Spawner[, nyears])
+    Sgen_plusone <- sum(Spawner[, nyears, ])
   }
 
   if (opt) {
-    return(Sgen_plusone - SMSY)
+    return(Sgen_plusone - popt * SMSY)
   } else {
     return(Sgen_ref)
   }
