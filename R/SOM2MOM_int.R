@@ -338,17 +338,22 @@ calc_survival <- function(Mjuv, p_mature, maxage = length(Mjuv)) {
 }
 
 
-#' Calculate unfished egg per smolt with life history groups
+#' Calculate equilibrium quantities with life history groups
+#'
+#' Calculate eggs/smolt or spawners/smolt based on life history parameters (survival, maturity, fecundity)
 #'
 #' @param Mjuv Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Juvenile natural mortality
 #' @param p_mature Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Maturity at age
 #' @param p_female Numeric. Proportion female
-#' @param fec Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Fecundity at age
+#' @param fec Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Fecundity at age. Only used if `output = "egg"`
 #' @param s_enroute Numeric, en-route survival of escapement to spawning grounds
 #' @param n_g Integer. Number of life history groups
 #' @param p_LHG Vector length `n_g` of proportion of life history groups per recruit. Default is `rep(1/n_g, n_g)`
+#' @param output Character to indicate the output units, e.g., "egg" returns eggs per smolt, and "spawner" returns spawners per smolt
 #' @keywords internal
-calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG) {
+#' @return Numeric, units depend on `"output"` argument
+calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG, output = c("egg", "spawner")) {
+  output <- match.arg(output)
 
   if (n_g == 1) {
     if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
@@ -359,8 +364,14 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LH
 
   surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g], p_mature[, g])) # age x g
   Esc <- p_mature * surv_juv # escapement per smolt
-  Egg <- p_female * Esc * s_enroute * fec
-  sum(Egg)
+
+  if (output == "egg") {
+    x <- p_female * Esc * s_enroute * fec
+  } else {
+    x <- p_female * Esc * s_enroute
+  }
+
+  return(sum(x))
 }
 
 make_Stock_objects <- function(SOM, s = 1) {

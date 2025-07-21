@@ -74,6 +74,13 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
                      SRRpars) {
 
+  if (n_g == 1) {
+    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
+    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
+    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
+  }
+  if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
+
   opt <- optimize(
     .calc_eq, interval = c(1e-8, 5),
     Mjuv = Mjuv,
@@ -106,6 +113,13 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
 
 calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
                       SRRpars, SMSY, F_range = c(1e-8, 100)) {
+
+  if (n_g == 1) {
+    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
+    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
+    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
+  }
+  if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
 
   opt_Sgen <- try(
     uniroot(

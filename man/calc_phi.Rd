@@ -2,9 +2,18 @@
 % Please edit documentation in R/SOM2MOM_int.R
 \name{calc_phi}
 \alias{calc_phi}
-\title{Calculate unfished egg per smolt with life history groups}
+\title{Calculate equilibrium quantities with life history groups}
 \usage{
-calc_phi(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG)
+calc_phi(
+  Mjuv,
+  p_mature,
+  p_female,
+  fec,
+  s_enroute = 1,
+  n_g = 1,
+  p_LHG,
+  output = c("egg", "spawner")
+)
 }
 \arguments{
 \item{Mjuv}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Juvenile natural mortality}
@@ -13,15 +22,20 @@ calc_phi(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG)
 
 \item{p_female}{Numeric. Proportion female}
 
-\item{fec}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Fecundity at age}
+\item{fec}{Matrix \verb{[maxage, n_g]}, but can be a vector if \code{n_g = 1}. Fecundity at age. Only used if \code{output = "egg"}}
 
 \item{s_enroute}{Numeric, en-route survival of escapement to spawning grounds}
 
 \item{n_g}{Integer. Number of life history groups}
 
 \item{p_LHG}{Vector length \code{n_g} of proportion of life history groups per recruit. Default is \code{rep(1/n_g, n_g)}}
+
+\item{output}{Character to indicate the output units, e.g., "egg" returns eggs per smolt, and "spawner" returns spawners per smolt}
+}
+\value{
+Numeric, units depend on \code{"output"} argument
 }
 \description{
-Calculate unfished egg per smolt with life history groups
+Calculate eggs/smolt or spawners/smolt based on life history parameters (survival, maturity, fecundity)
 }
 \keyword{internal}
