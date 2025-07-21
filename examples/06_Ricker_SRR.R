@@ -70,7 +70,8 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     s_enroute, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
   )
 
-  ref_salmonMSE <- ref[c("UT_MSY", "Spawners_MSY", "Sgen")] |> structure(names = c("UMSY", "SMSY", "Sgen"))
+  ref_salmonMSE <- ref[c("UPT_MSY", "UT_MSY", "Spawners_MSY", "Sgen")] |>
+    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "SMSY", "Sgen"))
 
   umsy <- umsyCalc(log(alpha))
   smsy <- smsyCalc(log(alpha), 1/Smax)
@@ -114,3 +115,21 @@ compare_ref(
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+
+
+#### Age-specific M, selectivity, maturity with all exploitation in pre-terminal fishery instead of terminal ----
+maxage <- 5
+compare_ref(
+  alpha = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(1, 0),
+  p_female = 1,
+  vulPT = c(0, 0.1, 0.2, 0.4, 1),
+  vulT = rep(0, maxage),
+  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1), # SAR = 0.01
+  fec = c(0, 1000, 2000, 3000, 3500),
+  s_enroute = 1,
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+
