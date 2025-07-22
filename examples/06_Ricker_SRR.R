@@ -4,7 +4,7 @@
 
 #### Define functions ----
 # install.packages("gsl")
-# remotes::install_github("Blue-Matter/salmonMSE")
+# remotes::install_github("Blue-Matter/salmonMSE", ref = "dev")
 source("https://raw.githubusercontent.com/Pacific-salmon-assess/samEst/refs/heads/main/R/RP_functions.R")
 
 
@@ -18,7 +18,10 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
                         Mjuv = c(1, 0.8, 0.6, 0.4, 0.2),
                         fec = c(0, 1500, 3000, 3200, 3500),
                         s_enroute = 1,
-                        p_mature = c(0, 0.1, 0.2, 0.3, 1)) {
+                        p_mature = c(0, 0.1, 0.2, 0.3, 1),
+                        maximize = c("MER", "MSY")) {
+
+  maximize <- match.arg(maximize)
 
   # Calculate eggs per smolt
   phi <- salmonMSE:::calc_phi(
@@ -41,7 +44,7 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     Mjuv = Mjuv,
     p_mature = p_mature,
     p_female = p_female,
-    fec = matrix(fec, maxage, 1),
+    fec = fec,
     s_enroute = s_enroute,
     n_g = 1,
     p_LHG = 1,
@@ -60,9 +63,10 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     SRrel = "Ricker"
   )
 
+  # MER
   ref <- salmonMSE:::calc_MSY(
     Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute, SRRpars = SRRpars
+    s_enroute, SRRpars = SRRpars, maximize = "MER"
   )
 
   ref["Sgen"] <- salmonMSE:::calc_Sgen(
@@ -73,13 +77,48 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
   ref_salmonMSE <- ref[c("UPT_MSY", "UT_MSY", "Spawners_MSY", "Sgen")] |>
     structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "SMSY", "Sgen"))
 
-  umsy <- umsyCalc(log(alpha))
-  smsy <- smsyCalc(log(alpha), 1/Smax)
-  sgen <- sgenCalcDirect(log(alpha), 1/Smax)
+  # MSY
+  ref_MSY <- salmonMSE:::calc_MSY(
+    Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
+    s_enroute, SRRpars = SRRpars, maximize = "MSY"
+  )
 
-  ref_lambert <- structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
+  ref_MSY["Sgen"] <- salmonMSE:::calc_Sgen(
+    Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
+    s_enroute, SRRpars = SRRpars, SMSY = ref_MSY["Spawners_MSY"]
+  )
 
-  list(salmonMSE = ref_salmonMSE, lambert = ref_lambert)
+  MSY_salmonMSE <- ref_MSY[c("UPT_MSY", "UT_MSY", "Spawners_MSY", "Sgen")] |>
+    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "SMSY", "Sgen"))
+
+  # Lambert naive calculations
+  ref_lambert <- local({
+    umsy <- umsyCalc(log(alpha))
+    smsy <- smsyCalc(log(alpha), 1/Smax)
+    sgen <- sgenCalcDirect(log(alpha), 1/Smax)
+    structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
+  })
+
+  # Lambert adjusted calculations
+  juv_surv <- salmonMSE:::calc_survival(Mjuv, p_mature)
+  phi_return <- sum(juv_surv * p_mature) # Recruit/smolt
+
+  alpha2 <- alpha/phi # smolt/egg
+  alpha_prime <- alpha2 * phi_return # recruit/egg
+  #alpha_prime <- alpha2 * phi_return * eo/so# This just returns the same numbers (alpha = alpha_prime)
+  if (alpha_prime < 1) warning("alpha_prime < 1")
+
+  ref_lambert2 <- local({
+    umsy <- umsyCalc(log(alpha_prime))
+    smsy <- smsyCalc(log(alpha_prime), 1/Smax)
+    sgen <- sgenCalcDirect(log(alpha_prime), 1/Smax)
+    structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
+  })
+
+  list(`salmonMSE MER` = ref_salmonMSE,
+       `salmonMSE MSY` = MSY_salmonMSE,
+       `lambert adjusted` = ref_lambert2,
+       `lambert naive` = ref_lambert)
 
 }
 
@@ -110,14 +149,15 @@ compare_ref(
   p_female = 1,
   vulPT = rep(0, maxage),
   vulT = c(0, 0.1, 0.2, 0.4, 1),
-  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1), # SAR = 0.01
+  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1),
   fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 
 
-#### Age-specific M, selectivity, maturity with all exploitation in pre-terminal fishery instead of terminal ----
+#### Age-specific M, selectivity, maturity with all exploitation in pre-terminal fishery instead of terminal (for actual yield curve) ----
+#### MER requires an assumption about terminal fishery vulnerability
 maxage <- 5
 compare_ref(
   alpha = 3,
@@ -126,7 +166,7 @@ compare_ref(
   rel_F = c(1, 0),
   p_female = 1,
   vulPT = c(0, 0.1, 0.2, 0.4, 1),
-  vulT = rep(0, maxage),
+  vulT = c(0, 0.1, 0.2, 0.4, 1), # Needs some assumption for MER calculation
   Mjuv = c(1, 0.1, 0.1, 0.1, 0.1), # SAR = 0.01
   fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,

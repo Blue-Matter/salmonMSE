@@ -4,7 +4,7 @@
 \alias{calc_ref}
 \title{Reference points}
 \usage{
-calc_ref(SOM, rel_F, check = TRUE)
+calc_ref(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"))
 }
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
@@ -13,6 +13,8 @@ calc_ref(SOM, rel_F, check = TRUE)
 For example, \code{c(1, 0)} indicates a yield calculation for only the preterminal fishery. By default, uses the ratio of the harvest rates in the operating model.}
 
 \item{check}{Logical, whether to check the SOM object using \code{\link[=check_SOM]{check_SOM()}}}
+
+\item{maximize}{Character, whether the MSY calculation is the optimum that maximizes catch (\code{"MSY"}) or excess recruitment (\code{"MER"})}
 }
 \value{
 Matrix of various state variables (catch, exploitation rate, egg production, spawners) at MSY and Sgen by simulation

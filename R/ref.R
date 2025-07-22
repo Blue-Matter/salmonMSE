@@ -8,10 +8,13 @@
 #' @param rel_F Numeric length 2, indicates the relative effort in the preterminal and terminal fisheries, with a maximum value of 1.
 #' For example, `c(1, 0)` indicates a yield calculation for only the preterminal fishery. By default, uses the ratio of the harvest rates in the operating model.
 #' @param check Logical, whether to check the SOM object using [check_SOM()]
+#' @param maximize Character, whether the MSY calculation is the optimum that maximizes catch (`"MSY"`) or excess recruitment (`"MER"`)
 #' @returns Matrix of various state variables (catch, exploitation rate, egg production, spawners) at MSY and Sgen by simulation
 #' @importFrom stats optimize
 #' @export
-calc_ref <- function(SOM, rel_F, check = TRUE) {
+calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
+  maximize <- match.arg(maximize)
+
   if (check) SOM <- check_SOM(SOM)
 
   ns <- length(SOM@Bio)
@@ -50,7 +53,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
       p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
 
       ref <- calc_MSY(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
-                      SRR$SRRpars[x, ])
+                      SRR$SRRpars[x, ], maximize)
 
       if (any(ref < 0, na.rm = TRUE)) {
 
@@ -59,7 +62,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 
       } else {
         Sgen <- calc_Sgen(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
-                          SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"])
+                          SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"], maximize)
         ref["Sgen"] <- Sgen
       }
       return(ref)
@@ -72,7 +75,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE) {
 }
 
 calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
-                     SRRpars) {
+                     SRRpars, maximize = c("MSY", "MER"), F_search = c(1e-8, 5)) {
+  maximize <- match.arg(maximize)
 
   if (n_g == 1) {
     if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
@@ -82,7 +86,7 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
   if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
 
   opt <- optimize(
-    .calc_eq, interval = c(1e-8, 5),
+    .calc_eq, interval = F_search,
     Mjuv = Mjuv,
     fec = fec,
     p_female = p_female, rel_F = rel_F,
@@ -92,6 +96,7 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
     n_g = n_g,
     p_LHG = p_LHG,
     SRRpars = SRRpars,
+    maximize = maximize,
     maximum = TRUE
   )
 
@@ -100,7 +105,7 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
     Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
     vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
     n_g = n_g, p_LHG = p_LHG,
-    SRRpars = SRRpars, opt = FALSE
+    SRRpars = SRRpars, maximize = maximize, opt = FALSE
   ) %>% unlist()
 
   names(ref) <- paste0(names(ref), "_MSY")
@@ -195,7 +200,11 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
 
 
 .calc_eq <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1, n_g, p_LHG,
-                     SRRpars, opt = TRUE, aggregate_age = TRUE) {
+                     SRRpars, maximize = c("MSY", "MER"), opt = TRUE, aggregate_age = TRUE) {
+
+  maximize <- match.arg(maximize)
+
+  if (maximize == "MER") rel_F <- c(0, 1)
 
   FPT <- vulPT * .F * rel_F[1]
   FT <- vulT * .F * rel_F[2]
@@ -220,8 +229,17 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   KPT <- Njuv * (1 - exp(-FPT))
   KT <- Return * (1 - exp(-FT))
 
+  Spawners <- Smolt * surv_spawn
+
   if (opt) {
-    return(sum(KPT, KT))
+
+    if (maximize == "MSY") {
+      return(sum(KPT, KT))
+    } else {
+      return(sum(Return) - sum(Spawners))
+    }
+
+
   } else {
 
     output <- list(
@@ -235,7 +253,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
       Njuv = Njuv,
       Return = Return,
       Escapement = Smolt * surv_esc,
-      Spawners = Smolt * surv_spawn,
+      Spawners = Spawners,
       Egg = Smolt * EPR
     )
 
