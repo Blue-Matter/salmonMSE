@@ -30,7 +30,7 @@ C^\textrm{fry-smolt},Capacity for density-dependent survival: fry to smolt life 
 \textrm{Stray},External strays of hatchery origin fish (considered 0% marked),Hatchery,SOM,stray_external
 \textrm{HOB_stray},Broodtake from strays,Hatchery,SMSE,HOB_stray
 "\textrm{Brood}^\textrm{avail,import}",Available imported brood (considered 100% marked HO fish),Hatchery,SOM,brood_import
-\textrm{Brood}^\textrm{import},Realized imported fished used for brood (considered 100% marked HO),Hatchery,SMSE,HOB_import
+\textrm{Brood}^\textrm{import},Realized imported fish used for brood (considered 100% marked HO),Hatchery,SMSE,HOB_import
 s_\textrm{yearling},Survival of hatchery eggs to yearling life stage,Hatchery,SOM,s_egg_smolt
 s_\textrm{subyearling},Survival of hatchery eggs to subyearling life stage,Hatchery,SOM,s_egg_subyearling
 p_\textrm{yearling},Proportion of hatchery releases as yearling (vs. subyearling),Hatchery,Internal state variable,-

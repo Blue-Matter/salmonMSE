@@ -525,12 +525,10 @@ Effective proportions, i.e., weighting by age-class fecundity, in the parental c
 
 # Mark-selective fishing
 
-If the mark rate $m$ of hatchery fish is greater than zero, then mark-selective fishing is implemented for both the pre-terminal and terminal fisheries.
+If the mark rate $m$ of hatchery fish is greater than zero, then mark-selective fishing can be implemented for both the pre-terminal and terminal fisheries with no retention on natural-origin fish.
 The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$ corresponds to the apical fishing mortality of the kept catch.
-The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch (hatchery-origin fish) and dead releases (natural-origin fish). 
+The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish. 
 Exploitation rates differ between hatchery and natural origin fish because there is no retention of the latter.
-
-Let the instantaneous fishing mortality for kept catch and released catch be 
 
 \begin{align}
 F^\textrm{kept} &= mE\\
@@ -540,6 +538,8 @@ F^\textrm{rel.} &= (1 - m)\delta E
 where $\delta$ is the proportion of released fish that die, i.e., release mortality. 
 
 $E$ is an index of fishing effort, also referred to as the encounter rate by the fishery, that links together $F^\textrm{kept}$ and $F^\textrm{rel.}$.
+Natural-origin fish experiences exclusively $F^\textrm{rel.}$ while hatchery-origin fish experience both $F^\textrm{rel.}$ and $F^\textrm{rel.}$.
+
 Intuitively, fishing effort can increase in a mark-selective fishery compared to a non-selective fishery.
 For example, if the mark rate is 20 percent, then the fishing effort could be 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
 Additional catch and release mortality then occurs for un-marked fish, according to $\delta$.
