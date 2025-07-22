@@ -74,8 +74,10 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     s_enroute, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
   )
 
-  ref_salmonMSE <- ref[c("UPT_MSY", "UT_MSY", "Spawners_MSY", "Sgen")] |>
-    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "SMSY", "Sgen"))
+  ref["Catch/Return"] <- ref["KT_MSY"]/ref["Return_MSY"]
+
+  ref_salmonMSE <- ref[c("UPT_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")] |>
+    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "Catch/Return", "SMSY", "Sgen"))
 
   # MSY
   ref_MSY <- salmonMSE:::calc_MSY(
@@ -88,8 +90,10 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     s_enroute, SRRpars = SRRpars, SMSY = ref_MSY["Spawners_MSY"]
   )
 
-  MSY_salmonMSE <- ref_MSY[c("UPT_MSY", "UT_MSY", "Spawners_MSY", "Sgen")] |>
-    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "SMSY", "Sgen"))
+  ref_MSY["Catch/Return"] <- ref_MSY["KT_MSY"]/ref_MSY["Return_MSY"]
+
+  MSY_salmonMSE <- ref_MSY[c("UPT_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")] |>
+    structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "Catch/Return", "SMSY", "Sgen"))
 
   # Lambert naive calculations
   ref_lambert <- local({
@@ -154,6 +158,24 @@ compare_ref(
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+
+#### Age-specific M, maturity but full vulnerability ----
+maxage <- 5
+compare_ref(
+  alpha = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, maxage),
+  vulT = rep(1, maxage),
+  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  s_enroute = 1,
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+
+
 
 
 #### Age-specific M, selectivity, maturity with all exploitation in pre-terminal fishery instead of terminal (for actual yield curve) ----
