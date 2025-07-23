@@ -607,7 +607,7 @@ calc_AEQ <- function(report, brood = TRUE) {
 
   for (t in seq(nt, 2) - 1) {
     for (a in seq(na, 2) - 1) {
-      AEQ[t, a, ] <- matt[t, a, ] * (1 - matt[t, a, ]) * Msurv[t, a+1] * AEQ[t, a+1, ]
+      AEQ[t, a, ] <- matt[t, a, ] + (1 - matt[t, a, ]) * Msurv[t, a+1] * AEQ[t, a+1, ]
     }
   }
 
