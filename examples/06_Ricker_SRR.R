@@ -215,3 +215,20 @@ compare_ref(
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+
+# Set fecundity = 1 for all ages
+maxage <- 5
+compare_ref(
+  alpha = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, maxage),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = rep(1, maxage),
+  #fec = c(0, 1000, 2000, 3000, 3500),
+  s_enroute = 1,
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
