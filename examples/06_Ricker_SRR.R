@@ -95,6 +95,27 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
   MSY_salmonMSE <- ref_MSY[c("UPT_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")] |>
     structure(names = c("UMSY (preterminal)", "UMSY (terminal)", "Catch/Return", "SMSY", "Sgen"))
 
+  # Fsearch
+  #FM <- seq(0, 3, 0.005)
+  #Fsearch <- sapply(FM, function(i) {
+  #  salmonMSE:::.calc_eq(
+  #    .F = i,
+  #    matrix(Mjuv, maxage, 1),
+  #    fec, p_female = 1, rel_F = c(0, 1),
+  #    vulPT = vulPT,
+  #    vulT = vulT,
+  #    p_mature = matrix(p_mature, maxage, 1),
+  #    s_enroute = s_enroute,
+  #    n_g = 1, p_LHG = 1,
+  #    SRRpars = SRRpars, opt = FALSE
+  #  ) %>% unlist()
+  #})
+  #i <- Fsearch["KT", ] >= 0
+  #Fsearch <- Fsearch[, i]
+  #FM <- FM[i]
+  #maxF <- length(FM)
+  #Fsearch["Return", maxF]/Fsearch["Spawners", maxF] # Equals to alpha
+
   # Lambert naive calculations
   ref_lambert <- local({
     umsy <- umsyCalc(log(alpha))
@@ -104,24 +125,22 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
   })
 
   # Lambert adjusted calculations
-  juv_surv <- salmonMSE:::calc_survival(Mjuv, p_mature)
-  phi_return <- sum(juv_surv * p_mature) # Recruit/smolt
-
-  alpha2 <- alpha/phi # smolt/egg
-  alpha_prime <- alpha2 * phi_return # recruit/egg
+  #juv_surv <- salmonMSE:::calc_survival(Mjuv, p_mature)
+  #phi_return <- sum(juv_surv * p_mature) # Recruit/smolt
+  #alpha2 <- alpha/phi # smolt/egg
+  #alpha_prime <- alpha2 * phi_return # recruit/egg
   #alpha_prime <- alpha2 * phi_return * eo/so# This just returns the same numbers (alpha = alpha_prime)
-  if (alpha_prime < 1) warning("alpha_prime < 1")
-
-  ref_lambert2 <- local({
-    umsy <- umsyCalc(log(alpha_prime))
-    smsy <- smsyCalc(log(alpha_prime), 1/Smax)
-    sgen <- sgenCalcDirect(log(alpha_prime), 1/Smax)
-    structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
-  })
+  #if (alpha_prime < 1) warning("alpha_prime < 1")
+  #ref_lambert2 <- local({
+  #  umsy <- umsyCalc(log(alpha_prime))
+  #  smsy <- smsyCalc(log(alpha_prime), 1/Smax)
+  #  sgen <- sgenCalcDirect(log(alpha_prime), 1/Smax)
+  #  structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
+  #})
 
   list(`salmonMSE MER` = ref_salmonMSE,
        `salmonMSE MSY` = MSY_salmonMSE,
-       `lambert adjusted` = ref_lambert2,
+       #`lambert adjusted` = ref_lambert2,
        `lambert naive` = ref_lambert)
 
 }
@@ -143,23 +162,9 @@ compare_ref(
   p_mature = c(0, 0, 0, 0, 1)
 )
 
-#### Age-specific M, selectivity, maturity ----
-maxage <- 5
-compare_ref(
-  alpha = 3,
-  Smax = 1000,
-  maxage = 5,
-  rel_F = c(0, 1),
-  p_female = 1,
-  vulPT = rep(0, maxage),
-  vulT = c(0, 0.1, 0.2, 0.4, 1),
-  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1),
-  fec = c(0, 1000, 2000, 3000, 3500),
-  s_enroute = 1,
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
-)
-
-#### Age-specific M, maturity but full vulnerability ----
+#### Age-specific M and maturity ----
+# There's no difference in spawners among ages
+# No difference between Lambert and numerical MSY, difference in Sgen
 maxage <- 5
 compare_ref(
   alpha = 3,
@@ -169,29 +174,44 @@ compare_ref(
   p_female = 1,
   vulPT = rep(0, maxage),
   vulT = rep(1, maxage),
-  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1),
-  fec = c(0, 1000, 2000, 3000, 3500),
+  Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = rep(1, maxage),
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 
-
-
-
-#### Age-specific M, selectivity, maturity with all exploitation in pre-terminal fishery instead of terminal (for actual yield curve) ----
-#### MER requires an assumption about terminal fishery vulnerability
+#### Age-specific M and maturity (and fecundity) ----
+# Older spawners are more fecund
+# No difference between Lambert and numerical MSY, difference in Sgen
 maxage <- 5
 compare_ref(
   alpha = 3,
   Smax = 1000,
   maxage = 5,
-  rel_F = c(1, 0),
+  rel_F = c(0, 1),
   p_female = 1,
-  vulPT = c(0, 0.1, 0.2, 0.4, 1),
-  vulT = c(0, 0.1, 0.2, 0.4, 1), # Needs some assumption for MER calculation
-  Mjuv = c(1, 0.1, 0.1, 0.1, 0.1), # SAR = 0.01
+  vulPT = rep(0, maxage),
+  vulT = rep(1, maxage),
+  Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
   fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 
+#### Age-specific M and maturity (and fecundity) and partial vulnerability of return ----
+# Older spawners are more fecund
+# Difference between Lambert and numerical MSY, difference in Sgen
+maxage <- 5
+compare_ref(
+  alpha = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, maxage),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  s_enroute = 1,
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
