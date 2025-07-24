@@ -592,6 +592,7 @@ setGeneric("report", function(object, ...) standardGeneric("report"))
 #' @importFrom utils browseURL
 #' @aliases report,SMSE-method
 #' @importFrom rmarkdown render
+#' @return Returns invisibly the output of [rmarkdown::render()], typically the path of the output file
 #' @export
 setMethod("report", "SMSE",
           function(object, name = object@Name, filename = "SMSE", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {

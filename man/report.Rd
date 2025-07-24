@@ -30,6 +30,9 @@
 
 \item{...}{Additional arguments (not used)}
 }
+\value{
+Returns invisibly the output of \code{\link[rmarkdown:render]{rmarkdown::render()}}, typically the path of the output file
+}
 \description{
 Generate a markdown report for outcomes from a single operating model projection
 }
