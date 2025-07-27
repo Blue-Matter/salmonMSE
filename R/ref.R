@@ -117,7 +117,7 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
 }
 
 calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
-                      SRRpars, SMSY, F_range = c(1e-8, 100)) {
+                      SRRpars, SMSY, F_range = c(1e-8, 100), nyears) {
 
   if (n_g == 1) {
     if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
@@ -125,6 +125,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
     if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
   }
   if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
+  if (missing(nyears)) nyears <- nrow(Mjuv)
 
   opt_Sgen <- try(
     uniroot(
@@ -132,7 +133,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
       Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
       vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
       n_g = n_g, p_LHG = p_LHG,
-      SRRpars = SRRpars, SMSY = SMSY
+      SRRpars = SRRpars, SMSY = SMSY, nyears = nyears
     ),
     silent = TRUE
   )
@@ -145,17 +146,18 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
       Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
       vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
       n_g = n_g, p_LHG = p_LHG,
-      SRRpars = SRRpars, SMSY = SMSY, opt = FALSE
+      SRRpars = SRRpars, SMSY = SMSY, nyears = nyears, opt = FALSE
     )
-
-    Sgen <- sum(Sgen_out$Spawners)
+    Sgen <- sum(Sgen_out$Sgen$Spawners)
+    attr(Sgen, "Sgen") <- Sgen_out$Sgen
+    attr(Sgen, "proj") <- Sgen_out$proj
   }
 
   return(Sgen)
 }
 
 .calc_Sgen <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1,
-                       n_g, p_LHG, SRRpars, popt = 1, SMSY, opt = TRUE) {
+                       n_g, p_LHG, SRRpars, popt = 1, SMSY, nyears, opt = TRUE) {
 
   # Equilibrium quantities at .F
   Sgen_ref <- .calc_eq(
@@ -166,15 +168,18 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   if (Sgen_ref$Egg <= 0) {
     Sgen_plusone <- 0
   } else {
-    nyears <- maxage <- length(fec)
+    maxage <- length(fec)
+    if (missing(nyears)) nyears <- maxage
 
-    Njuv <- Spawner <- array(0, c(maxage, nyears, n_g))
+    Njuv <- Return <- Spawner <- array(0, c(maxage, nyears, n_g))
     Egg <- rep(0, nyears)
     Njuv[, 1, ] <- Sgen_ref$Njuv
 
     for (y in 1:nyears) {
-      Spawner[, y, ] <- Njuv[, y, ] * p_mature * s_enroute # sum across LHG
-      Egg[y] <- sum(Spawner[, y, ] * gamma * p_female * fec)
+      Return[, y, ] <- Njuv[, y, ] * p_mature * s_enroute
+      Spawner[, y, ] <- Return[, y, ] * s_enroute
+
+      Egg[y] <- sum(Spawner[, y, ] * gamma * p_female * fec) # sum across LHG
 
       if (y < nyears) {
         Smolt <- calc_smolt(
@@ -194,7 +199,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   if (opt) {
     return(Sgen_plusone - popt * SMSY)
   } else {
-    return(Sgen_ref)
+    return(list(Sgen = Sgen_ref, proj = list(Njuv = Njuv, Return = Return, Spawner = Spawner, Egg = Egg)))
   }
 }
 

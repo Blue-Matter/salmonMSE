@@ -19,7 +19,9 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
                         fec = c(0, 1500, 3000, 3200, 3500),
                         s_enroute = 1,
                         p_mature = c(0, 0.1, 0.2, 0.3, 1),
-                        maximize = c("MER", "MSY")) {
+                        maximize = c("MER", "MSY"),
+                        Sgen_nyears = maxage,
+                        Sgen_output = FALSE) {
 
   maximize <- match.arg(maximize)
 
@@ -71,7 +73,8 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
 
   ref["Sgen"] <- salmonMSE:::calc_Sgen(
     Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
+    s_enroute, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"],
+    nyears = Sgen_nyears
   )
 
   ref["Catch/Return"] <- ref["KT_MSY"]/ref["Return_MSY"]
@@ -84,11 +87,13 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
     Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
     s_enroute, SRRpars = SRRpars, maximize = "MSY"
   )
-
-  ref_MSY["Sgen"] <- salmonMSE:::calc_Sgen(
+  Sgen <- salmonMSE:::calc_Sgen(
     Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute, SRRpars = SRRpars, SMSY = ref_MSY["Spawners_MSY"]
+    s_enroute, SRRpars = SRRpars, SMSY = ref_MSY["Spawners_MSY"],
+    nyears = Sgen_nyears
   )
+
+  ref_MSY["Sgen"] <- Sgen
 
   ref_MSY["Catch/Return"] <- ref_MSY["KT_MSY"]/ref_MSY["Return_MSY"]
 
@@ -138,17 +143,25 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
   #  structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
   #})
 
-  list(`salmonMSE MER` = ref_salmonMSE,
-       `salmonMSE MSY` = MSY_salmonMSE,
-       #`lambert adjusted` = ref_lambert2,
-       `lambert naive` = ref_lambert)
+  output <- list(
+    `salmonMSE MER` = ref_salmonMSE,
+    `salmonMSE MSY` = MSY_salmonMSE,
+    #`lambert adjusted` = ref_lambert2,
+    `lambert naive` = ref_lambert
+  )
+  if (Sgen_output) {
+    attr(output, "Sgen") <- attr(Sgen, "Sgen")
+    attr(output, "Sgen_proj") <- attr(Sgen, "proj")
+  }
+
+  output
 
 }
 
 
 #### Simple life cycle ----
 maxage <- 5
-compare_ref(
+output <- compare_ref(
   alpha = 3,
   Smax = 1000,
   maxage = 5,
@@ -159,14 +172,19 @@ compare_ref(
   Mjuv = c(-log(0.01), 0, 0, 0, 0), # SAR = 0.01
   fec = c(0, 0, 0, 0, 1),
   s_enroute = 1,
-  p_mature = c(0, 0, 0, 0, 1)
+  p_mature = c(0, 0, 0, 0, 1),
+  Sgen_output = TRUE,
+  Sgen_nyears = 1 # Try Sgen with 1 year projection, this is closer to the lambert calculation
 )
+output[1:3]
+attr(output, "Sgen")
+attr(output, "Sgen_proj")
 
 #### Age-specific M and maturity ----
 # There's no difference in spawners among ages
 # No difference between Lambert and numerical MSY, difference in Sgen
 maxage <- 5
-compare_ref(
+output <- compare_ref(
   alpha = 3,
   Smax = 1000,
   maxage = 5,
@@ -177,8 +195,13 @@ compare_ref(
   Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
   fec = rep(1, maxage),
   s_enroute = 1,
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  Sgen_output = TRUE,
+  Sgen_nyears = 1 # Try Sgen with 1 year projection, this is closer to the lambert calculation
 )
+output[1:3]
+attr(output, "Sgen")
+attr(output, "Sgen_proj")
 
 #### Age-specific M and maturity (and fecundity) ----
 # Older spawners are more fecund
@@ -195,7 +218,8 @@ compare_ref(
   Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
   fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  Sgen_nyears = 1
 )
 
 #### Age-specific M and maturity (and fecundity) and partial vulnerability of return ----
@@ -213,7 +237,8 @@ compare_ref(
   Mjuv = c(1, 0.3, 0.2, 0.1, 0.1),
   fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  Sgen_nyears = 1
 )
 
 # Set fecundity = 1 for all ages
@@ -230,5 +255,6 @@ compare_ref(
   fec = rep(1, maxage),
   #fec = c(0, 1000, 2000, 3000, 3500),
   s_enroute = 1,
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  Sgen_nyears = 1
 )
