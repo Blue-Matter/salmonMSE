@@ -1,0 +1,332 @@
+---
+title: "Reference points"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reference points}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(dplyr)
+```
+
+# Introduction
+
+Reference points for salmon typically use the Ricker stock function that predict the return from the number of spawners.
+
+The Ricker function is
+
+$$
+R = a\times S\exp(-bS)
+$$
+
+where $R$ is the return and $S$ is the spawners. 
+Parameters $a$ is in units of returns/spawner and $b$ is in units of reciprocal spawners.
+
+Let $S_\textrm{MSY}$ be the spawner abundance that maximizes catch $R-S$, which can be obtained by maximizing the function:
+
+$$
+R - S = a\times S\exp(-b S) - S
+$$
+
+The implicit solution, where $\alpha = \log(a)$, satisfies
+
+$$
+(1 - bS_\textrm{MSY})\exp(\alpha - bS_\textrm{MSY}) = 1
+$$
+
+and can be solved numerically ([Scheuerell 2016](https://doi.org/10.7717/peerj.1623)).
+
+$S_\textrm{MSY}$ is also the spawner abundance that maximizes excess returns above the one-to-one line.
+
+The harvest rate corresponding to $S_\textrm{MSY}$ is
+
+$$
+U_\textrm{MSY} = bS_\textrm{MSY}
+$$
+
+The quantity $S_\textrm{gen}$ is the spawner abundance that would reach the spawner abundance at MSY after one generation without fishing ([Holt et al. 2009](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2009/2009_058-eng.htm)), and satisfies the equation:
+
+$$
+S_\textrm{MSY}=a\times S_\textrm{gen}\exp(-b\times S_\textrm{gen})
+$$
+
+There are several implicit assumptions associated with these reference points:
+
+1. The stock-recruit relationship predicts the number of returns, not juveniles
+2. All returns are the same age
+3. All exploitation occurs on mature individuals
+4. All returns are equally vulnerable to the fishery
+5. All spawners are equally fecund
+
+# Reference points in salmonMSE
+
+salmonMSE is an age-structured model that can relax the assumptions from the introduction:
+
+1. The stock-recruit relationship predicts the number of outmigrating juveniles, not the return, from the egg production
+2. The calendar-year return can comprise of multiple brood years
+3. Exploitation can occur on both immature and mature individuals
+4. Fish vulnerability can vary by age
+5. Older, larger spawners can be more fecund than younger fish
+
+Reference points are calculated with more structural complexity compared to the simple approach. 
+However, comparisons below indicate the many situations where the salmonMSE reference points overlap with the typical salmon approach.
+
+## Calculations for MSY
+
+Given exploitation in both the immature and mature component of the population, the juvenile survival of an outmigrating individual ("smolt") to age $a$ is
+
+$$
+\ell_a = \prod_{j=1}^{a-1}\exp(-[M_j+v^\textrm{PT}_jF^\textrm{PT}])(1 - p_j)
+$$
+where $M$ is natural mortality, $v^\textrm{PT}$ is vulnerability at age in the preterminal fishery, $F^\textrm{PT}$ is fishing mortality in the preterminal fishery, and $p$ is maturity.
+
+The corresponding return per juvenile $r_a = \ell_a \exp(-v^\textrm{PT}_aF^\textrm{PT}])(1 - p_a)$.
+
+The corresponding escapement per juvenile is $s_a = r_a \exp(-v^\textrm{T}_aF^\textrm{T}])$, with $v^\textrm{T}$ is vulnerability at age in the fishery and $F^\textrm{T}$ is fishing mortality in the terminal fishery.
+
+The corresponding egg production per juvenile $\phi = \sum_a s_a f_a p^\textrm{female}$.
+
+The equilibrium juvenile production $J$ is calculated from $\phi$ as:
+
+$J = \log(a'\phi)/(b'\phi)$
+
+where $a'$ is in units of juvenile per egg and $b'$ is in units of per egg.
+
+The total return is $\sum_a J \times r_a$ and total spawners is $\sum_a J \times s_a$.
+
+The maximum sustainable yield state variables are values obtained from maximizing the total catch:
+
+$$
+C = \sum_a J\times\ell_a\times(1 - \exp(v^\textrm{PT}_aF^\textrm{PT})) + \sum_a J\times r_a\times(1 - \exp(v^\textrm{T}_aF^\textrm{T}))
+$$
+
+The optimization calculates the corresponding fishery effort $E_\textrm{MSY}$. 
+The user needs to specify the relative effort to the preterminal and terminal fisheries ($e_1$ and $e_2$), with $F^\textrm{PT,MSY} = e_1 \times E_\textrm{MSY}$ and $F^\textrm{T,MSY} = e_2 \times E_\textrm{MSY}$.
+
+An alternative optimization scheme maximizes excess recruitment ($R - S$):
+
+$$
+R - S = \sum_a J \times r_a - \sum_a J \times s_a
+$$
+
+## Calculations for Sgen
+
+Sgen is calculated by a subsequent optimization algorithm to search for the fishery effort $E_\textrm{gen}$ that generates an equilibrium distributions at age, then projects the population for $n_\textrm{gen}$ years with no fishing, such that the spawning abundance is $S_\textrm{MSY}$ at the end of the projection.
+
+If there is partial maturity at several age classes, the number of years for the projection is unclear. 
+The population can recover to $S_\textrm{MSY}$ with either increased survival, increased juvenile production, or both.
+Currently, salmonMSE will use the first age of maturity, e.g., typically two years for Chinook salmon, for the projection duration.
+Comparisons in the next section indicate that Sgen between the two methods frequently agree using this projection duration.
+
+# Comparison between methods
+
+Currently, salmonMSE parameterizes the operating model with $a$ (returns/spawner), $\phi$ (juveniles/egg) and $Smax = 1/b'$ (eggs). 
+
+The following function facilitates comparison of the salmonMSE and Ricker SRR reference points in the various examples. 
+Some conversion is also needed to convert between $b'$ (1/eggs) to $b$ (1/spawners).
+
+In summary, if the age-structured reference point calculation only includes terminal exploitation, then the reference points are equivalent with values from the Ricker model unless both fecundity and vulnerability vary with age.
+
+```{r}
+compare_ref <- function(a = 3, # Units of recruits/spawner
+                        b = 1/1000, # Units of reciprocal spawners
+                        maxage = 5,
+                        rel_F = c(0, 1), # e_1 and e_2
+                        p_female = 1,
+                        vulPT = rep(0, maxage),
+                        vulT = c(0, 0, 0.2, 0.5, 1),
+                        M = c(1, 0.8, 0.6, 0.4, 0.2),
+                        fec = c(0, 1500, 3000, 3200, 3500),
+                        p_mature = c(0, 0.1, 0.2, 0.3, 1)) {
+  
+  require(salmonMSE)
+
+  # Calculate eggs per smolt
+  phi <- salmonMSE:::calc_phi(
+    Mjuv = M,
+    p_mature = p_mature,
+    p_female = p_female,
+    fec = fec,
+    s_enroute = 1
+  )
+
+  # To convert Smax from units of spawners to eggs:
+  # 1. Calculate unfished spawners (from Ricker SRR, set R = S --> S0 = exp(1/Smax)/a)
+  # 2. Calculate spawners per juvenile (spro)
+  # 3. Calculate smolt per egg (phi)
+  # 4. unfished eggs (eo) = unfished spawners * juvenile per spawner * egg per smolt
+  # 5. Smax_eggs = log(a) / unfished eggs
+  spro <- salmonMSE:::calc_phi(
+    Mjuv = M,
+    p_mature = p_mature,
+    p_female = p_female,
+    fec = fec,
+    s_enroute = 1,
+    output = "spawner"
+  )
+  
+  Smax <- 1/b
+  so <- Smax * log(a)
+  eo <- so / spro * phi
+  beta_eggs <- log(a)/eo
+  Smax_eggs <- 1/beta_eggs
+
+  SRRpars <- data.frame(
+    kappa = a,
+    Smax = Smax_eggs,
+    phi = phi,
+    SRrel = "Ricker"
+  )
+
+  # salmonMSE ref
+  ref <- calc_MSY(
+    M, fec, p_female, rel_F, vulPT, vulT, p_mature,
+    s_enroute = 1, SRRpars = SRRpars
+  )
+
+  ref["Sgen"] <- calc_Sgen(
+    M, fec, p_female, rel_F, vulPT, vulT, p_mature,
+    s_enroute = 1, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
+  )
+  ref["Catch/Return"] <- ref["KT_MSY"]/ref["Return_MSY"]
+
+  ref_salmonMSE <- structure(
+    ref[c("UPT_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")], 
+    names = c("UMSY (preterminal)", "UMSY (terminal)", "Terminal Catch/Return", "SMSY", "Sgen")
+  )
+  
+  # Ricker SRR calcs
+  ref_Ricker <- local({
+    umsy <- calc_Umsy_Ricker(log(a))
+    smsy <- calc_Smsy_Ricker(log(a), b)
+    sgen <- calc_Sgen_Ricker(log(a), b)
+    structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
+  })
+  
+  output <- list(
+    salmonMSE = ref_salmonMSE,
+    Ricker = ref_Ricker
+  )
+  return(output)
+}
+```
+
+## Situation 1 - single age of maturity
+
+Situation 1 specifies the salmonMSE (age-structured) model with the simple assumptions identified in the introduction. 
+The salmonMSE and Ricker (stock-recruit only) reference points are identical.
+
+```{r}
+compare_ref(
+  a = 3,
+  b = 1/1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0, 0, 0, 1),
+  M = c(-log(0.01), 0, 0, 0, 0), # SAR = 0.01
+  fec = c(0, 0, 0, 0, 1),
+  p_mature = c(0, 0, 0, 0, 1)
+)
+```
+
+## Situation 2 - partial age maturity, equal vulnerability
+
+Situation 2 specifies the salmonMSE (age-structured) model with age-specific juvenile mortality and maturity. 
+All spawners are identical with fecundity = 1 and fully vulnerable to the fishery.
+
+The salmonMSE and Ricker-only reference points are identical.
+
+```{r}
+compare_ref(
+  a = 3,
+  b = 1/1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = rep(1, 5),
+  M = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = rep(1, 5),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+```
+
+## Situation 3 - partial age maturity, varying vulnerability by age
+
+Situation 3 is the same as 2 except with age-varying fishery vulnerability.
+
+The salmonMSE and Ricker-only reference points are identical.
+
+One nuance is how to report the exploitation rate, since it varies by age due to differential vulnerability. 
+UMSY reported in salmonMSE is the maximum value experienced by an age class (typically the oldest), but the ratio of total catch to total return may be more appropriate metric.
+
+```{r}
+compare_ref(
+  a = 3,
+  b = 1/1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  M = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = rep(1, 5),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+```
+
+
+## Situation 4 - partial age maturity, varying fecundity and vulnerability by age
+
+Situation 4 is the same as 3 except with age-varying fecundity.
+
+The salmonMSE and Ricker-only reference points are **not** identical. 
+
+Preferential vulnerability by the fishery for return which are not identical in fecundity are additional complexities not implemented in Ricker-only reference points.
+
+```{r}
+compare_ref(
+  a = 3,
+  b = 1/1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  M = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+```
+
+## Situation 5 - partial age maturity, with immature exploitation
+
+Reference points can also be calculated by considering preterminal exploitation, e.g., [Hankin and Healey 1986](https://doi.org/10.1139/f86-219), although this is not common practice.
+
+Preterminal mortality is not explicitly modeled in Ricker-only reference points.
+
+Thus, salmonMSE and Ricker-only reference points are **not** identical.
+
+```{r}
+compare_ref(
+  a = 3,
+  b = 1/1000,
+  maxage = 5,
+  rel_F = c(1, 1),
+  p_female = 1,
+  vulPT = c(0, 0.1, 0.2, 0.3, 1),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  M = c(1, 0.3, 0.2, 0.1, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+)
+```

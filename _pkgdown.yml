@@ -17,6 +17,8 @@ navbar:
         href: articles/example-multi.html
       - text: Dynamics equations
         href: articles/equations.html
+      - text: Reference points
+        href: articles/ref.html
       - text: Conditioning model
         href: articles/conditioning.html
       - text: Implementation
