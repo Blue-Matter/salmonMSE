@@ -9,7 +9,8 @@ articles:
   example: example.html
   introduction: introduction.html
   model: model.html
-last_built: 2025-07-24T19:42Z
+  ref: ref.html
+last_built: 2025-07-31T19:39Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles
