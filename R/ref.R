@@ -1,15 +1,23 @@
 
 #' Reference points
 #'
+#' @description
 #' Calculate MSY and Sgen reference points for the operating model. Uses the biological parameters (maturity, natural mortality)
 #' in the last year of the projection.
+#' - `calc_MSY()` calculates the MSY reference points from a set of biological and fishery parameters
+#' - `calc_Sgen()` calculates the Sgen, the spawner abundance that would reach the spawner abundance at MSY after one generation without fishing
+#' - `calc_ref()` is a wrapper function that calculates MSY and Sgen for an operating model
 #'
 #' @param SOM An object of class [salmonMSE::SOM-class]
 #' @param rel_F Numeric length 2, indicates the relative effort in the preterminal and terminal fisheries, with a maximum value of 1.
-#' For example, `c(1, 0)` indicates a yield calculation for only the preterminal fishery. By default, uses the ratio of the harvest rates in the operating model.
+#' The default is `c(0, 1)` which indicates a yield calculation with only the terminal fishery.
 #' @param check Logical, whether to check the SOM object using [check_SOM()]
-#' @param maximize Character, whether the MSY calculation is the optimum that maximizes catch (`"MSY"`) or excess recruitment (`"MER"`)
-#' @returns Matrix of various state variables (catch, exploitation rate, egg production, spawners) at MSY and Sgen by simulation
+#' @param maximize Character, whether the MSY calculation is the optimum that maximizes catch (`"MSY"`) or excess recruitment (`"MER"`). The two
+#' methods should be equivalent when `rel_F = c(0, 1)`.
+#' @returns
+#' - `calc_MSY` returns a vector of various state variables (catch, exploitation rate, egg production, spawners) at MSY
+#' - `calc_Sgen` returns a numeric
+#' - `calc_ref` returns a list by stock, each containing a matrix of MSY state variables and Sgen by simulation
 #' @importFrom stats optimize
 #' @export
 calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
@@ -21,14 +29,8 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
 
   y <- SOM@nyears + SOM@proyears
 
-  if (missing(rel_F)) {
-    rel_F_s <- lapply(1:ns, function(s) {
-      x <- c(SOM@Harvest[[s]]@u_preterminal, SOM@Harvest[[s]]@u_terminal)
-      x/max(x)
-    })
-  } else {
-    rel_F_s <- lapply(1:ns, function(...) rel_F)
-  }
+  if (missing(rel_F)) rel_F <- c(0, 1)
+  rel_F_s <- lapply(1:ns, function(...) rel_F)
 
   ref_s <- lapply(1:ns, function(s) {
 
@@ -74,15 +76,27 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
   return(ref_s)
 }
 
+#' @rdname calc_ref
+#' @param Mjuv Numeric `maxage` for juvenile natural mortality. Can be a matrix `[maxage, n_g]`.
+#' @param fec Numeric `maxage` for fecundity. Can be a matrix `[maxage, n_g]`.
+#' @param p_female Numeric for proportion female spawners
+#' @param vulPT Numeric `maxage` for preterminal vulnerability at age
+#' @param vulT Numeric `maxage` for terminal vulnerability at age
+#' @param p_mature Numeric `maxage` for maturity proportions at age. Can be a matrix `[maxage, n_g]`.
+#' @param s_enroute Numeric for en-route survival of escapement to spawning grounds
+#' @param n_g Integer, number of life history groups within a cohort
+#' @param p_LHG Numeric `n_g` for proportion of the total egg production assigned to each life history group within a cohort
+#' @param SRRpars Data frame, one row, that contains the stock recruit parameters that predicts density-dependent survival at the egg-smolt life stage
+#' @param F_search Numeric, length 2 for the range of F values to search for the instantaneous fishing mortality that produces MSY
+#' @export
 calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
                      SRRpars, maximize = c("MSY", "MER"), F_search = c(1e-8, 5)) {
   maximize <- match.arg(maximize)
 
-  if (n_g == 1) {
-    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
-    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
-    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
-  }
+  if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, length(Mjuv), n_g)
+  if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, length(p_mature), n_g)
+  if (!is.matrix(fec)) fec <- matrix(fec, length(fec), n_g)
+
   if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
 
   opt <- optimize(
@@ -113,23 +127,26 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
   if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
 
   return(ref)
-
 }
 
+#' @rdname calc_ref
+#' @param SMSY Numeric, spawning abundance at MSY
+#' @param nyears Integer, number of years to project the population with no fishing to reach `SMSY`. Default
+#' is the minimum age of maturity.
+#' @export
 calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
-                      SRRpars, SMSY, F_range = c(1e-8, 100), nyears) {
+                      SRRpars, SMSY, F_search = c(1e-8, 100), nyears) {
 
-  if (n_g == 1) {
-    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
-    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
-    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
-  }
+  if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, length(Mjuv), n_g)
+  if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, length(p_mature), n_g)
+  if (!is.matrix(fec)) fec <- matrix(fec, length(fec), n_g)
+
   if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
-  if (missing(nyears)) nyears <- nrow(Mjuv)
+  if (missing(nyears)) nyears <- which(rowSums(p_mature) > 0)[1]
 
   opt_Sgen <- try(
     uniroot(
-      .calc_Sgen, interval = F_range,
+      .calc_Sgen, interval = F_search,
       Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
       vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
       n_g = n_g, p_LHG = p_LHG,
