@@ -37,7 +37,7 @@ compare_ref <- function(alpha = 3, # Units of recruits/spawner
   )
 
   # To convert Smax from units of spawners to eggs:
-  # 1. Calculate unfished spawners (from Ricker SRR, set R = S --> S0 = exp(1/Smax)/alpha)
+  # 1. Calculate unfished spawners (from Ricker SRR, set R = S --> S0 = Smax * log(alpha)
   # 2. Calculate spawners per smolt (spro)
   # 3. Calculate egg per smolt (phi)
   # 4. unfished eggs (eo) = unfished spawners * smolt per spawner * egg per smolt
@@ -258,3 +258,4 @@ compare_ref(
   p_mature = c(0, 0.1, 0.2, 0.3, 1),
   Sgen_nyears = 1
 )
+
