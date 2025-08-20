@@ -153,10 +153,33 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     )
   }
 
-  NOS <- spawners$NOS
-  HOS <- spawners$HOS # Includes local and strays!
+
+  # Add habitat density-dependence on spawning sites
+  if (habitat_args$use_habitat) {
+
+    Habitat <- habitat_args$Habitat
+
+    # By parental life cycle group x age
+    NOS <- calc_SRR(
+      spawners$NOS, sum(spawners$NOS, spawners$HOS),
+      p = Habitat@prespawn_prod, capacity = Habitat@prespawn_capacity,
+      type = Habitat@prespawn_rel
+    )
+
+    # By parental release strategy x age
+    HOS <- calc_SRR(
+      spawners$HOS, sum(spawners$NOS, spawners$HOS),
+      p = Habitat@prespawn_prod, capacity = Habitat@prespawn_capacity,
+      type = Habitat@prespawn_rel
+    )
+
+  } else {
+    NOS <- spawners$NOS
+    HOS <- spawners$HOS # Includes local and strays!
+  }
+
   if (sum(HOS)) {
-    HOS_effective <- spawners$HOS * hatchery_args$gamma
+    HOS_effective <- HOS * hatchery_args$gamma
   } else {
     HOS_effective <- array(0, dim(HOS))
   }

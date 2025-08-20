@@ -442,6 +442,10 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
       Bio <- check_numeric2nsim(Bio, "phi", nsim)
     } else {
+      Habitat <- check_numeric(Habitat, "prespawn_rel", default = "BH")
+      Habitat <- check_numeric(Habitat, "prespawn_prod", default = 1)
+      Habitat <- check_numeric(Habitat, "prespawn_capacity", default = Inf)
+
       Habitat <- check_numeric(Habitat, "egg_rel", default = "BH")
       Habitat <- check_numeric(Habitat, "egg_prod", default = 1)
       Habitat <- check_numeric(Habitat, "egg_capacity", default = Inf)

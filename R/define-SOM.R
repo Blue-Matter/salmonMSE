@@ -77,6 +77,9 @@ setClass(
   slots = c(
     Name = "character",
     use_habitat = "logical",
+    prespawn_rel = "character",
+    prespawn_prod = "numeric",
+    prespawn_capacity = "numeric",
     egg_rel = "character",
     egg_prod = "numeric",
     egg_capacity = "numeric",
