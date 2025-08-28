@@ -14,10 +14,10 @@
 #' determines the proportions of the donor escapement that will move to the recipient population.
 #' @param x Integer, simulation number from openMSE
 #' @param y Integer, simulation year (including historical years)
-#' @param output Character, whether to predic the natural origin or hatchery origin smolt production
+#' @param output Character, whether to predict the natural origin or hatchery origin smolt production
 #' @param s_enroute Numeric, en route survival of the escapement to the spawning grounds
 #' @param p_female Numeric, proportion female for calculating the egg production.
-#' @param fec Vector `[maxage]`. The fecundity at age schedule of spawners
+#' @param fec Array `[nsim, maxage, nyears+proyears]`. The fecundity at age schedule of spawners
 #' @param SRRpars Data frame containing stock recruit parameters for natural smolt production from egg production.
 #' Column names include: SRrel, kappa, capacity, Smax, phi
 #' @param hatchery_args Named list containing various arguments controlling broodtake and hatchery production. See details below.
@@ -34,7 +34,7 @@
 #' - `egg_target` Numeric, target egg production for hatchery. Set to zero for no hatchery production.
 #' - `ptarget_NOB` Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
 #' - `pmax_NOB` Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
-#' - `fec_brood` Vector `[maxage]`. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
+#' - `fec_brood` Array `[nsim, maxage, nyears+proyears]`. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
 #' - `s_yearling` Numeric, the survival of eggs to the smolt life stage (for yearling release)
 #' - `s_subyearling` Numeric. the survival of eggs to subyearling life stage (for subyearling release)
 #' - `p_yearling` Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
@@ -55,6 +55,11 @@
 smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("natural", "hatchery"),
                        s_enroute, p_female, fec, SRRpars, # Spawning (natural production)
                        hatchery_args, fitness_args, habitat_args, stray_args, s, g, prop_LHG, r) {
+
+  xx <- max(x, 1)
+  yy <- max(floor(y/2), 1)
+  fec_t <- fec[xx, , yy]
+  if (!is.null(hatchery_args$fec_brood)) fec_brood_t <- hatchery_args$fec_brood[xx, , yy]
 
   output <- match.arg(output)
   Nage_NOS[is.na(Nage_NOS)] <- 0
@@ -97,7 +102,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       hatchery_args$phatchery,
       hatchery_args$egg_target,
       hatchery_args$p_female,
-      hatchery_args$fec_brood,
+      fec_brood_t,
       hatchery_args$s_prespawn,
       hatchery_args$m
     )
@@ -185,12 +190,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   }
 
   # Spawners weighted by fecundity
-  pHOSeff <- sum(fec * HOS_effective)/sum(fec * NOS, fec * HOS_effective)
-  pHOScensus <- sum(fec * HOS)/sum(fec * NOS, fec * HOS)
+  pHOSeff <- sum(fec_t * HOS_effective)/sum(fec_t * NOS, fec_t * HOS_effective)
+  pHOScensus <- sum(fec_t * HOS)/sum(fec_t * NOS, fec_t * HOS)
 
   # Natural egg production in the absence of fitness effects by life cycle group (NOS) and release strategy (HOS)
-  Egg_NOS <- colSums(NOS * p_female * fec)
-  Egg_HOS <- colSums(HOS_effective * p_female * fec)
+  Egg_NOS <- colSums(NOS * p_female * fec_t)
+  Egg_HOS <- colSums(HOS_effective * p_female * fec_t)
 
   total_egg <- sum(Egg_NOS, Egg_HOS) # numeric
   if (output == "natural" && !total_egg) return(0) # Perr_y = 0
@@ -225,7 +230,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       zbar <- calc_zbar(
         rowSums(NOS), rowSums(HOS_effective), rowSums(broodtake$NOB),
         rowSums(broodtake$HOB_marked + broodtake$HOB_unmarked) + broodtake$HOB_import,
-        fec, hatchery_args$fec_brood, zbar_brood,
+        fec_t, fec_brood_t, zbar_brood,
         fitness_args$fitness_variance, fitness_args$theta, fitness_args$phenotype_variance, fitness_args$heritability[x]
       )
     } else {
@@ -250,7 +255,6 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   }
 
   # Egg production from egg output
-  xx <- max(x, 1)
   if (habitat_args$use_habitat) {
     t <- max(1, 0.5 * (y - habitat_args$nyears_om))
     Habitat <- habitat_args$Habitat
@@ -391,7 +395,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
   # Predicted smolts from historical SRR parameters and openMSE setup
   # if there were no hatchery production, habitat improvement, enroute mortality, or multiple LHG
-  Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec)
+  Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec_t)
 
   if (habitat_args$use_habitat) {
     smolt_NOS_SRR <- 1
@@ -505,6 +509,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 #' @param r Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if `output = "hatchery"`)
 makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
                           p_stray = NULL,
+                          maxage,
                           output = c("natural", "hatchery"), s_enroute,
                           p_female, fec, SRRpars,  # Spawning (natural production)
                           hatchery_args, fitness_args, habitat_args, stray_args, g, prop_LHG, r) {
@@ -532,7 +537,6 @@ makeRel_smolt <- function(p_smolt = 1, s = 1, p_natural, p_hatchery = NULL,
   }
   if (output == "hatchery") formals(.smolt_func)$r <- r
 
-  maxage <- length(fec)
   N_natural <- matrix(1, maxage, length(p_natural))
 
   if (!is.null(p_hatchery)) { # Need p_hatchery to use p_stray

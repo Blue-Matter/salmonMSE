@@ -53,7 +53,7 @@ to the first year and weighted by life history groups. Not used if habitat compo
 Natural mortality of immature natural origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
 
-\item{\code{fec}}{Vector by age (length \code{maxage}). Female fecundity of natural origin spawners.}
+\item{\code{fec}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. Female fecundity of natural origin spawners.}
 
 \item{\code{p_female}}{Numeric. The proportion of females in the spawning population. Default is 0.5.}
 

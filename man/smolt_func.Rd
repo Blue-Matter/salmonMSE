@@ -32,6 +32,7 @@ makeRel_smolt(
   p_natural,
   p_hatchery = NULL,
   p_stray = NULL,
+  maxage,
   output = c("natural", "hatchery"),
   s_enroute,
   p_female,
@@ -60,7 +61,7 @@ determines the proportions of the donor escapement that will move to the recipie
 
 \item{y}{Integer, simulation year (including historical years)}
 
-\item{output}{Character, whether to predic the natural origin or hatchery origin smolt production}
+\item{output}{Character, whether to predict the natural origin or hatchery origin smolt production}
 
 \item{s_enroute}{Numeric, en route survival of the escapement to the spawning grounds}
 

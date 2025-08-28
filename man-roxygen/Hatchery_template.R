@@ -38,7 +38,7 @@
 #'  ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., `premove_HOS * m`.
 #'  The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
 #'  imperfect implementation of weir removal. Default is zero.
-#' @slot fec_brood Vector of length `maxage`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
+#' @slot fec_brood Vector of length `maxage` or an array with dimension `[nsim, maxage, nyears+proyears]`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
 #' @slot fitness_type Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
 #' @slot rel_loss Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages which reduces survival. Theoretically, the three values should sum to 1. Alternatively,

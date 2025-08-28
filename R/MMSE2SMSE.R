@@ -247,7 +247,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       #PNI[, s, ] <- (h2 + (1 - h2 + fitness_variance) * pNOB[, s, ])/(h2 + (1 - h2 + fitness_variance) * (pHOS_effective[, s, ] + pNOB[, s, ]))
 
-      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
+      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec[, , SOM@nyears + seq(1, SOM@proyears)], SOM@Hatchery[[s]]@gamma)
 
       if (n_r > 1) {
         Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
@@ -385,13 +385,26 @@ get_salmonMSE_agevar <- function(d, var = "Egg_NOS", s = 1, FUN = function(x) su
     reshape2::acast(list("x", "a", "t"), value.var = "value")
 }
 
+
+#' Proportion wild spawners
+#'
+#' @description Calculate the proportion of wild spawners from a time series of spawners
+#' - `calc_pwild()` is the simple calculation based on the proportion of hatchery spawners
+#' - `calc_pwild_age()` performs the calculation weighted by age class fecundity
+#'
+#' @param NOS_a Array `[nsim, maxage, years]` for natural spawners
+#' @param HOS_a Array `[nsim, maxage, years]` for hatchery spawners
+#' @param fec Array `[nsim, maxage, years]` for age class fecundity
+#' @param gamma Numeric, reduced reproductive success of hatchery spawners
+#' @param pHOS_cur Numeric, proportion of hatchery spawners in current generation
+#' @param pHOS_prev Numeric, proportion of hatchery spawners in previous generation
+#' @return `calc_pwild_age()` a matrix of pWILD by simulation and year. `calc_pwild()` returns a numeric
+#' @keywords internal
 calc_pwild_age <- function(NOS_a, HOS_a, fec, gamma) {
 
   nsim <- dim(NOS_a)[1]
   maxage <- dim(NOS_a)[2]
   proyears <- dim(NOS_a)[3]
-
-  fec <- matrix(fec, nsim, maxage, byrow = TRUE)
 
   prob <- array(NA_real_, c(nsim, proyears))
 
@@ -408,8 +421,8 @@ calc_pwild_age <- function(NOS_a, HOS_a, fec, gamma) {
 
         b <- y - a # brood_year
         if (b > 0) {
-          pNOS_b[] <- NOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
-          pHOS_b[] <- HOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
+          pNOS_b[] <- NOS_a[, , b]/rowSums(fec[, , b] * NOS_a[, , b] + fec[, , b] * HOS_a[, , b])
+          pHOS_b[] <- HOS_a[, , b]/rowSums(fec[, , b] * NOS_a[, , b] + fec[, , b] * HOS_a[, , b])
         }
         pnatural_b[, a] <- rowSums(pNOS_b, na.rm = TRUE)^2
         phetero_b[, a] <- 2 * gamma * rowSums(pNOS_b, na.rm = TRUE) * rowSums(pHOS_b, na.rm = TRUE)

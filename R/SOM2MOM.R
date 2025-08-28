@@ -301,7 +301,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
         Rel_smolt_g[[g]] <- makeRel_smolt(
           p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
           p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
-          output = "natural", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
+          output = "natural", maxage = maxage_s[s],
+          s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
           SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
           stray_args = stray_args,
@@ -326,7 +327,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           Rel_hatchrel[[r]] <- makeRel_smolt(
             p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
             p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
-            output = "hatchery", s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
+            output = "hatchery", maxage = maxage_s[s],
+            s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
             SRRpars = SRRpars,
             hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
             stray_args = stray_args,
@@ -404,7 +406,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, years)
     Bio <- check_numeric(Bio, "p_female", default = 0.5)
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
-    Bio <- check_maxage(Bio, "fec", maxage)
+    Bio <- check_maxage2array(Bio, "fec", maxage, nsim, years)
 
     ### Check Habitat (initial) ----
     Habitat <- SOM@Habitat[[s]]
@@ -433,7 +435,7 @@ check_SOM <- function(SOM, silent = FALSE) {
             Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage, Bio@n_g),
             p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
             p_female = Bio@p_female,
-            fec = matrix(Bio@fec, Bio@maxage, Bio@n_g),
+            fec = matrix(Bio@fec[x, , 1], Bio@maxage, Bio@n_g),
             s_enroute = Bio@s_enroute,
             n_g = Bio@n_g,
             p_LHG = Bio@p_LHG
@@ -509,7 +511,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "ptarget_NOB", default = 0.9)
 
       if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
-      Hatchery <- check_maxage(Hatchery, "fec_brood", maxage)
+      Hatchery <- check_maxage2array(Hatchery, "fec_brood", maxage, nsim, years)
 
       Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
 
