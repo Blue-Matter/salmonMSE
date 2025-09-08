@@ -49,8 +49,8 @@ CM_int <- function(p, d) {
   }
 
   epro <- d$ssum * sum(lo * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
-  spro <- d$ssum * sum(lo * d$bmatt)                             # unfished spawners per smolt
-  sprhist <- d$ssum * sum(lhist * exp(-vulPT * d$finitPT) * d$bmatt * exp(vulT * d$finitT))   # historcial spawners per recruit (pr)
+  spro <- d$ssum * sum(lo * d$bmatt)                             # unfished female spawner per smolt
+  sprhist <- d$ssum * sum(lhist * exp(-vulPT * d$finitPT) * d$bmatt * exp(-vulT * d$finitT))   # historcial spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
   rhist <- spawnhist/sprhist # historical recruitment
