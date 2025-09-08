@@ -81,17 +81,30 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     # Exploitation rate from kept + dead discards (DD)
     vulPT <- array(SOM@Harvest[[s]]@vulPT, c(SOM@nsim, nage, length(t1)))
     DDPT_NOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_NOS[, s, ]
-    FPT_NOS <- MMSE@FM[, p_NOS_imm, f, mp, t1]
-    FaPT_NOS <- sapply(1:length(t1), function(t) vulPT[, , t] * FPT_NOS[, t], simplify = "array")
-    ExPT_NOS[, s, , ] <- (1 - exp(-FaPT_NOS)) * Njuv_NOS[, s, , ]/Njuv_NOS[, s, , ]
+    ExPT_NOS[, s, , ] <- local({
+      Ka_NOS <- sapply(1:length(p_NOS_imm), function(i) { # sim x age x year
+        FM <- MMSE@FM[, p_NOS_imm[i], f, mp, t1]
+        Fa <- sapply(1:length(t1), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+        N <- apply(MMSE@N[, p_NOS_imm[i], a_imm, mp, t1, ], 1:3, sum)
+        (1 - exp(-Fa)) * N
+      }, simplify = "array") %>%
+        apply(1:3, sum)
+      Ka_NOS/Njuv_NOS[, s, , ]
+    })
     ExPT_NOS[is.na(ExPT_NOS)] <- 0
 
     vulT <- array(SOM@Harvest[[s]]@vulT, c(SOM@nsim, nage, length(t2)))
     DDT_NOS <- SOM@Harvest[[s]]@release_mort[2] * DT_NOS[, s, ]
-    FT_NOS <- MMSE@FM[, p_NOS_return, f, mp, t2]
-    FaT_NOS <- sapply(1:length(t2), function(t) vulT[, , t] * FT_NOS[, t], simplify = "array")
-
-    ExT_NOS[, s, , ] <- (1 - exp(-FaT_NOS)) * Escapement_NOS[, s, , ]/Escapement_NOS[, s, , ]
+    ExT_NOS[, s, , ] <- local({
+      Ka_NOS <- sapply(1:length(p_NOS_return), function(i) { # sim x age x year
+        FM <- MMSE@FM[, p_NOS_return[i], f, mp, t2]
+        Fa <- sapply(1:length(t2), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+        N <- apply(MMSE@N[, p_NOS_return[i], a_return, mp, t2, ], 1:3, sum)
+        (1 - exp(-Fa)) * N
+      }, simplify = "array") %>%
+        apply(1:3, sum)
+      Ka_NOS/Return_NOS[, s, , ]
+    })
     ExT_NOS[is.na(ExT_NOS)] <- 0
 
     # Harvest rate from kept catch
@@ -144,15 +157,29 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       # Exploitation rate from kept + dead discards (DD)
       DDPT_HOS <- SOM@Harvest[[s]]@release_mort[1] * DPT_HOS[, s, ]
-      FPT_HOS <- MMSE@FM[, p_HOS_imm, f, mp, t1]
-      FaPT_HOS <- sapply(1:length(t1), function(t) vulPT[, , t] * FPT_HOS[, t], simplify = "array")
-      ExPT_HOS[, s, , ] <- (1 - exp(-FaPT_HOS)) * Njuv_HOS[, s, , ]/Njuv_HOS[, s, , ]
+      ExPT_HOS[, s, , ] <- local({
+        Ka_HOS <- sapply(1:length(p_HOS_imm), function(i) { # sim x age x year
+          FM <- MMSE@FM[, p_HOS_imm[i], f, mp, t1]
+          Fa <- sapply(1:length(t1), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+          N <- apply(MMSE@N[, p_HOS_imm[i], a_imm, mp, t1, ], 1:3, sum)
+          (1 - exp(-Fa)) * N
+        }, simplify = "array") %>%
+          apply(1:3, sum)
+        Ka_HOS/Njuv_HOS[, s, , ]
+      })
       ExPT_HOS[is.na(ExPT_HOS)] <- 0
 
       DDT_HOS <- SOM@Harvest[[s]]@release_mort[2] * DT_HOS[, s, ]
-      FT_HOS <- MMSE@FM[, p_HOS_return, f, mp, t2]
-      FaT_HOS <- sapply(1:length(t2), function(t) vulT[, , t] * FT_HOS[, t], simplify = "array")
-      ExT_HOS[, s, , ] <- (1 - exp(-FaT_HOS)) * Escapement_HOS[, s, , ]/Escapement_HOS[, s, , ]
+      ExT_HOS[, s, , ] <- local({
+        Ka_HOS <- sapply(1:length(p_HOS_return), function(i) { # sim x age x year
+          FM <- MMSE@FM[, p_HOS_return[i], f, mp, t2]
+          Fa <- sapply(1:length(t2), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+          N <- apply(MMSE@N[, p_HOS_return[i], a_return, mp, t2, ], 1:3, sum)
+          (1 - exp(-Fa)) * N
+        }, simplify = "array") %>%
+          apply(1:3, sum)
+        Ka_HOS/Return_HOS[, s, , ]
+      })
       ExT_HOS[is.na(ExT_HOS)] <- 0
 
       # Harvest rate from kept catch
@@ -220,7 +247,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       #PNI[, s, ] <- (h2 + (1 - h2 + fitness_variance) * pNOB[, s, ])/(h2 + (1 - h2 + fitness_variance) * (pHOS_effective[, s, ] + pNOB[, s, ]))
 
-      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec, SOM@Hatchery[[s]]@gamma)
+      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec[, , SOM@nyears + seq(1, SOM@proyears)], SOM@Hatchery[[s]]@gamma)
 
       if (n_r > 1) {
         Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
@@ -358,13 +385,26 @@ get_salmonMSE_agevar <- function(d, var = "Egg_NOS", s = 1, FUN = function(x) su
     reshape2::acast(list("x", "a", "t"), value.var = "value")
 }
 
+
+#' Proportion wild spawners
+#'
+#' @description Calculate the proportion of wild spawners from a time series of spawners
+#' - `calc_pwild()` is the simple calculation based on the proportion of hatchery spawners
+#' - `calc_pwild_age()` performs the calculation weighted by age class fecundity
+#'
+#' @param NOS_a Array `[nsim, maxage, years]` for natural spawners
+#' @param HOS_a Array `[nsim, maxage, years]` for hatchery spawners
+#' @param fec Array `[nsim, maxage, years]` for age class fecundity
+#' @param gamma Numeric, reduced reproductive success of hatchery spawners
+#' @param pHOS_cur Numeric, proportion of hatchery spawners in current generation
+#' @param pHOS_prev Numeric, proportion of hatchery spawners in previous generation
+#' @return `calc_pwild_age()` a matrix of pWILD by simulation and year. `calc_pwild()` returns a numeric
+#' @keywords internal
 calc_pwild_age <- function(NOS_a, HOS_a, fec, gamma) {
 
   nsim <- dim(NOS_a)[1]
   maxage <- dim(NOS_a)[2]
   proyears <- dim(NOS_a)[3]
-
-  fec <- matrix(fec, nsim, maxage, byrow = TRUE)
 
   prob <- array(NA_real_, c(nsim, proyears))
 
@@ -381,8 +421,8 @@ calc_pwild_age <- function(NOS_a, HOS_a, fec, gamma) {
 
         b <- y - a # brood_year
         if (b > 0) {
-          pNOS_b[] <- NOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
-          pHOS_b[] <- HOS_a[, , b]/rowSums(fec * NOS_a[, , b] + fec * HOS_a[, , b])
+          pNOS_b[] <- NOS_a[, , b]/rowSums(fec[, , b] * NOS_a[, , b] + fec[, , b] * HOS_a[, , b])
+          pHOS_b[] <- HOS_a[, , b]/rowSums(fec[, , b] * NOS_a[, , b] + fec[, , b] * HOS_a[, , b])
         }
         pnatural_b[, a] <- rowSums(pNOS_b, na.rm = TRUE)^2
         phetero_b[, a] <- 2 * gamma * rowSums(pNOS_b, na.rm = TRUE) * rowSums(pHOS_b, na.rm = TRUE)

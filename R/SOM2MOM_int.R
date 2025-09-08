@@ -115,13 +115,11 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   # Unfished spawners per recruit must be identical between immature and mature NOS populations (?)
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "escapement") {
-    fec_array <- array(Bio@fec, c(Bio@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>%
-      aperm(c(2, 1, 3))
     age_fec <- seq(3, n_age, 2)
     if (NOS) {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * Bio@fec
     } else {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * Hatchery@gamma * fec_array
+      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * Hatchery@gamma * Bio@fec
     }
   } else {
     cpars_bio$Fec_age[, n_age, ] <- 1
@@ -151,7 +149,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
           p_mature = Bio@p_mature[x, , ],
           nyears = SOM@nyears,
           HistSpawner = if (is.array(Historical@HistSpawner_NOS) && length(Historical@HistSpawner_NOS)) Historical@HistSpawner_NOS[x, , , g] else NULL,
-          fec = Bio@fec,
+          fec = Bio@fec[x, , seq(1, SOM@nyears)],
           p_female = Bio@p_female,
           gamma = 1,
           NOS = TRUE,
@@ -168,7 +166,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
           p_mature = Hatchery@p_mature_HOS[x, , , r],
           nyears = SOM@nyears,
           HistSpawner = if (is.array(Historical@HistSpawner_HOS) && length(Historical@HistSpawner_HOS)) Historical@HistSpawner_HOS[x, , , r] else NULL,
-          fec = Bio@fec,
+          fec = Bio@fec[x, , seq(1, SOM@nyears)],
           p_female = Bio@p_female,
           gamma = Hatchery@gamma,
           NOS = FALSE
@@ -484,7 +482,7 @@ make_stock_index <- function(SOM, check = FALSE) {
 calc_Perr_main <- function(Njuv, Fjuv, Fterm, p_mature, nyears, HistSpawner, fec, p_female, gamma = 1, NOS = TRUE,
                            SRRfun, SRRpars) {
 
-  Recruit <- Njuv[, 1:nyears] * exp(-Fjuv) * p_mature[, 1:nyears]
+  Recruit <- Njuv[, seq(1, nyears)] * exp(-Fjuv) * p_mature[, seq(1, nyears)]
   SpawnerOM <- Recruit * exp(-Fterm) # Escapement
 
   if (!length(HistSpawner)) HistSpawner <- SpawnerOM

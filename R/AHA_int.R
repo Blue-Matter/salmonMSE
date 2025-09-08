@@ -84,6 +84,7 @@ catch_fn <- function(return_size, u, surv_passage = c(1, 1, 1, 1), nfishery = 4)
 
 
 # Withler et al. 2018, page 27
+#' @rdname calc_pwild_age
 calc_pwild <- function(pHOS_cur, pHOS_prev, gamma) {
   num <- (1 - pHOS_prev)^2
   denom <- num + 2 * gamma * pHOS_prev * (1 - pHOS_prev) + gamma * gamma * pHOS_prev^2

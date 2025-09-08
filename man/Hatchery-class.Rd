@@ -72,7 +72,7 @@ ensure a high proportion of NOS). The effective removal is discounted by the mar
 The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
 imperfect implementation of weir removal. Default is zero.}
 
-\item{\code{fec_brood}}{Vector of length \code{maxage}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
+\item{\code{fec_brood}}{Vector of length \code{maxage} or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
 
 \item{\code{fitness_type}}{Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".}
 

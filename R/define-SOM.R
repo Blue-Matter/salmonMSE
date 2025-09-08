@@ -45,7 +45,7 @@ setClass(
     Smax = "numeric",
     phi = "numeric",
     Mjuv_NOS = "num.array",
-    fec = "numeric",
+    fec = "num.array",
     p_female = "numeric",
     s_enroute = "numeric"
     #strays = 0
@@ -77,6 +77,9 @@ setClass(
   slots = c(
     Name = "character",
     use_habitat = "logical",
+    prespawn_rel = "character",
+    prespawn_prod = "numeric",
+    prespawn_capacity = "numeric",
     egg_rel = "character",
     egg_prod = "numeric",
     egg_capacity = "numeric",
@@ -206,7 +209,7 @@ setClass(
     ptarget_NOB = "numeric",
     phatchery = "num.logical",
     premove_HOS = "numeric",
-    fec_brood = "numeric",
+    fec_brood = "num.array",
     fitness_type = "character",
     theta = "numeric",
     rel_loss = "numeric",

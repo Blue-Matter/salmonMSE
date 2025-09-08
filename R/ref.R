@@ -48,10 +48,9 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
     n_g <- SOM@Bio[[s]]@n_g
     p_LHG <- SOM@Bio[[s]]@p_LHG
 
-    fec <- matrix(SOM@Bio[[s]]@fec, maxage, n_g)
 
     val <- sapply(1:SOM@nsim, function(x) {
-
+      fec <- matrix(SOM@Bio[[s]]@fec[x, , y], maxage, n_g)
       Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage, n_g)
       p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
 

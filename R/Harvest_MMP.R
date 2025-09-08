@@ -127,8 +127,12 @@ Harvest_MMP <- function(x = 1, DataList, reps = 1,
 
     lapply(1:nf, function(f) {
       Rec <- new("Rec")
-      HistE <- DataList[[p]][[f]]@OM$FinF[x] # Last historical fishing effort
-      Rec@Effort <- rep(Effort/HistE, reps)
+      if (p %in% c(p_terminal, p_preterminal)) {
+        HistE <- DataList[[p]][[f]]@OM$FinF[x] # Last historical fishing effort
+        Rec@Effort <- rep(Effort/HistE, reps)
+      } else {
+        Rec@Effort <- rep(0, reps)
+      }
       return(Rec)
     })
   })

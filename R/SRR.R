@@ -49,6 +49,7 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
     Nstar <- capacity_N1/p
     out <- pmin(p * N1, capacity_N1)
   }
+  out[is.na(out)] <- 0
   return(out)
 }
 
