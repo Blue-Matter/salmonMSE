@@ -284,6 +284,8 @@ If management is by target harvest rate, then the specified harvest rate $u^\tex
 
 If management is by target catch $K^\textrm{PT,target}$, then the fishing mortality is solved such that $K^\textrm{PT,target} = \sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}$.
 
+Alternative equations are used if [mark-selective fishing](#mark-selective-fishing) is implemented.
+
 # Recruitment and maturity
 
 The recruitment is calculated from the survival of juvenile fish after pre-terminal harvest and maturation:
@@ -314,6 +316,8 @@ K^\textrm{HOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\
 If management is by target harvest rate, then the specified harvest rate $u^\textrm{T}$ in the terminal ($\textrm{PT}$) fishery is converted to the apical instantaneous fishing mortality rates as $F^\textrm{T} = -\log(1 - u^\textrm{T})$.
 
 If management is by target catch $K^\textrm{T,target}$, then the fishing mortality is solved such that $K^\textrm{T,target} = \sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}$.
+
+Alternative equations are used if [mark-selective fishing](#mark-selective-fishing) is implemented.
 
 # Escapement and spawners
 
@@ -530,15 +534,23 @@ The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$
 The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish. 
 Exploitation rates differ between hatchery and natural origin fish because there is no retention of the latter.
 
+Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and release catch:
+
 \begin{align}
-F^\textrm{kept} &= mE\\
-F^\textrm{rel.} &= (1 - m)\delta E
+F^\textrm{kept,HO} &= mE\\
+F^\textrm{rel,HO} &= (1 - m)\delta E
 \end{align}
 
 where $\delta$ is the proportion of released fish that die, i.e., release mortality. 
 
-$E$ is an index of fishing effort, also referred to as the encounter rate by the fishery, that links together $F^\textrm{kept}$ and $F^\textrm{rel.}$.
-Natural-origin fish experiences exclusively $F^\textrm{rel.}$ while hatchery-origin fish experience both $F^\textrm{rel.}$ and $F^\textrm{rel.}$.
+$E$ is an index of fishing effort, also referred to as the encounter rate by the fishery, that links together $F^\textrm{kept,HO}$ and $F^\textrm{rel,NO}$.
+
+Natural-origin fish experience exclusively fishing mortality due to deaths from release:
+
+$$
+F^\textrm{rel,NO} = \delta E
+$$
+
 
 Intuitively, fishing effort can increase in a mark-selective fishery compared to a non-selective fishery.
 For example, if the mark rate is 20 percent, then the fishing effort could be 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
@@ -547,15 +559,15 @@ Additional catch and release mortality then occurs for un-marked fish, according
 The kept catch $K$ are
 
 \begin{align}
-K^\textrm{HOS,PT}_{y,a} &= \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y + F^\textrm{rel,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} + F^\textrm{rel,PT}])\right)N^\textrm{juv,HOS}_{y,a}\\
-K^\textrm{HOS,T}_{y,a} &= \dfrac{F^\textrm{kept,T}_y}{F^\textrm{kept,T}_y + F^\textrm{rel,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,T} + F^\textrm{rel,T}])\right)\textrm{HOR}_{y,a}
+K^\textrm{HOS,PT}_{y,a} &= \dfrac{F^\textrm{kept,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}])\right)N^\textrm{juv,HOS}_{y,a}\\
+K^\textrm{HOS,T}_{y,a} &= \dfrac{F^\textrm{kept,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,HO,T} + F^\textrm{rel,HO,T}])\right)\textrm{HOR}_{y,a}
 \end{align}
 
 If management is by target harvest rate for the preterminal and terminal fisheries, the corresponding $E$ is solved to satisfy:
 
 \begin{align}
-u^\textrm{PT} &= 1 - \exp(-F^\textrm{kept,PT})\\
-u^\textrm{T} &= 1 - \exp(-F^\textrm{kept,T})
+u^\textrm{PT} &= 1 - \exp(-F^\textrm{kept,HO,PT})\\
+u^\textrm{T} &= 1 - \exp(-F^\textrm{kept,HO,T})
 \end{align}
 
 If management is by target catch, the corresponding $E$ is solved to satisfy:
@@ -568,8 +580,8 @@ K^\textrm{T,target} &= \sum_a K^\textrm{HOS,T}_{y,a}
 The exploitation rate for natural origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:
 
 \begin{align}
-u^\textrm{exploit,NOS,PT}_{y,a} &= 1 - \exp(-v_a F^\textrm{rel.,PT}_y)\\
-u^\textrm{exploit,HOS,PT}_{y,a} &= 1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y])
+u^\textrm{exploit,NOS,PT}_{y,a} &= 1 - \exp(-v_a F^\textrm{rel.,NO,PT}_y)\\
+u^\textrm{exploit,HOS,PT}_{y,a} &= 1 - \exp(-v_a[F^\textrm{kept,HO,PT}_y + F^\textrm{rel.,HO,PT}_y])
 \end{align}
 
 

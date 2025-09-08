@@ -131,7 +131,7 @@ $$
 M_y^\textrm{egg} = M^\textrm{egg}_\textrm{min} + \beta \times \textrm{Egg}_y + \delta_y
 $$ 
 
-where $M^\textrm{egg}_\textrm{min} = -\log(\phi_0^{-1}) - \log(\kappa)$.
+where $M^\textrm{egg}_\textrm{min} = -\log(\phi_0^{-1}) - \log(\kappa)$ is the density-independent egg mortality rate when the egg production approaches zero, $\beta \times \textrm{Egg}_y$ is the density-dependent mortality term, and $\delta_y$ is a year-specific deviation.
 
 The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi_0$, where $\kappa$ is productivity (return/spawner) and $\phi_0$ is the equilibrium unfished egg-per-smolt corresponding to the one-to-one return per spawner line, with $\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
 
