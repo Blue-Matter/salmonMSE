@@ -81,10 +81,13 @@
 #' - `finitPT` Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 #' - `finitT` Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 #'
-#' - `cwtExp` Numeric, the CWT sampling rate. This coefficient scales down the CWT predictions to match the observations. For example, `cwtExp = 0.1`
-#' reduces the CWT predictions by 0.1 for the likelihood. Default is 1. The Poisson distribution is used for the likelihood of the CWT observations,
-#' and this parameter can be used to downweight the CWT likelihood relative to the escapement time series.
-#'
+#' - `cwtExp` Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
+#' The model scales down the CWT predictions to match the observations. In other words,
+#' the model assumes that the CWT catch and escapement are not expanded. For example, `cwtExp = 10` divides the CWT predictions by 10 for the likelihood. Default is 1.
+#' The Poisson distribution is used for the likelihood of the CWT observations, and the expansion parameter can be used to downweight the CWT likelihood relative to the escapement time series.
+#' However it requires adjustments of the CWT catches prior to fitting to ensure the proper population scale.
+#' If the expanded catch is 100, then the input CWT catch should be 10 and 50 with `cwtExp` of 10 and 2, respectively, to maintain the same population scale.
+#' The Poisson variance scales with the mean and is higher with `cwtExp = 2`.
 #' - `fitness` Logical, whether to calculate fitness effects on survival. Default is `FALSE`.
 #' - `theta` Vector length 2, the optimum phenotype value for the natural and hatchery environments. Default is 100 and 80, respectively. See
 #' [online article](https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival) for more information.

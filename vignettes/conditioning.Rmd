@@ -19,13 +19,13 @@ library(dplyr)
 # Introduction
 
 Typical run reconstruction uses a historical time series of spawner and recruit data to estimate the productivity of salmon populations. 
-Escapement time series may be available but catch may not be identifiable for a population of interest, for example, if the population is a conservation unit, as part of a larger stock complex and catch composition is not identified to individual CUs.
+For many small populations of interest, escapement time series may be available but catch may not be identifiable to the local scale, for example, if the population is a conservation unit (CU) as part of a larger stock complex and catch composition is not identified to individual CUs.
 
 [Walters and Korman (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html) demonstrated an approach for reconstruction if Coded Wire Tag (CWT) data from an indicator hatchery are assumed to be representative to life cycle parameters of a natural population.
 
 The model consists of two components.
 First, CWT data informs natural mortality, maturation, and exploitation rate in the marine environment. 
-Second, these parameters are then applied to the system of interest and informs the size and productivity of the population that has a time series of total escapement. The number of hatchery releases in the system informs hatchery production, and the difference in total escapement and hatchery production informs natural production.
+Second, these parameters are then applied to the population of interest and informs the size and productivity of the population that has a time series of total escapement. The number of hatchery releases in the system informs hatchery production, and the difference in total escapement and hatchery production informs natural production.
 Both steps are accomplished within a single model fit, which can account for uncertainty among the various data components, and posterior distributions of parameters are obtained by MCMC.
 
 We utilize this approach as a conditioning model to inform stochastic parameters for projections in salmonMSE, although use of this model is not necessary to set up an operating model.
@@ -59,8 +59,6 @@ $$
 N^\textrm{juv,CWT}_{y+1,a+1} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 $$
 
-The age-1 CWT is assumed to be the releases specified by the user, i.e., $N^\textrm{juv,CWT}_{y,a=1}= $.
-
 The CWT return $R$ is the fraction of maturing juveniles after preterminal exploitation
 
 $$
@@ -84,7 +82,7 @@ C^\textrm{CWT,T}_{y,a} &= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\textrm
 
 The model does separate accounting is natural-origin ($\textrm{NO}$) and hatchery-origin ($\textrm{HO}$) fish in the population of interest. 
 
-The abundance of juvenile fish, recruitment, and escapement uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
+The abundance of juvenile fish, return, and escapement uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
 
 \begin{align}
 N^\textrm{juv,NO}_{y+1,a+1} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
@@ -105,7 +103,7 @@ E^\textrm{NO}_{y,a} &= R^\textrm{NO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)\\
 E^\textrm{HO}_{y,a} &= R^\textrm{HO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
 \end{align}
 
-The number of spawners is calculated from the escapement, the en-route survival rate, and the proportion allowed to spawn. This proportion can be calculated from the ratio of broodtake to observed escapement:
+The number of spawners is calculated from the escapement, the en-route survival rate, and the proportion allowed to spawn. This proportion can be calculated from the ratio of broodtake to observed escapement (the model is parameterized in this way for numerical stability and it is assumed broodtake is non-selective with respect to origin):
 
 \begin{align}
 \textrm{NOS}_{y,a} &= E^\textrm{NO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y\\
@@ -126,6 +124,29 @@ $$
 $$
 
 where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate.
+
+[Walters and Korman (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html) show that the realized egg-smolt mortality rate can be defined as 
+
+$$
+M_y^\textrm{egg} = M^\textrm{egg}_\textrm{min} + \beta \times \textrm{Egg}_y + \delta_y
+$$ 
+
+where $M^\textrm{egg}_\textrm{min} = -\log(\phi_0^{-1}) - \log(\kappa)$.
+
+The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi_0$, where $\kappa$ is productivity (return/spawner) and $\phi_0$ is the equilibrium unfished egg-per-smolt corresponding to the one-to-one return per spawner line, with $\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
+
+$\ell_a$ is the juvenile survival at age:
+
+$$
+\ell_a = 
+\begin{cases}
+1 &, a = 1\\
+\ell_{a-1} \exp(-M^\textrm{base}_{a-1}) (1 - m^\textrm{base}_{a-1}) &, a = 2, \ldots, A
+\end{cases}
+$$
+
+The $\beta$ parameter is $\beta = \log(\kappa)/(\phi_0J_0)$, where $J_0$ is the equilibrium juvenile smolt production. 
+The equilibrium spawners is $S_0$ and $J_0 = S_0/\phi'_0$, where $\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the equilibrium female spawners per smolt.
 
 # Parameter estimation and priors
 
@@ -214,22 +235,6 @@ with hyperprior $\sigma^M \sim \textrm{Gamma}(2, 5)$.
 
 ## Natural production
 
-The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi_0$, where $kappa$ is productivity and $\phi_0$ is the unfished egg-per-smolt corresponding to the one-to-one recruits per spawner line $\phi_0$, with $\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
-
-$\ell_a$ is the juvenile survival at age:
-
-$$
-\ell_a = 
-\begin{cases}
-1 &, a = 1\\
-\ell_{a-1} \exp(-M^\textrm{base}_{a-1}) (1 - m^\textrm{base}_{a-1}) &, a = 2, \ldots, A
-\end{cases}
-$$
-
-The $\beta$ parameter is $\beta = \log(\kappa)/\phi_0r_0$, where $r_0$ is the unfished smolt production, first estimated from the unfished spawners $S_0$ parameter and then calculated as $r_0 = S_0/\phi'_0$.
-
-$\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the unfished spawners per smolt.
-  
 A uniform prior is used for $\log(\kappa)$, and a lognormal prior is used to estimate $S_0$.
 
 The annual deviations in smolt production are estimated with prior $\delta_y \sim N(0, \sigma_\delta^2)$ and hyperprior $\sigma_\delta \sim \textrm{Gamma}(2, 5)$.

@@ -215,9 +215,9 @@ CM_int <- function(p, d) {
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {
       if (t+a-1 <= d$Ldyr) {
-        cbroodPT[t, a, ] <- d$cwtExp * ccwtPT[t+a-1, a, ] + tiny
-        cbroodT[t, a, ] <- d$cwtExp * ccwtT[t+a-1, a, ] + tiny
-        ebrood[t, a, ] <- d$cwtExp * ecwt[t+a-1, a, ] + tiny
+        cbroodPT[t, a, ] <- ccwtPT[t+a-1, a, ]/d$cwtExp + tiny
+        cbroodT[t, a, ] <- ccwtT[t+a-1, a, ]/d$cwtExp + tiny
+        ebrood[t, a, ] <- ecwt[t+a-1, a, ]/d$cwtExp + tiny
       }
     }
   }

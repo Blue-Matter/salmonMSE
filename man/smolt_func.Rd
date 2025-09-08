@@ -67,7 +67,7 @@ determines the proportions of the donor escapement that will move to the recipie
 
 \item{p_female}{Numeric, proportion female for calculating the egg production.}
 
-\item{fec}{Vector \verb{[maxage]}. The fecundity at age schedule of spawners}
+\item{fec}{Array \verb{[nsim, maxage, nyears+proyears]}. The fecundity at age schedule of spawners}
 
 \item{SRRpars}{Data frame containing stock recruit parameters for natural smolt production from egg production.
 Column names include: SRrel, kappa, capacity, Smax, phi}
@@ -123,7 +123,7 @@ Hatchery control parameters are included in a named list with the following argu
 \item \code{egg_target} Numeric, target egg production for hatchery. Set to zero for no hatchery production.
 \item \code{ptarget_NOB} Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake
 \item \code{pmax_NOB} Numeric, the maximum proportion of the natural origin escapement to be used as broodtake
-\item \code{fec_brood} Vector \verb{[maxage]}. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
+\item \code{fec_brood} Array \verb{[nsim, maxage, nyears+proyears]}. the fecundity at age schedule of broodtake to calculate the total hatchery egg production
 \item \code{s_yearling} Numeric, the survival of eggs to the smolt life stage (for yearling release)
 \item \code{s_subyearling} Numeric. the survival of eggs to subyearling life stage (for subyearling release)
 \item \code{p_yearling} Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
