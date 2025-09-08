@@ -65,18 +65,33 @@ egg-to-fry production, and fry-to-smolt production with annual deviations. Other
 See <code>Bio</code> object.</p></dd>
 
 
+<dt><code>prespawn_rel</code></dt>
+<dd><p>Character, density-dependent function for pre-spawn mortality, e.g., for spawners to reach spawning sites. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+Default is "BH".</p></dd>
+
+
+<dt><code>prespawn_prod</code></dt>
+<dd><p>Numeric, productivity for pre-spawn mortality. Default is 1.
+Default if <code>Inf</code>.</p></dd>
+
+
+<dt><code>prespawn_capacity</code></dt>
+<dd><p>Numeric, capacity for pre-spawn mortality. Default is <code>Inf</code>, i.e., density-independence.
+Default is <code>Inf</code>.</p></dd>
+
+
 <dt><code>egg_rel</code></dt>
-<dd><p>Character, density-dependent function egg production from total spawning output. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
+<dd><p>Character, density-dependent function for egg production from total spawning output. Choices are "BH" (Beverton-Holt) or "HS" (hockey stick).
 Default is "BH".</p></dd>
 
 
 <dt><code>egg_prod</code></dt>
-<dd><p>Numeric, capacity for egg production from total spawning output (incubation). Default is 1.
+<dd><p>Numeric, productivity for egg production from total spawning output (incubation). Default is 1.
 Default if <code>Inf</code>.</p></dd>
 
 
 <dt><code>egg_capacity</code></dt>
-<dd><p>Numeric, capacity for egg production from total spawning output (incubation). Set to <code>Inf</code> for density-independence.
+<dd><p>Numeric, capacity for egg production from total spawning output (incubation). Default is <code>Inf</code>, i.e., density-independence.
 Default is <code>Inf</code>.</p></dd>
 
 
@@ -91,7 +106,7 @@ Default is 0.4.</p></dd>
 
 
 <dt><code>fry_capacity</code></dt>
-<dd><p>Numeric, capacity for fry production from egg production. Set to <code>Inf</code> for density-independence.
+<dd><p>Numeric, capacity for fry production from egg production. Default is <code>Inf</code>, i.e., for density-independence.
 Default is <code>Inf</code>.</p></dd>
 
 
@@ -134,18 +149,18 @@ time-varying environmental, climate, or habitat mitigation effects. Default is <
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Habitat" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name    use_habitat        egg_rel       egg_prod</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        logical      character        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:    egg_capacity        fry_rel       fry_prod   fry_capacity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric      character        numeric        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        fry_sdev      smolt_rel     smolt_prod smolt_capacity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:         matrix      character        numeric        numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      smolt_sdev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:         matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               Name       use_habitat      prespawn_rel     prespawn_prod</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:         character           logical         character           numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  prespawn_capacity           egg_rel          egg_prod      egg_capacity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           numeric         character           numeric           numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            fry_rel          fry_prod      fry_capacity          fry_sdev</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:         character           numeric           numeric            matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          smolt_rel        smolt_prod    smolt_capacity        smolt_sdev</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:         character           numeric           numeric            matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Habitat.list"</span>
 </code></pre></div>

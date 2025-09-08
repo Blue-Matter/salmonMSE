@@ -119,7 +119,7 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 
 
 <dt><code>fec</code></dt>
-<dd><p>Vector by age (length <code>maxage</code>). Female fecundity of natural origin spawners.</p></dd>
+<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. Female fecundity of natural origin spawners.</p></dd>
 
 
 <dt><code>p_female</code></dt>
@@ -149,7 +149,7 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class: character   numeric   numeric   numeric num.array character   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi  Mjuv_NOS       fec  p_female s_enroute</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric num.array   numeric   numeric   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric num.array num.array   numeric   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Bio.list"</span>
 </code></pre></div>

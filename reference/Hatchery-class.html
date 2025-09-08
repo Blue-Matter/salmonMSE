@@ -151,7 +151,7 @@ imperfect implementation of weir removal. Default is zero.</p></dd>
 
 
 <dt><code>fec_brood</code></dt>
-<dd><p>Vector of length <code>maxage</code>. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses <code>Bio@fec</code>.</p></dd>
+<dd><p>Vector of length <code>maxage</code> or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses <code>Bio@fec</code>.</p></dd>
 
 
 <dt><code>fitness_type</code></dt>
@@ -222,7 +222,7 @@ an array by dimension <code>[nsim, maxage, 2]</code>, where the age slot corresp
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric        num.logical            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          character            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array          character            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:            rel_loss         zbar_start phenotype_variance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array            numeric</span>
