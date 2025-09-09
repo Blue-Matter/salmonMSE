@@ -622,11 +622,18 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
   list(lower = .lower, upper = .upper)
 }
 
-get_report <- function(stanfit, sims) {
+get_report <- function(stanfit, sims, inc_warmup = FALSE) {
   if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package is needed.")
 
   pars <- rstan::extract(stanfit)
-  if (missing(sims)) sims <- seq_len(length(pars[["lp__"]]))
+  if (missing(sims)) {
+    sims <- seq_len(length(pars[["lp__"]]))
+
+    if (!inc_warmup) {
+      it <- seq(1, stanfit@sim$iter, by = stanfit@sim$thin)
+      sims <- sims[it > stanfit@sim$warmup]
+    }
+  }
 
   pars_samp <- lapply(pars[names(pars) != "lp__"], function(x) {
     if (is.matrix(x)) x[sims, , drop = FALSE] else x[sims]

@@ -12,7 +12,7 @@
 #' for age 1 vs. ages 2+).
 #' The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).
 #'
-#' `fit_CM()` generates the RTMB model from data which can then be passed to `sample_CM()` to run the MCMC in Stan.
+#' `fit_CM()` generates the RTMB model from data which can then be passed to `sample_CM()` to run the MCMC in Stan. Generate a markdown report with [`report_CM()`].
 #'
 #' More information is available on the [salmonMSE](https://docs.salmonmse.com/articles/conditioning.html) website
 #' }
@@ -28,6 +28,7 @@
 #' @param ... For `fit_CM`, arguments to [`RTMB::MakeADFun()`]. For `sample_CM`, arguments to `rstan::sampling()`
 #' @import RTMB
 #' @importFrom stats nlminb
+#' @seealso [report_CM()]
 #' @returns
 #' - `fit_CM()` returns a named list containing the RTMB model (`obj`), nlminb output (`opt`), standard errors (`SD`),
 #' and parameter bounds (`lower` and `upper`)

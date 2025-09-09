@@ -1,6 +1,6 @@
 
 #' @importFrom dplyr bind_rows bind_cols mutate
-stan_trace <- function(stanfit, vars) {
+stan_trace <- function(stanfit, vars, inc_warmup = FALSE) {
   val <- lapply(1:stanfit@sim$chains, function(i) {
     x <- stanfit@sim$samples[[i]]
     vars_regex <- paste0(vars, collapse = "|")
@@ -8,12 +8,23 @@ stan_trace <- function(stanfit, vars) {
     x_pars <- x[grepl(vars_regex, names(x))]
 
     if (length(x_pars)) {
+
+      if (inc_warmup) {
+        warmup <- 1
+      } else {
+        warmup <- stanfit@stan_args[[i]]$warmup
+      }
+      thin <- stanfit@stan_args[[i]]$thin
+      iter <- stanfit@stan_args[[i]]$iter
+
+      it <- seq(1, iter, by = thin)
+
       x[grepl(vars_regex, names(x))] %>%
         bind_cols() %>%
         as.data.frame() %>%
-        mutate(Chain = i, Iteration = 1:nrow(.)) %>%
-        reshape2::melt(id.vars = c("Chain", "Iteration")) %>%
-        dplyr::filter(.data$Iteration > stanfit@sim$warmup)
+        mutate(Chain = i, Iteration = it) %>%
+        filter(.data$Iteration > warmup) %>%
+        reshape2::melt(id.vars = c("Chain", "Iteration"))
     } else {
       data.frame()
     }
@@ -32,7 +43,7 @@ stan_trace <- function(stanfit, vars) {
 
 #' @importFrom stats cor
 #' @importFrom graphics pairs rect strwidth text
-pairs_panel <- function(stanfit, vars) {
+pairs_panel <- function(stanfit, vars, inc_warmup = FALSE) {
   panel.hist <- function(x, ...) {
     usr <- par("usr"); on.exit(par(usr = usr))
     par(usr = c(usr[1:2], 0, 1.5) )
@@ -57,7 +68,24 @@ pairs_panel <- function(stanfit, vars) {
     vars_str <- paste0(vars, collapse = "|")
     xout <- x[grepl(vars_str, names(x))] %>%
       bind_cols()
-    xout[-seq(1, stanfit@sim$warmup), ]
+
+    if (nrow(xout)) {
+
+      if (inc_warmup) {
+        warmup <- 1
+      } else {
+        warmup <- stanfit@stan_args[[i]]$warmup
+      }
+
+      thin <- stanfit@stan_args[[i]]$thin
+      iter <- stanfit@stan_args[[i]]$iter
+
+      it <- data.frame(iter = seq(1, iter, by = thin))
+      it$n <- 1:nrow(it)
+
+      xout <- xout[it$n[it$iter > warmup], ]
+    }
+    return(xout)
   }) %>%
     bind_rows()
 
@@ -834,14 +862,33 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 
 }
 
-reportCM <- function(stanfit, year, cov1_names, cov_names, rs_names,
-                     name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
+#' Conditioning model markdown report
+#'
+#' Generate a markdown report to plot time series and MCMC posteriors of estimates from the conditioning model
+#'
+#' @param stanfit Output from [sample_CM()]
+#' @param year Optional vector of calendar years
+#' @param cov1_names Optional character vector for names of covariates that predict age-1 natural mortality
+#' @param cov_names Optional character vector for names of covariates that predict age-2+ natural mortality
+#' @param rs_names Optional character vector for names of hatchery release strategies
+#' @param name Optional character string for the model name to include in the report, e.g., model run number
+#' @param filename Character string for the name of the markdown and HTML files
+#' @param dir The directory in which the markdown and HTML files will be saved.
+#' @param open_file Logical, whether the HTML document is opened after it is rendered
+#' @param render_args List of arguments to pass to [rmarkdown::render()]
+#' @param ... Additional arguments (not used)
+#' @details Report excludes MCMC values from warmup iterations
+#' @returns Returns invisibly the output of [rmarkdown::render()], typically the path of the output file
+#' @seealso [fit_CM()]
+#' @export
+report_CM <- function(stanfit, year, cov1_names, cov_names, rs_names,
+                      name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
 
   if (!requireNamespace("ggrepel", quietly = TRUE)) {
     warning("Install ggrepel package to label years for stock-recruit figure.")
   }
 
-  report <- get_report(stanfit)
+  report <- get_report(stanfit, inc_warmup = FALSE)
   fit <- stanfit@.MISC$CMfit
   d <- get_CMdata(fit)
 

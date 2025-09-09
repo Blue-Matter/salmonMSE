@@ -50,27 +50,27 @@ knitr::kable(make_CM_table(fit), row.names = FALSE)
 
 ## MCMC
 
-```{r trace-cr, fig.cap="MCMC wormplots of productivity parameters, scaling parameters and the log-posterior."}
+```{r trace-cr, fig.cap="Wormplots of productivity parameters, scaling parameters and the log-posterior from MCMC iterations after thinning and warmup."}
 pars_core <- c("cr", "log_so", "moadd", "log_FbasePT", "log_FbaseT", "lp")
 stan_trace(stanfit, pars_core)
 ```
 
-```{r trace-cov, fig.cap="MCMC wormplots of coefficients for mortality covariates."}
+```{r trace-cov, fig.cap="Wormplots of coefficients for mortality covariates from MCMC iterations after thinning and warmup."}
 pars_cov <- c("^b")
 stan_trace(stanfit, pars_cov)
 ```
 
-```{r trace-vul, fig.cap="MCMC wormplots of fishery vulnerability at age parameters."}
+```{r trace-vul, fig.cap="Wormplots of fishery vulnerability at age parameters from MCMC iterations after thinning and warmup."}
 pars_vul <- c("^logit_vul")
 stan_trace(stanfit, pars_cov)
 ```
 
-```{r trace-var, fig.cap="MCMC wormplots of variance parameters."}
+```{r trace-var, fig.cap="Wormplots of variance parameters from MCMC iterations after thinning and warmup."}
 pars_var <- c("lnE_sd", "wt_sd", "wto_sd", "fanomalyPT_sd", "fanomalyT_sd", "sd_matt")
 stan_trace(stanfit, pars_var)
 ```
 
-```{r pairs-cr, fig.cap="Marginal posterior distributions and correlations of productivity parameters, scaling parameters and the log-posterior."}
+```{r pairs-cr, fig.cap="Marginal posterior distributions and correlations of productivity parameters, scaling parameters and the log-posterior (from MCMC iterations after thinning and warmup)."}
 pairs_panel(stanfit, pars_core)
 ```
 

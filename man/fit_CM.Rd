@@ -57,7 +57,7 @@ The model estimates time-varying maturity rate as well as time-varying ocean sur
 for age 1 vs. ages 2+).
 The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).
 
-\code{fit_CM()} generates the RTMB model from data which can then be passed to \code{sample_CM()} to run the MCMC in Stan.
+\code{fit_CM()} generates the RTMB model from data which can then be passed to \code{sample_CM()} to run the MCMC in Stan. Generate a markdown report with \code{\link[=report_CM]{report_CM()}}.
 
 More information is available on the \href{https://docs.salmonmse.com/articles/conditioning.html}{salmonMSE} website
 }
@@ -185,6 +185,8 @@ Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon populatio
 Sciences 62: vi + 60 p.
 }
 \seealso{
+\code{\link[=report_CM]{report_CM()}}
+
 \code{\link[=CM2SOM]{CM2SOM()}}
 }
 \author{
