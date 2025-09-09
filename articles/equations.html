@@ -64,7 +64,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2025-09-08</h4>
+            <h4 data-toc-skip class="date">2025-09-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -1029,6 +1029,8 @@ as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>K</mi><mtext mathvariant="normal">PT,target</mtext></msup><annotation encoding="application/x-tex">K^\textrm{PT,target}</annotation></semantics></math>,
 then the fishing mortality is solved such that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>K</mi><mtext mathvariant="normal">PT,target</mtext></msup><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,PT</mtext></msubsup><mo>+</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mrow><annotation encoding="application/x-tex">K^\textrm{PT,target} = \sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}</annotation></semantics></math>.</p>
+<p>Alternative equations are used if <a href="#mark-selective-fishing">mark-selective fishing</a> is
+implemented.</p>
 </div>
 <div class="section level2">
 <h2 id="recruitment-and-maturity">Recruitment and maturity<a class="anchor" aria-label="anchor" href="#recruitment-and-maturity"></a>
@@ -1072,6 +1074,8 @@ as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>K</mi><mtext mathvariant="normal">T,target</mtext></msup><annotation encoding="application/x-tex">K^\textrm{T,target}</annotation></semantics></math>,
 then the fishing mortality is solved such that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>K</mi><mtext mathvariant="normal">T,target</mtext></msup><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS,T</mtext></msubsup><mo>+</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mrow><annotation encoding="application/x-tex">K^\textrm{T,target} = \sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}</annotation></semantics></math>.</p>
+<p>Alternative equations are used if <a href="#mark-selective-fishing">mark-selective fishing</a> is
+implemented.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1390,9 +1394,11 @@ exploitation rate
 is calculated from kept catch of hatchery-origin fish and dead releases
 of natural-origin fish. Exploitation rates differ between hatchery and
 natural origin fish because there is no retention of the latter.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">kept</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>m</mi><mi>E</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>δ</mi><mi>E</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-F^\textrm{kept} &amp;= mE\\
-F^\textrm{rel.} &amp;= (1 - m)\delta E
+<p>Fishing mortality on hatchery origin fish is partitioned into two
+parts, for kept and release catch:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">kept,HO</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>m</mi><mi>E</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>F</mi><mtext mathvariant="normal">rel,HO</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>δ</mi><mi>E</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+F^\textrm{kept,HO} &amp;= mE\\
+F^\textrm{rel,HO} &amp;= (1 - m)\delta E
 \end{align}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
@@ -1401,15 +1407,14 @@ mortality.</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
 is an index of fishing effort, also referred to as the encounter rate by
 the fishery, that links together
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">kept</mtext></msup><annotation encoding="application/x-tex">F^\textrm{kept}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">kept,HO</mtext></msup><annotation encoding="application/x-tex">F^\textrm{kept,HO}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel.}</annotation></semantics></math>.
-Natural-origin fish experiences exclusively
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel.}</annotation></semantics></math>
-while hatchery-origin fish experience both
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel.}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel.</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel.}</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">rel,NO</mtext></msup><annotation encoding="application/x-tex">F^\textrm{rel,NO}</annotation></semantics></math>.</p>
+<p>Natural-origin fish experience exclusively fishing mortality due to
+deaths from release:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>F</mi><mtext mathvariant="normal">rel,NO</mtext></msup><mo>=</mo><mi>δ</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">
+F^\textrm{rel,NO} = \delta E
+</annotation></semantics></math></p>
 <p>Intuitively, fishing effort can increase in a mark-selective fishery
 compared to a non-selective fishery. For example, if the mark rate is 20
 percent, then the fishing effort could be 500 percent higher than in a
@@ -1420,17 +1425,17 @@ according to
 <p>The kept catch
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
 are</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mrow><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,PT</mtext></msubsup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,PT</mtext></msup><mo>+</mo><msup><mi>F</mi><mtext mathvariant="normal">rel,PT</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,T</mtext></msubsup><mrow><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,T</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,T</mtext></msubsup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,T</mtext></msup><mo>+</mo><msup><mi>F</mi><mtext mathvariant="normal">rel,T</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-K^\textrm{HOS,PT}_{y,a} &amp;= \dfrac{F^\textrm{kept,PT}_y}{F^\textrm{kept,PT}_y + F^\textrm{rel,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,PT} + F^\textrm{rel,PT}])\right)N^\textrm{juv,HOS}_{y,a}\\
-K^\textrm{HOS,T}_{y,a} &amp;= \dfrac{F^\textrm{kept,T}_y}{F^\textrm{kept,T}_y + F^\textrm{rel,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,T} + F^\textrm{rel,T}])\right)\textrm{HOR}_{y,a}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,HO,PT</mtext></msubsup><mrow><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,HO,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,HO,PT</mtext></msubsup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,HO,PT</mtext></msup><mo>+</mo><msup><mi>F</mi><mtext mathvariant="normal">rel,HO,PT</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HOS</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>K</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HOS,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac displaystyle="true"><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,HO,T</mtext></msubsup><mrow><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,HO,T</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel,HO,T</mtext></msubsup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,HO,T</mtext></msup><mo>+</mo><msup><mi>F</mi><mtext mathvariant="normal">rel,HO,T</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mtext mathvariant="normal">HOR</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+K^\textrm{HOS,PT}_{y,a} &amp;= \dfrac{F^\textrm{kept,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}])\right)N^\textrm{juv,HOS}_{y,a}\\
+K^\textrm{HOS,T}_{y,a} &amp;= \dfrac{F^\textrm{kept,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,HO,T} + F^\textrm{rel,HO,T}])\right)\textrm{HOR}_{y,a}
 \end{align}</annotation></semantics></math></p>
 <p>If management is by target harvest rate for the preterminal and
 terminal fisheries, the corresponding
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
 is solved to satisfy:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>u</mi><mtext mathvariant="normal">PT</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>u</mi><mtext mathvariant="normal">T</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,T</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-u^\textrm{PT} &amp;= 1 - \exp(-F^\textrm{kept,PT})\\
-u^\textrm{T} &amp;= 1 - \exp(-F^\textrm{kept,T})
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>u</mi><mtext mathvariant="normal">PT</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,HO,PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msup><mi>u</mi><mtext mathvariant="normal">T</mtext></msup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msup><mi>F</mi><mtext mathvariant="normal">kept,HO,T</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+u^\textrm{PT} &amp;= 1 - \exp(-F^\textrm{kept,HO,PT})\\
+u^\textrm{T} &amp;= 1 - \exp(-F^\textrm{kept,HO,T})
 \end{align}</annotation></semantics></math></p>
 <p>If management is by target catch, the corresponding
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
@@ -1442,9 +1447,9 @@ K^\textrm{T,target} &amp;= \sum_a K^\textrm{HOS,T}_{y,a}
 <p>The exploitation rate for natural origin fish is calculated from dead
 discards. The exploitation rate for hatchery origin fish is calculated
 from kept catch and dead discards:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">exploit,NOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">exploit,HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,PT</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-u^\textrm{exploit,NOS,PT}_{y,a} &amp;= 1 - \exp(-v_a F^\textrm{rel.,PT}_y)\\
-u^\textrm{exploit,HOS,PT}_{y,a} &amp;= 1 - \exp(-v_a[F^\textrm{kept,PT}_y + F^\textrm{rel.,PT}_y])
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">exploit,NOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,NO,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>u</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">exploit,HOS,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>v</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">kept,HO,PT</mtext></msubsup><mo>+</mo><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">rel.,HO,PT</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+u^\textrm{exploit,NOS,PT}_{y,a} &amp;= 1 - \exp(-v_a F^\textrm{rel.,NO,PT}_y)\\
+u^\textrm{exploit,HOS,PT}_{y,a} &amp;= 1 - \exp(-v_a[F^\textrm{kept,HO,PT}_y + F^\textrm{rel.,HO,PT}_y])
 \end{align}</annotation></semantics></math></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

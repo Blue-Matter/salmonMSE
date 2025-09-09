@@ -144,7 +144,7 @@ determines the proportions of the donor escapement that will move to the recipie
 
 
 <dt id="arg-fec">fec<a class="anchor" aria-label="anchor" href="#arg-fec"></a></dt>
-<dd><p>Vector <code>[maxage]</code>. The fecundity at age schedule of spawners</p></dd>
+<dd><p>Array <code>[nsim, maxage, nyears+proyears]</code>. The fecundity at age schedule of spawners</p></dd>
 
 
 <dt id="arg-srrpars">SRRpars<a class="anchor" aria-label="anchor" href="#arg-srrpars"></a></dt>
@@ -219,7 +219,7 @@ hatchery, en route mortality, or habitat improvement</p></li>
 <p>Hatchery control parameters are included in a named list with the following arguments:</p><ul><li><p><code>egg_target</code> Numeric, target egg production for hatchery. Set to zero for no hatchery production.</p></li>
 <li><p><code>ptarget_NOB</code> Numeric, the target proportion of the natural origin broodtake relative to the overall broodtake</p></li>
 <li><p><code>pmax_NOB</code> Numeric, the maximum proportion of the natural origin escapement to be used as broodtake</p></li>
-<li><p><code>fec_brood</code> Vector <code>[maxage]</code>. the fecundity at age schedule of broodtake to calculate the total hatchery egg production</p></li>
+<li><p><code>fec_brood</code> Array <code>[nsim, maxage, nyears+proyears]</code>. the fecundity at age schedule of broodtake to calculate the total hatchery egg production</p></li>
 <li><p><code>s_yearling</code> Numeric, the survival of eggs to the smolt life stage (for yearling release)</p></li>
 <li><p><code>s_subyearling</code> Numeric. the survival of eggs to subyearling life stage (for subyearling release)</p></li>
 <li><p><code>p_yearling</code> Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)</p></li>
