@@ -90,22 +90,36 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
   if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
-    Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
-    Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
-    broodtake <- calc_broodtake(
-      NOR_escapement = Nage_NOS_avail_brood,
-      HOR_escapement = Nage_HOS_avail_brood,
-      stray_external_enroute,
-      hatchery_args$brood_import,
-      hatchery_args$ptarget_NOB,
-      hatchery_args$pmax_NOB,
-      hatchery_args$phatchery,
-      hatchery_args$egg_target,
-      hatchery_args$p_female,
-      fec_brood_t,
-      hatchery_args$s_prespawn,
-      hatchery_args$m
-    )
+    if (is.null(formals(hatchery_args$f_brood))) {
+      Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
+      Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
+      broodtake <- calc_broodtake(
+        NOR_escapement = Nage_NOS_avail_brood,
+        HOR_escapement = Nage_HOS_avail_brood,
+        stray_external_enroute,
+        hatchery_args$brood_import,
+        hatchery_args$ptarget_NOB,
+        hatchery_args$pmax_NOB,
+        hatchery_args$phatchery,
+        hatchery_args$egg_target,
+        hatchery_args$p_female,
+        fec_brood_t,
+        hatchery_args$s_prespawn,
+        hatchery_args$m
+      )
+    } else {
+
+      broodtake <- calc_broodtake_custom(
+        f_brood = hatchery_args$f_brood,
+        NOR_escapement = Nage_NOS_enroute,
+        HOR_escapement = Nage_HOS_enroute,
+        stray_external_enroute,
+        hatchery_args$p_female,
+        fec_brood_t,
+        hatchery_args$s_prespawn,
+        hatchery_args$m
+      )
+    }
 
     egg_NOB <- broodtake$egg_NOB
     egg_HOB <- broodtake$egg_HOB_unmarked + broodtake$egg_HOB_marked
@@ -154,10 +168,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   } else {
     spawners <- list(
       NOS = array(0, dim(Nage_NOS)),
-      HOS = array(0, dim(Nage_HOS))
+      HOS = array(0, dim(Nage_HOS)),
+      HOS_local = array(0, dim(Nage_HOS)),
+      HO_remove = array(0, dim(Nage_HOS)),
     )
   }
-
 
   # Add habitat density-dependence on spawning sites
   if (habitat_args$use_habitat) {
@@ -466,7 +481,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
             Esc_HOS = Nage_HOS[, r],
             HOB = broodtake$HOB_unmarked[, r] + broodtake$HOB_marked[, r] + broodtake$HOB_stray[, r],
             HOS = HOS[, r],
-            HOS_effective = HOS_effective[, r]
+            HOS_effective = HOS_effective[, r],
+            HO_remove = spawners$HO_remove[, r]
           )
           d$HOB_import <- if (r == 1) broodtake$HOB_import else rep(NA, nrow(Nage_HOS))
           return(d)

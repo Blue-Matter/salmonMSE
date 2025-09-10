@@ -10,6 +10,7 @@ NULL
 setClassUnion("num.array", c("numeric", "array"))
 setClassUnion("num.logical", c("numeric", "logical"))
 setClassUnion("num.matrix", c("numeric", "matrix"))
+setClassUnion("num.function", c("numeric", "function"))
 
 # ---- Bio Class -----
 #' Class \code{"Bio"}
@@ -198,17 +199,18 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
-    brood_import = "numeric",
     Mjuv_HOS = "num.array",
     p_mature_HOS = "num.array",
     stray_external = "matrix",
     gamma = "numeric",
     m = "numeric",
+    f_brood = "function",
+    brood_import = "numeric",
     pmax_esc = "numeric",
     pmax_NOB = "numeric",
     ptarget_NOB = "numeric",
     phatchery = "num.logical",
-    premove_HOS = "numeric",
+    premove_HOS = "num.function",
     fec_brood = "num.array",
     fitness_type = "character",
     theta = "numeric",

@@ -5,6 +5,8 @@
 calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, ptarget_NOB, pmax_NOB, phatchery, egg_target, p_female,
                            fec_brood, s_prespawn, m) {
 
+
+
   if (is.na(phatchery)) {
     HO_avail <- cbind(
       HOR_escapement,
@@ -121,12 +123,21 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
   }
   if (sum(escapement_HOS)) {
     if (is.na(phatchery)) {
-      HOS_local <- (escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked) * (1 - premove_HOS * m)
+      HO <- escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked
     } else {
-      HOS_local <- escapement_HOS * (1 - phatchery) * (1 - premove_HOS * m)
+      HO <- escapement_HOS * (1 - phatchery)
     }
+    if (is.function(premove_HOS)) {
+      p <- premove_HOS(spawners$NOS, HO, m)
+    } else if (is.numeric(premove_HOS)) {
+      p <- premove_HOS * m
+    } else {
+      stop("Error with premove_HOS")
+    }
+    HOS_local <- HO * (1 - p)
+    spawners$HO_remove <- HO * p
   } else {
-    HOS_local <- array(0, dim(escapement_HOS))
+    HOS_local <- spawners$HO_remove <- array(0, dim(escapement_HOS))
   }
   spawners$HOS <- HOS_local + spawners$HOS_stray
   return(spawners)
@@ -135,6 +146,37 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
 
 .egg_func <- function(ptake, N, gamma = 1, fec, p_female, s_prespawn, val = 0) {
   sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
+}
+
+calc_broodtake_custom <- function(f_brood, NOR_escapement, HOR_escapement, stray, p_female, fec, s_prespawn, m) {
+
+  brood <- f_brood(NOR_escapement, HOR_escapement, stray, m)
+  NOB <- brood$NOB
+  HOB_marked <- brood$HOB_marked
+  HOB_unmarked <- brood$HOB_unmarked
+  HOB_stray <- brood$HOB_stray
+
+  egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
+  egg_HOB_unmarked <- sum((HOB_unmarked + HOB_stray) * s_prespawn * fec * p_female)
+  egg_HOB_marked <- sum(HOB_marked * s_prespawn * fec * p_female)
+
+  pNOB <- sum(fec * NOB)/sum(fec * (NOB + HOB_unmarked + HOB_marked + HOB_stray))
+
+  # Check output is the same as .broodtake_func()
+  output <- list(
+    egg_NOB = egg_NOB,
+    egg_HOB_unmarked = egg_HOB_unmarked,
+    egg_HOB_marked = egg_HOB_marked,
+    ptake_unmarked = sum(NOB, HOB_unmarked, HOB_stray)/sum(NOR_escapement, HOR_escapement, stray),
+    ptake_marked = sum(HOB_marked)/sum(NOR_escapement, HOR_escapement, stray),
+    pNOB = pNOB,
+    NOB = NOB,
+    HOB_unmarked = HOB_unmarked,
+    HOB_marked = HOB_marked,
+    HOB_import = rep(0, nrow(HOR_escapement)),
+    HOB_stray = HOB_stray
+  )
+  return(output)
 }
 
 .broodtake_func <- function(ptake_unmarked, NOR_escapement, HOR_escapement, stray, brood_import, phatchery, p_female, fec, gamma,

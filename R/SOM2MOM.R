@@ -270,7 +270,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           premove_HOS = Hatchery@premove_HOS,
           s_prespawn = Hatchery@s_prespawn,
           gamma = Hatchery@gamma,
-          m = Hatchery@m
+          m = Hatchery@m,
+          f_brood = Hatchery@f_brood
         )
 
         if (any(Hatchery@fitness_type == "Ford") && (do_hatchery_s || has_strays_s)) {
@@ -487,7 +488,6 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_smolt", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
-      Hatchery <- check_numeric(Hatchery, "brood_import", size = maxage, default = rep(0, maxage))
 
       if (length(dim(Hatchery@Mjuv_HOS)) == 3 && Hatchery@n_r == 1) {
         Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage, nsim, years)
@@ -503,9 +503,11 @@ check_SOM <- function(SOM, silent = FALSE) {
         Hatchery@p_mature_HOS <- array(Hatchery@p_mature_HOS, c(dim(Hatchery@Mjuv_HOS), 1))
       }
       Hatchery <- check_maxage2garray(Hatchery, "p_mature_HOS", maxage, nsim, years, Hatchery@n_r)
+      Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
 
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
 
+      Hatchery <- check_numeric(Hatchery, "brood_import", size = maxage, default = rep(0, maxage))
       Hatchery <- check_numeric(Hatchery, "pmax_esc", default = 0.75)
       Hatchery <- check_numeric(Hatchery, "pmax_NOB", default = 1)
       Hatchery <- check_numeric(Hatchery, "ptarget_NOB", default = 0.9)
@@ -513,10 +515,11 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
       Hatchery <- check_maxage2array(Hatchery, "fec_brood", maxage, nsim, years)
 
-      Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
-
       Hatchery <- check_numeric(Hatchery, "phatchery", default = NA)
-      Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
+
+      if (!is.function(Hatchery@premove_HOS) && is.numeric(Hatchery@premove_HOS)) {
+        Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
+      }
 
       Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
       if (any(Hatchery@fitness_type == "Ford")) {
