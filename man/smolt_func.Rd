@@ -87,7 +87,7 @@ Names include:}
 
 \item{g}{Integer for the life history group of natural origin fish to pass the parameter back to openMSE (if \code{output = "natural"})}
 
-\item{prop_LHG}{Numeric, proportion of the egg production assign to life history group \code{g} corresponding to \code{p_smolt} for the next generation (only used if \code{output = "natural"})}
+\item{prop_LHG}{Numeric vector, proportion of the egg production assign to life history groups (sums up to one) (only used if \code{output = "natural"})}
 
 \item{r}{Integer for the release strategy of hatchery origin fish to pass the parameter back to openMSE (if \code{output = "hatchery"})}
 

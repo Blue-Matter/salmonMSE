@@ -60,11 +60,16 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     p_NOS_return <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "recruitment"] # MSEtool population index for returning NOS
     p_NOS_escapement <- pindex$p[pindex$s == s & pindex$origin == "natural" & pindex$stage == "escapement"] # NOS escapement
 
-    y_spawnOM <- which(MMSE@SSB[1, p_NOS_escapement[1], mp, ] > 0) # Odd time steps, indicated by presence of escapement
+    #y_spawnOM <- which(colSums(MMSE@SSB[, p_NOS_escapement[1], mp, ]) > 0) # Odd time steps, indicated by presence of escapement
+    #if (y_spawnOM[1] == 1) {
+    #  y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
+    #}
+    #y_spawn <- 0.5 * (y_spawnOM - 1)
+    y_spawnOM <- t1
     if (y_spawnOM[1] == 1) {
       y_spawnOM <- y_spawnOM[-1] # This is actually the spawning from the last historical year
     }
-    y_spawn <- 0.5 * (y_spawnOM - 1)
+    y_spawn <- seq(1, length(unique(N$t)))
 
     Njuv_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_imm, a_imm, mp, t1, , drop = FALSE], c(1, 3, 5), sum)
     Return_NOS[, s, , ] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, , drop = FALSE], c(1, 3, 5), sum)
@@ -98,7 +103,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     ExT_NOS[, s, , ] <- local({
       Ka_NOS <- sapply(1:length(p_NOS_return), function(i) { # sim x age x year
         FM <- MMSE@FM[, p_NOS_return[i], f, mp, t2]
-        Fa <- sapply(1:length(t2), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+        Fa <- sapply(1:length(t2), function(t) vulT[, , t] * FM[, t], simplify = "array")
         N <- apply(MMSE@N[, p_NOS_return[i], a_return, mp, t2, ], 1:3, sum)
         (1 - exp(-Fa)) * N
       }, simplify = "array") %>%
@@ -173,7 +178,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       ExT_HOS[, s, , ] <- local({
         Ka_HOS <- sapply(1:length(p_HOS_return), function(i) { # sim x age x year
           FM <- MMSE@FM[, p_HOS_return[i], f, mp, t2]
-          Fa <- sapply(1:length(t2), function(t) vulPT[, , t] * FM[, t], simplify = "array")
+          Fa <- sapply(1:length(t2), function(t) vulT[, , t] * FM[, t], simplify = "array")
           N <- apply(MMSE@N[, p_HOS_return[i], a_return, mp, t2, ], 1:3, sum)
           (1 - exp(-Fa)) * N
         }, simplify = "array") %>%

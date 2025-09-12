@@ -53,13 +53,13 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     age_mature <- which(age_mature)[1]
     message("Age of maturity assumed to be: ", age_mature)
 
-    fec <- SOM@Bio[[s]]@fec[age_mature]
+    fec <- SOM@Bio[[s]]@fec[1, age_mature, 1]
     SOM@Bio[[s]]@fec <- fec
     message("Fecundity of spawners assumed to be: ", fec)
 
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
     if (do_hatchery) {
-      fec_brood <- SOM@Hatchery[[s]]@fec_brood[age_mature]
+      fec_brood <- SOM@Hatchery[[s]]@fec_brood[1, age_mature, 1]
       message("Fecundity of broodtake assumed to be: ", fec_brood)
 
       if (is.na(SOM@Hatchery[[s]]@phatchery)) stop("Need value for SOM@Hatchery[[", s, "]]@phatchery")

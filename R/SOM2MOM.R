@@ -307,7 +307,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           SRRpars = SRRpars,
           hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
           stray_args = stray_args,
-          g = g, prop_LHG = p_LHG[g]
+          g = g, prop_LHG = p_LHG
         )
 
         # Marine survival of natural origin fish

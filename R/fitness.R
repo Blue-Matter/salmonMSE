@@ -3,13 +3,16 @@
 calc_zbar <- function(NOS, HOS_effective, NOB, HOB, fec, fec_brood,
                       zbar_prev, fitness_variance, theta, phenotype_variance, heritability) {
 
-  tiny <- 1e-8
-
   pNOS <- NOS * fec/sum(fec * (NOS + HOS_effective))
-  pHOSeff <- HOS_effective * fec/sum(fec * (NOS + HOS_effective))
+  if (!sum(NOS)) pNOS[] <- 0
 
-  pNOB <- NOB * fec_brood/sum(fec_brood * (NOB + HOB) + tiny)
-  pHOB <- HOB * fec_brood/sum(fec_brood * (NOB + HOB) + tiny)
+  pHOSeff <- HOS_effective * fec/sum(fec * (NOS + HOS_effective))
+  if (!sum(HOS_effective)) pHOSeff[] <- 0
+
+  pNOB <- NOB * fec_brood/sum(fec_brood * (NOB + HOB))
+  if (!sum(NOB)) pNOB[] <- 0
+  pHOB <- HOB * fec_brood/sum(fec_brood * (NOB + HOB))
+  if (!sum(HOB)) pHOB[] <- 0
 
   # Trait value after selection
   zprime_natural <- (zbar_prev * fitness_variance + theta[1] * phenotype_variance)/(fitness_variance + phenotype_variance)
