@@ -53,7 +53,7 @@
     <p>Various parameters can be stochastic (length <code>nsim</code>) or input as a single numeric
 (value identical across all simulations).</p>
 <p>A description of the fitness parameters and hatchery dynamics is available in the
-<a href="https://docs.salmonmse.com/articles/equations.html#fitness-effects-on-survival">online documentation</a>.</p>
+<a href="https://docs.salmonmse.com/articles/equations.html#hatchery-production">online documentation</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="slots">Slots<a class="anchor" aria-label="anchor" href="#slots"></a></h2>
@@ -68,12 +68,12 @@
 
 
 <dt><code>n_yearling</code></dt>
-<dd><p>Vector length <code>n_r</code>. The number of yearlings released by release strategy. No hatchery is modeled if <code>sum(n_yearling, n_subyearling) = 0</code>.
+<dd><p>Vector length <code>n_r</code>. The target number of yearlings released by release strategy. No hatchery is modeled if <code>sum(n_yearling, n_subyearling) = 0</code>.
 are zero. Yearlings survival is density-independent after release. Default is zero.</p></dd>
 
 
 <dt><code>n_subyearling</code></dt>
-<dd><p>Vector length <code>n_r</code>. The number of subyearlings released. No hatchery is modeled if <code>sum(n_yearling, n_subyearling) = 0</code> are zero.
+<dd><p>Vector length <code>n_r</code>. The target number of subyearlings released. No hatchery is modeled if <code>sum(n_yearling, n_subyearling) = 0</code> are zero.
 Subyearlings experience density-dependent survival in competition with natural origin young. Default is zero.</p></dd>
 
 
@@ -90,11 +90,6 @@ Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_su
 <dt><code>s_egg_subyearling</code></dt>
 <dd><p>Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from <code>n_yearling</code> and <code>n_subyearling</code>. Default is 1.</p></dd>
-
-
-<dt><code>brood_import</code></dt>
-<dd><p>Matrix by age (length <code>maxage</code>) for the number of annual imported hatchery origin broodstock. Egg production is weighted by <code>fec_brood</code>.
-To meet hatchery production target releases, imported brood and local marked brood are used indiscriminately. Default imported brood is zero.</p></dd>
 
 
 <dt><code>Mjuv_HOS</code></dt>
@@ -122,32 +117,43 @@ not included in the operating model. Default is zero. External strays are added 
 Set m = 1 for AHA compatibility with <code>ptarget_NOB</code>. Default is zero.</p></dd>
 
 
+<dt><code>f_brood</code></dt>
+<dd><p>Function that calculates the natural origin brood and hatchery origin brood from the escapement (after en-route mortality). Function should be of the form
+<code>function(NO, HO, stray, m) {return(list(NOB, HOB_marked, HOB_unmarked, HOB_stray))}</code>. Allows for bespoke rules for broodtake.</p></dd>
+
+
+<dt><code>brood_import</code></dt>
+<dd><p><strong>Not used if <code>f_brood</code> is provided</strong> Matrix by age (length <code>maxage</code>) for the number of annual imported hatchery origin broodstock. Egg production is weighted by <code>fec_brood</code>.
+To meet hatchery production target releases, imported brood and local marked brood are used indiscriminately. Default imported brood is zero.</p></dd>
+
+
 <dt><code>pmax_esc</code></dt>
-<dd><p>Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility. Default is 0.75.</p></dd>
+<dd><p><strong>Not used if <code>f_brood</code> is provided</strong> Numeric. The maximum proportion of total escapement (after en route mortality) that could be used as broodtake. Set to 1 for AHA compatibility. Default is 0.75.</p></dd>
 
 
 <dt><code>pmax_NOB</code></dt>
-<dd><p>Numeric. The maximum proportion of the natural origin escapement (after en route mortality and <code>pmax_esc</code>) to be used as broodtake. If broodstock
+<dd><p><strong>Not used if <code>f_brood</code> is provided</strong> Numeric. The maximum proportion of the natural origin escapement (after en route mortality and <code>pmax_esc</code>) to be used as broodtake. If broodstock
 is limited by <code>pmax_esc &lt; 1</code>, then this parameter should be 1. Default is 1.</p></dd>
 
 
 <dt><code>ptarget_NOB</code></dt>
-<dd><p>Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
+<dd><p><strong>Not used if <code>f_brood</code> is provided</strong> Numeric. The target proportion of the natural origin broodtake relative to the overall broodtake, assuming the mark rate is 1 and natural origin fish
 can be identified in the hatchery. The realized proportion may be lower if there are insufficient natural origin escapement. If the mark rate &lt; 1, then
 this target proportion identifies the proportion of unmarked fished in the broodtake. If mark rate = 0, then pNOB is equal to the proportion in the escapement. Default is 0.9.</p></dd>
 
 
 <dt><code>phatchery</code></dt>
-<dd><p>Numeric. Optional parameter (default is <code>NA</code>). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
+<dd><p><strong>Not used if <code>f_brood</code> is provided</strong> Numeric. Optional parameter (default is <code>NA</code>). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
 or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
 With the default option, <code>NA</code> allows all hatchery origin escapement that is not used brood to go to the spawning grounds.</p></dd>
 
 
 <dt><code>premove_HOS</code></dt>
-<dd><p>Numeric. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). The effective removal is discounted by the mark rate, i.e., <code>premove_HOS * m</code>.
+<dd><p>Numeric or function. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). The proportion of hatchery spawners removed is discounted by the mark rate, i.e., <code>p = premove_HOS * m</code>.
 The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
-imperfect implementation of weir removal. Default is zero.</p></dd>
+imperfect implementation of weir removal. Default is zero. This can also be a function that returns the proportion based on hatchery and natural escapement (after brood removal),
+Allows for bespoke rules for harvest. The function should be of the form: <code>function(NO, HO, m) {return(p)}</code>.</p></dd>
 
 
 <dt><code>fec_brood</code></dt>
@@ -209,26 +215,29 @@ an array by dimension <code>[nsim, maxage, 2]</code>, where the age slot corresp
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:       n_subyearling         s_prespawn        s_egg_smolt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   s_egg_subyearling       brood_import           Mjuv_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   s_egg_subyearling           Mjuv_HOS       p_mature_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array          num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      stray_external              gamma                  m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:             matrix            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             f_brood       brood_import           pmax_esc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           function            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pmax_NOB        ptarget_NOB          phatchery</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric        num.logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_HOS          fec_brood       fitness_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       num.function          num.array          character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               theta           rel_loss         zbar_start</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric          num.array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        p_mature_HOS     stray_external              gamma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array             matrix            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:                   m           pmax_esc           pmax_NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  phenotype_variance   fitness_variance       heritability</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric        num.logical            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           fec_brood       fitness_type              theta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array          character            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            rel_loss         zbar_start phenotype_variance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric          num.array            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:    fitness_variance       heritability      fitness_floor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Hatchery.list"</span>
 </code></pre></div>
