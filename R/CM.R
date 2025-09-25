@@ -66,7 +66,7 @@
 #'
 #' - `hatchsurv` Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
 #' - `gamma` *Optional*. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
-#' - `ssum` Numeric, proportion of spawners that is female
+#' - `ssum` Numeric, proportion of spawners that is female. Can also be a vector `Nages`
 #'
 #' - `fec` Vector length `Nages`. Fecundity, egg production at age
 #'

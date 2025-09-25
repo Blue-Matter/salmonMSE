@@ -16,7 +16,7 @@
 #' @param y Integer, simulation year (including historical years)
 #' @param output Character, whether to predict the natural origin or hatchery origin smolt production
 #' @param s_enroute Numeric, en route survival of the escapement to the spawning grounds
-#' @param p_female Numeric, proportion female for calculating the egg production.
+#' @param p_female Vector `[maxage]`, proportion female for calculating the egg production.
 #' @param fec Array `[nsim, maxage, nyears+proyears]`. The fecundity at age schedule of spawners
 #' @param SRRpars Data frame containing stock recruit parameters for natural smolt production from egg production.
 #' Column names include: SRrel, kappa, capacity, Smax, phi

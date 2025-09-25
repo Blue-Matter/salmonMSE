@@ -405,7 +405,8 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_numeric(Bio, "p_LHG", size = Bio@n_g, default = rep(1/Bio@n_g, Bio@n_g))
 
     Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, years)
-    Bio <- check_numeric(Bio, "p_female", default = 0.5)
+    if (length(Bio@p_female) == 1) Bio@p_female <- rep(Bio@p_female, maxage)
+    Bio <- check_numeric(Bio, "p_female", size = maxage, default = rep(0.5, maxage))
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
     Bio <- check_maxage2array(Bio, "fec", maxage, nsim, years)
 

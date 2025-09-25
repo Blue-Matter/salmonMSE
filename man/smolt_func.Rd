@@ -65,7 +65,7 @@ determines the proportions of the donor escapement that will move to the recipie
 
 \item{s_enroute}{Numeric, en route survival of the escapement to the spawning grounds}
 
-\item{p_female}{Numeric, proportion female for calculating the egg production.}
+\item{p_female}{Vector \verb{[maxage]}, proportion female for calculating the egg production.}
 
 \item{fec}{Array \verb{[nsim, maxage, nyears+proyears]}. The fecundity at age schedule of spawners}
 

@@ -116,10 +116,11 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "escapement") {
     age_fec <- seq(3, n_age, 2)
+    p_female <- array(Bio@p_female, c(Bio@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>% aperm(c(2, 1, 3))
     if (NOS) {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * Bio@fec
+      cpars_bio$Fec_age[, age_fec, all_t1] <- p_female * Bio@fec
     } else {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- Bio@p_female * Hatchery@gamma * Bio@fec
+      cpars_bio$Fec_age[, age_fec, all_t1] <- p_female * Hatchery@gamma * Bio@fec
     }
   } else {
     cpars_bio$Fec_age[, n_age, ] <- 1

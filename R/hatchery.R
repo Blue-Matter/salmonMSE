@@ -88,7 +88,7 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
       ptake_NOB <- NOBopt$root
     }
     NOB <- ptake_NOB * NOR_escapement
-    egg_NOB <- sum(NOB * s_prespawn, fec_brood * p_female)
+    egg_NOB <- sum(NOB * s_prespawn * fec_brood * p_female)
     HOB_zero <- array(0, dim(HOR_escapement))
     HOB_import <- rep(0, nrow(NOB))
     pNOB <- 1

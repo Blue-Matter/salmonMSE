@@ -48,9 +48,9 @@ CM_int <- function(p, d) {
     lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - vulPT[a] * d$finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
   }
 
-  epro <- d$ssum * sum(lo * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
-  spro <- d$ssum * sum(lo * d$bmatt)                             # unfished female spawner per smolt
-  sprhist <- d$ssum * sum(lhist * exp(-vulPT * d$finitPT) * d$bmatt * exp(-vulT * d$finitT))   # historcial spawners per recruit (pr)
+  epro <- sum(lo * d$ssum * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
+  spro <- sum(lo * d$ssum * d$bmatt)                             # unfished female spawner per smolt
+  sprhist <- sum(lhist * d$ssum * exp(-vulPT * d$finitPT) * d$bmatt * exp(-vulT * d$finitT))   # historcial female spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
   rhist <- spawnhist/sprhist # historical recruitment
@@ -507,7 +507,7 @@ check_data <- function(data) {
 
   if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
   if (is.null(data$gamma)) data$gamma <- 1
-  if (is.null(data$ssum)) stop("data$ssum should be between 0-1")
+  if (is.null(data$ssum)) stop("data$ssum (proportion female spawners) should be between 0-1")
 
   if (is.null(data$fec) || length(data$fec) != data$Nages) {
     stop("data$fec should be a vector length Nages")

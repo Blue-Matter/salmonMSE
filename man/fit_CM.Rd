@@ -89,7 +89,7 @@ the equilibrium spawners at age.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
 \item \code{hatchsurv} Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
 \item \code{gamma} \emph{Optional}. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
-\item \code{ssum} Numeric, proportion of spawners that is female
+\item \code{ssum} Numeric, proportion of spawners that is female. Can also be a vector \code{Nages}
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
 \item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
 \item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.

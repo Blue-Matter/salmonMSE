@@ -55,7 +55,7 @@ To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] 
 
 \item{\code{fec}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. Female fecundity of natural origin spawners.}
 
-\item{\code{p_female}}{Numeric. The proportion of females in the spawning population. Default is 0.5.}
+\item{\code{p_female}}{Numeric. The proportion of females in the spawning population. Default is 0.5. Can also be a vector \verb{[maxage]} (for situations where older spawners are predominantly female)}
 
 \item{\code{s_enroute}}{Numeric. Survival of escapement to the spawning grounds (for spawning and for broodtake). Default is 1.}
 }}

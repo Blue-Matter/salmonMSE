@@ -57,6 +57,10 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
     SOM@Bio[[s]]@fec <- fec
     message("Fecundity of spawners assumed to be: ", fec)
 
+    p_female_mean <- mean(SOM@Bio[[s]]@p_female)
+    SOM@Bio[[s]]@p_female <- p_female_mean
+    message("Fecundity of spawners assumed to be: ", p_female_mean)
+
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
     if (do_hatchery) {
       fec_brood <- SOM@Hatchery[[s]]@fec_brood[1, age_mature, 1]

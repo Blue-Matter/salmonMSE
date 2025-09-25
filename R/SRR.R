@@ -77,6 +77,7 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
 #' @export
 calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker", "HS")) {
   type <- match.arg(type)
+  if (length(p_female) > 1) stop("p_female needs to be length 1")
   alpha <- p/f/p_female
   beta <- switch(
     type,
