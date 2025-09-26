@@ -5,8 +5,6 @@
 calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, ptarget_NOB, pmax_NOB, phatchery, egg_target, p_female,
                            fec_brood, s_prespawn, m) {
 
-
-
   if (is.na(phatchery)) {
     HO_avail <- cbind(
       HOR_escapement,
@@ -148,13 +146,29 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
   sum(ptake * gamma * N * s_prespawn * fec * p_female) - val
 }
 
-calc_broodtake_custom <- function(f_brood, NOR_escapement, HOR_escapement, stray, p_female, fec, s_prespawn, m) {
+calc_broodtake_custom <- function(f_brood, NOR_escapement, HOR_escapement, stray, p_female, fec, s_prespawn, m,
+                                  egg_target) {
 
   brood <- f_brood(NOR_escapement, HOR_escapement, stray, m)
-  NOB <- brood$NOB
-  HOB_marked <- brood$HOB_marked
-  HOB_unmarked <- brood$HOB_unmarked
-  HOB_stray <- brood$HOB_stray
+  brood$egg_NOB <- sum(brood$NOB * s_prespawn * fec * p_female)
+  brood$egg_HOB_unmarked <- sum((brood$HOB_unmarked + brood$HOB_stray) * s_prespawn * fec * p_female)
+  brood$egg_HOB_marked <- sum(brood$HOB_marked * s_prespawn * fec * p_female)
+  brood$total_egg <- brood$egg_NOB + brood$egg_HOB_unmarked + brood$egg_HOB_marked
+
+  if (brood$total_egg/egg_target > 1.001) {
+    brood_init <- cbind(brood$NOB, brood$HOB_marked, brood$HOB_unmarked, brood$HOB_stray)
+    opt <- uniroot(.egg_func, c(1e-8, 1), N = brood_init, fec = fec,
+                   p_female = p_female, s_prespawn = s_prespawn, val = egg_target)
+    p_adjust <- opt$root
+
+  } else {
+    p_adjust <- 1
+  }
+
+  NOB <- p_adjust * brood$NOB
+  HOB_marked <- p_adjust * brood$HOB_marked
+  HOB_unmarked <- p_adjust * brood$HOB_unmarked
+  HOB_stray <- p_adjust * brood$HOB_stray
 
   egg_NOB <- sum(NOB * s_prespawn * fec * p_female)
   egg_HOB_unmarked <- sum((HOB_unmarked + HOB_stray) * s_prespawn * fec * p_female)

@@ -117,7 +117,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         hatchery_args$p_female,
         fec_brood_t,
         hatchery_args$s_prespawn,
-        hatchery_args$m
+        hatchery_args$m,
+        hatchery_args$egg_target
       )
     }
 
