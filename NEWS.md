@@ -3,6 +3,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 # 0.1.1
 
 - `SOM@Bio@p_female` parameter can now be age-specific. Intended for cases where older spawners are predominantly female. 
+- Fix markdown reporting
 
 # 0.1.0
 

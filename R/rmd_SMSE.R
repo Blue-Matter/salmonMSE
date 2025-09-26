@@ -262,7 +262,7 @@ rmd_hatchery_production <- function(s, sname) {
     "```",
     "",
     "```{r, fig.cap=\"Broodtake fecundity.\"}",
-    paste0("plot_SOM(SOM@Hatchery[[", s, "]], \"fec_brood\", type = \"age\", maxage = SOM@Bio[[", s, "]]@maxage, ylab = \"Brood fecundity\")"),
+    paste0("plot_SOM(SOM@Hatchery[[", s, "]], \"fec_brood\", type = \"age\", maxage = SOM@Bio[[", s, "]]@maxage, nsim = SOM@nsim, nyears = SOM@nyears, proyears = SOM@proyears, ylab = \"Brood fecundity\")"),
     "```",
     "\n",
     "#### Time series",
