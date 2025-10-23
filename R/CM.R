@@ -232,8 +232,11 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   SRbeta <- sapply(report, getElement, "beta")
   phi <- sapply(report, getElement, "epro")
 
-  matt <- sapply(report, getElement, "matt", simplify = "array") %>%
-    aperm(3:1)
+  # Sim, age, year, rs
+  matt_HO <- sapply(report, getElement, "matt", simplify = "array") %>%
+    aperm(c(4, 2, 1, 3))
+  matt_NO <- matt_HO[, , , data$r_matt]
+
 
   mo <- sapply(report, getElement, "mo", simplify = "array") %>%
     aperm(3:1)
@@ -254,7 +257,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     maxage = data$Nages,
     n_g = 1,
     p_LHG = 1,
-    p_mature = expand_array(matt, proyears),
+    p_mature = expand_array(matt_NO, proyears),
     SRrel = "Ricker",
     kappa = as.numeric(exp(pars$log_cr[sims])),
     Smax = 1/SRbeta,
@@ -265,9 +268,21 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     s_enroute = data$s_enroute
   )
 
+  M_HO_proj <- expand_array(mo, proyears)
+  M_HO_proj2 <- array(M_HO_proj, c(dim(M_HO_proj), data$n_r))
+  matt_HO_proj <- local({
+    x <- matt_HO
+    xlast <- x[, , dim(x)[3], ]
+    xproj <- array(xlast, c(dim(x)[c(1, 2, 4)], proyears)) %>% aperm(c(1, 2, 4, 3))
+    abind::abind(x, xproj, along = 3) %>%
+      structure(dimnames = NULL)
+  })
+
   Hatchery <- new(
     "Hatchery",
-    Mjuv_HOS = expand_array(mo, proyears),
+    n_r = data$n_r,
+    Mjuv_HOS = M_HO_proj2,
+    p_mature_HOS = matt_HO_proj,
     gamma = data$gamma
   )
 
