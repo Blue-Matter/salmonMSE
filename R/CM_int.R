@@ -291,6 +291,7 @@ CM_int <- function(p, d) {
 
   # Log likelihood
   loglike_esc <- dnorm(logobsesc, logpredesc, p$lnE_sd, log = TRUE)
+  loglike_esc[is.na(d$obsescape)] <- 0
   loglike_cwtesc <- dpois(d$cwtesc, ebrood, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
@@ -531,7 +532,7 @@ check_data <- function(data) {
 
   if (is.null(data$s_enroute)) data$s_enroute <- 1
 
-  if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape))
+  if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
   if (is.null(data$so_sd)) data$so_sd <- 0.5
 
   if (is.null(data$finitPT)) data$finitPT <- 0

@@ -101,7 +101,7 @@ CM_fit_esc <- function(report, d, year) {
   esc <- exp(sapply(report, getElement, "logpredesc")) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975))
 
-  plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(esc, obs), xlab = "Year", ylab = "Escapement")
+  plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(esc, obs, na.rm = TRUE), xlab = "Year", ylab = "Escapement")
   polygon(c(rev(year), year), c(rev(esc[1, ]), esc[3, ]), col = alpha("grey", 0.5), border = NA)
   lines(year, esc[2, ], lwd = 1.5)
 

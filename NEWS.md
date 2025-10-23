@@ -3,8 +3,9 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 # 0.1.1
 
 - `SOM@Bio@p_female` parameter can now be age-specific. Intended for cases where older spawners are predominantly female. 
-- Fix markdown reporting
+- Fix markdown reporting for projections
 - If release target is exceeded in custom brood rule, projection will proportionally reduce broodtake to return to target
+- Allow NAs in target population escapement time series in likelihood of conditioning model
 
 # 0.1.0
 
