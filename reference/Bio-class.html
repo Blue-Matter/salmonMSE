@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@
     <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/Blue-Matter/salmonMSE/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -123,7 +124,7 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 
 
 <dt><code>p_female</code></dt>
-<dd><p>Numeric. The proportion of females in the spawning population. Default is 0.5.</p></dd>
+<dd><p>Numeric. The proportion of females in the spawning population. Default is 0.5. Can also be a vector <code>[maxage]</code> (for situations where older spawners are predominantly female)</p></dd>
 
 
 <dt><code>s_enroute</code></dt>

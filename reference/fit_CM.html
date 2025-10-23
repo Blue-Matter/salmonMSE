@@ -19,7 +19,7 @@ The model can include either a preterminal juvenile fishery, terminal return fis
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@ The model can include either a preterminal juvenile fishery, terminal return fis
     <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
     <li><a class="dropdown-item" href="../articles/model.html">Implementation</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/Blue-Matter/salmonMSE/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -160,7 +161,7 @@ the equilibrium spawners at age.</p></li>
 <li><p><code>covariate</code> <em>Optional</em>. Matrix <code>Ldyr, ncov</code> of linear covariates that predict natural mortality for ages 2+.</p></li>
 <li><p><code>hatchsurv</code> Numeric, survival of hatchery releases into the smolt life stage. Density-independent.</p></li>
 <li><p><code>gamma</code> <em>Optional</em>. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.</p></li>
-<li><p><code>ssum</code> Numeric, proportion of spawners that is female</p></li>
+<li><p><code>ssum</code> Numeric, proportion of spawners that is female. Can also be a vector <code>Nages</code></p></li>
 <li><p><code>fec</code> Vector length <code>Nages</code>. Fecundity, egg production at age</p></li>
 <li><p><code>r_matt</code> Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.</p></li>
 <li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
