@@ -80,9 +80,9 @@ C^\textrm{CWT,T}_{y,a} &= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\textrm
 
 # Hatchery and natural production
 
-The model does separate accounting is natural-origin ($\textrm{NO}$) and hatchery-origin ($\textrm{HO}$) fish in the population of interest. 
+The model does separate accounting of natural-origin ($\textrm{NO}$) and hatchery-origin ($\textrm{HO}$) fish in the population of interest. 
 
-The abundance of juvenile fish, return, and escapement uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
+The abundance of juvenile fish $N$, return $R$, and escapement $E$ uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
 
 \begin{align}
 N^\textrm{juv,NO}_{y+1,a+1} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
@@ -123,7 +123,7 @@ $$
 \textrm{Egg}_y) \exp(-\delta_y)
 $$
 
-where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate.
+where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate. Here, smolts are considered to be outmigrating juveniles. Thus, the survival described by the Ricker function occurs over freshwater life stages.
 
 [Walters and Korman (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html) show that the realized egg-smolt mortality rate can be defined as 
 
@@ -131,9 +131,9 @@ $$
 M_y^\textrm{egg} = M^\textrm{egg}_\textrm{min} + \beta \times \textrm{Egg}_y + \delta_y
 $$ 
 
-where $M^\textrm{egg}_\textrm{min} = -\log(\phi_0^{-1}) - \log(\kappa)$ is the density-independent egg mortality rate when the egg production approaches zero, $\beta \times \textrm{Egg}_y$ is the density-dependent mortality term, and $\delta_y$ is a year-specific deviation.
+where $M^\textrm{egg}_\textrm{min} = -\log(\phi^{-1}) - \log(\kappa)$ is the density-independent egg mortality rate when the egg production approaches zero, $\beta \times \textrm{Egg}_y$ is the density-dependent mortality term, and $\delta_y$ is a year-specific deviation.
 
-The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi_0$, where $\kappa$ is productivity (return/spawner) and $\phi_0$ is the equilibrium unfished egg-per-smolt corresponding to the one-to-one return per spawner line, with $\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
+The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi$ in units of juvenile-per-egg, where $\kappa$ is productivity (return/spawner) and $\phi$ is the egg-per-juvenile at replacement (corresponding to the one-to-one return per spawner line), with $\phi = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}$.
 
 $\ell_a$ is the juvenile survival at age:
 
@@ -145,8 +145,27 @@ $$
 \end{cases}
 $$
 
-The $\beta$ parameter is $\beta = \log(\kappa)/(\phi_0J_0)$, where $J_0$ is the equilibrium juvenile smolt production. 
-The equilibrium spawners is $S_0$ and $J_0 = S_0/\phi'_0$, where $\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the equilibrium female spawners per smolt.
+The $\beta$ parameter is $\beta = \log(\kappa)/(\phi \times J^\textrm{rep})$ is in units of reciprocal eggs, where $J^\textrm{rep}$ is the juvenile smolt production at replacement.
+The equilibrium spawners at replacement is $S^\textrm{rep}$ and $J^\textrm{rep} = S^\textrm{rep}/\tau$, where $\tau = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}$ is the equilibrium female spawners per juvenile.
+
+## Realized productivity
+
+Note that the replacement values described above correspond to initial maturity and natural mortality values. 
+The realized replacement, along with the realized productivity and spawners at replacement, varies if either maturity and natural mortality are varying in the historical time series because these parameters change the egg production over the lifetime of a juvenile.
+
+To obtain the realized productivity in a particular year, we can calculate the egg-per-juvenile $\phi_y = \sum_a \ell_{y,a} m_{y,a} f_a p^\textrm{female}$ and spawner-per-juvenile $\tau_y = \sum_a \ell_{y,a} m_{y,a} p^\textrm{female}$ from the historical maturity and mortality, where
+
+$$
+\ell_{y,a} = 
+\begin{cases}
+1 &, a = 1\\
+\ell_{y,a-1} \exp(-M_{y,a-1}) (1 - m_{y,a-1}) &, a = 2, \ldots, A
+\end{cases}
+$$
+
+The realized productivity is $\kappa_y = \alpha \phi_y$ with corresponding $S^\textrm{rep}_y = \log(\kappa_y)\times\tau_y/(\beta\phi_y)$ and $E^\textrm{rep}_y = S^\textrm{rep}_y \phi_y / \tau_y$ ($E^\textrm{rep}_y$ is the egg production at replacement).
+
+The realized productivity can be less than one (and $S^\textrm{rep}_y < 0$) in an individual year. If juvenile marine mortality is high or maturity is late, then there are too few returns to replace the population.
 
 # Parameter estimation and priors
 
