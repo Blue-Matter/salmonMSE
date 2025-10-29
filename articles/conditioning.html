@@ -245,14 +245,19 @@ C^\textrm{CWT,T}_{y,a} &amp;= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\te
 <div class="section level2">
 <h2 id="hatchery-and-natural-production">Hatchery and natural production<a class="anchor" aria-label="anchor" href="#hatchery-and-natural-production"></a>
 </h2>
-<p>The model does separate accounting is natural-origin
+<p>The model does separate accounting of natural-origin
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NO</mtext><annotation encoding="application/x-tex">\textrm{NO}</annotation></semantics></math>)
 and hatchery-origin
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HO</mtext><annotation encoding="application/x-tex">\textrm{HO}</annotation></semantics></math>)
 fish in the population of interest.</p>
-<p>The abundance of juvenile fish, return, and escapement uses the same
-exploitation rate, maturity, and natural mortality parameters estimated
-from the CWT.</p>
+<p>The abundance of juvenile fish
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
+return
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+and escapement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+uses the same exploitation rate, maturity, and natural mortality
+parameters estimated from the CWT.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 N^\textrm{juv,NO}_{y+1,a+1} &amp;= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
 N^\textrm{juv,HO}_{y+1,a+1} &amp;= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
@@ -296,7 +301,9 @@ function:</p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\delta_y</annotation></semantics></math>
 is an annual deviation from the density-dependent function, expressed as
-an instantaneous mortality rate.</p>
+an instantaneous mortality rate. Here, smolts are considered to be
+outmigrating juveniles. Thus, the survival described by the Ricker
+function occurs over freshwater life stages.</p>
 <p><a href="https://publications.gc.ca/site/eng/9.940685/publication.html" class="external-link">Walters
 and Korman (2024)</a> show that the realized egg-smolt mortality rate
 can be defined as</p>
@@ -304,7 +311,7 @@ can be defined as</p>
 M_y^\textrm{egg} = M^\textrm{egg}_\textrm{min} + \beta \times \textrm{Egg}_y + \delta_y
 </annotation></semantics></math></p>
 <p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>M</mi><mtext mathvariant="normal">min</mtext><mtext mathvariant="normal">egg</mtext></msubsup><mo>=</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>ϕ</mi><mn>0</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>κ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">M^\textrm{egg}_\textrm{min} = -\log(\phi_0^{-1}) - \log(\kappa)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>M</mi><mtext mathvariant="normal">min</mtext><mtext mathvariant="normal">egg</mtext></msubsup><mo>=</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ϕ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>κ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">M^\textrm{egg}_\textrm{min} = -\log(\phi^{-1}) - \log(\kappa)</annotation></semantics></math>
 is the density-independent egg mortality rate when the egg production
 approaches zero,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>×</mo><msub><mtext mathvariant="normal">Egg</mtext><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">\beta \times \textrm{Egg}_y</annotation></semantics></math>
@@ -314,14 +321,14 @@ is a year-specific deviation.</p>
 <p>The Ricker
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
 parameter is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><msub><mi>ϕ</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi_0</annotation></semantics></math>,
-where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi</annotation></semantics></math>
+in units of juvenile-per-egg, where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>κ</mi><annotation encoding="application/x-tex">\kappa</annotation></semantics></math>
 is productivity (return/spawner) and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\phi_0</annotation></semantics></math>
-is the equilibrium unfished egg-per-smolt corresponding to the
-one-to-one return per spawner line, with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mn>0</mn></msub><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mi>a</mi></msub><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msub><mi>f</mi><mi>a</mi></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi_0 = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>
+is the egg-per-juvenile at replacement (corresponding to the one-to-one
+return per spawner line), with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mi>a</mi></msub><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msub><mi>f</mi><mi>a</mi></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi = \sum_a \ell_a m^\textrm{base}_a f_a p^\textrm{female}</annotation></semantics></math>.</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>a</mi></msub><annotation encoding="application/x-tex">\ell_a</annotation></semantics></math>
 is the juvenile survival at age:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mi>a</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msub><mo>ℓ</mo><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">base</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>m</mi><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">base</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>A</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
@@ -334,17 +341,52 @@ is the juvenile survival at age:</p>
 <p>The
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 parameter is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>κ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ϕ</mi><mn>0</mn></msub><msub><mi>J</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta = \log(\kappa)/(\phi_0J_0)</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>0</mn></msub><annotation encoding="application/x-tex">J_0</annotation></semantics></math>
-is the equilibrium juvenile smolt production. The equilibrium spawners
-is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>κ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ϕ</mi><mo>×</mo><msup><mi>J</mi><mtext mathvariant="normal">rep</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta = \log(\kappa)/(\phi \times J^\textrm{rep})</annotation></semantics></math>
+is in units of reciprocal eggs, where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>J</mi><mtext mathvariant="normal">rep</mtext></msup><annotation encoding="application/x-tex">J^\textrm{rep}</annotation></semantics></math>
+is the juvenile smolt production at replacement. The equilibrium
+spawners at replacement is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mtext mathvariant="normal">rep</mtext></msup><annotation encoding="application/x-tex">S^\textrm{rep}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mn>0</mn></msub><mo>=</mo><msub><mi>S</mi><mn>0</mn></msub><mi>/</mi><mi>ϕ</mi><msub><mi>′</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">J_0 = S_0/\phi'_0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>J</mi><mtext mathvariant="normal">rep</mtext></msup><mo>=</mo><msup><mi>S</mi><mtext mathvariant="normal">rep</mtext></msup><mi>/</mi><mi>τ</mi></mrow><annotation encoding="application/x-tex">J^\textrm{rep} = S^\textrm{rep}/\tau</annotation></semantics></math>,
 where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><msub><mi>′</mi><mn>0</mn></msub><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mi>a</mi></msub><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi'_0 = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}</annotation></semantics></math>
-is the equilibrium female spawners per smolt.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mi>a</mi></msub><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\tau = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}</annotation></semantics></math>
+is the equilibrium female spawners per juvenile.</p>
+<div class="section level3">
+<h3 id="realized-productivity">Realized productivity<a class="anchor" aria-label="anchor" href="#realized-productivity"></a>
+</h3>
+<p>Note that the replacement values described above correspond to
+initial maturity and natural mortality values. The realized replacement,
+along with the realized productivity and spawners at replacement, varies
+if either maturity and natural mortality are varying in the historical
+time series because these parameters change the egg production over the
+lifetime of a juvenile.</p>
+<p>To obtain the realized productivity in a particular year, we can
+calculate the egg-per-juvenile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi>y</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><msub><mi>f</mi><mi>a</mi></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi_y = \sum_a \ell_{y,a} m_{y,a} f_a p^\textrm{female}</annotation></semantics></math>
+and spawner-per-juvenile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mi>y</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\tau_y = \sum_a \ell_{y,a} m_{y,a} p^\textrm{female}</annotation></semantics></math>
+from the historical maturity and mortality, where</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msub><mo>ℓ</mo><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>A</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+\ell_{y,a} = 
+\begin{cases}
+1 &amp;, a = 1\\
+\ell_{y,a-1} \exp(-M_{y,a-1}) (1 - m_{y,a-1}) &amp;, a = 2, \ldots, A
+\end{cases}
+</annotation></semantics></math></p>
+<p>The realized productivity is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>κ</mi><mi>y</mi></msub><mo>=</mo><mi>α</mi><msub><mi>ϕ</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">\kappa_y = \alpha \phi_y</annotation></semantics></math>
+with corresponding
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>S</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>κ</mi><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msub><mi>τ</mi><mi>y</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><msub><mi>ϕ</mi><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S^\textrm{rep}_y = \log(\kappa_y)\times\tau_y/(\beta\phi_y)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>E</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><mo>=</mo><msubsup><mi>S</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><msub><mi>ϕ</mi><mi>y</mi></msub><mi>/</mi><msub><mi>τ</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">E^\textrm{rep}_y = S^\textrm{rep}_y \phi_y / \tau_y</annotation></semantics></math>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>E</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><annotation encoding="application/x-tex">E^\textrm{rep}_y</annotation></semantics></math>
+is the egg production at replacement).</p>
+<p>The realized productivity can be less than one (and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>S</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">S^\textrm{rep}_y &lt; 0</annotation></semantics></math>)
+in an individual year. If juvenile marine mortality is high or maturity
+is late, then there are too few returns to replace the population.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="parameter-estimation-and-priors">Parameter estimation and priors<a class="anchor" aria-label="anchor" href="#parameter-estimation-and-priors"></a>
