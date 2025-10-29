@@ -96,8 +96,8 @@ the equilibrium spawners at age.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
-\item \code{so_mu} Numeric, the prior mean for unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
-\item \code{so_sd} Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
+\item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
+\item \code{so_sd} Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
 \item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 \item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 \item \code{cwtExp} Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
@@ -190,5 +190,5 @@ Sciences 62: vi + 60 p.
 \code{\link[=CM2SOM]{CM2SOM()}}
 }
 \author{
-Q. Huynh with Stan code provided by J. Korman and C. Walters
+Q. Huynh from Stan code provided by J. Korman and C. Walters
 }

@@ -19,7 +19,7 @@
 #'  Not used if habitat component is used.
 #' @slot Smax Vector length `nsim`. The egg production that maximizes smolt production in the Ricker stock-recruit function. **Units of eggs.**
 #' Equivalent to units of spawners if `fec = 1` for all spawners. Not used if habitat component is used.
-#' @slot phi Optional parameter, vector length `nsim`. Unfished egg production per smolt. **Units of egg per smolt**.
+#' @slot phi Optional parameter, vector length `nsim`. Egg production per smolt at unfished replacement. **Units of egg per smolt**.
 #'  The `alpha` parameter of the stock-recruit function will be the ratio of `kappa` and `phi`. In stage-based models,
 #'  this is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.

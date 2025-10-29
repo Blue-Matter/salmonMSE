@@ -370,7 +370,6 @@ CM_SRR <- function(report, year1 = 1, gg = TRUE) {
     geom_line(data = df_med) +
     geom_polygon(data = rbind(df_poly1, df_poly2), fill = "grey", alpha = 0.5) +
     labs(x = "Egg production", y = "Smolt production") +
-
     expand_limits(x = 0, y = 0)
 
   if (requireNamespace("ggrepel", quietly = TRUE)) {
@@ -379,6 +378,83 @@ CM_SRR <- function(report, year1 = 1, gg = TRUE) {
   g
 }
 
+CM_prod <- function(report, d, year1 = 1) {
+
+  prod <- sapply(1:length(report), function(x) {
+    sapply(1:d$Ldyr, function(y) {
+
+      mo <- report[[x]]$mo[y, ]
+      matt <- report[[x]]$matt[y, , d$r_matt]
+
+      lo <- numeric(d$Nages)
+      lo[1] <- 1
+      for (a in 2:d$Nages) {
+        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
+      }
+      epro <- sum(lo * d$ssum * d$fec * matt)
+
+      return(report[[x]]$alpha * epro)
+    })
+  })
+
+  prod_q <- apply(prod, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1) %>%
+    reshape2::dcast(list("Year", "Var1"))
+
+  g <- prod_q %>%
+    ggplot(aes(Year, .data$`50%`)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+    labs(x = "Year", y = "Productivity")
+  g
+
+}
+
+CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+  type <- match.arg(type)
+
+  Srep <- sapply(1:length(report), function(x) {
+    sapply(1:d$Ldyr, function(y) {
+
+      mo <- report[[x]]$mo[y, ]
+      matt <- report[[x]]$matt[y, , d$r_matt]
+
+      lo <- numeric(d$Nages)
+      lo[1] <- 1
+      for (a in 2:d$Nages) {
+        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
+      }
+      epro <- sum(lo * d$ssum * d$fec * matt)
+      spro <- sum(lo * d$ssum * matt)
+
+      beta_s <- report[[x]]$beta * epro / spro
+      alpha_s <- report[[x]]$alpha * epro
+
+      Srep <- log(alpha_s)/beta_s
+
+      if (type == "spawner") {
+        return(Srep)
+      } else {
+        Erep <- Srep * epro / spro
+        return(Erep)
+      }
+    })
+  })
+
+  Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1) %>%
+    reshape2::dcast(list("Year", "Var1"))
+
+  g <- Srep_q %>%
+    ggplot(aes(Year, .data$`50%`)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+    labs(x = "Year", y = ifelse(type == "spawner", expression(S[rep]), expression(E[rep])))
+
+  g
+}
 
 .CM_statevarage <- function(report, year1 = 1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
   arr <- sapply(report, getElement, var, simplify = "array")

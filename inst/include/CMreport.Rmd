@@ -189,6 +189,18 @@ CM_Megg(report, year1, ci = TRUE, surv = TRUE) +
   coord_cartesian(ylim = c(0, 1))
 ```
 
+```{r prod, fig.cap="Realized productivity (medians and 95% prediction interval) from annual maturity and juvenile natural mortality values and constant density-dependent egg-juvenile survival. Values are less than 1 when there is insufficient spawners because juvenile natural mortality is high and/or maturity is late."}
+CM_prod(report, d, year1)
+```
+
+```{r Srep, fig.cap="Realized spawners at replacement (medians and 95% prediction interval) from annual maturity and natural mortality values and constant density-dependent egg-juvenile survival. Values are less than zero when realized productivity is less than 1."}
+CM_Srep(report, d, year1)
+```
+
+```{r Erep, fig.cap="Realized egg production at replacement (medians and 95% prediction interval) from annual maturity and natural mortality values and constant density-dependent egg-juvenile survival. Values are less than zero when realized productivity is less than 1."}
+CM_Srep(report, d, year1, type = "egg")
+```
+
 ### Juvenile abundance
 
 ```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval). Natural origin age 1 fish corresponds to smolt production."}

@@ -76,8 +76,8 @@
 #' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.
 #'
-#' - `so_mu` Numeric, the prior mean for unfished spawners in logspace. Default is `log(3 * max(data$obsescape))`.
-#' - `so_sd` Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.
+#' - `so_mu` Numeric, the prior mean for spawners at unfished replacement in logspace. Default is `log(3 * max(data$obsescape))`.
+#' - `so_sd` Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
 #'
 #' - `finitPT` Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
 #' - `finitT` Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
@@ -152,7 +152,7 @@
 #' M^\textrm{base}_a + \sum_j b_j X_{y,j} & \quad a = 2, \ldots, A
 #' \end{cases}
 #' }
-#' @author Q. Huynh with Stan code provided by J. Korman and C. Walters
+#' @author Q. Huynh from Stan code provided by J. Korman and C. Walters
 #' @references
 #' Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
 #' Sciences 62: vi + 60 p.
