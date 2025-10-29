@@ -168,8 +168,8 @@ the equilibrium spawners at age.</p></li>
 <li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
 <li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code>, number of hatchery juvenile fish released</p></li>
 <li><p><code>s_enroute</code> Numeric, survival of escapement to spawning grounds. Default is 1.</p></li>
-<li><p><code>so_mu</code> Numeric, the prior mean for unfished spawners in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
-<li><p><code>so_sd</code> Numeric, the prior standard deviation for unfished spawners in logspace. Default is 0.5.</p></li>
+<li><p><code>so_mu</code> Numeric, the prior mean for spawners at unfished replacement in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
+<li><p><code>so_sd</code> Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.</p></li>
 <li><p><code>finitPT</code> Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
 <li><p><code>finitT</code> Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
 <li><p><code>cwtExp</code> Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
@@ -260,7 +260,7 @@ Sciences 62: vi + 60 p.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Q. Huynh with Stan code provided by J. Korman and C. Walters</p>
+    <p>Q. Huynh from Stan code provided by J. Korman and C. Walters</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
