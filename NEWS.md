@@ -7,6 +7,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - If release target is exceeded in custom brood rule, projection will proportionally reduce broodtake to return to target
 - Allow NAs in target population escapement time series in likelihood of conditioning model
 - Conditioning model reports realized productivity annually with time-varying maturity and M
+- Fix calculation in freshwater survival when habitat features are used
 
 # 0.1.0
 

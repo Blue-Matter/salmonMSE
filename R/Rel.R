@@ -260,7 +260,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
     # By parental life cycle group
     Egg_prod_NOS <- calc_SRR(
-      Egg_HOS, sum(Egg_HOS, Egg_NOS),
+      Egg_NOS, sum(Egg_HOS, Egg_NOS),
       p = Habitat@egg_prod, capacity = Habitat@egg_capacity,
       type = Habitat@egg_rel
     )
@@ -334,7 +334,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       type = Habitat@smolt_rel
     ) * Habitat@smolt_sdev[x, t]
     smolt_HOS <- calc_SRR(
-      Fry_NOS_g, total_fry,
+      Fry_HOS_g, total_fry,
       p = Habitat@smolt_prod * fitness_loss[1, 2], capacity = Habitat@smolt_capacity * fitness_loss[1, 2],
       type = Habitat@smolt_rel
     ) * Habitat@smolt_sdev[x, t]
