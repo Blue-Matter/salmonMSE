@@ -527,20 +527,45 @@ and hyperprior
 <div class="section level2">
 <h2 id="likelihoods">Likelihoods<a class="anchor" aria-label="anchor" href="#likelihoods"></a>
 </h2>
+<p>The likelihood of the total escapement for the population of interest
+uses a lognormal distribution:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NO</mtext></msubsup><mo>+</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HO</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>σ</mi><mi>E</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\log(E_y) \sim N\left(\log\left(\sum_a(\hat{E}^\textrm{NO}_{y,a} + \hat{E}^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
+</annotation></semantics></math></p>
 <p>The likelihood of the CWT at age uses a Poisson distribution:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-C^\textrm{CWT,PT}_{y,a} &amp;\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,PT}_{y,a})\\
-C^\textrm{CWT,T}_{y,a} &amp;\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,T}_{y,a})\\
-E^\textrm{CWT}_{y,a} &amp;\sim \textrm{Poisson}(\hat{E}^\textrm{CWT}_{y,a})
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+C^\textrm{CWT,PT}_{y,a} &amp;\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,PT}_{y,a}\right)\\
+C^\textrm{CWT,T}_{y,a} &amp;\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,T}_{y,a}\right)\\
+E^\textrm{CWT}_{y,a} &amp;\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{E}^\textrm{CWT}_{y,a}\right)
 \end{align}</annotation></semantics></math></p>
 <p>where the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>∧</mo><annotation encoding="application/x-tex">\wedge</annotation></semantics></math>
-symbol denotes an estimate of the corresponding observed quantity.</p>
-<p>The likelihood of the total escapement for the population of interest
-uses a lognormal distribution:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NO</mtext></msubsup><mo>+</mo><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HO</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>σ</mi><mi>E</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\log(E_y) \sim N\left(\log\left(\sum_a(E^\textrm{NO}_{y,a} + E^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
-</annotation></semantics></math></p>
+symbol denotes an estimate of the corresponding observed quantity and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
+is the expansion factor.</p>
+<p>The expansion factor is the scalar to ensure CWT data are
+representative of total recoveries (typically greater or equal to 1).
+For example,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\lambda = 10</annotation></semantics></math>
+may be appropriate if 10 percent of the fishery catch is sampled for
+coded wire tags. It is assumed that the CWT data are unexpanded
+numbers.</p>
+<div class="section level3">
+<h3 id="likelihood-re-weighting">Likelihood re-weighting<a class="anchor" aria-label="anchor" href="#likelihood-re-weighting"></a>
+</h3>
+<p>CWT likelihood components can be reweighted relative to the total
+escapement with alternative expansion factors (higher expansion factors
+have lower weight with increasing variance for the Poisson
+distribution).</p>
+<p>The data needed to be adjusted simultaneously to preserve the
+magnitude of predicted CWT catch and escapement between alternative
+fits. For example, if the true sampling rate is 0.1, then an initial fit
+may use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\lambda = 10</annotation></semantics></math>,
+but the CWT can be up-weighted assuming a higher sampling rate of 0.5
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = 2</annotation></semantics></math>).
+The analyst should multiply the CWT catch and escapement data by 5.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="release-strategies">Release strategies<a class="anchor" aria-label="anchor" href="#release-strategies"></a>
