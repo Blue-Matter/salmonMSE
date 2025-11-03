@@ -196,16 +196,16 @@ with hyperpriors for $\sigma_\textrm{FPT}^2$ and $\sigma_\textrm{FT}^2$:
 
 ## Vulnerability 
 
-Vulnerability are independent terms estimated in logit space, with relatively uninformative normal priors of mean zero and standard deviation of 1.6:
+Vulnerability at age are independent terms estimated in logit space:
 
 \begin{align}
-\textrm{logit}(v^\textrm{PT}_a) &\sim N(0, 1.6^2)\\
-\textrm{logit}(v^\textrm{T}_a) &\sim N(0, 1.6^2)
+\textrm{logit}(v^\textrm{PT}_a) &\sim N(\textrm{logit}(\mu^{vPT}_a), 1.6^2)\\
+\textrm{logit}(v^\textrm{T}_a) &\sim N(\textrm{logit}(\mu^{vT}_a), 1.6^2)
 \end{align}
 
-Vulnerability is fixed at zero and one for the age 1 and maximum age ($A$), respectively ($v_1 = 0$ and $v_A = 1$).
+where $\mu$ is the prior mean specified by the analyst. Vulnerability is fixed at zero and one for the age 1 and maximum age ($A$), respectively ($v_1 = 0$ and $v_A = 1$).
 
-When transformed to normal space, the prior density is relatively uniform between 0-1 with low density at the bounds:
+A useful prior may be with $\mu = 0.5$. When transformed to normal space, the prior density is relatively uniform between 0-1 with low density at the bounds:
 
 ```{r}
 x <- seq(-5, 5, 0.1)
@@ -215,8 +215,8 @@ y <- plogis(x)
 g_y <- f_x /(y * (1 - y)) # Prior density with Jacobian transformation
 
 par(mfcol = c(1, 2), mar = c(5, 4, 1, 1))
-plot(x, f_x, type = "l", xlab = "logit(v)", ylab = "Prior density")
-plot(y, g_y, typ = 'l', xlab = expression(v[a]), ylab = "Prior density")
+plot(y, g_y, type = 'l', xlab = expression(v[a]), ylab = "Prior density")
+plot(y, log(g_y), type = 'l', xlab = expression(v[a]), ylab = "log prior density")
 ```
 
 ## Maturity
@@ -227,7 +227,20 @@ $$
 \textrm{logit}(m_{y,a}) \sim N(\textrm{logit}(m_a^\textrm{base}), [\sigma^m_a]^2)
 $$
 
-with hyperprior $\sigma^m_a \sim \textrm{Gamma}(2, 5)$.
+with hyperprior $\sigma^m_a \sim \textrm{Gamma}(2, 5)$ (mode of 0.2, mean of 0.4, and standard deviation of 0.28).
+
+
+```{r}
+x <- seq(0, 1.5, 0.01)
+f_x <- dgamma(x, 2, scale = 1/5)
+
+#x[which.max(f_x)] # Prior mode at 0.2
+
+par(mfcol = c(1, 2), mar = c(5, 4, 1, 1), oma = c(0, 0, 2, 0))
+plot(x, f_x, type = "l", ylab = "Prior density")
+plot(x, log(f_x), type = "l", ylab = "log prior density")
+mtext("Gamma(2, 5) prior distribution", outer = TRUE, line = 1)
+```
 
 ## Natural mortality
 
