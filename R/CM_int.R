@@ -529,6 +529,7 @@ check_data <- function(data) {
   }
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
+  if (data$cwtExp < 1) warning("CWT expansion factor in data object (cwtExp) < 1. Are you sure?")
 
   if (is.null(data$s_enroute)) data$s_enroute <- 1
 
@@ -623,6 +624,11 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
   list(lower = .lower, upper = .upper)
 }
 
+#' @rdname CMfigures
+#' @param sims Optional integer vector for subset of MCMC iterations
+#' @returns
+#' - `get_report()` returns the list of state variables by individual MCMC samples
+#' @export
 get_report <- function(stanfit, sims, inc_warmup = FALSE) {
   if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package is needed.")
 
@@ -652,6 +658,11 @@ get_report <- function(stanfit, sims, inc_warmup = FALSE) {
   return(report)
 }
 
+#' @rdname CMfigures
+#' @param fit Output from `[fit_CM()]`
+#' @returns
+#' - `get_CMdata()` returns the list of data variables used in the conditioning model
+#' @export
 get_CMdata <- function(fit) {
   func <- attr(fit$obj$env$data, "func")
   get("data", envir = environment(func), inherits = FALSE)

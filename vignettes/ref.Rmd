@@ -18,7 +18,7 @@ library(dplyr)
 
 # Introduction
 
-Reference points for salmon typically use the Ricker stock function that predict the return from the number of spawners.
+Reference points for salmon typically use the Ricker stock function that predict the return as a density-dependent relationship with the number of spawners, typically of the previous generation for salmon with single brood year returns.
 
 The Ricker function is
 
@@ -57,25 +57,25 @@ $$
 S_\textrm{MSY}=a\times S_\textrm{gen}\exp(-b\times S_\textrm{gen})
 $$
 
-There are several implicit assumptions associated with these reference points:
+There are several implicit assumptions frequently associated with these reference points:
 
-1. The stock-recruit relationship predicts the number of returns, not juveniles
+1. The stock-recruit relationship predicts the number of returns, not juveniles, from the number of spawners
 2. All returns are the same age
 3. All exploitation occurs on mature individuals
-4. All returns are equally vulnerable to the fishery
+4. All returns are equally vulnerable to the terminal fishery
 5. All spawners are equally fecund
 
 # Reference points in salmonMSE
 
-salmonMSE is an age-structured model that can relax the assumptions from the introduction:
+salmonMSE is an age-structured model that can relax the assumptions from the typical spawner-return model:
 
-1. The stock-recruit relationship predicts the number of outmigrating juveniles, not the return, from the egg production
+1. The stock-recruit relationship predicts the number of outmigrating juveniles, not the return, from the egg production (not the number of spawners)
 2. The calendar-year return can comprise of multiple brood years
 3. Exploitation can occur on both immature and mature individuals
 4. Fish vulnerability can vary by age
-5. Older, larger spawners can be more fecund than younger fish
+5. Older, larger spawners have larger contributions to the egg production because they are more fecund than younger fish
 
-Reference points are calculated with more structural complexity compared to the simple approach. 
+Accordingly, reference points are calculated with more structural complexity compared to the simple approach. 
 However, comparisons below indicate the many situations where the salmonMSE reference points overlap with the typical salmon approach.
 
 ## Calculations for MSY
@@ -110,7 +110,7 @@ $$
 The optimization calculates the corresponding fishery effort $E_\textrm{MSY}$. 
 The user needs to specify the relative effort to the preterminal and terminal fisheries ($e_1$ and $e_2$), with $F^\textrm{PT,MSY} = e_1 \times E_\textrm{MSY}$ and $F^\textrm{T,MSY} = e_2 \times E_\textrm{MSY}$.
 
-An alternative optimization scheme maximizes excess recruitment ($R - S$):
+An alternative optimization scheme maximizes excess recruitment ($R - S$) but should be equivalent to maximizing terminal fishery catch (no preterminal fishery catch):
 
 $$
 R - S = \sum_a J \times r_a - \sum_a J \times s_a
@@ -118,19 +118,19 @@ $$
 
 ## Calculations for Sgen
 
-Sgen is calculated by a subsequent optimization algorithm to search for the fishery effort $E_\textrm{gen}$ that generates an equilibrium distributions at age, then projects the population for $n_\textrm{gen}$ years with no fishing, such that the spawning abundance is $S_\textrm{MSY}$ at the end of the projection.
+Sgen is calculated by a subsequent optimization algorithm to search for the fishery effort $E_\textrm{gen}$ that generates an equilibrium distribution at age, then projects that equilibrium population for $n_\textrm{gen}$ years with no fishing, such that the spawning abundance reaches $S_\textrm{MSY}$ after $n_\textrm{gen}$ years.
 
 If there is partial maturity at several age classes, the number of years for the projection is unclear. 
 The population can recover to $S_\textrm{MSY}$ with either increased survival, increased juvenile production, or both.
 Currently, salmonMSE will use the first age of maturity, e.g., typically two years for Chinook salmon, for the projection duration.
-Comparisons in the next section indicate that Sgen between the two methods frequently agree using this projection duration.
+Comparisons in the next section indicate that Sgen between the two methods sometimes, but not always, agree.
 
 # Comparison between methods
 
 Currently, salmonMSE parameterizes the operating model with $a$ (returns/spawner), $\phi$ (juveniles/egg) and $Smax = 1/b'$ (eggs). 
 
 The following function facilitates comparison of the salmonMSE and Ricker SRR reference points in the various examples. 
-Some conversion is also needed to convert between $b'$ (1/eggs) to $b$ (1/spawners).
+Some conversion is also needed to convert between $b'$ (1/eggs) to $b$ (1/spawner).
 
 In summary, if the age-structured reference point calculation only includes terminal exploitation, then the reference points are equivalent with values from the Ricker model unless both fecundity and vulnerability vary with age.
 

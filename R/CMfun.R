@@ -1,6 +1,16 @@
 
+#' @name CMfigures
+#' @title Figures for conditioning model results
+#'
+#' @description Functions used by the markdown report to generate summary figures from the age-structured conditoning model
+#' @param stanfit Output from [sample_CM()]
+#' @param vars Character vector for variables. Regex supported because it is passed to the `pattern` argument of [`grepl()`]
+#' @param inc_warmup Logical, whether to include warmup MCMC samples
+#' @returns
+#' - `CM_trace()` returns a ggplot showing the MCMC trace plot (aka wormplot)
 #' @importFrom dplyr bind_rows bind_cols mutate
-stan_trace <- function(stanfit, vars, inc_warmup = FALSE) {
+#' @export
+CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
   val <- lapply(1:stanfit@sim$chains, function(i) {
     x <- stanfit@sim$samples[[i]]
     vars_regex <- paste0(vars, collapse = "|")
@@ -41,9 +51,14 @@ stan_trace <- function(stanfit, vars, inc_warmup = FALSE) {
   }
 }
 
+
+#' @rdname CMfigures
+#' @returns
+#' - `CM_pairs()` returns output from [graphics::pairs()], a matrix of scatterplots of MCMC posterior samples
 #' @importFrom stats cor
 #' @importFrom graphics pairs rect strwidth text
-pairs_panel <- function(stanfit, vars, inc_warmup = FALSE) {
+#' @export
+CM_pairs <- function(stanfit, vars, inc_warmup = FALSE) {
   panel.hist <- function(x, ...) {
     usr <- par("usr"); on.exit(par(usr = usr))
     par(usr = c(usr[1:2], 0, 1.5) )
@@ -95,6 +110,14 @@ pairs_panel <- function(stanfit, vars, inc_warmup = FALSE) {
 
 }
 
+
+#' @rdname CMfigures
+#' @param report List, output of state variables from individual MCMC samples, obtained with `get_report()`
+#' @param d List of data variables, obtained with `get_CMdata()`
+#' @param year Vector of years
+#' @returns
+#' - `CM_fit_esc()` returns base graphics with fit to total escapement time series
+#' @export
 #' @importFrom graphics points polygon
 CM_fit_esc <- function(report, d, year) {
   obs <- d$obsescape
@@ -145,6 +168,12 @@ CM_CWTrel <- function(obs, year1, rs_names) {
 }
 
 
+#' @rdname CMfigures
+#' @param year1 Numeric, first year of model
+#' @param rs_names Character vector of hatchery release strategies
+#' @returns
+#' - `CM_fit_CWTesc()` returns ggplot of fit to CWT escapement at age
+#' @export
 CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
 
   if (missing(rs_names)) rs_names <- seq(1, d$n_r)
@@ -188,6 +217,11 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
   g
 }
 
+#' @rdname CMfigures
+#' @param PT Logical, whether to plot preterminal catch, otherwise (plot terminal catch)
+#' @returns
+#' - `CM_fit_CWTcatch()` returns ggplot of fit to CWT catch at age
+#' @export
 CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1, rs_names) {
   dat <- d[[ifelse(PT, "cwtcatPT", "cwtcatT")]]
 
@@ -233,6 +267,13 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1, rs_names) {
   }
 }
 
+#' @rdname CMfigures
+#' @param r Integer, the release strategy for the figure (only if `annual = FALSE`)
+#' @param brood Logical, whether to show results by brood year or return year (FALSE)
+#' @param annual Logical, whether to show panel figure by individual year (TRUE) or a single time series figure
+#' @returns
+#' - `CM_maturity()` returns ggplot of estimated maturity at age
+#' @export
 #' @importFrom dplyr rename
 CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALSE, rs_names) {
   n_r <- d$n_r
@@ -310,6 +351,13 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
   g
 }
 
+
+#' @rdname CMfigures
+#' @param type Character, indicates type of variable to plot
+#' @returns
+#' - `CM_vul()` returns ggplot of estimated fishery vulnerability at age
+#' @export
+#' @importFrom dplyr rename
 CM_vul <- function(report, type = c("vulPT", "vulT")) {
   type <- match.arg(type)
   vul <- sapply(report, getElement, type) # age x sim
@@ -329,7 +377,12 @@ CM_vul <- function(report, type = c("vulPT", "vulT")) {
   }
 }
 
-CM_SRR <- function(report, year1 = 1, gg = TRUE) {
+#' @rdname CMfigures
+#' @returns
+#' - `CM_SRR()` returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
+#' relationship and realized annual values
+#' @export
+CM_SRR <- function(report, year1 = 1) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
   smolt <- sapply(report, function(x) x$N[-1, 1, 1]) %>% apply(1, median)
   epred <- seq(0, 1.1 * max(egg), length.out = 50)
@@ -378,9 +431,8 @@ CM_SRR <- function(report, year1 = 1, gg = TRUE) {
   g
 }
 
-CM_prod <- function(report, d, year1 = 1) {
-
-  prod <- sapply(1:length(report), function(x) {
+.CM_prod <- function(report, d) {
+  sapply(1:length(report), function(x) {
     sapply(1:d$Ldyr, function(y) {
 
       mo <- report[[x]]$mo[y, ]
@@ -396,6 +448,15 @@ CM_prod <- function(report, d, year1 = 1) {
       return(report[[x]]$alpha * epro)
     })
   })
+}
+
+#' @rdname CMfigures
+#' @returns
+#' - `CM_prod()` returns ggplot of realized productivity in the absence of fishery harvest, annual values are based on natural mortality and maturity at age
+#' @export
+CM_prod <- function(report, d, year1 = 1) {
+
+  prod <- .CM_prod(report, d)
 
   prod_q <- apply(prod, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
@@ -411,10 +472,10 @@ CM_prod <- function(report, d, year1 = 1) {
 
 }
 
-CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+.CM_Srep <- function(report, d, type = c("spawner", "egg")) {
   type <- match.arg(type)
 
-  Srep <- sapply(1:length(report), function(x) {
+  sapply(1:length(report), function(x) {
     sapply(1:d$Ldyr, function(y) {
 
       mo <- report[[x]]$mo[y, ]
@@ -441,6 +502,16 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
       }
     })
   })
+}
+
+#' @rdname CMfigures
+#' @returns
+#' - `CM_Srep()` returns ggplot of realized spawner or egg production at replacement, annual values are based on natural mortality and maturity at age
+#' @export
+CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+  type <- match.arg(type)
+
+  Srep <- .CM_Srep(report, d, type)
 
   Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
@@ -455,6 +526,8 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
 
   g
 }
+
+
 
 .CM_statevarage <- function(report, year1 = 1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
   arr <- sapply(report, getElement, var, simplify = "array")
@@ -495,6 +568,8 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
     g
 
   }
+
+  invisible()
 }
 
 CM_ts_origin <- function(report, year1 = 1, ci = TRUE, var = "Spawners", ylab = var, xlab = "Year") {
@@ -519,6 +594,12 @@ CM_ts_origin <- function(report, year1 = 1, ci = TRUE, var = "Spawners", ylab = 
   g
 }
 
+
+#' @rdname CMfigures
+#' @param ci Logical whether to show posterior intervals in addition to posterior median
+#' @returns
+#' - `CM_M()` returns ggplot of estimated natural mortality time series by age (marine stage)
+#' @export
 CM_M <- function(report, year1 = 1, ci = TRUE) {
   df <- sapply(report, getElement, "mo", simplify = "array") %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
@@ -538,6 +619,11 @@ CM_M <- function(report, year1 = 1, ci = TRUE) {
 }
 
 
+#' @rdname CMfigures
+#' @param surv Logical, whether to plot survival (values between 0 - 1) or instantaneous mortality rates
+#' @returns
+#' - `CM_Megg()` returns ggplot of egg-juvenile mortality time series
+#' @export
 CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
   megg <- sapply(report, getElement, 'megg')
 
@@ -559,21 +645,37 @@ CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
 }
 
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_Njuv()` returns ggplot of juvenile abundance
+#' @export
 CM_Njuv <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "N", "Juvenile abundance") +
     theme(legend.position = "bottom")
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_recr()` returns ggplot of recruitment (mature return)
+#' @export
 CM_recr <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "recr", "Recruitment") +
     theme(legend.position = "bottom")
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_esc()` returns ggplot of escapement (after terminal harvest)
+#' @export
 CM_esc <- function(report, year1 = 1, ci = TRUE) {
   .CM_statevarage(report, year1, ci, "escyear", "Escapement") +
     theme(legend.position = "bottom")
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_F()` returns ggplot of instantaneous fishing mortality
+#' @export
 CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
   .CM_ts(
     report, year1, ci,
@@ -598,8 +700,13 @@ CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
     if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
   }
+  invisible()
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_surv()` returns ggplot of natural survival (converting from instantaneous units of natural mortality)
+#' @export
 CM_surv <- function(report, year1 = 1, ci = TRUE) {
   df <- exp(-sapply(report, getElement, "mo", simplify = "array")) %>%
     apply(1:2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
@@ -618,6 +725,11 @@ CM_surv <- function(report, year1 = 1, ci = TRUE) {
   g
 }
 
+
+#' @rdname CMfigures
+#' @returns
+#' - `CM_wt()` returns ggplot of annual deviations in egg-juvenile mortality from the Ricker function
+#' @export
 CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
 
   wt <- try(rstan::extract(stanfit, "wt")$wt, silent = TRUE)
@@ -641,6 +753,10 @@ CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
 
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_wt()` returns ggplot of annual deviations in age 1 natural mortality (first year in marine life stage, deviations from time series average)
+#' @export
 CM_wto <- function(stanfit, year1 = 1, ci = TRUE) {
 
   wto <- try(rstan::extract(stanfit, "wto")$wto, silent = TRUE)
@@ -719,6 +835,11 @@ calc_AEQ <- function(report, brood = TRUE) {
 }
 
 
+#' @rdname CMfigures
+#' @param at_age Logical, whether to make figure by individual age
+#' @returns
+#' - `CM_ER()` returns ggplot of exploitation rate either by individual age or aggregate values using adult equivalents
+#' @export
 CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE, r = 1) {
 
   type <- match.arg(type)
@@ -795,6 +916,10 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
   g
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_CWT_ER()` returns ggplot of CWT exploitation rate (by release strategy)
+#' @export
 #' @importFrom dplyr left_join
 CM_CWT_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, ci = TRUE, rs_names) {
 
@@ -881,6 +1006,16 @@ CM_CWT_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 
 }
 
 
+#' @rdname CMfigures
+#' @param x Matrix of covariates by year x covariate
+#' @param names Character of covariate names
+#' @param b Matrix of fixed effect coefficients by simulation x covariate. If missing only the covariates (`x`) are plotted,
+#' otherwise, the dot product `sum(x * b)` is calculated by individual simulation and quantiles are plotted
+#' @param ylab Character y axis label
+#' @returns
+#' - `CM_covariate()` returns ggplot of mortality covariates
+#' @export
+#' @importFrom dplyr left_join
 CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 
   if (sum(x)) {
@@ -940,7 +1075,8 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 
 #' Conditioning model markdown report
 #'
-#' Generate a markdown report to plot time series and MCMC posteriors of estimates from the conditioning model
+#' Generate a markdown report to plot time series and MCMC posteriors of estimates from the conditioning model. See [get_report()] for the
+#' various plotting functions used in the report.
 #'
 #' @param stanfit Output from [sample_CM()]
 #' @param year Optional vector of calendar years
@@ -955,7 +1091,7 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
 #' @param ... Additional arguments (not used)
 #' @details Report excludes MCMC values from warmup iterations
 #' @returns Returns invisibly the output of [rmarkdown::render()], typically the path of the output file
-#' @seealso [fit_CM()]
+#' @seealso [fit_CM()] [get_report()]
 #' @export
 report_CM <- function(stanfit, year, cov1_names, cov_names, rs_names,
                       name, filename = "CM", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {

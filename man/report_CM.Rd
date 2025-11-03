@@ -45,11 +45,12 @@ report_CM(
 Returns invisibly the output of \code{\link[rmarkdown:render]{rmarkdown::render()}}, typically the path of the output file
 }
 \description{
-Generate a markdown report to plot time series and MCMC posteriors of estimates from the conditioning model
+Generate a markdown report to plot time series and MCMC posteriors of estimates from the conditioning model. See \code{\link[=get_report]{get_report()}} for the
+various plotting functions used in the report.
 }
 \details{
 Report excludes MCMC values from warmup iterations
 }
 \seealso{
-\code{\link[=fit_CM]{fit_CM()}}
+\code{\link[=fit_CM]{fit_CM()}} \code{\link[=get_report]{get_report()}}
 }

@@ -36,6 +36,8 @@ Model fitting is performed in RTMB with `fit_CM()`.
 
 The posterior can then be sampled with `sample_CM()` through rstan. 
 
+A markdown report is available with `report_CM()`
+
 A subset of posterior MCMC draws of parameters to reconstruct the historical population can be imported into the operating model with `CM2SOM()`.
 Further modification of the operating model and additional settings can then be added to run the projection.
 

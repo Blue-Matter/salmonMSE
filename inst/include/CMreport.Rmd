@@ -52,38 +52,38 @@ knitr::kable(make_CM_table(fit), row.names = FALSE)
 
 ```{r trace-cr, fig.cap="Wormplots of productivity parameters, scaling parameters and the log-posterior from MCMC iterations after thinning and warmup."}
 pars_core <- c("cr", "log_so", "moadd", "log_FbasePT", "log_FbaseT", "lp")
-stan_trace(stanfit, pars_core)
+CM_trace(stanfit, pars_core)
 ```
 
 ```{r trace-cov, fig.cap="Wormplots of coefficients for mortality covariates from MCMC iterations after thinning and warmup."}
 pars_cov <- c("^b")
-stan_trace(stanfit, pars_cov)
+CM_trace(stanfit, pars_cov)
 ```
 
 ```{r trace-vul, fig.cap="Wormplots of fishery vulnerability at age parameters from MCMC iterations after thinning and warmup."}
 pars_vul <- c("^logit_vul")
-stan_trace(stanfit, pars_cov)
+CM_trace(stanfit, pars_cov)
 ```
 
 ```{r trace-var, fig.cap="Wormplots of variance parameters from MCMC iterations after thinning and warmup."}
 pars_var <- c("lnE_sd", "wt_sd", "wto_sd", "fanomalyPT_sd", "fanomalyT_sd", "sd_matt")
-stan_trace(stanfit, pars_var)
+CM_trace(stanfit, pars_var)
 ```
 
 ```{r pairs-cr, fig.cap="Marginal posterior distributions and correlations of productivity parameters, scaling parameters and the log-posterior (from MCMC iterations after thinning and warmup)."}
-pairs_panel(stanfit, pars_core)
+CM_pairs(stanfit, pars_core)
 ```
 
 ```{r pairs-cov, fig.cap="Marginal posterior distributions and correlations of coefficients for mortality covariates."}
-pairs_panel(stanfit, pars_cov)
+CM_pairs(stanfit, pars_cov)
 ```
 
 ```{r pairs-vul, fig.cap="Marginal posterior distributions and correlations for fishery vulnerability at age parameters."}
-pairs_panel(stanfit, pars_vul)
+CM_pairs(stanfit, pars_vul)
 ```
 
 ```{r pairs-var, fig.cap="Marginal posterior distributions and correlations of variance parameters."}
-pairs_panel(stanfit, pars_var)
+CM_pairs(stanfit, pars_var)
 ```
 
 ```{r wt, fig.cap="Posterior estimates of egg mortality deviates from the stock-recruit relationship (medians and 95% prediction interval)."}
@@ -227,7 +227,8 @@ CM_covariate(d[["covariate"]], cov_names, year1, b = rstan::extract(stanfit, "b"
 ### Preterminal fishery
 
 ```{r vulPT, fig.cap="Posterior estimates of preterminal vulnerability at age (medians and 95% prediction interval)."}
-CM_vul(report, type = "vulPT")
+FPT <- sapply(report, getElement, "FPT") 
+if (sum(FPT)) CM_vul(report, type = "vulPT")
 ```
 
 ```{r FPT, fig.cap="Preterminal instantaneous fishing mortality (medians and 95% prediction interval)."}
@@ -259,7 +260,8 @@ CM_recr(report, year1, ci = TRUE)
 ### Terminal fishery
 
 ```{r vulT, fig.cap="Posterior estimates of terminal vulnerability at age (medians and 95% prediction interval)."}
-CM_vul(report, type = "vulT")
+FT <- sapply(report, getElement, "FT")
+if (sum(FT)) CM_vul(report, type = "vulT")
 ```
 
 ```{r FT, fig.cap="Terminal instantaneous fishing mortality (medians and 95% prediction interval)."}
