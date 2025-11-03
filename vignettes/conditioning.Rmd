@@ -273,21 +273,32 @@ The annual deviations in smolt production are estimated with prior $\delta_y \si
 
 # Likelihoods
 
-The likelihood of the CWT at age uses a Poisson distribution:
-
-\begin{align}
-C^\textrm{CWT,PT}_{y,a} &\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,PT}_{y,a})\\
-C^\textrm{CWT,T}_{y,a} &\sim \textrm{Poisson}(\hat{C}^\textrm{CWT,T}_{y,a})\\
-E^\textrm{CWT}_{y,a} &\sim \textrm{Poisson}(\hat{E}^\textrm{CWT}_{y,a})
-\end{align}
-
-where the $\wedge$ symbol denotes an estimate of the corresponding observed quantity.
-
 The likelihood of the total escapement for the population of interest uses a lognormal distribution:
 
 $$
-\log(E_y) \sim N\left(\log\left(\sum_a(E^\textrm{NO}_{y,a} + E^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
+\log(E_y) \sim N\left(\log\left(\sum_a(\hat{E}^\textrm{NO}_{y,a} + \hat{E}^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
 $$
+
+
+The likelihood of the CWT at age uses a Poisson distribution:
+
+\begin{align}
+C^\textrm{CWT,PT}_{y,a} &\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,PT}_{y,a}\right)\\
+C^\textrm{CWT,T}_{y,a} &\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,T}_{y,a}\right)\\
+E^\textrm{CWT}_{y,a} &\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{E}^\textrm{CWT}_{y,a}\right)
+\end{align}
+
+where the $\wedge$ symbol denotes an estimate of the corresponding observed quantity and $\lambda$ is the expansion factor. 
+
+The expansion factor is the scalar to ensure CWT data are representative of total recoveries (typically greater or equal to 1). For example, $\lambda = 10$ may be appropriate if 10 percent of the fishery catch is sampled for coded wire tags.
+It is assumed that the CWT data are unexpanded numbers.
+
+## Likelihood re-weighting
+
+CWT likelihood components can be reweighted relative to the total escapement with alternative expansion factors (higher expansion factors have lower weight with increasing variance for the Poisson distribution).
+
+The data needed to be adjusted simultaneously to preserve the magnitude of predicted CWT catch and escapement between alternative fits.
+For example, if the true sampling rate is 0.1, then an initial fit may use $\lambda = 10$, but the CWT can be up-weighted assuming a higher sampling rate of 0.5 ($\lambda = 2$). The analyst should multiply the CWT catch and escapement data by 5.
 
 # Release strategies
 
