@@ -8,6 +8,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Allow NAs in target population escapement time series in likelihood of conditioning model
 - Conditioning model reports realized productivity annually with time-varying maturity and M
 - Fix calculation in freshwater survival when habitat features are used
+- Export CM plotting functions
 
 # 0.1.0
 

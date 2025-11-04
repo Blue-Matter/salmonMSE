@@ -528,6 +528,130 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
 }
 
 
+.CM_SMSY <- function(report, d, type = c("spawner", "egg")) {
+  type <- match.arg(type)
+
+  sapply(1:length(report), function(x) {
+    sapply(1:d$Ldyr, function(y) {
+
+      mo <- report[[x]]$mo[y, ]
+      matt <- report[[x]]$matt[y, , d$r_matt]
+      vulT <- report[[x]]$vulT
+      FT <- report[[x]]$FT
+
+      lo <- numeric(d$Nages)
+      lo[1] <- 1
+      for (a in 2:d$Nages) {
+        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
+      }
+      epro <- sum(lo * d$ssum * d$fec * matt)
+      alpha_s <- report[[x]]$alpha * epro
+
+      if (!sum(FT) && type == "spawner") {
+        spro <- sum(lo * d$ssum * matt)
+        beta_s <- report[[x]]$beta * epro / spro
+        if (alpha_s > 1) {
+          val <- calc_Smsy_Ricker(log(alpha_s), beta_s)
+        } else {
+          val <- 0
+        }
+      } else {
+        vulPT <- report[[x]]$vulPT
+        if (!sum(FT)) vulT[] <- 1
+        SRRpars <- data.frame("kappa" = alpha_s, "Smax" = 1/report[[x]]$beta, "phi" = epro, "SRrel" = "Ricker")
+        ref <- calc_MSY(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
+                        s_enroute = 1, SRRpars = SRRpars)
+
+        if (type == "spawner") {
+          val <- ref["Spawners_MSY"]
+        } else {
+          val <- ref["Egg_MSY"]
+        }
+      }
+      as.numeric(val)
+    })
+  })
+
+}
+
+CM_SMSY <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+  type <- match.arg(type)
+
+  SMSY <- .CM_SMSY(report, d, type)
+
+  SMSY_q <- apply(SMSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1) %>%
+    reshape2::dcast(list("Year", "Var1"))
+
+  g <- SMSY_q %>%
+    ggplot(aes(Year, .data$`50%`)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+    labs(x = "Year", y = ifelse(type == "spawner", expression(S[MSY]), expression(E[MSY])))
+
+  g
+}
+
+.CM_Sgen <- function(report, d) {
+
+  sapply(1:length(report), function(x) {
+    sapply(1:d$Ldyr, function(y) {
+
+      mo <- report[[x]]$mo[y, ]
+      matt <- report[[x]]$matt[y, , d$r_matt]
+      vulT <- report[[x]]$vulT
+      FT <- report[[x]]$FT
+
+      lo <- numeric(d$Nages)
+      lo[1] <- 1
+      for (a in 2:d$Nages) {
+        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
+      }
+      epro <- sum(lo * d$ssum * d$fec * matt)
+      alpha_s <- report[[x]]$alpha * epro
+
+      if (!sum(FT)) {
+        spro <- sum(lo * d$ssum * matt)
+        beta_s <- report[[x]]$beta * epro / spro
+        if (alpha_s > 1) {
+          val <- calc_Sgen_Ricker(log(alpha_s), beta_s)
+        } else {
+          val <- 0
+        }
+      } else {
+        vulPT <- report[[x]]$vulPT
+        SRRpars <- data.frame("kappa" = alpha_s, "Smax" = 1/report[[x]]$beta, "phi" = epro, "SRrel" = "Ricker")
+        ref <- calc_MSY(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
+                        s_enroute = 1, SRRpars = SRRpars)
+        SMSY <- ref["Spawners_MSY"]
+
+        val <- calc_Sgen(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
+                         s_enroute = 1, SRRpars = SRRpars, SMSY = SMSY)
+      }
+      as.numeric(val)
+    })
+  })
+
+}
+
+CM_Sgen <- function(report, d, year1 = 1) {
+  Sgen <- .CM_Sgen(report, d)
+
+  Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+    reshape2::melt() %>%
+    mutate(Year = Var2 + year1 - 1) %>%
+    reshape2::dcast(list("Year", "Var1"))
+
+  g <- Sgen_q %>%
+    ggplot(aes(Year, .data$`50%`)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+    labs(x = "Year", y = expression(S[gen]))
+
+  g
+}
+
 
 .CM_statevarage <- function(report, year1 = 1, ci = TRUE, var, ylab, xlab = "Year", scales = "free_y") {
   arr <- sapply(report, getElement, var, simplify = "array")
