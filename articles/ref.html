@@ -65,7 +65,7 @@
 
       <h1>Reference points</h1>
             
-            <h4 data-toc-skip class="date">2025-11-03</h4>
+            <h4 data-toc-skip class="date">2025-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/ref.Rmd" class="external-link"><code>vignettes/ref.Rmd</code></a></small>
       <div class="d-none name"><code>ref.Rmd</code></div>
@@ -77,7 +77,9 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>Reference points for salmon typically use the Ricker stock function
-that predict the return from the number of spawners.</p>
+that predict the return as a density-dependent relationship with the
+number of spawners, typically of the previous generation for salmon with
+single brood year returns.</p>
 <p>The Ricker function is</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mi>a</mi><mo>×</mo><mi>S</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>b</mi><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 R = a\times S\exp(-bS)
@@ -123,14 +125,14 @@ et al. 2009</a>), and satisfies the equation:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><mo>=</mo><mi>a</mi><mo>×</mo><msub><mi>S</mi><mtext mathvariant="normal">gen</mtext></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>b</mi><mo>×</mo><msub><mi>S</mi><mtext mathvariant="normal">gen</mtext></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 S_\textrm{MSY}=a\times S_\textrm{gen}\exp(-b\times S_\textrm{gen})
 </annotation></semantics></math></p>
-<p>There are several implicit assumptions associated with these
-reference points:</p>
+<p>There are several implicit assumptions frequently associated with
+these reference points:</p>
 <ol style="list-style-type: decimal">
 <li>The stock-recruit relationship predicts the number of returns, not
-juveniles</li>
+juveniles, from the number of spawners</li>
 <li>All returns are the same age</li>
 <li>All exploitation occurs on mature individuals</li>
-<li>All returns are equally vulnerable to the fishery</li>
+<li>All returns are equally vulnerable to the terminal fishery</li>
 <li>All spawners are equally fecund</li>
 </ol>
 </div>
@@ -138,19 +140,21 @@ juveniles</li>
 <h2 id="reference-points-in-salmonmse">Reference points in salmonMSE<a class="anchor" aria-label="anchor" href="#reference-points-in-salmonmse"></a>
 </h2>
 <p>salmonMSE is an age-structured model that can relax the assumptions
-from the introduction:</p>
+from the typical spawner-return model:</p>
 <ol style="list-style-type: decimal">
 <li>The stock-recruit relationship predicts the number of outmigrating
-juveniles, not the return, from the egg production</li>
+juveniles, not the return, from the egg production (not the number of
+spawners)</li>
 <li>The calendar-year return can comprise of multiple brood years</li>
 <li>Exploitation can occur on both immature and mature individuals</li>
 <li>Fish vulnerability can vary by age</li>
-<li>Older, larger spawners can be more fecund than younger fish</li>
+<li>Older, larger spawners have larger contributions to the egg
+production because they are more fecund than younger fish</li>
 </ol>
-<p>Reference points are calculated with more structural complexity
-compared to the simple approach. However, comparisons below indicate the
-many situations where the salmonMSE reference points overlap with the
-typical salmon approach.</p>
+<p>Accordingly, reference points are calculated with more structural
+complexity compared to the simple approach. However, comparisons below
+indicate the many situations where the salmonMSE reference points
+overlap with the typical salmon approach.</p>
 <div class="section level3">
 <h3 id="calculations-for-msy">Calculations for MSY<a class="anchor" aria-label="anchor" href="#calculations-for-msy"></a>
 </h3>
@@ -213,7 +217,9 @@ with
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>F</mi><mtext mathvariant="normal">T,MSY</mtext></msup><mo>=</mo><msub><mi>e</mi><mn>2</mn></msub><mo>×</mo><msub><mi>E</mi><mtext mathvariant="normal">MSY</mtext></msub></mrow><annotation encoding="application/x-tex">F^\textrm{T,MSY} = e_2 \times E_\textrm{MSY}</annotation></semantics></math>.</p>
 <p>An alternative optimization scheme maximizes excess recruitment
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">R - S</annotation></semantics></math>):</p>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">R - S</annotation></semantics></math>)
+but should be equivalent to maximizing terminal fishery catch (no
+preterminal fishery catch):</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>−</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mi>s</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">
 R - S = \sum_a J \times r_a - \sum_a J \times s_a
 </annotation></semantics></math></p>
@@ -224,12 +230,14 @@ R - S = \sum_a J \times r_a - \sum_a J \times s_a
 <p>Sgen is calculated by a subsequent optimization algorithm to search
 for the fishery effort
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">E_\textrm{gen}</annotation></semantics></math>
-that generates an equilibrium distributions at age, then projects the
-population for
+that generates an equilibrium distribution at age, then projects that
+equilibrium population for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">n_\textrm{gen}</annotation></semantics></math>
-years with no fishing, such that the spawning abundance is
+years with no fishing, such that the spawning abundance reaches
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-at the end of the projection.</p>
+after
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">n_\textrm{gen}</annotation></semantics></math>
+years.</p>
 <p>If there is partial maturity at several age classes, the number of
 years for the projection is unclear. The population can recover to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
@@ -237,7 +245,7 @@ with either increased survival, increased juvenile production, or both.
 Currently, salmonMSE will use the first age of maturity, e.g., typically
 two years for Chinook salmon, for the projection duration. Comparisons
 in the next section indicate that Sgen between the two methods
-frequently agree using this projection duration.</p>
+sometimes, but not always, agree.</p>
 </div>
 </div>
 <div class="section level2">
@@ -256,7 +264,7 @@ also needed to convert between
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">b'</annotation></semantics></math>
 (1/eggs) to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
-(1/spawners).</p>
+(1/spawner).</p>
 <p>In summary, if the age-structured reference point calculation only
 includes terminal exploitation, then the reference points are equivalent
 with values from the Ricker model unless both fecundity and
