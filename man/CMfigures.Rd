@@ -108,7 +108,7 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 \item{fit}{Output from \verb{[fit_CM()]}}
 
-\item{vars}{Character vector for variables. Regex supported because it is passed to the \code{pattern} argument of \code{\link[=grepl]{grepl()}}}
+\item{vars}{Character vector for variable names (see \code{names(stanfit@sim$samples[[1]])}). Regex and partial matching supported because it is passed to the \code{pattern} argument of \code{\link[=grepl]{grepl()}}}
 
 \item{report}{List, output of state variables from individual MCMC samples, obtained with \code{get_report()}}
 

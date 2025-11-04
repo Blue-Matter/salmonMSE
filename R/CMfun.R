@@ -4,7 +4,7 @@
 #'
 #' @description Functions used by the markdown report to generate summary figures from the age-structured conditoning model
 #' @param stanfit Output from [sample_CM()]
-#' @param vars Character vector for variables. Regex supported because it is passed to the `pattern` argument of [`grepl()`]
+#' @param vars Character vector for variable names (see `names(stanfit@sim$samples[[1]])`). Regex and partial matching supported because it is passed to the `pattern` argument of [`grepl()`]
 #' @param inc_warmup Logical, whether to include warmup MCMC samples
 #' @returns
 #' - `CM_trace()` returns a ggplot showing the MCMC trace plot (aka wormplot)
@@ -13,6 +13,7 @@
 CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
   val <- lapply(1:stanfit@sim$chains, function(i) {
     x <- stanfit@sim$samples[[i]]
+    if (missing(vars)) vars <- names(x)
     vars_regex <- paste0(vars, collapse = "|")
 
     x_pars <- x[grepl(vars_regex, names(x))]

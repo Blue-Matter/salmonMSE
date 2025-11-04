@@ -106,15 +106,15 @@ CM_int <- function(p, d) {
   # Loop over years ----
   for (t in 1:d$Ldyr) {
     # First year ocean M
-    if (length(d$covariate1)) {
-      mo[t, 1] <- d$mobase[1] + p$moadd + p$wto[t] + sum(d$covariate1[t, ] * p$b1)
+    if (length(d[["covariate1"]])) {
+      mo[t, 1] <- d$mobase[1] + p$moadd + p[["wto"]][t] + sum(d[["covariate1"]][t, ] * p[["b1"]])
     } else {
-      mo[t, 1] <- d$mobase[1] + p$moadd + p$wto[t]
+      mo[t, 1] <- d$mobase[1] + p$moadd + p[["wto"]][t]
     }
 
     # M's for older ages
-    if (length(d$covariate)) {
-      mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)] + sum(d$covariate[t, ] * p$b)
+    if (length(d[["covariate1"]])) {
+      mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)] + sum(d[["covariate"]][t, ] * p[["b"]])
     } else {
       mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)]
     }
@@ -192,11 +192,11 @@ CM_int <- function(p, d) {
       alpha_fitness <- alpha * fitness[t, 1]^d$rel_loss[2]
       beta_fitness <- beta/fitness[t, 1]^d$rel_loss[2]
 
-      megg[t] <- memin + mden * egg_fitness + p$wt[t]
-      N[t + d$lht, 1, 1] <- alpha_fitness * egg_fitness * exp(-beta_fitness * egg_fitness) * exp(-p$wt[t])
+      megg[t] <- memin + mden * egg_fitness + p[["wt"]][t]
+      N[t + d$lht, 1, 1] <- alpha_fitness * egg_fitness * exp(-beta_fitness * egg_fitness) * exp(-p[["wt"]][t])
     } else {
-      megg[t] <- memin + mden * egg[t] + p$wt[t]
-      N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p$wt[t])
+      megg[t] <- memin + mden * egg[t] + p[["wt"]][t]
+      N[t + d$lht, 1, 1] <- alpha * egg[t] * exp(-beta * egg[t]) * exp(-p[["wt"]][t])
     }
     N[t + d$lht, 1, 2] <- d$hatchsurv * d$hatchrelease[t+1]
 
@@ -224,8 +224,8 @@ CM_int <- function(p, d) {
 
   # Log prior for parameters
   logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE) # prior on so in log space as it is poorly determined from data
-  logprior_wt <- dnorm(p$wt, 0, p$wt_sd, log = TRUE)
-  logprior_wto <- dnorm(p$wto, 0, p$wto_sd, log = TRUE)
+  logprior_wt <- dnorm(p[["wt"]], 0, p$wt_sd, log = TRUE)
+  logprior_wto <- dnorm(p[["wto"]], 0, p$wto_sd, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
     logprior_fanomPT <- dnorm(p$log_fanomalyPT, 0, p$fanomalyPT_sd, log = TRUE)
@@ -386,8 +386,8 @@ make_CMpars <- function(p, d) {
   if (is.null(p$log_cr)) p$log_cr <- 3
   if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape))
   if (is.null(p$moadd)) p$moadd <- 0
-  if (is.null(p$wt)) p$wt <- rep(0, d$Ldyr)
-  if (is.null(p$wto)) p$wto <- rep(0, d$Ldyr)
+  if (is.null(p[["wt"]])) p[["wt"]] <- rep(0, d$Ldyr)
+  if (is.null(p[["wto"]])) p[["wto"]] <- rep(0, d$Ldyr)
   if (is.null(p$log_fanomalyPT)) p$log_fanomalyPT <- rep(0, d$Ldyr)
   if (is.null(p$log_fanomalyT)) p$log_fanomalyT <- rep(0, d$Ldyr)
   if (is.null(p$lnE_sd)) p$lnE_sd <- 0.1
@@ -403,8 +403,8 @@ make_CMpars <- function(p, d) {
     p$matt_offset <- array(0, c(d$Nages - 2, d$n_r - 1))
   }
 
-  if (is.null(p$wt_sd)) p$wt_sd <- 1
-  if (is.null(p$wto_sd)) p$wto_sd <- 1
+  if (is.null(p[["wt_sd"]])) p[["wt_sd"]] <- 1
+  if (is.null(p[["wto_sd"]])) p[["wto_sd"]] <- 1
   if (is.null(p$fanomalyPT_sd)) p$fanomalyPT_sd <- 1
   if (is.null(p$fanomalyT_sd)) p$fanomalyT_sd <- 1
 
