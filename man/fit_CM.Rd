@@ -95,6 +95,7 @@ the equilibrium spawners at age.
 \item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
+\item \code{hatch_init} Numeric, equilibrium hatchery releases used to initialize the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{so_sd} Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.

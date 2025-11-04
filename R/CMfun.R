@@ -11,9 +11,10 @@
 #' @importFrom dplyr bind_rows bind_cols mutate
 #' @export
 CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
+  if (missing(vars)) vars <- names(stanfit@sim$samples[[1]])
+
   val <- lapply(1:stanfit@sim$chains, function(i) {
     x <- stanfit@sim$samples[[i]]
-    if (missing(vars)) vars <- names(x)
     vars_regex <- paste0(vars, collapse = "|")
 
     x_pars <- x[grepl(vars_regex, names(x))]
@@ -690,10 +691,9 @@ CM_Sgen <- function(report, d, year1 = 1) {
     }
 
     if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2)
-    g
 
+    return(g)
   }
-
   invisible()
 }
 
@@ -823,7 +823,7 @@ CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
       expand_limits(y = 0)
 
     if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
-    g
+    return(g)
   }
   invisible()
 }

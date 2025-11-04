@@ -94,6 +94,7 @@ CM_int <- function(p, d) {
 
   # Initialize N ----
   N[1, , 1] <- rhist * lhist               # initial numbers at age year 1
+  N[1, , 2] <- d$hatch_init * d$hatchrelease[1] * lhist
   N[1, 1, 2] <- d$hatchsurv * d$hatchrelease[1] # initial age 1 numbers for hatchery release in year 1
   if (d$lht==2) {  #in case spring run type where age of ocean entry=2, not 1
     N[2, 1, ] <- N[1, 1, ]
@@ -113,7 +114,7 @@ CM_int <- function(p, d) {
     }
 
     # M's for older ages
-    if (length(d[["covariate1"]])) {
+    if (length(d[["covariate"]])) {
       mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)] + sum(d[["covariate"]][t, ] * p[["b"]])
     } else {
       mo[t, 2:(d$Nages-1)] <- d$mobase[2:(d$Nages-1)]
@@ -527,6 +528,8 @@ check_data <- function(data) {
   if (is.null(data$hatchrelease) || length(data$hatchrelease) != data$Ldyr + 1) {
     stop("data$hatchrelease should be a vector length Ldyr+1")
   }
+
+  if (is.null(data$hatch_init)) data$hatch_init <- 0
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
   if (data$cwtExp < 1) warning("CWT expansion factor in data object (cwtExp) < 1. Are you sure?")
