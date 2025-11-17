@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   conditioning: conditioning.html
@@ -10,7 +10,7 @@ articles:
   introduction: introduction.html
   model: model.html
   ref: ref.html
-last_built: 2025-11-04T00:59Z
+last_built: 2025-11-17T21:17Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles

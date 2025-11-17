@@ -151,15 +151,17 @@ parameters related to the terminal fishery.</p></li>
 <li><p><code>bvulPT</code> Vector length <code>Nages</code>. Prior mean for the vulnerability at age to the preterminal fishery.</p></li>
 <li><p><code>bvulT</code> Vector length <code>Nages</code>. Prior mean for the vulnerability at age to the terminal fishery.</p></li>
 <li><p><code>RelRegFPT</code> Vector <code>Ldyr</code>. Trend in relative regional preterminal fishing mortality. Fishing mortality is estimated by estimating a scaling
-coefficient and annual deviations from this vector.</p></li>
-<li><p><code>RelRegFT</code> Vector <code>Ldyr</code>. Trend in relative regional terminal fishing mortality.</p></li>
+coefficient and annual deviations from this vector. Default is <code>rep(1, d$Ldyr)</code> (no prior trend) if <code>cwtcatPT</code> is provided, otherwise zero.</p></li>
+<li><p><code>RelRegFT</code> Vector <code>Ldyr</code>. Trend in relative regional terminal fishing mortality.
+Default is <code>rep(1, d$Ldyr)</code> (no prior trend) if <code>cwtcatT</code> is provided, otherwise zero.</p></li>
 <li><p><code>bmatt</code> Vector length <code>Nages</code>. Proportion maturity at age, base values for calculating the unfished replacement line. Also the prior means if year-specific
 maturity rates are estimated.</p></li>
 <li><p><code>mobase</code>. Vector length <code>Nages</code>. Natural mortality at age, base values for calculating the unfished replacement line and the
 the equilibrium spawners at age.</p></li>
 <li><p><code>covariate1</code> <em>Optional</em>. Matrix <code>Ldyr, ncov1</code> of linear covariates that predict natural mortality for age 1.</p></li>
 <li><p><code>covariate</code> <em>Optional</em>. Matrix <code>Ldyr, ncov</code> of linear covariates that predict natural mortality for ages 2+.</p></li>
-<li><p><code>hatchsurv</code> Numeric, survival of hatchery releases into the smolt life stage. Density-independent.</p></li>
+<li><p><code>hatchsurv</code> Numeric, survival of hatchery releases into the smolt life stage. Density-independent. Default is 1. If less than 1, then hatchery origin fish have
+lower survival to age 2 (after first year of marine life stage) compared to natural origin fish.</p></li>
 <li><p><code>gamma</code> <em>Optional</em>. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.</p></li>
 <li><p><code>ssum</code> Numeric, proportion of spawners that is female. Can also be a vector <code>Nages</code></p></li>
 <li><p><code>fec</code> Vector length <code>Nages</code>. Fecundity, egg production at age</p></li>
@@ -167,6 +169,7 @@ the equilibrium spawners at age.</p></li>
 <li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
 <li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
 <li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code>, number of hatchery juvenile fish released</p></li>
+<li><p><code>hatch_init</code> Numeric, equilibrium hatchery releases used to initialize the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.</p></li>
 <li><p><code>s_enroute</code> Numeric, survival of escapement to spawning grounds. Default is 1.</p></li>
 <li><p><code>so_mu</code> Numeric, the prior mean for spawners at unfished replacement in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
 <li><p><code>so_sd</code> Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.</p></li>
@@ -272,7 +275,7 @@ Sciences 62: vi + 60 p.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
