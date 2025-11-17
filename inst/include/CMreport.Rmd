@@ -172,9 +172,9 @@ CM_SRR(report, year1)
 .CM_ts(report, year1, var = "egg", ci = TRUE, ylab = "Egg production")
 ```
 
-```{r smolt, fig.cap="Natural smolt production (medians and 95% prediction interval)."}
+```{r smolt, fig.cap="Natural smolt production (outmigrating juveniles, medians and 95% prediction interval)."}
 report <- lapply(report, function(i) {
-  i$Smolt <- rowSums(i$N[, 1, ])
+  i$Smolt <- i$N[, 1, 1]
   return(i)
 })
 .CM_ts(report, year1, var = "Smolt", ci = TRUE, ylab = "Smolt production")
@@ -203,7 +203,7 @@ CM_Srep(report, d, year1, type = "egg")
 
 ### Juvenile abundance
 
-```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval). Natural origin age 1 fish corresponds to smolt production."}
+```{r Njuv, fig.cap="Juvenile abundance at age (medians and 95% prediction interval). Natural origin age 1 fish corresponds to smolt production (outmigrating juveniles)."}
 CM_Njuv(report, year1, ci = FALSE)
 ```
 
@@ -227,20 +227,20 @@ CM_covariate(d[["covariate"]], cov_names, year1, b = rstan::extract(stanfit, "b"
 ### Preterminal fishery
 
 ```{r vulPT, fig.cap="Posterior estimates of preterminal vulnerability at age (medians and 95% prediction interval)."}
-FPT <- sapply(report, getElement, "FPT") 
+FPT <- sapply(report, getElement, "FPT")
 if (sum(FPT)) CM_vul(report, type = "vulPT")
 ```
 
 ```{r FPT, fig.cap="Preterminal instantaneous fishing mortality (medians and 95% prediction interval)."}
-CM_F(report, PT = TRUE, year1)
+if (sum(FPT)) CM_F(report, PT = TRUE, year1)
 ```
 
 ```{r CYER-PT, fig.cap="Return year preterminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_ER(report, brood = FALSE, type = "PT", year1, r = d$r_matt)
+if (sum(FPT)) CM_ER(report, brood = FALSE, type = "PT", year1, r = d$r_matt)
 ```
 
 ```{r BYER-PT, fig.cap="Brood year preterminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_ER(report, brood = TRUE, type = "PT", year1, r = d$r_matt)
+if (sum(FPT)) CM_ER(report, brood = TRUE, type = "PT", year1, r = d$r_matt)
 ```
 
 ### Return
@@ -253,7 +253,7 @@ CM_maturity(report, d, year1, r = d$r_matt, brood = FALSE, rs_names = rs_names)
 CM_maturity(report, d, year1, r = d$r_matt, brood = TRUE, rs_names = rs_names)
 ```
 
-```{r recr, fig.cap="Recruitment at age (medians and 95% prediction interval)."}
+```{r recr, fig.cap="Recruitment at age (mature abundance, medians and 95% prediction interval)."}
 CM_recr(report, year1, ci = TRUE)
 ```
 
@@ -265,15 +265,15 @@ if (sum(FT)) CM_vul(report, type = "vulT")
 ```
 
 ```{r FT, fig.cap="Terminal instantaneous fishing mortality (medians and 95% prediction interval)."}
-CM_F(report, PT = FALSE, year1)
+if (sum(FT)) CM_F(report, PT = FALSE, year1)
 ```
 
 ```{r CYER-T, fig.cap="Return year terminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_ER(report, brood = FALSE, type = "T", year1, r = d$r_matt)
+if (sum(FT)) CM_ER(report, brood = FALSE, type = "T", year1, r = d$r_matt)
 ```
 
 ```{r BYER-T, fig.cap="Brood year terminal exploitation rate at age (medians and 95% prediction interval)."}
-CM_ER(report, brood = TRUE, type = "T", year1, r = d$r_matt)
+if (sum(FT)) CM_ER(report, brood = TRUE, type = "T", year1, r = d$r_matt)
 ```
 
 ### Escapement
