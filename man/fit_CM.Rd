@@ -79,15 +79,17 @@ parameters related to the terminal fishery.
 \item \code{bvulPT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the preterminal fishery.
 \item \code{bvulT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the terminal fishery.
 \item \code{RelRegFPT} Vector \code{Ldyr}. Trend in relative regional preterminal fishing mortality. Fishing mortality is estimated by estimating a scaling
-coefficient and annual deviations from this vector.
+coefficient and annual deviations from this vector. Default is \code{rep(1, d$Ldyr)} (no prior trend) if \code{cwtcatPT} is provided, otherwise zero.
 \item \code{RelRegFT} Vector \code{Ldyr}. Trend in relative regional terminal fishing mortality.
+Default is \code{rep(1, d$Ldyr)} (no prior trend) if \code{cwtcatT} is provided, otherwise zero.
 \item \code{bmatt} Vector length \code{Nages}. Proportion maturity at age, base values for calculating the unfished replacement line. Also the prior means if year-specific
 maturity rates are estimated.
 \item \code{mobase}. Vector length \code{Nages}. Natural mortality at age, base values for calculating the unfished replacement line and the
 the equilibrium spawners at age.
 \item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
-\item \code{hatchsurv} Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
+\item \code{hatchsurv} Numeric, survival of hatchery releases into the smolt life stage. Density-independent. Default is 1. If less than 1, then hatchery origin fish have
+lower survival to age 2 (after first year of marine life stage) compared to natural origin fish.
 \item \code{gamma} \emph{Optional}. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 \item \code{ssum} Numeric, proportion of spawners that is female. Can also be a vector \code{Nages}
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age

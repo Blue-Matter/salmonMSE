@@ -52,8 +52,9 @@
 #' - `bvulT` Vector length `Nages`. Prior mean for the vulnerability at age to the terminal fishery.
 #'
 #' - `RelRegFPT` Vector `Ldyr`. Trend in relative regional preterminal fishing mortality. Fishing mortality is estimated by estimating a scaling
-#' coefficient and annual deviations from this vector.
+#' coefficient and annual deviations from this vector. Default is `rep(1, d$Ldyr)` (no prior trend) if `cwtcatPT` is provided, otherwise zero.
 #' - `RelRegFT` Vector `Ldyr`. Trend in relative regional terminal fishing mortality.
+#' Default is `rep(1, d$Ldyr)` (no prior trend) if `cwtcatT` is provided, otherwise zero.
 #'
 #' - `bmatt` Vector length `Nages`. Proportion maturity at age, base values for calculating the unfished replacement line. Also the prior means if year-specific
 #' maturity rates are estimated.
@@ -64,7 +65,8 @@
 #' - `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that predict natural mortality for ages 2+.
 #'
-#' - `hatchsurv` Numeric, survival of hatchery releases into the smolt life stage. Density-independent.
+#' - `hatchsurv` Numeric, survival of hatchery releases into the smolt life stage. Density-independent. Default is 1. If less than 1, then hatchery origin fish have
+#' lower survival to age 2 (after first year of marine life stage) compared to natural origin fish.
 #' - `gamma` *Optional*. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 #' - `ssum` Numeric, proportion of spawners that is female. Can also be a vector `Nages`
 #'

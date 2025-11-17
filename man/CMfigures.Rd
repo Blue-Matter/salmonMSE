@@ -22,6 +22,7 @@
 \alias{CM_F}
 \alias{CM_surv}
 \alias{CM_wt}
+\alias{CM_surv2}
 \alias{CM_wto}
 \alias{CM_ER}
 \alias{CM_CWT_ER}
@@ -75,6 +76,8 @@ CM_F(report, PT = TRUE, year1 = 1, ci = TRUE)
 CM_surv(report, year1 = 1, ci = TRUE)
 
 CM_wt(stanfit, year1 = 1, ci = TRUE)
+
+CM_surv2(report, year1 = 1, ci = TRUE, ylab = "Survival to age 2")
 
 CM_wto(stanfit, year1 = 1, ci = TRUE)
 
@@ -134,6 +137,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 \item{surv}{Logical, whether to plot survival (values between 0 - 1) or instantaneous mortality rates}
 
+\item{ylab}{Character y axis label}
+
 \item{at_age}{Logical, whether to make figure by individual age}
 
 \item{x}{Matrix of covariates by year x covariate}
@@ -142,8 +147,6 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 \item{b}{Matrix of fixed effect coefficients by simulation x covariate. If missing only the covariates (\code{x}) are plotted,
 otherwise, the dot product \code{sum(x * b)} is calculated by individual simulation and quantiles are plotted}
-
-\item{ylab}{Character y axis label}
 }
 \value{
 \itemize{
@@ -184,7 +187,7 @@ otherwise, the dot product \code{sum(x * b)} is calculated by individual simulat
 
 \itemize{
 \item \code{CM_SRR()} returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
-relationship and realized annual values
+relationship and realized annual values. Years correspond to years of egg production (assumes juvenile production for the following brood year).
 }
 
 \itemize{
@@ -225,6 +228,11 @@ relationship and realized annual values
 
 \itemize{
 \item \code{CM_wt()} returns ggplot of annual deviations in egg-juvenile mortality from the Ricker function
+}
+
+\itemize{
+\item \code{CM_surv2()} returns ggplot of annual survival to age 2, which includes age-1 mortality (marine life stage) for both natural and hatchery origin fish.
+Hatchery fish experience additional mortality specified by release mortality.
 }
 
 \itemize{

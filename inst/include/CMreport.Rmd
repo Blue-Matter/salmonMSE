@@ -164,7 +164,7 @@ report <- lapply(report, function(i) {
 
 ### Egg production
 
-```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Points show annual smolt production (medians)."}
+```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Years correspond to years of egg production (assumes juvenile production for the following brood year). Points show annual smolt production (medians)."}
 CM_SRR(report, year1)
 ```
 
@@ -184,7 +184,7 @@ report <- lapply(report, function(i) {
 CM_Megg(report, year1, ci = TRUE, surv = FALSE)
 ```
 
-```{r Meggsurv, fig.cap="Estimated egg-smolt survival (medians and 95% prediction interval)."}
+```{r Meggsurv, fig.cap="Estimated egg-smolt survival of natural origin fish (medians and 95% prediction interval)."}
 CM_Megg(report, year1, ci = TRUE, surv = TRUE) +
   coord_cartesian(ylim = c(0, 1))
 ```
@@ -214,6 +214,10 @@ CM_M(report, year1)
 ```{r Msurv, fig.cap="Juvenile natural survival at age (medians and 95% prediction interval)."}
 CM_surv(report, year1) +
   coord_cartesian(ylim = c(0, 1))
+```
+
+```{r M2, fig.cap="Survival to age 2. All fish experience age 1 mortality (first year of marine life stage) and hatchery origin fish may have lower survival if release mortality is specified."}
+CM_surv2(report, year1 = 1)
 ```
 
 ```{r Mcov1, fig.cap="Contribution to natural mortality in age 1 from covariates."}

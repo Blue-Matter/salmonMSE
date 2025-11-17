@@ -123,6 +123,9 @@ CM_pairs <- function(stanfit, vars, inc_warmup = FALSE) {
 #' @importFrom graphics points polygon
 CM_fit_esc <- function(report, d, year) {
   obs <- d$obsescape
+
+  if (missing(year)) year <- 1:length(obs)
+
   esc <- exp(sapply(report, getElement, "logpredesc")) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975))
 
@@ -139,8 +142,9 @@ CM_fit_esc <- function(report, d, year) {
 CM_data <- function(obs, year, ylab) {
 
   if (!is.null(obs) && sum(obs)) {
+    if (missing(year)) year <- 1:length(obs)
     plot(year, obs, type = "o", pch = 16, xlim = range(year),
-         ylim = c(0, 1.1) * range(obs), xlab = "Year", ylab = ylab)
+         ylim = c(0, 1.1) * range(obs, na.rm = TRUE), xlab = "Year", ylab = ylab)
   }
 
   invisible()
@@ -382,7 +386,7 @@ CM_vul <- function(report, type = c("vulPT", "vulT")) {
 #' @rdname CMfigures
 #' @returns
 #' - `CM_SRR()` returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
-#' relationship and realized annual values
+#' relationship and realized annual values. Years correspond to years of egg production (assumes juvenile production for the following brood year).
 #' @export
 CM_SRR <- function(report, year1 = 1) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
@@ -391,7 +395,7 @@ CM_SRR <- function(report, year1 = 1) {
   spred <- sapply(report, function(x) x$alpha * epred * exp(-x$beta * epred)) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975))
 
-  year <- year1 + seq(1, length(egg))
+  year <- year1 + seq(1, length(egg)) - 1
 
   #plot(egg, smolt, xlim = c(0, 1.1) * range(egg), ylim = c(0, 1.1) * range(smolt),
   #     xlab = "Egg production", ylab = "Smolt production")
@@ -876,6 +880,38 @@ CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
     g
   }
 
+}
+
+#' @rdname CMfigures
+#' @returns
+#' - `CM_surv2()` returns ggplot of annual survival to age 2, which includes age-1 mortality (marine life stage) for both natural and hatchery origin fish.
+#' Hatchery fish experience additional mortality specified by release mortality.
+#' @importFrom dplyr n
+#' @export
+CM_surv2 <- function(report, year1 = 1, ci = TRUE, ylab = "Survival to age 2") {
+
+  NO <- exp(-sapply(report, function(x) x$mo[, 1])) %>%
+    apply(1, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+    t() %>%
+    as.data.frame() %>%
+    mutate(type = "Natural", Year = year1 + 1:n() - 1)
+
+  HO <- exp(-sapply(report, getElement, "moplot")) %>%
+    apply(1, quantile, probs = c(0.025, 0.5, 0.975)) %>%
+    t() %>%
+    as.data.frame() %>%
+    mutate(type = "Hatchery", Year = year1 + 1:n() - 1)
+
+  df <- rbind(NO, HO)
+
+  g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+    geom_line(aes(colour = .data$type)) +
+    labs(x = "Year", y = ylab, fill = "Origin", colour = "Origin") +
+    expand_limits(y = 0) +
+    theme(legend.position = "bottom")
+
+  if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`, fill = .data$type), alpha = 0.25)
+  g
 }
 
 #' @rdname CMfigures

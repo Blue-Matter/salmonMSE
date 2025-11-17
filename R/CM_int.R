@@ -472,9 +472,8 @@ check_data <- function(data) {
     if (is.null(data$bvulPT) || length(data$bvulPT) != data$Nages) {
       stop("data$bvulPT should be a vector length Nages")
     }
-    if (is.null(data$RelRegFPT) || length(data$RelRegFPT) != data$Ldyr) {
-      stop("data$RelRegFPT should be a vector length Ldyr")
-    }
+    if (is.null(data$RelRegFPT)) data$RelRegFPT <- rep(1, data$Ldyr)
+    if (length(data$RelRegFPT) != data$Ldyr) stop("data$RelRegFPT should be a vector length Ldyr")
   } else {
     data$bvulPT <- rep(0, data$Nages)
     data$RelRegFPT <- rep(0, data$Ldyr)
@@ -484,9 +483,8 @@ check_data <- function(data) {
     if (is.null(data$bvulT) || length(data$bvulT) != data$Nages) {
       stop("data$bvulT should be a vector length Nages")
     }
-    if (is.null(data$RelRegFT) || length(data$RelRegFT) != data$Ldyr) {
-      stop("data$RelRegFT should be a vector length Ldyr")
-    }
+    if (is.null(data$RelRegFT)) data$RelRegFT <- rep(1, data$Ldyr)
+    if (length(data$RelRegFT) != data$Ldyr) stop("data$RelRegFT should be a vector length Ldyr")
   } else {
     data$bvulT <- rep(0, data$Nages)
     data$RelRegFT <- rep(0, data$Ldyr)
@@ -507,7 +505,7 @@ check_data <- function(data) {
     if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
   }
 
-  if (is.null(data$hatchsurv)) stop("data$hatchsurv should be between 0-1")
+  if (is.null(data$hatchsurv)) data$hatchsurv <- 1
   if (is.null(data$gamma)) data$gamma <- 1
   if (is.null(data$ssum)) stop("data$ssum (proportion female spawners) should be between 0-1")
 
