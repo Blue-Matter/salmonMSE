@@ -393,15 +393,9 @@ CM_SRR <- function(report, year1 = 1) {
   smolt <- sapply(report, function(x) x$N[-1, 1, 1]) %>% apply(1, median)
   epred <- seq(0, 1.1 * max(egg), length.out = 50)
   spred <- sapply(report, function(x) x$alpha * epred * exp(-x$beta * epred)) %>%
-    apply(1, quantile, probs = c(0.025, 0.5, 0.975))
+    apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
 
   year <- year1 + seq(1, length(egg)) - 1
-
-  #plot(egg, smolt, xlim = c(0, 1.1) * range(egg), ylim = c(0, 1.1) * range(smolt),
-  #     xlab = "Egg production", ylab = "Smolt production")
-  #lines(epred, spred[2, ])
-  #polygon(c(rev(epred), epred), c(rev(spred[1, ]), spred[3, ]), col = alpha("grey", 0.5), border = NA)
-  #invisible()
 
   df <- data.frame(
     year = year,
