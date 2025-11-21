@@ -166,15 +166,18 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 <li><p><code>ssum</code> Numeric, proportion of spawners that is female. Can also be a vector <code>Nages</code></p></li>
 <li><p><code>fec</code> Vector length <code>Nages</code>. Fecundity, egg production at age</p></li>
 <li><p><code>r_matt</code> Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.</p></li>
-<li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
+<li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
 <li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
-<li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code>, number of hatchery juvenile fish released</p></li>
+<li><p><code>obs_pHOS</code> Vector length <code>Ldyr</code>, proportion of hatchery origin spawners (census) (between 0-1). Logistic-normal likelihood.</p></li>
+<li><p><code>pHOS_sd</code> Numeric, logistic-normal standard deviation. Default is 0.1.</p></li>
 <li><p><code>hatch_init</code> Numeric, equilibrium hatchery releases used to initialize the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.</p></li>
 <li><p><code>s_enroute</code> Numeric, survival of escapement to spawning grounds. Default is 1.</p></li>
 <li><p><code>so_mu</code> Numeric, the prior mean for spawners at unfished replacement in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
 <li><p><code>so_sd</code> Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.</p></li>
-<li><p><code>finitPT</code> Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
-<li><p><code>finitT</code> Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.</p></li>
+<li><p><code>finitPT</code> Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to <code>"estimate"</code> to allow the model to estimate
+the equilibrium condition.</p></li>
+<li><p><code>finitT</code> Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to <code>"estimate"</code> to allow the model to estimate
+the equilibrium condition.</p></li>
 <li><p><code>cwtExp</code> Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
 The model scales down the CWT predictions to match the observations. In other words,
 the model assumes that the CWT catch and escapement are not expanded. For example, <code>cwtExp = 10</code> divides the CWT predictions by 10 for the likelihood. Default is 1.

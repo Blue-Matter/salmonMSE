@@ -167,14 +167,17 @@ Data should passed through a named list with the following entries.
 - `r_matt` Integer, the release strategy for which to use maturity
   parameter for the natural system. Default is 1.
 
-- `obsescape` Vector length `Ldyr`, total observed escapement (all ages
-  and both hatchery/natural fish). Lognormal likelhood.
+- `obsescape` Vector length `Ldyr`, total observed escapement from
+  fisheries, i.e., return to river (all ages and both hatchery/natural
+  fish). Lognormal likelhood.
 
 - `propwildspawn` Vector length `Ldyr`, proportion of the escapement
   that spawn (accounts for en-route mortality and broodtake)
 
-- `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile
-  fish released
+- `obs_pHOS` Vector length `Ldyr`, proportion of hatchery origin
+  spawners (census) (between 0-1). Logistic-normal likelihood.
+
+- `pHOS_sd` Numeric, logistic-normal standard deviation. Default is 0.1.
 
 - `hatch_init` Numeric, equilibrium hatchery releases used to initialize
   the model. Helpful if hatchery production starts prior to CWT time
@@ -191,11 +194,13 @@ Data should passed through a named list with the following entries.
 
 - `finitPT` Numeric, initial preterminal fishing mortality for
   calculating the equilibrium spawners at age in the first year of the
-  model. Default is 0.
+  model. Default is 0. Set to `"estimate"` to allow the model to
+  estimate the equilibrium condition.
 
 - `finitT` Numeric, initial terminal fishing mortality for calculating
   the equilibrium spawners at age in the first year of the model.
-  Default is 0.
+  Default is 0. Set to `"estimate"` to allow the model to estimate the
+  equilibrium condition.
 
 - `cwtExp` Numeric, the CWT expansion factor, typically the reciprocal
   of the catch sampling rate (higher factors for lower sampling rate).
