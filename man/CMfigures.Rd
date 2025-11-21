@@ -7,6 +7,7 @@
 \alias{CM_trace}
 \alias{CM_pairs}
 \alias{CM_fit_esc}
+\alias{CM_fit_pHOS}
 \alias{CM_fit_CWTesc}
 \alias{CM_fit_CWTcatch}
 \alias{CM_maturity}
@@ -38,6 +39,8 @@ CM_trace(stanfit, vars, inc_warmup = FALSE)
 CM_pairs(stanfit, vars, inc_warmup = FALSE)
 
 CM_fit_esc(report, d, year)
+
+CM_fit_pHOS(report, d, year)
 
 CM_fit_CWTesc(report, d, year1 = 1, rs_names)
 
@@ -167,6 +170,10 @@ otherwise, the dot product \code{sum(x * b)} is calculated by individual simulat
 
 \itemize{
 \item \code{CM_fit_esc()} returns base graphics with fit to total escapement time series
+}
+
+\itemize{
+\item \code{CM_fit_pHOS()} returns base graphics with fit to pHOS (census) observations
 }
 
 \itemize{

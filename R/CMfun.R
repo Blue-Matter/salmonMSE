@@ -139,6 +139,10 @@ CM_fit_esc <- function(report, d, year) {
   invisible()
 }
 
+#' @rdname CMfigures
+#' @returns
+#' - `CM_fit_pHOS()` returns base graphics with fit to pHOS (census) observations
+#' @export
 CM_fit_pHOS <- function(report, d, year) {
   obs <- d$obs_pHOS
 
