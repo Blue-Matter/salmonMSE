@@ -102,8 +102,12 @@ CM_wto(stanfit, year1)
 CM_data(d$hatchrelease, c(year, max(year) + 1), ylab = "Hatchery release")
 ```
 
-```{r fit-esc, fig.cap="Observed total escapement (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
+```{r fit-esc, fig.cap="Observed total escapement (return to river, points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_esc(report, d, year)
+```
+
+```{r fit-pHOS, fig.cap="Observed pHOS (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_pHOS(report, d, year)
 ```
 
 ```{r cov1, fig.cap="Linear covariates to natural mortality in age 1."}

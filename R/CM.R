@@ -73,9 +73,10 @@
 #' - `fec` Vector length `Nages`. Fecundity, egg production at age
 #'
 #' - `r_matt` Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
-#' - `obsescape` Vector length `Ldyr`, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
+#' - `obsescape` Vector length `Ldyr`, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
-#' - `hatchrelease` Vector length `Ldyr+1`, number of hatchery juvenile fish released
+#' - `obs_pHOS` Vector length `Ldyr`, proportion of hatchery origin spawners (census) (between 0-1). Logistic-normal likelihood.
+#' - `pHOS_sd` Numeric, logistic-normal standard deviation. Default is 0.1.
 #' - `hatch_init` Numeric, equilibrium hatchery releases used to initialize the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.
 #'

@@ -139,6 +139,27 @@ CM_fit_esc <- function(report, d, year) {
   invisible()
 }
 
+CM_fit_pHOS <- function(report, d, year) {
+  obs <- d$obs_pHOS
+
+  if (!is.null(obs) && sum(obs, na.rm = TRUE)) {
+
+    if (missing(year)) year <- 1:length(obs)
+
+    pred <- sapply(report, getElement, "pHOScensus") %>%
+      apply(1, quantile, probs = c(0.025, 0.5, 0.975))
+
+    plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(pred, obs, na.rm = TRUE), xlab = "Year", ylab = "pHOS census")
+    polygon(c(rev(year), year), c(rev(pred[1, ]), pred[3, ]), col = alpha("grey", 0.5), border = NA)
+    lines(year, pred[2, ], lwd = 1.5)
+
+    points(year, obs, pch = 16)
+    lines(year, obs, lty = 3)
+  }
+
+  invisible()
+}
+
 CM_data <- function(obs, year, ylab) {
 
   if (!is.null(obs) && sum(obs)) {

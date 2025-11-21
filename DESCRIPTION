@@ -4,7 +4,7 @@ Version: 0.1.1
 Authors@R: 
     person("Quang", "Huynh", , "quang@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7835-4376"))
-Date: 2025-11-03
+Date: 2025-11-20
 Maintainer: Quang Huynh <quang@bluematterscience.com>
 Description: Simulation tools to evaluate the long-term effects of salmon management strategies, including a combination of habitat, harvest, and
   habitat actions. The stochastic age-structured operating model accommodates complex life histories, including freshwater survival across 

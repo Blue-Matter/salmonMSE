@@ -310,7 +310,16 @@ CM_int <- function(p, d) {
     loglike_cwtcatT <- 0
   }
 
-  loglike <- sum(loglike_esc, loglike_cwtcatPT, loglike_cwtcatT, loglike_cwtesc)
+  if (!is.null(d$obs_pHOS) && sum(d$obs_pHOS, na.rm = TRUE)) {
+    loglike_pHOS <- dnorm(qlogis(d$obs_pHOS), qlogis(squeeze(pHOScensus)), d$pHOS_sd, log = TRUE)
+    loglike_pHOS[is.na(d$obs_pHOS)] <- 0
+  } else if (is_ad) {
+    loglike_pHOS <- advector(0)
+  } else {
+    loglike_pHOS <- 0
+  }
+
+  loglike <- sum(loglike_esc, loglike_cwtcatPT, loglike_cwtcatT, loglike_cwtesc, loglike_pHOS)
 
   # Objective function
   fn <- -1 * (logprior + loglike)
@@ -373,6 +382,7 @@ CM_int <- function(p, d) {
   REPORT(loglike_cwtcatPT)
   REPORT(loglike_cwtcatT)
   REPORT(loglike_cwtesc)
+  REPORT(loglike_pHOS)
 
   REPORT(loglike)
   REPORT(logprior)
@@ -526,6 +536,12 @@ check_data <- function(data) {
   if (is.null(data$hatchrelease) || length(data$hatchrelease) != data$Ldyr + 1) {
     stop("data$hatchrelease should be a vector length Ldyr+1")
   }
+
+  if (!is.null(data$obs_pHOS) && length(data$obs_pHOS) != data$Ldyr) {
+    stop("data$obs_pHOS should be a vector length Ldyr")
+  }
+
+  if (!is.null(data$obs_pHOS) && is.null(data$pHOS_sd)) data$pHOS_sd <- 0.1
 
   if (is.null(data$hatch_init)) data$hatch_init <- 0
 

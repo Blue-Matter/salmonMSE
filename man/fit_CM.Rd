@@ -94,9 +94,10 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 \item \code{ssum} Numeric, proportion of spawners that is female. Can also be a vector \code{Nages}
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
 \item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
-\item \code{obsescape} Vector length \code{Ldyr}, total observed escapement (all ages and both hatchery/natural fish). Lognormal likelhood.
+\item \code{obsescape} Vector length \code{Ldyr}, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
-\item \code{hatchrelease} Vector length \code{Ldyr+1}, number of hatchery juvenile fish released
+\item \code{obs_pHOS} Vector length \code{Ldyr}, proportion of hatchery origin spawners (census) (between 0-1). Logistic-normal likelihood.
+\item \code{pHOS_sd} Numeric, logistic-normal standard deviation. Default is 0.1.
 \item \code{hatch_init} Numeric, equilibrium hatchery releases used to initialize the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
