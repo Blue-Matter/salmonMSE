@@ -60,6 +60,8 @@
 <span></span>
 <span><span class="fu">CM_fit_esc</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, <span class="va">year</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">CM_fit_pHOS</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, <span class="va">year</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">CM_fit_CWTesc</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span>, <span class="va">rs_names</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">CM_fit_CWTcatch</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, PT <span class="op">=</span> <span class="cn">TRUE</span>, year1 <span class="op">=</span> <span class="fl">1</span>, <span class="va">rs_names</span><span class="op">)</span></span>
@@ -225,6 +227,7 @@ otherwise, the dot product <code>sum(x * b)</code> is calculated by individual s
 </ul><ul><li><p><code>CM_trace()</code> returns a ggplot showing the MCMC trace plot (aka wormplot)</p></li>
 </ul><ul><li><p><code>CM_pairs()</code> returns output from <code><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">graphics::pairs()</a></code>, a matrix of scatterplots of MCMC posterior samples</p></li>
 </ul><ul><li><p><code>CM_fit_esc()</code> returns base graphics with fit to total escapement time series</p></li>
+</ul><ul><li><p><code>CM_fit_pHOS()</code> returns base graphics with fit to pHOS (census) observations</p></li>
 </ul><ul><li><p><code>CM_fit_CWTesc()</code> returns ggplot of fit to CWT escapement at age</p></li>
 </ul><ul><li><p><code>CM_fit_CWTcatch()</code> returns ggplot of fit to CWT catch at age</p></li>
 </ul><ul><li><p><code>CM_maturity()</code> returns ggplot of estimated maturity at age</p></li>

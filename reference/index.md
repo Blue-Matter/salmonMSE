@@ -17,6 +17,7 @@
   [`CM_trace()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_pairs()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_fit_esc()`](https://docs.salmonmse.com/reference/CMfigures.md)
+  [`CM_fit_pHOS()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_fit_CWTesc()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_fit_CWTcatch()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_maturity()`](https://docs.salmonmse.com/reference/CMfigures.md)

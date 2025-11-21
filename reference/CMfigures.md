@@ -16,6 +16,8 @@ CM_pairs(stanfit, vars, inc_warmup = FALSE)
 
 CM_fit_esc(report, d, year)
 
+CM_fit_pHOS(report, d, year)
+
 CM_fit_CWTesc(report, d, year1 = 1, rs_names)
 
 CM_fit_CWTcatch(report, d, PT = TRUE, year1 = 1, rs_names)
@@ -208,6 +210,11 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 - `CM_fit_esc()` returns base graphics with fit to total escapement time
   series
+
+&nbsp;
+
+- `CM_fit_pHOS()` returns base graphics with fit to pHOS (census)
+  observations
 
 &nbsp;
 
