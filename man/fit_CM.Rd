@@ -102,8 +102,10 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{so_sd} Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
-\item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
-\item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
+\item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
+the equilibrium condition.
+\item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
+the equilibrium condition.
 \item \code{cwtExp} Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
 The model scales down the CWT predictions to match the observations. In other words,
 the model assumes that the CWT catch and escapement are not expanded. For example, \code{cwtExp = 10} divides the CWT predictions by 10 for the likelihood. Default is 1.

@@ -83,8 +83,10 @@
 #' - `so_mu` Numeric, the prior mean for spawners at unfished replacement in logspace. Default is `log(3 * max(data$obsescape))`.
 #' - `so_sd` Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
 #'
-#' - `finitPT` Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
-#' - `finitT` Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0.
+#' - `finitPT` Numeric, initial preterminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to `"estimate"` to allow the model to estimate
+#' the equilibrium condition.
+#' - `finitT` Numeric, initial terminal fishing mortality for calculating the equilibrium spawners at age in the first year of the model. Default is 0. Set to `"estimate"` to allow the model to estimate
+#' the equilibrium condition.
 #'
 #' - `cwtExp` Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
 #' The model scales down the CWT predictions to match the observations. In other words,

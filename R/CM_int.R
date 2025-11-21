@@ -34,6 +34,19 @@ CM_int <- function(p, d) {
   vulT[seq(2, d$Nages-1)] <- plogis(p$logit_vulT)
   vulT[d$Nages] <- 1
 
+  # Initial conditions for F
+  if (is.character(d$finitPT) && d$finitPT == "estimate") {
+    finitPT <- exp(p$log_finitPT)
+  } else {
+    finitPT <- d$finitPT
+  }
+
+  if (is.character(d$finitT) && d$finitT == "estimate") {
+    finitT <- exp(p$log_finitT)
+  } else {
+    finitT <- d$finitT
+  }
+
   lo <- numeric(d$Nages)
   if (is_ad) {
     lhist <- advector(rep(0, d$Nages))
@@ -45,12 +58,12 @@ CM_int <- function(p, d) {
   lhist[1] <- 1
   for (a in 2:d$Nages) {
     lo[a] <- lo[a-1] * exp(-d$mobase[a-1]) * (1 - d$bmatt[a-1]) # unfished juvenile survival
-    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - vulPT[a] * d$finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
+    lhist[a] <- lhist[a-1] * exp(-d$mobase[a-1] - vulPT[a] * finitPT) * (1 - d$bmatt[a-1]) # historical juvenile survival
   }
 
   epro <- sum(lo * d$ssum * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
   spro <- sum(lo * d$ssum * d$bmatt)                             # unfished female spawner per smolt
-  sprhist <- sum(lhist * d$ssum * exp(-vulPT * d$finitPT) * d$bmatt * exp(-vulT * d$finitT))   # historcial female spawners per recruit (pr)
+  sprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT))   # historcial female spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
   rhist <- spawnhist/sprhist # historical recruitment
@@ -435,6 +448,9 @@ make_CMpars <- function(p, d) {
     }
   }
 
+  if (is.null(p[["log_finitPT"]])) p[["log_finitPT"]] <- log(0.1)
+  if (is.null(p[["log_finitT"]])) p[["log_finitT"]] <- log(0.1)
+
   return(p)
 }
 
@@ -593,6 +609,9 @@ make_map <- function(map = list(), p, d) {
 
   if (!length(d[["covariate1"]])) map[["b1"]] <- factor(NA)
   if (!length(d[["covariate"]])) map[["b"]] <- factor(NA)
+
+  if (is.numeric(d$finitPT)) map[["log_finitPT"]] <- factor(NA)
+  if (is.numeric(d$finitT)) map[["log_finitT"]] <- factor(NA)
   return(map)
 }
 
