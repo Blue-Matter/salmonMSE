@@ -9,7 +9,18 @@ production levels or harvest strategy). See example at
 ## Usage
 
 ``` r
-plot_tradeoff(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab)
+plot_tradeoff(
+  pm1,
+  pm2,
+  x1,
+  x2,
+  xlab,
+  ylab,
+  x1lab,
+  x2lab,
+  scenario,
+  ncol = NULL
+)
 ```
 
 ## Arguments
@@ -52,6 +63,16 @@ plot_tradeoff(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab)
 - x2lab:
 
   Character, optional label for the second grouping variable
+
+- scenario:
+
+  Atomic, vector of faceting variables (same length as `pm1`, `pm2`)
+  used to generate a grid of decision tables
+
+- ncol:
+
+  Integer, number of columns for decision table grid, only used if
+  `scenario is provided`
 
 ## Value
 

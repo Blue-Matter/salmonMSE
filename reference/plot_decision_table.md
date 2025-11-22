@@ -9,7 +9,7 @@ strategy). See example at
 ## Usage
 
 ``` r
-plot_decision_table(x, y, z, title, xlab, ylab)
+plot_decision_table(x, y, z, title, xlab, ylab, scenario, ncol = NULL)
 ```
 
 ## Arguments
@@ -39,6 +39,16 @@ plot_decision_table(x, y, z, title, xlab, ylab)
 - ylab:
 
   Character, optional y-axis label
+
+- scenario:
+
+  Atomic, vector of faceting variables (same length as z) used to
+  generate a grid of decision tables
+
+- ncol:
+
+  Integer, number of columns for decision table grid, only used if
+  `scenario is provided`
 
 ## Value
 

@@ -56,7 +56,18 @@ See example at <a href="https://docs.salmonmse.com/articles/decision-table.html"
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_tradeoff</span><span class="op">(</span><span class="va">pm1</span>, <span class="va">pm2</span>, <span class="va">x1</span>, <span class="va">x2</span>, <span class="va">xlab</span>, <span class="va">ylab</span>, <span class="va">x1lab</span>, <span class="va">x2lab</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_tradeoff</span><span class="op">(</span></span>
+<span>  <span class="va">pm1</span>,</span>
+<span>  <span class="va">pm2</span>,</span>
+<span>  <span class="va">x1</span>,</span>
+<span>  <span class="va">x2</span>,</span>
+<span>  <span class="va">xlab</span>,</span>
+<span>  <span class="va">ylab</span>,</span>
+<span>  <span class="va">x1lab</span>,</span>
+<span>  <span class="va">x2lab</span>,</span>
+<span>  <span class="va">scenario</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -95,6 +106,14 @@ to the lower bound, central tendency, and upper bound.</p></dd>
 
 <dt id="arg-x-lab">x2lab<a class="anchor" aria-label="anchor" href="#arg-x-lab"></a></dt>
 <dd><p>Character, optional label for the second grouping variable</p></dd>
+
+
+<dt id="arg-scenario">scenario<a class="anchor" aria-label="anchor" href="#arg-scenario"></a></dt>
+<dd><p>Atomic, vector of faceting variables (same length as <code>pm1</code>, <code>pm2</code>) used to generate a grid of decision tables</p></dd>
+
+
+<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
+<dd><p>Integer, number of columns for decision table grid, only used if <code>scenario is provided</code></p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -56,7 +56,7 @@ See example at <a href="https://docs.salmonmse.com/articles/decision-table.html"
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_decision_table</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, <span class="va">title</span>, <span class="va">xlab</span>, <span class="va">ylab</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_decision_table</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, <span class="va">title</span>, <span class="va">xlab</span>, <span class="va">ylab</span>, <span class="va">scenario</span>, ncol <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,6 +85,14 @@ See example at <a href="https://docs.salmonmse.com/articles/decision-table.html"
 
 <dt id="arg-ylab">ylab<a class="anchor" aria-label="anchor" href="#arg-ylab"></a></dt>
 <dd><p>Character, optional y-axis label</p></dd>
+
+
+<dt id="arg-scenario">scenario<a class="anchor" aria-label="anchor" href="#arg-scenario"></a></dt>
+<dd><p>Atomic, vector of faceting variables (same length as z) used to generate a grid of decision tables</p></dd>
+
+
+<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
+<dd><p>Integer, number of columns for decision table grid, only used if <code>scenario is provided</code></p></dd>
 
 </dl></div>
     <div class="section level2">
