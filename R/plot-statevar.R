@@ -418,13 +418,17 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 #' @param title Character, optional title of figure
 #' @param xlab Character, optional x-axis label
 #' @param ylab Character, optional y-axis label
+#' @param scenario Atomic, vector of faceting variables (same length as z) used to generate a grid of decision tables
+#' @param ncol Integer, number of columns for decision table grid, only used if `scenario is provided`
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_tradeoff()]
 #' @import ggplot2
 #' @export
-plot_decision_table <- function(x, y, z, title, xlab, ylab) {
+plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NULL) {
   dt <- data.frame(x = x, y = y, z = z)
-  dt$txt <- format(round(z, 2))
+  dt$txt <- format(round(dt$z, 2))
+
+  if (!missing(scenario)) dt$scenario <- scenario
 
   g <- ggplot(dt, aes(factor(.data$x), factor(.data$y), fill = .data$z)) +
     geom_tile(colour = "grey20", alpha = 0.6) +
@@ -434,6 +438,12 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab) {
     theme_bw() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
     scale_fill_gradient2(low = "deeppink", high = "green4", mid = "white", midpoint = 0.5)
+
+  if (!missing(scenario)) {
+    g <- g +
+      facet_wrap(vars(.data$scenario), ncol = ncol) +
+      theme(strip.background = element_blank())
+  }
 
   if (!missing(xlab)) g <- g + labs(x = xlab)
   if (!missing(ylab)) g <- g + labs(y = ylab)
@@ -458,11 +468,13 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab) {
 #' @param ylab Character, optional y-axis label
 #' @param x1lab Character, optional label for the first grouping variable
 #' @param x2lab Character, optional label for the second grouping variable
+#' @param scenario Atomic, vector of faceting variables (same length as `pm1`, `pm2`) used to generate a grid of decision tables
+#' @param ncol Integer, number of columns for decision table grid, only used if `scenario is provided`
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_decision_table()]
 #' @import ggplot2
 #' @export
-plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab) {
+plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, ncol = NULL) {
 
   if (missing(x1)) x1 <- 0
   if (missing(x2)) x2 <- 1
@@ -477,6 +489,8 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab) {
     x1 = x1,
     x2 = x2
   )
+
+  if (!missing(scenario)) dt$scenario <- scenario
 
   g <- ggplot(dt, aes(.data$pm1, .data$pm2, colour = .data$x1, shape = .data$x2)) +
     geom_linerange(aes(xmin = .data$pm1_lower, xmax = .data$pm1_upper), linewidth = 0.25) +
@@ -493,6 +507,12 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab) {
     g <- g +
       scale_shape_manual(values = GeomPoint$default_aes$shape) +
       guides(shape = "none")
+  }
+
+  if (!missing(scenario)) {
+    g <- g +
+      facet_wrap(vars(.data$scenario), ncol = ncol) +
+      theme(strip.background = element_blank())
   }
 
   if (!missing(xlab)) g <- g + labs(x = xlab)

@@ -4,7 +4,7 @@
 \alias{plot_decision_table}
 \title{Decision table of performance metrics}
 \usage{
-plot_decision_table(x, y, z, title, xlab, ylab)
+plot_decision_table(x, y, z, title, xlab, ylab, scenario, ncol = NULL)
 }
 \arguments{
 \item{x}{Atomic, vector of values for the x axis (same length as z). Will be converted to factors}
@@ -18,6 +18,10 @@ plot_decision_table(x, y, z, title, xlab, ylab)
 \item{xlab}{Character, optional x-axis label}
 
 \item{ylab}{Character, optional y-axis label}
+
+\item{scenario}{Atomic, vector of faceting variables (same length as z) used to generate a grid of decision tables}
+
+\item{ncol}{Integer, number of columns for decision table grid, only used if \verb{scenario is provided}}
 }
 \value{
 ggplot object

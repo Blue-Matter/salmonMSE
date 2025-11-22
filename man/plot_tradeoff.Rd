@@ -4,7 +4,18 @@
 \alias{plot_tradeoff}
 \title{Tradeoff figure}
 \usage{
-plot_tradeoff(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab)
+plot_tradeoff(
+  pm1,
+  pm2,
+  x1,
+  x2,
+  xlab,
+  ylab,
+  x1lab,
+  x2lab,
+  scenario,
+  ncol = NULL
+)
 }
 \arguments{
 \item{pm1}{Numeric or matrix. A vector of values for the first performance metric on the x-axis. Alternatively, provide a three column matrix corresponding
@@ -24,6 +35,10 @@ to the lower bound, central tendency, and upper bound.}
 \item{x1lab}{Character, optional label for the first grouping variable}
 
 \item{x2lab}{Character, optional label for the second grouping variable}
+
+\item{scenario}{Atomic, vector of faceting variables (same length as \code{pm1}, \code{pm2}) used to generate a grid of decision tables}
+
+\item{ncol}{Integer, number of columns for decision table grid, only used if \verb{scenario is provided}}
 }
 \value{
 ggplot object
