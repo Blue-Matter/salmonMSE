@@ -20,7 +20,6 @@ CM_int <- function(p, d) {
   # Transformed data ----
   tiny <- 1e-6
   moaddcwt <- -log(d$hatchsurv)
-  spawnhist <- d$obsescape[1]
   logobsesc <- log(d$obsescape)
 
   # Vulnerability (= 0 for age 1, = 1 for oldest age)
@@ -63,10 +62,8 @@ CM_int <- function(p, d) {
 
   epro <- sum(lo * d$ssum * d$fec * d$bmatt)                     # unfished egg production per smolt (recruit, pr)
   spro <- sum(lo * d$ssum * d$bmatt)                             # unfished female spawner per smolt
-  sprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT))   # historcial female spawners per recruit (pr)
 
   memax <- -log(1.0/epro) # unfished M from egg to smolt
-  rhist <- spawnhist/sprhist # historical recruitment
 
   # Transformed parameters ----
   so <- exp(p$log_so)
@@ -77,6 +74,15 @@ CM_int <- function(p, d) {
 
   alpha <- exp(-memin)
   beta <- mden
+
+  if (d$NOinit == "SRR") {
+    eprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT) * d$fec)   # historical egg per recruit (pr)
+    rhist <- log(alpha * eprhist)/beta/eprhist
+  } else {
+    spawnhist <- d$obsescape[1]
+    sprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT))   # historical female spawners per recruit (pr)
+    rhist <- spawnhist/sprhist # historical recruitment
+  }
 
   mo <- matrix(0, d$Ldyr, d$Nages-1) # annual ocean M by age
 
@@ -226,6 +232,12 @@ CM_int <- function(p, d) {
   # Convert predicted cwt catches and escapement from calendar year to brood year for likelihoods
   # data are in brood year format
   cbroodPT <- cbroodT <- ebrood <- array(tiny, c(d$Ldyr, d$Nages, d$n_r))
+
+  pHOScensus_brood <- numeric(d$Ldyr)
+  NOS_brood <- CY2BY(syear[, , 1])
+  HOS_brood <- CY2BY(syear[, , 2])
+  matt_brood <- CY2BY(matt[, , d$n_r])
+
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {
       if (t+a-1 <= d$Ldyr) {
@@ -234,6 +246,7 @@ CM_int <- function(p, d) {
         ebrood[t, a, ] <- ecwt[t+a-1, a, ]/d$cwtExp + tiny
       }
     }
+    pHOScensus_brood[t] <- sum(d$fec * HOS_brood[t, ])/sum(d$fec * (HOS_brood[t, ] + NOS_brood[t, ]))
   }
 
   # Log prior for parameters
@@ -324,8 +337,9 @@ CM_int <- function(p, d) {
   }
 
   if (!is.null(d$obs_pHOS) && sum(d$obs_pHOS, na.rm = TRUE)) {
-    loglike_pHOS <- dnorm(qlogis(d$obs_pHOS), qlogis(squeeze(pHOScensus)), d$pHOS_sd, log = TRUE)
+    loglike_pHOS <- dnorm(qlogis(d$obs_pHOS), qlogis(squeeze(pHOScensus_brood)), d$pHOS_sd, log = TRUE)
     loglike_pHOS[is.na(d$obs_pHOS)] <- 0
+    loglike_pHOS[d$Ldyr - seq(1, d$Nages - 1) + 1] <- 0
   } else if (is_ad) {
     loglike_pHOS <- advector(0)
   } else {
@@ -385,6 +399,7 @@ CM_int <- function(p, d) {
   REPORT(pNOB)
   REPORT(pHOSeff)
   REPORT(pHOScensus)
+  REPORT(pHOScensus_brood)
 
   if (d$fitness) {
     REPORT(fitness)
@@ -557,7 +572,7 @@ check_data <- function(data) {
     stop("data$obs_pHOS should be a vector length Ldyr")
   }
 
-  if (!is.null(data$obs_pHOS) && is.null(data$pHOS_sd)) data$pHOS_sd <- 0.1
+  if (!is.null(data$obs_pHOS) && is.null(data$pHOS_sd)) data$pHOS_sd <- 1
 
   if (is.null(data$hatch_init)) data$hatch_init <- 0
 
@@ -571,6 +586,9 @@ check_data <- function(data) {
 
   if (is.null(data$finitPT)) data$finitPT <- 0
   if (is.null(data$finitT)) data$finitT <- 0
+
+  if (is.null(data$NOinit)) data$NOinit <- "empirical"
+  data$NOinit <- match.arg(data$NOinit, choices = c("empirical", "SRR"))
 
   if (is.null(data$fitness)) data$fitness <- FALSE
 
