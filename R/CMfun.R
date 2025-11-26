@@ -60,7 +60,7 @@ CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
 #' @importFrom stats cor
 #' @importFrom graphics pairs rect strwidth text
 #' @export
-CM_pairs <- function(stanfit, vars, inc_warmup = FALSE) {
+CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) {
   panel.hist <- function(x, ...) {
     usr <- par("usr"); on.exit(par(usr = usr))
     par(usr = c(usr[1:2], 0, 1.5) )
@@ -150,10 +150,10 @@ CM_fit_pHOS <- function(report, d, year) {
 
     if (missing(year)) year <- 1:length(obs)
 
-    pred <- sapply(report, getElement, "pHOScensus") %>%
-      apply(1, quantile, probs = c(0.025, 0.5, 0.975))
+    pred <- sapply(report, getElement, "pHOScensus_brood") %>%
+      apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
 
-    plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(pred, obs, na.rm = TRUE), xlab = "Year", ylab = "pHOS census")
+    plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(pred, obs, na.rm = TRUE), xlab = "Brood Year", ylab = "pHOS census")
     polygon(c(rev(year), year), c(rev(pred[1, ]), pred[3, ]), col = alpha("grey", 0.5), border = NA)
     lines(year, pred[2, ], lwd = 1.5)
 

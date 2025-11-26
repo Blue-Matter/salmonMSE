@@ -36,7 +36,7 @@ get_CMdata(fit)
 
 CM_trace(stanfit, vars, inc_warmup = FALSE)
 
-CM_pairs(stanfit, vars, inc_warmup = FALSE)
+CM_pairs(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE)
 
 CM_fit_esc(report, d, year)
 
