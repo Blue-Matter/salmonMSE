@@ -236,7 +236,6 @@ CM_int <- function(p, d) {
   pHOScensus_brood <- numeric(d$Ldyr)
   NOS_brood <- CY2BY(syear[, , 1])
   HOS_brood <- CY2BY(syear[, , 2])
-  matt_brood <- CY2BY(matt[, , d$n_r])
 
   for (t in 1:(d$Ldyr)) {
     for (a in 1:d$Nages) {

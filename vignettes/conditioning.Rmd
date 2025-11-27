@@ -49,7 +49,7 @@ param_cm <- read.csv("tables/glossary_conditioning.csv") %>%
 knitr::kable(param_cm)
 ```
 
-# Life cycle parameters
+# Life cycle parameters from CWT
 
 Life cycle parameters are informed by CWT. Mortality rates are parameterized in instantaneous units, which can be converted to survival terms.
 
@@ -60,6 +60,14 @@ Survival of juvenile CWT to the next age class $a$ at the beginning of year $y$ 
 $$
 N^\textrm{juv,CWT}_{y+1,a+1} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 $$
+
+An additional mortality term, associated with release mortality, can be applied for survival in the first year of life shortly after release:
+
+$$
+N^\textrm{juv,CWT}_{y,a=1} = N^\textrm{rel,CWT}_y s^\textrm{rel}
+$$
+
+where $s^\textrm{rel}$ is the survival after release into the wild.
 
 The CWT return $R$ is the fraction of maturing juveniles after preterminal exploitation
 
@@ -80,20 +88,27 @@ C^\textrm{CWT,PT}_{y,a} &= N^\textrm{juv,CWT}_{y,a}(1 - \exp(-v^\textrm{PT}_aF^\
 C^\textrm{CWT,T}_{y,a} &= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\textrm{T}_y))
 \end{align}
 
-# Hatchery and natural production
+# Population reconstruction
 
 The model does separate accounting of natural-origin ($\textrm{NO}$) and hatchery-origin ($\textrm{HO}$) fish in the population of interest. 
 
-The abundance of juvenile fish $N$, return $R$, and escapement $E$ uses the same exploitation rate, maturity, and natural mortality parameters estimated from the CWT. 
+## Juvenile life stage
 
+The age-1 HO fish is obtained from the number of releases and an assumption about survival after release: $N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}$. 
+
+The age-1 NO fish is equal to the smolt production, usually considered to be the juveniles migrating out of the freshwater environment: $N^\textrm{juv,NO}_{y,a=1} = \textrm{Smolt}_y$
+
+> In the first year in the marine life stage, both HO and NO fish experience the natural mortality rate associated with $M$. Additional mortality can be applied to HO fish associated with release mortality (not experienced by NO fish). In effect, since the CWT data inform hatchery survival in the first year, the release mortality assumption effectively allows the analyst to attribute a smaller proportion of the mortality experienced by hatchery fish to natural origin fish.
+
+The abundance of juvenile fish $N$, uses the same preterminal fishing mortality, maturity, and natural mortality paramaters estimated from the CWT:
 \begin{align}
 N^\textrm{juv,NO}_{y+1,a+1} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
 N^\textrm{juv,HO}_{y+1,a+1} &= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 \end{align}
 
-For age 1, the age-1 HO fish is obtained from the number of releases and an assumption about survival after release: $N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}$. 
+## Adult life stage
 
-The age-1 NO fish is equal to the smolt production: $N^\textrm{juv,NO}_{y,a=1} = \textrm{Smolt}_y$
+The return $R$, and escapement $E$ is calculated from the terminal fishing mortality and maturity parameters estimated from the CWT:
 
 \begin{align}
 R^\textrm{NO}_{y,a} &= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}\\
@@ -105,12 +120,15 @@ E^\textrm{NO}_{y,a} &= R^\textrm{NO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)\\
 E^\textrm{HO}_{y,a} &= R^\textrm{HO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
 \end{align}
 
-The number of spawners is calculated from the escapement, the en-route survival rate, and the proportion allowed to spawn. This proportion can be calculated from the ratio of broodtake to observed escapement (the model is parameterized in this way for numerical stability and it is assumed broodtake is non-selective with respect to origin):
+The number of spawners is calculated from the escapement, the en-route survival, and the proportion of escapement that spawn. 
+This proportion can be calculated from the ratio of broodtake to observed escapement (the model is parameterized in this manner for numerical stability and it is assumed broodtake is non-selective with respect to origin):
 
 \begin{align}
 \textrm{NOS}_{y,a} &= E^\textrm{NO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y\\
 \textrm{HOS}_{y,a} &= E^\textrm{HO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y
 \end{align}
+
+## Egg and juvenile production
 
 The egg production is calculated from the proportion females and fecundity $f$ at age:
 
@@ -125,7 +143,11 @@ $$
 \textrm{Egg}_y) \exp(-\delta_y)
 $$
 
-where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate. Here, smolts are considered to be outmigrating juveniles. Thus, the survival described by the Ricker function occurs over freshwater life stages.
+where $\delta_y$ is an annual deviation from the density-dependent function, expressed as an instantaneous mortality rate. 
+Here, smolts can be considered to be outmigrating juveniles. 
+Thus, the egg-smolt survival occurs over freshwater life stages.
+
+## Ricker stock-recruit function
 
 [Walters and Korman (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html) show that the realized egg-smolt mortality rate can be defined as 
 
@@ -168,6 +190,44 @@ $$
 The realized productivity is $\kappa_y = \alpha \phi_y$ with corresponding $S^\textrm{rep}_y = \log(\kappa_y)\times\tau_y/(\beta\phi_y)$ and $E^\textrm{rep}_y = S^\textrm{rep}_y \phi_y / \tau_y$ ($E^\textrm{rep}_y$ is the egg production at replacement).
 
 The realized productivity can be less than one (and $S^\textrm{rep}_y < 0$) in an individual year. If juvenile marine mortality is high or maturity is late, then there are too few returns to replace the population.
+
+## Initial abundance
+
+As a forward-projecting model, an assumption about the equilibrium age distribution in the first year of the model is required. This age distribution is calculated from the initial fishing mortality rate $F^\textrm{init}$ of preterminal and terminal fisheries.
+
+The initial equilibrium juvenile survival at age is:
+
+$$
+\ell^\textrm{Finit}_a = 
+\begin{cases}
+1 &, a = 1\\
+\ell_{a-1} \exp(-v^\textrm{PT}_{a-1}F^\textrm{init,PT})\exp(-M^\textrm{base}_{a-1}) (1 - m^\textrm{base}_{a-1}) &, a = 2, \ldots, A
+\end{cases}
+$$
+
+For the hatchery-origin population, the juvenile abundance is calculated from an initial equilibrium release assumption $N^\textrm{rel}_{eq}$:
+
+$$
+N^\textrm{juv,HO}_{y=1,a} = N^\textrm{rel}_{eq} \times s^\textrm{rel} \times \ell^\textrm{Finit}_a 
+$$
+
+For the natural-origin population, two assumptions are available. 
+
+First, the juvenile abundance is in equilibrium corresponding to the observed escapement $E_{y=1}$ in the first year (feasible if there is no hatchery population at the beginning of the model):
+
+$$
+N^\textrm{juv,HO}_{y=1,a} = \dfrac{E_{y=1}}{\tau^\textrm{Finit}} \times \ell^\textrm{Finit}_a
+$$
+
+where the juvenile abundance is calculated from the ratio of initial escapement and spawner-per-juvenile $\tau^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a p^\textrm{female}$.
+
+Alternatively, the natural-origin initial abundance is calculated from the Ricker stock-recruit relationship where
+
+$$
+N^\textrm{juv,NO}_{y=1,a} = \dfrac{\log(\alpha\times\phi^\textrm{Finit})}{\beta\times\phi^\textrm{Finit}} \times \ell^\textrm{Finit}_a 
+$$
+
+with the corresponding egg-per-juvenile $\phi^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a f_a p^\textrm{female}$.
 
 # Parameter estimation and priors
 
@@ -265,6 +325,7 @@ Gaussion priors are used for $\varepsilon_y$:
 $$
 \varepsilon_y \sim N(0, [\sigma^M]^2)
 $$
+
 with hyperprior $\sigma^M \sim \textrm{Gamma}(2, 5)$.
 
 ## Natural production
@@ -275,12 +336,30 @@ The annual deviations in smolt production are estimated with prior $\delta_y \si
 
 # Likelihoods
 
+## Total escapement
+
 The likelihood of the total escapement for the population of interest uses a lognormal distribution:
 
 $$
 \log(E_y) \sim N\left(\log\left(\sum_a(\hat{E}^\textrm{NO}_{y,a} + \hat{E}^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
 $$
 
+## pHOS
+
+The model can also be fitted to observations of pHOS (proportion hatchery origin spawners by brood year $t$) for the population of interest.
+A logistic normal distribution is used:
+
+$$
+\log\left(\dfrac{p\textrm{HOS}_t}{1 - p\textrm{HOS}_t}\right) \sim N\left(\log\left(\dfrac{\widehat{p\textrm{HOS}}_t}{1 - \widehat{p\textrm{HOS}}_t}\right), [\sigma^{p\textrm{HOS}}]^2\right)
+$$
+
+where the predicted value is 
+
+$$
+p\textrm{HOS}_t = \dfrac{\sum_a\textrm{HOS}_{t+a-1}\times f_{t+a-1}}{\sum_a([\textrm{NOS}_{t+a-1} + \textrm{HOS}_{t+a-1})\times f_{t+a-1}]}
+$$
+
+## CWT catch and escapement at age
 
 The likelihood of the CWT at age uses a Poisson distribution:
 
@@ -300,7 +379,7 @@ It is assumed that the CWT data are unexpanded numbers.
 CWT likelihood components can be reweighted relative to the total escapement with alternative expansion factors (higher expansion factors have lower weight with increasing variance for the Poisson distribution).
 
 The data needed to be adjusted simultaneously to preserve the magnitude of predicted CWT catch and escapement between alternative fits.
-For example, if the true sampling rate is 0.1, then an initial fit may use $\lambda = 10$, but the CWT can be up-weighted assuming a higher sampling rate of 0.5 ($\lambda = 2$). The analyst should multiply the CWT catch and escapement data by 5.
+For example, if the true sampling rate is 0.1, then an initial fit may use $\lambda = 10$, but the CWT can be up-weighted assuming a higher sampling rate of 0.5 ($\lambda = 2$). The analyst should multiply the CWT catch and escapement by 5, or equivalently, multiply the releases by 0.2 with $\lambda = 1$.
 
 # Release strategies
 
