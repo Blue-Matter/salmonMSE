@@ -205,29 +205,23 @@ $$
 \end{cases}
 $$
 
-For the hatchery-origin population, the juvenile abundance is calculated from an initial equilibrium release assumption $N^\textrm{rel}_{eq}$:
 
-$$
-N^\textrm{juv,HO}_{y=1,a} = N^\textrm{rel}_{eq} \times s^\textrm{rel} \times \ell^\textrm{Finit}_a 
-$$
+The juvenile abundance is back-calculated from an initial equilibrium spawners $S^\textrm{init}$ and pHOS assumptions:
 
-For the natural-origin population, two assumptions are available. 
+\begin{align}
+N^\textrm{juv,NO}_{y=1,a} &= \dfrac{S^\textrm{init}}{\tau^\textrm{init}} \times (1 - p\textrm{HOS}^\textrm{init}) \times \ell^\textrm{Finit}_a\\
+N^\textrm{juv,HO}_{y=1,a} &= \dfrac{S^\textrm{init}}{\tau^\textrm{init}} \times p\textrm{HOS}^\textrm{init} \times \ell^\textrm{Finit}_a 
+\end{align}
 
-First, the juvenile abundance is in equilibrium corresponding to the observed escapement $E_{y=1}$ in the first year (feasible if there is no hatchery population at the beginning of the model):
+where spawner-per-juvenile $\tau^\textrm{init} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a p^\textrm{female}$.
 
-$$
-N^\textrm{juv,HO}_{y=1,a} = \dfrac{E_{y=1}}{\tau^\textrm{Finit}} \times \ell^\textrm{Finit}_a
-$$
-
-where the juvenile abundance is calculated from the ratio of initial escapement and spawner-per-juvenile $\tau^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a p^\textrm{female}$.
-
-Alternatively, the natural-origin initial abundance is calculated from the Ricker stock-recruit relationship where
+<!-- Alternatively, the natural-origin initial abundance is calculated from the Ricker stock-recruit relationship where
 
 $$
 N^\textrm{juv,NO}_{y=1,a} = \dfrac{\log(\alpha\times\phi^\textrm{Finit})}{\beta\times\phi^\textrm{Finit}} \times \ell^\textrm{Finit}_a 
 $$
 
-with the corresponding egg-per-juvenile $\phi^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a f_a p^\textrm{female}$.
+with the corresponding egg-per-juvenile $\phi^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a f_a p^\textrm{female}$. -->
 
 # Parameter estimation and priors
 

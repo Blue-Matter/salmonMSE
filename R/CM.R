@@ -77,7 +77,7 @@
 #' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 #' - `obs_pHOS` *Optional*. Vector length `Ldyr`, observations of proportion of hatchery origin spawners (census) (between 0-1) *by brood year*. Fitted to model with logistic-normal likelihood.
 #' - `pHOS_sd` Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
-#' - `hatch_init` Numeric, equilibrium hatchery releases for the hatchery-origin juvenile abundance in the first year of the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.
+#' - `pHOS_init` Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.
 #'
 #' - `so_mu` Numeric, the prior mean for spawners at unfished replacement in logspace. Default is `log(3 * max(data$obsescape))`.
@@ -87,8 +87,7 @@
 #' the equilibrium condition.
 #' - `finitT` Numeric, initial terminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to `"estimate"` to allow the model to estimate
 #' the equilibrium condition.
-#' - `NOinit` Character. How the initial natural-origin juvenile abundance is calculated. Choices are `"empirical"` (default) where the abundance is back-calculated from the observed escapement in the first year or `"SRR"` where
-#' abundance is calculated from the Ricker stock-recruit relationship. Choose `"SRR"` when `hatch_init > 0`.
+#' - `spawn_init` Numeric, initial spawners to calculate equilibrium abundance in the first year of the model. Default is `obsescape[1]`.
 #'
 #' - `cwtExp` Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
 #' The model scales down the CWT predictions to match the observations. In other words,

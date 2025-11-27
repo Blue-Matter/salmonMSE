@@ -98,7 +98,7 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 \item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{obs_pHOS} \emph{Optional}. Vector length \code{Ldyr}, observations of proportion of hatchery origin spawners (census) (between 0-1) \emph{by brood year}. Fitted to model with logistic-normal likelihood.
 \item \code{pHOS_sd} Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
-\item \code{hatch_init} Numeric, equilibrium hatchery releases for the hatchery-origin juvenile abundance in the first year of the model. Helpful if hatchery production starts prior to CWT time series. Default is zero.
+\item \code{pHOS_init} Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
 \item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
 \item \code{so_sd} Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
@@ -106,8 +106,7 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 the equilibrium condition.
 \item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
 the equilibrium condition.
-\item \code{NOinit} Character. How the initial natural-origin juvenile abundance is calculated. Choices are \code{"empirical"} (default) where the abundance is back-calculated from the observed escapement in the first year or \code{"SRR"} where
-abundance is calculated from the Ricker stock-recruit relationship. Choose \code{"SRR"} when \code{hatch_init > 0}.
+\item \code{spawn_init} Numeric, initial spawners to calculate equilibrium abundance in the first year of the model. Default is \code{obsescape[1]}.
 \item \code{cwtExp} Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
 The model scales down the CWT predictions to match the observations. In other words,
 the model assumes that the CWT catch and escapement are not expanded. For example, \code{cwtExp = 10} divides the CWT predictions by 10 for the likelihood. Default is 1.

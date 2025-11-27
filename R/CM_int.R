@@ -75,14 +75,9 @@ CM_int <- function(p, d) {
   alpha <- exp(-memin)
   beta <- mden
 
-  if (d$NOinit == "SRR") {
-    eprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT) * d$fec)   # historical egg per recruit (pr)
-    rhist <- log(alpha * eprhist)/beta/eprhist
-  } else {
-    spawnhist <- d$obsescape[1]
-    sprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT))   # historical female spawners per recruit (pr)
-    rhist <- spawnhist/sprhist # historical recruitment
-  }
+  spawnhist <- d$spawn_init
+  sprhist <- sum(lhist * d$ssum * exp(-vulPT * finitPT) * d$bmatt * exp(-vulT * finitT))   # historical female spawners per recruit (pr)
+  rhist <- spawnhist/sprhist # historical recruitment
 
   mo <- matrix(0, d$Ldyr, d$Nages-1) # annual ocean M by age
 
@@ -112,8 +107,8 @@ CM_int <- function(p, d) {
   }
 
   # Initialize N ----
-  N[1, , 1] <- rhist * lhist               # initial numbers at age year 1
-  if (!is.null(d$hatch_init)) N[1, , 2] <- d$hatchsurv * d$hatch_init * lhist
+  N[1, , 1] <- rhist * (1 - d$pHOS_init) * lhist               # initial numbers at age year 1
+  N[1, , 2] <- rhist * d$pHOS_init * lhist
   N[1, 1, 2] <- d$hatchsurv * d$hatchrelease[1] # initial age 1 numbers for hatchery release in year 1
   if (d$lht==2) {  #in case spring run type where age of ocean entry=2, not 1
     N[2, 1, ] <- N[1, 1, ]
@@ -570,10 +565,7 @@ check_data <- function(data) {
   if (!is.null(data$obs_pHOS) && length(data$obs_pHOS) != data$Ldyr) {
     stop("data$obs_pHOS should be a vector length Ldyr")
   }
-
   if (!is.null(data$obs_pHOS) && is.null(data$pHOS_sd)) data$pHOS_sd <- 1
-
-  if (is.null(data$hatch_init)) data$hatch_init <- 0
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
   if (data$cwtExp < 1) warning("CWT expansion factor in data object (cwtExp) < 1. Are you sure?")
@@ -585,10 +577,9 @@ check_data <- function(data) {
 
   if (is.null(data$finitPT)) data$finitPT <- 0
   if (is.null(data$finitT)) data$finitT <- 0
+  if (is.null(data$pHOS_init)) data$pHOS_init <- 0
 
-  if (is.null(data$NOinit)) data$NOinit <- "empirical"
-  data$NOinit <- match.arg(data$NOinit, choices = c("empirical", "SRR"))
-
+  if (is.null(data$spawn_init)) data$spawn_init <- na.omit(data$obsescape)[1]
   if (is.null(data$fitness)) data$fitness <- FALSE
 
   if (data$fitness) {
