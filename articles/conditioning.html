@@ -65,7 +65,7 @@
 
       <h1>Conditioning model from CWT and escapement</h1>
             
-            <h4 data-toc-skip class="date">2025-11-22</h4>
+            <h4 data-toc-skip class="date">2025-11-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/conditioning.Rmd" class="external-link"><code>vignettes/conditioning.Rmd</code></a></small>
       <div class="d-none name"><code>conditioning.Rmd</code></div>
@@ -202,7 +202,7 @@ additional settings can then be added to run the projection.</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="life-cycle-parameters">Life cycle parameters<a class="anchor" aria-label="anchor" href="#life-cycle-parameters"></a>
+<h2 id="life-cycle-parameters-from-cwt">Life cycle parameters from CWT<a class="anchor" aria-label="anchor" href="#life-cycle-parameters-from-cwt"></a>
 </h2>
 <p>Life cycle parameters are informed by CWT. Mortality rates are
 parameterized in instantaneous units, which can be converted to survival
@@ -225,6 +225,15 @@ and natural mortality
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,CWT</mtext></msubsup><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,CWT</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 N^\textrm{juv,CWT}_{y+1,a+1} = N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 </annotation></semantics></math></p>
+<p>An additional mortality term, associated with release mortality, can
+be applied for survival in the first year of life shortly after
+release:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,CWT</mtext></msubsup><mo>=</mo><msubsup><mi>N</mi><mi>y</mi><mtext mathvariant="normal">rel,CWT</mtext></msubsup><msup><mi>s</mi><mtext mathvariant="normal">rel</mtext></msup></mrow><annotation encoding="application/x-tex">
+N^\textrm{juv,CWT}_{y,a=1} = N^\textrm{rel,CWT}_y s^\textrm{rel}
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>s</mi><mtext mathvariant="normal">rel</mtext></msup><annotation encoding="application/x-tex">s^\textrm{rel}</annotation></semantics></math>
+is the survival after release into the wild.</p>
 <p>The CWT return
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
 is the fraction of maturing juveniles after preterminal exploitation</p>
@@ -244,30 +253,52 @@ C^\textrm{CWT,T}_{y,a} &amp;= R^\textrm{CWT}_{y,a}(1 - \exp(-v^\textrm{T}_aF^\te
 \end{align}</annotation></semantics></math></p>
 </div>
 <div class="section level2">
-<h2 id="hatchery-and-natural-production">Hatchery and natural production<a class="anchor" aria-label="anchor" href="#hatchery-and-natural-production"></a>
+<h2 id="population-reconstruction">Population reconstruction<a class="anchor" aria-label="anchor" href="#population-reconstruction"></a>
 </h2>
 <p>The model does separate accounting of natural-origin
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NO</mtext><annotation encoding="application/x-tex">\textrm{NO}</annotation></semantics></math>)
 and hatchery-origin
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">HO</mtext><annotation encoding="application/x-tex">\textrm{HO}</annotation></semantics></math>)
 fish in the population of interest.</p>
+<div class="section level3">
+<h3 id="juvenile-life-stage">Juvenile life stage<a class="anchor" aria-label="anchor" href="#juvenile-life-stage"></a>
+</h3>
+<p>The age-1 HO fish is obtained from the number of releases and an
+assumption about survival after release:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>=</mo><msubsup><mi>N</mi><mi>y</mi><mtext mathvariant="normal">rel</mtext></msubsup><msup><mi>s</mi><mtext mathvariant="normal">rel</mtext></msup></mrow><annotation encoding="application/x-tex">N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}</annotation></semantics></math>.</p>
+<p>The age-1 NO fish is equal to the smolt production, usually
+considered to be the juveniles migrating out of the freshwater
+environment:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>=</mo><msub><mtext mathvariant="normal">Smolt</mtext><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">N^\textrm{juv,NO}_{y,a=1} = \textrm{Smolt}_y</annotation></semantics></math></p>
+<blockquote>
+<p>In the first year in the marine life stage, both HO and NO fish
+experience the natural mortality rate associated with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>.
+Additional mortality can be applied to HO fish associated with release
+mortality (not experienced by NO fish). In effect, since the CWT data
+inform hatchery survival in the first year, the release mortality
+assumption effectively allows the analyst to attribute a smaller
+proportion of the mortality experienced by hatchery fish to natural
+origin fish.</p>
+</blockquote>
 <p>The abundance of juvenile fish
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
-return
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
-and escapement
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
-uses the same exploitation rate, maturity, and natural mortality
-parameters estimated from the CWT.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+uses the same preterminal fishing mortality, maturity, and natural
+mortality paramaters estimated from the CWT:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>N</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn><mo>,</mo><mi>a</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msub><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 N^\textrm{juv,NO}_{y+1,a+1} &amp;= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})\\
 N^\textrm{juv,HO}_{y+1,a+1} &amp;= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)(1 - m_{y,a})\exp(-M_{y,a})
 \end{align}</annotation></semantics></math></p>
-<p>For age 1, the age-1 HO fish is obtained from the number of releases
-and an assumption about survival after release:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>=</mo><msubsup><mi>N</mi><mi>y</mi><mtext mathvariant="normal">rel</mtext></msubsup><msup><mi>s</mi><mtext mathvariant="normal">rel</mtext></msup></mrow><annotation encoding="application/x-tex">N^\textrm{juv,HO}_{y,a=1} = N^\textrm{rel}_y s^\textrm{rel}</annotation></semantics></math>.</p>
-<p>The age-1 NO fish is equal to the smolt production:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>=</mo><msub><mtext mathvariant="normal">Smolt</mtext><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">N^\textrm{juv,NO}_{y,a=1} = \textrm{Smolt}_y</annotation></semantics></math></p>
+</div>
+<div class="section level3">
+<h3 id="adult-life-stage">Adult life stage<a class="anchor" aria-label="anchor" href="#adult-life-stage"></a>
+</h3>
+<p>The return
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+and escapement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+is calculated from the terminal fishing mortality and maturity
+parameters estimated from the CWT:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>R</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>R</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HO</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>N</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msubsup><mi>F</mi><mi>y</mi><mtext mathvariant="normal">PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>m</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 R^\textrm{NO}_{y,a} &amp;= N^\textrm{juv,NO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}\\
 R^\textrm{HO}_{y,a} &amp;= N^\textrm{juv,HO}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}
@@ -277,15 +308,19 @@ E^\textrm{NO}_{y,a} &amp;= R^\textrm{NO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y
 E^\textrm{HO}_{y,a} &amp;= R^\textrm{HO}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
 \end{align}</annotation></semantics></math></p>
 <p>The number of spawners is calculated from the escapement, the
-en-route survival rate, and the proportion allowed to spawn. This
+en-route survival, and the proportion of escapement that spawn. This
 proportion can be calculated from the ratio of broodtake to observed
-escapement (the model is parameterized in this way for numerical
+escapement (the model is parameterized in this manner for numerical
 stability and it is assumed broodtake is non-selective with respect to
 origin):</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NO</mtext></msubsup><msup><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msup><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">spawn</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HO</mtext></msubsup><msup><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msup><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">spawn</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \textrm{NOS}_{y,a} &amp;= E^\textrm{NO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y\\
 \textrm{HOS}_{y,a} &amp;= E^\textrm{HO}_{y,a} s^\textrm{enroute} p^\textrm{spawn}_y
 \end{align}</annotation></semantics></math></p>
+</div>
+<div class="section level3">
+<h3 id="egg-and-juvenile-production">Egg and juvenile production<a class="anchor" aria-label="anchor" href="#egg-and-juvenile-production"></a>
+</h3>
 <p>The egg production is calculated from the proportion females and
 fecundity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
@@ -302,9 +337,13 @@ function:</p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\delta_y</annotation></semantics></math>
 is an annual deviation from the density-dependent function, expressed as
-an instantaneous mortality rate. Here, smolts are considered to be
-outmigrating juveniles. Thus, the survival described by the Ricker
-function occurs over freshwater life stages.</p>
+an instantaneous mortality rate. Here, smolts can be considered to be
+outmigrating juveniles. Thus, the egg-smolt survival occurs over
+freshwater life stages.</p>
+</div>
+<div class="section level3">
+<h3 id="ricker-stock-recruit-function">Ricker stock-recruit function<a class="anchor" aria-label="anchor" href="#ricker-stock-recruit-function"></a>
+</h3>
 <p><a href="https://publications.gc.ca/site/eng/9.940685/publication.html" class="external-link">Walters
 and Korman (2024)</a> show that the realized egg-smolt mortality rate
 can be defined as</p>
@@ -353,6 +392,7 @@ and
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mo>ℓ</mo><mi>a</mi></msub><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\tau = \sum_a \ell_a m^\textrm{base}_a p^\textrm{female}</annotation></semantics></math>
 is the equilibrium female spawners per juvenile.</p>
+</div>
 <div class="section level3">
 <h3 id="realized-productivity">Realized productivity<a class="anchor" aria-label="anchor" href="#realized-productivity"></a>
 </h3>
@@ -387,6 +427,48 @@ is the egg production at replacement).</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>S</mi><mi>y</mi><mtext mathvariant="normal">rep</mtext></msubsup><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">S^\textrm{rep}_y &lt; 0</annotation></semantics></math>)
 in an individual year. If juvenile marine mortality is high or maturity
 is late, then there are too few returns to replace the population.</p>
+</div>
+<div class="section level3">
+<h3 id="initial-abundance">Initial abundance<a class="anchor" aria-label="anchor" href="#initial-abundance"></a>
+</h3>
+<p>As a forward-projecting model, an assumption about the equilibrium
+age distribution in the first year of the model is required. This age
+distribution is calculated from the initial fishing mortality rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">init</mtext></msup><annotation encoding="application/x-tex">F^\textrm{init}</annotation></semantics></math>
+of preterminal and terminal fisheries.</p>
+<p>The initial equilibrium juvenile survival at age is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msub><mo>ℓ</mo><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">init,PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">base</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>m</mi><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow><mtext mathvariant="normal">base</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mi>a</mi><mo>=</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>A</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+\ell^\textrm{Finit}_a = 
+\begin{cases}
+1 &amp;, a = 1\\
+\ell_{a-1} \exp(-v^\textrm{PT}_{a-1}F^\textrm{init,PT})\exp(-M^\textrm{base}_{a-1}) (1 - m^\textrm{base}_{a-1}) &amp;, a = 2, \ldots, A
+\end{cases}
+</annotation></semantics></math></p>
+<p>For the hatchery-origin population, the juvenile abundance is
+calculated from an initial equilibrium release assumption
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>N</mi><mrow><mi>e</mi><mi>q</mi></mrow><mtext mathvariant="normal">rel</mtext></msubsup><annotation encoding="application/x-tex">N^\textrm{rel}_{eq}</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>=</mo><msubsup><mi>N</mi><mrow><mi>e</mi><mi>q</mi></mrow><mtext mathvariant="normal">rel</mtext></msubsup><mo>×</mo><msup><mi>s</mi><mtext mathvariant="normal">rel</mtext></msup><mo>×</mo><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup></mrow><annotation encoding="application/x-tex">
+N^\textrm{juv,HO}_{y=1,a} = N^\textrm{rel}_{eq} \times s^\textrm{rel} \times \ell^\textrm{Finit}_a 
+</annotation></semantics></math></p>
+<p>For the natural-origin population, two assumptions are available.</p>
+<p>First, the juvenile abundance is in equilibrium corresponding to the
+observed escapement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mrow><mi>y</mi><mo>=</mo><mn>1</mn></mrow></msub><annotation encoding="application/x-tex">E_{y=1}</annotation></semantics></math>
+in the first year (feasible if there is no hatchery population at the
+beginning of the model):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,HO</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><msub><mi>E</mi><mrow><mi>y</mi><mo>=</mo><mn>1</mn></mrow></msub><msup><mi>τ</mi><mtext mathvariant="normal">Finit</mtext></msup></mfrac><mo>×</mo><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup></mrow><annotation encoding="application/x-tex">
+N^\textrm{juv,HO}_{y=1,a} = \dfrac{E_{y=1}}{\tau^\textrm{Finit}} \times \ell^\textrm{Finit}_a
+</annotation></semantics></math></p>
+<p>where the juvenile abundance is calculated from the ratio of initial
+escapement and spawner-per-juvenile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>τ</mi><mtext mathvariant="normal">Finit</mtext></msup><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">init,PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">init,T</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\tau^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a p^\textrm{female}</annotation></semantics></math>.</p>
+<p>Alternatively, the natural-origin initial abundance is calculated
+from the Ricker stock-recruit relationship where</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>N</mi><mrow><mi>y</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">juv,NO</mtext></msubsup><mo>=</mo><mfrac displaystyle="true"><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>α</mi><mo>×</mo><msup><mi>ϕ</mi><mtext mathvariant="normal">Finit</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>β</mi><mo>×</mo><msup><mi>ϕ</mi><mtext mathvariant="normal">Finit</mtext></msup></mrow></mfrac><mo>×</mo><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup></mrow><annotation encoding="application/x-tex">
+N^\textrm{juv,NO}_{y=1,a} = \dfrac{\log(\alpha\times\phi^\textrm{Finit})}{\beta\times\phi^\textrm{Finit}} \times \ell^\textrm{Finit}_a 
+</annotation></semantics></math></p>
+<p>with the corresponding egg-per-juvenile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mtext mathvariant="normal">Finit</mtext></msup><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msubsup><mo>ℓ</mo><mi>a</mi><mtext mathvariant="normal">Finit</mtext></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">init,PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">init,T</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>m</mi><mi>a</mi><mtext mathvariant="normal">base</mtext></msubsup><msub><mi>f</mi><mi>a</mi></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi^\textrm{Finit} = \sum_a \ell^\textrm{Finit}_a \exp(-v^\textrm{PT}_aF^\textrm{init,PT})\exp(-v^\textrm{T}_aF^\textrm{init,T}) m^\textrm{base}_a f_a p^\textrm{female}</annotation></semantics></math>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -509,7 +591,8 @@ can be estimated from the base parameter.</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\varepsilon_y</annotation></semantics></math>:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ε</mi><mi>y</mi></msub><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>σ</mi><mi>M</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \varepsilon_y \sim N(0, [\sigma^M]^2)
-</annotation></semantics></math> with hyperprior
+</annotation></semantics></math></p>
+<p>with hyperprior
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mi>M</mi></msup><mo>∼</mo><mtext mathvariant="normal">Gamma</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>,</mo><mn>5</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\sigma^M \sim \textrm{Gamma}(2, 5)</annotation></semantics></math>.</p>
 </div>
 <div class="section level3">
@@ -528,11 +611,34 @@ and hyperprior
 <div class="section level2">
 <h2 id="likelihoods">Likelihoods<a class="anchor" aria-label="anchor" href="#likelihoods"></a>
 </h2>
+<div class="section level3">
+<h3 id="total-escapement">Total escapement<a class="anchor" aria-label="anchor" href="#total-escapement"></a>
+</h3>
 <p>The likelihood of the total escapement for the population of interest
 uses a lognormal distribution:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>E</mi><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mi>a</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NO</mtext></msubsup><mo>+</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">HO</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>σ</mi><mi>E</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \log(E_y) \sim N\left(\log\left(\sum_a(\hat{E}^\textrm{NO}_{y,a} + \hat{E}^\textrm{HO}_{y,a})\right), [\sigma^E]^2\right)
 </annotation></semantics></math></p>
+</div>
+<div class="section level3">
+<h3 id="phos">pHOS<a class="anchor" aria-label="anchor" href="#phos"></a>
+</h3>
+<p>The model can also be fitted to observations of pHOS (proportion
+hatchery origin spawners by brood year
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+for the population of interest. A logistic normal distribution is
+used:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mrow><mi>p</mi><msub><mtext mathvariant="normal">HOS</mtext><mi>t</mi></msub></mrow><mrow><mn>1</mn><mo>−</mo><mi>p</mi><msub><mtext mathvariant="normal">HOS</mtext><mi>t</mi></msub></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><msub><mover><mrow><mi>p</mi><mtext mathvariant="normal">HOS</mtext></mrow><mo accent="true">̂</mo></mover><mi>t</mi></msub><mrow><mn>1</mn><mo>−</mo><msub><mover><mrow><mi>p</mi><mtext mathvariant="normal">HOS</mtext></mrow><mo accent="true">̂</mo></mover><mi>t</mi></msub></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>σ</mi><mrow><mi>p</mi><mtext mathvariant="normal">HOS</mtext></mrow></msup><mo stretchy="true" form="postfix">]</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\log\left(\dfrac{p\textrm{HOS}_t}{1 - p\textrm{HOS}_t}\right) \sim N\left(\log\left(\dfrac{\widehat{p\textrm{HOS}}_t}{1 - \widehat{p\textrm{HOS}}_t}\right), [\sigma^{p\textrm{HOS}}]^2\right)
+</annotation></semantics></math></p>
+<p>where the predicted value is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><msub><mtext mathvariant="normal">HOS</mtext><mi>t</mi></msub><mo>=</mo><mfrac displaystyle="true"><mrow><munder><mo>∑</mo><mi>a</mi></munder><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>t</mi><mo>+</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>×</mo><msub><mi>f</mi><mrow><mi>t</mi><mo>+</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><mrow><munder><mo>∑</mo><mi>a</mi></munder><mo stretchy="false" form="prefix">(</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mtext mathvariant="normal">NOS</mtext><mrow><mi>t</mi><mo>+</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mrow><mi>t</mi><mo>+</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>×</mo><msub><mi>f</mi><mrow><mi>t</mi><mo>+</mo><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+p\textrm{HOS}_t = \dfrac{\sum_a\textrm{HOS}_{t+a-1}\times f_{t+a-1}}{\sum_a([\textrm{NOS}_{t+a-1} + \textrm{HOS}_{t+a-1})\times f_{t+a-1}]}
+</annotation></semantics></math></p>
+</div>
+<div class="section level3">
+<h3 id="cwt-catch-and-escapement-at-age">CWT catch and escapement at age<a class="anchor" aria-label="anchor" href="#cwt-catch-and-escapement-at-age"></a>
+</h3>
 <p>The likelihood of the CWT at age uses a Poisson distribution:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,PT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>C</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>C</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT,T</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>E</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>∼</mo><mtext mathvariant="normal">Poisson</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><mn>1</mn><mi>λ</mi></mfrac><mo>×</mo><msubsup><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">CWT</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 C^\textrm{CWT,PT}_{y,a} &amp;\sim \textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,PT}_{y,a}\right)\\
@@ -551,6 +657,7 @@ For example,
 may be appropriate if 10 percent of the fishery catch is sampled for
 coded wire tags. It is assumed that the CWT data are unexpanded
 numbers.</p>
+</div>
 <div class="section level3">
 <h3 id="likelihood-re-weighting">Likelihood re-weighting<a class="anchor" aria-label="anchor" href="#likelihood-re-weighting"></a>
 </h3>
@@ -565,7 +672,9 @@ may use
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\lambda = 10</annotation></semantics></math>,
 but the CWT can be up-weighted assuming a higher sampling rate of 0.5
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = 2</annotation></semantics></math>).
-The analyst should multiply the CWT catch and escapement data by 5.</p>
+The analyst should multiply the CWT catch and escapement by 5, or
+equivalently, multiply the releases by 0.2 with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\lambda = 1</annotation></semantics></math>.</p>
 </div>
 </div>
 <div class="section level2">
