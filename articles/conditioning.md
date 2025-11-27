@@ -265,30 +265,16 @@ $$\ell_{a}^{\text{Finit}} = \begin{cases}
 {\ell_{a - 1}\exp\left( - v_{a - 1}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - M_{a - 1}^{\text{base}} \right)\left( 1 - m_{a - 1}^{\text{base}} \right)} & {,a = 2,\ldots,A}
 \end{cases}$$
 
-For the hatchery-origin population, the juvenile abundance is calculated
-from an initial equilibrium release assumption $N_{eq}^{\text{rel}}$:
+The juvenile abundance is back-calculated from an initial equilibrium
+spawners $S^{\text{init}}$ and pHOS assumptions:
 
-$$N_{y = 1,a}^{\text{juv,HO}} = N_{eq}^{\text{rel}} \times s^{\text{rel}} \times \ell_{a}^{\text{Finit}}$$
+$$\begin{aligned}
+N_{y = 1,a}^{\text{juv,NO}} & {= \frac{S^{\text{init}}}{\tau^{\text{init}}} \times \left( 1 - p\text{HOS}^{\text{init}} \right) \times \ell_{a}^{\text{Finit}}} \\
+N_{y = 1,a}^{\text{juv,HO}} & {= \frac{S^{\text{init}}}{\tau^{\text{init}}} \times p\text{HOS}^{\text{init}} \times \ell_{a}^{\text{Finit}}}
+\end{aligned}$$
 
-For the natural-origin population, two assumptions are available.
-
-First, the juvenile abundance is in equilibrium corresponding to the
-observed escapement $E_{y = 1}$ in the first year (feasible if there is
-no hatchery population at the beginning of the model):
-
-$$N_{y = 1,a}^{\text{juv,HO}} = \frac{E_{y = 1}}{\tau^{\text{Finit}}} \times \ell_{a}^{\text{Finit}}$$
-
-where the juvenile abundance is calculated from the ratio of initial
-escapement and spawner-per-juvenile
-$\tau^{\text{Finit}} = \sum_{a}\ell_{a}^{\text{Finit}}\exp\left( - v_{a}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - v_{a}^{\text{T}}F^{\text{init,T}} \right)m_{a}^{\text{base}}p^{\text{female}}$.
-
-Alternatively, the natural-origin initial abundance is calculated from
-the Ricker stock-recruit relationship where
-
-$$N_{y = 1,a}^{\text{juv,NO}} = \frac{\log\left( \alpha \times \phi^{\text{Finit}} \right)}{\beta \times \phi^{\text{Finit}}} \times \ell_{a}^{\text{Finit}}$$
-
-with the corresponding egg-per-juvenile
-$\phi^{\text{Finit}} = \sum_{a}\ell_{a}^{\text{Finit}}\exp\left( - v_{a}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - v_{a}^{\text{T}}F^{\text{init,T}} \right)m_{a}^{\text{base}}f_{a}p^{\text{female}}$.
+where spawner-per-juvenile
+$\tau^{\text{init}} = \sum_{a}\ell_{a}^{\text{Finit}}\exp\left( - v_{a}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - v_{a}^{\text{T}}F^{\text{init,T}} \right)m_{a}^{\text{base}}p^{\text{female}}$.
 
 ## Parameter estimation and priors
 
