@@ -461,10 +461,7 @@ of predicted CWT catch and escapement between alternative fits. For
 example, if the true sampling rate is 0.1, then an initial fit may use
 $\lambda = 10$, but the CWT can be up-weighted assuming a higher
 sampling rate of 0.5 ($\lambda = 2$). The analyst should multiply the
-CWT catch and escapement by 5, or equivalently, multiply the releases by
-0.2 with $\lambda = 1$.
-
-## Release strategies
+CWT catch and escapement by 5. \# Release strategies
 
 The equations above assume that CWT come from a single release strategy,
 for example, fed fry, smolts, or yearlings (see [James et
