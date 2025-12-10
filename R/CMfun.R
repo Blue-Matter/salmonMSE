@@ -58,7 +58,7 @@ CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
 #' @returns
 #' - `CM_pairs()` returns output from [graphics::pairs()], a matrix of scatterplots of MCMC posterior samples
 #' @importFrom stats cor
-#' @importFrom graphics pairs rect strwidth text
+#' @importFrom graphics pairs rect strwidth text box
 #' @export
 CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) {
   panel.hist <- function(x, ...) {
@@ -106,8 +106,14 @@ CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) 
   }) %>%
     bind_rows()
 
+
   if (nrow(val)) {
-    pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor, gap = 0)
+    if (ncol(val) > 1) {
+      pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor, gap = 0)
+    } else {
+      hist(val[[1]], col = "cyan", main = NULL, xlab = names(val)[1])
+      box()
+    }
   }
 
 }
