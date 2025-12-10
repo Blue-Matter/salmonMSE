@@ -533,11 +533,11 @@ check_data <- function(data) {
     stop("data$mobase should be a vector length Nages")
   }
 
-  if (!is.null(data$covariate1)) {
-    if (!is.matrix(data$covariate1)) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
+  if (!is.null(data[["covariate1"]])) {
+    if (!is.matrix(data[["covariate1"]])) stop("data$covariate1 should be a matrix. See help('fit-CM') for dimensions")
   }
-  if (!is.null(data$covariate)) {
-    if (!is.matrix(data$covariate)) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
+  if (!is.null(data[["covariate"]])) {
+    if (!is.matrix(data[["covariate"]])) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
   }
 
   if (is.null(data$hatchsurv)) data$hatchsurv <- 1
