@@ -692,6 +692,15 @@ get_report <- function(stanfit, sims, inc_warmup = FALSE) {
 
   fit <- stanfit@.MISC$CMfit
   if (is.null(fit)) stop("CM fitted object not found in stanfit@.MISC$CMfit")
+
+  # Update data object
+  d <- get_CMdata(fit)
+  dnew <- check_data(d)
+  if (!identical(d, dnew)) {
+    env_func <- attr(fit$obj$env$data, "func") %>% environment()
+    assign("data", dnew, envir = env_func)
+  }
+
   report <- lapply(1:length(sims), function(i) {
     par_x <- lapply(pars_samp, function(x) {
       if (is.matrix(x)) x[i, ] else x[i]
