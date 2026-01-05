@@ -559,7 +559,8 @@ check_data <- function(data) {
   }
 
   if (is.null(data$hatchrelease) || length(data$hatchrelease) != data$Ldyr + 1) {
-    stop("data$hatchrelease should be a vector length Ldyr+1")
+    #stop("data$hatchrelease should be a vector length Ldyr+1")
+    data$hatchrelease <- rep(0, d$Ldyr + 1)
   }
 
   if (!is.null(data$obs_pHOS) && length(data$obs_pHOS) != data$Ldyr) {

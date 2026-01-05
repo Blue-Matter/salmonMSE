@@ -99,7 +99,7 @@ CM_wto(stanfit, year1)
 ### Hatchery and escapement
 
 ```{r hatch-rel, fig.cap="Total hatchery releases."}
-CM_data(d$hatchrelease, c(year, max(year) + 1), ylab = "Hatchery release")
+CM_data(d$hatchrelease, c(year, max(year) + 1), ylab = "Hatchery release", xlab = "Release Year")
 ```
 
 ```{r fit-esc, fig.cap="Observed total escapement (return to river, points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
@@ -124,16 +124,16 @@ CM_covariate(d[["covariate"]], cov_names, year1, ylab = "M covariates (age 2+)")
 CM_CWTrel(d$cwtrelease, year1, rs_names)
 ```
 
-```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
-CM_fit_CWTesc(report, d, year1, rs_names)
-```
-
 ```{r fit-cwt-catpt, fig.cap="Observed coded wire tag preterminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_CWTcatch(report, d, PT = TRUE, year1, rs_names)
 ```
 
 ```{r fit-cwt-catt, fig.cap="Observed coded wire tag terminal catch at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
 CM_fit_CWTcatch(report, d, PT = FALSE, year1, rs_names)
+```
+
+```{r fit-cwt-esc, fig.cap="Observed coded wire tag escapement at age (points with dotted lines) and posterior predicted values (medians and 95% prediction interval)."}
+CM_fit_CWTesc(report, d, year1, rs_names)
 ```
 
 ```{r mat-cwt-rs, fig.cap="Brood year maturity by release strategy."}
@@ -147,15 +147,15 @@ if (d$n_r > 1) {
 ### Spawners/Broodtake
 
 ```{r Spawners, fig.cap="Number of spawners by origin (medians and 95% prediction interval)."}
-CM_ts_origin(report, year1, var = "Spawners")
+CM_ts_origin(report, year1, var = "Spawners", xlab = "Return Year")
 ```
 
 ```{r pHOS, fig.cap="Proportion hatchery origin spawners (medians and 95% prediction interval)."}
-.CM_ts(report, year1, var = "pHOScensus", ci = TRUE, ylab = "pHOScensus")
+.CM_ts(report, year1, var = "pHOScensus", ci = TRUE, ylab = "pHOScensus", xlab = "Return Year")
 ```
 
 ```{r pNOB, fig.cap="Proportion natural origin broodtake, assuming non-selective broodtake (medians and 95% prediction interval)."}
-.CM_ts(report, year1, var = "pNOB", ci = TRUE, ylab = "pNOB")
+.CM_ts(report, year1, var = "pNOB", ci = TRUE, ylab = "pNOB", xlab = "Brood Year")
 ```
 
 ```{r PNI, fig.cap="Proportionate natural influence."}
@@ -163,17 +163,17 @@ report <- lapply(report, function(i) {
   i$PNI <- i$pNOB/(i$pNOB + i$pHOSeff)
   return(i)
 })
-.CM_ts(report, year1, var = "PNI", ci = TRUE, ylab = "PNI")
+.CM_ts(report, year1, var = "PNI", ci = TRUE, ylab = "PNI", xlab = "Brood Year")
 ```
 
 ### Egg production
 
-```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Years correspond to years of egg production (assumes juvenile production for the following brood year). Points show annual smolt production (medians)."}
+```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Numbers correspond to years of egg production (predicts juvenile production for the following calendar year). Points show annual smolt production (medians)."}
 CM_SRR(report, year1)
 ```
 
 ```{r egg, fig.cap="Egg production (medians and 95% prediction interval)."}
-.CM_ts(report, year1, var = "egg", ci = TRUE, ylab = "Egg production")
+.CM_ts(report, year1, var = "egg", ci = TRUE, ylab = "Egg production", xlab = "Return Year")
 ```
 
 ```{r smolt, fig.cap="Natural smolt production (outmigrating juveniles, medians and 95% prediction interval)."}
@@ -181,7 +181,7 @@ report <- lapply(report, function(i) {
   i$Smolt <- i$N[, 1, 1]
   return(i)
 })
-.CM_ts(report, year1, var = "Smolt", ci = TRUE, ylab = "Smolt production")
+.CM_ts(report, year1 - 1, var = "Smolt", ci = TRUE, ylab = "Smolt production", xlab = "Brood Year")
 ```
 
 ```{r Megg, fig.cap="Estimated egg-smolt instantaneous mortality rate (medians and 95% prediction interval)."}
@@ -221,7 +221,7 @@ CM_surv(report, year1) +
 ```
 
 ```{r M2, fig.cap="Survival to age 2. All fish experience age 1 mortality (first year of marine life stage) and hatchery origin fish may have lower survival if release mortality is specified."}
-CM_surv2(report, year1 = 1)
+CM_surv2(report, year1)
 ```
 
 ```{r Mcov1, fig.cap="Contribution to natural mortality in age 1 from covariates."}

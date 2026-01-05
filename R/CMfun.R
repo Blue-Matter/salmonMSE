@@ -135,7 +135,7 @@ CM_fit_esc <- function(report, d, year) {
   esc <- exp(sapply(report, getElement, "logpredesc")) %>%
     apply(1, quantile, probs = c(0.025, 0.5, 0.975))
 
-  plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(esc, obs, na.rm = TRUE), xlab = "Year", ylab = "Escapement")
+  plot(NULL, NULL, type = "n", pch = 16, xlim = range(year), ylim = c(0, 1.1) * range(esc, obs, na.rm = TRUE), xlab = "Return Year", ylab = "Escapement")
   polygon(c(rev(year), year), c(rev(esc[1, ]), esc[3, ]), col = alpha("grey", 0.5), border = NA)
   lines(year, esc[2, ], lwd = 1.5)
 
@@ -155,6 +155,7 @@ CM_fit_pHOS <- function(report, d, year) {
   if (!is.null(obs) && sum(obs, na.rm = TRUE)) {
 
     if (missing(year)) year <- 1:length(obs)
+    year <- year - 1 # Brood year
 
     pred <- sapply(report, getElement, "pHOScensus_brood") %>%
       apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
@@ -170,12 +171,12 @@ CM_fit_pHOS <- function(report, d, year) {
   invisible()
 }
 
-CM_data <- function(obs, year, ylab) {
+CM_data <- function(obs, year, ylab, xlab = "Year") {
 
   if (!is.null(obs) && sum(obs)) {
     if (missing(year)) year <- 1:length(obs)
     plot(year, obs, type = "o", pch = 16, xlim = range(year),
-         ylim = c(0, 1.1) * range(obs, na.rm = TRUE), xlab = "Year", ylab = ylab)
+         ylim = c(0, 1.1) * range(obs, na.rm = TRUE), xlab = xlab, ylab = ylab)
   }
 
   invisible()
@@ -185,14 +186,14 @@ CM_CWTrel <- function(obs, year1, rs_names) {
   if (missing(rs_names)) rs_names <- seq(1, ncol(obs))
 
   dat <- obs %>%
-    structure(dimnames = list(Year = 1:nrow(obs) + year1 - 1, `Release Strategy` = rs_names)) %>%
+    structure(dimnames = list(RelYear = 1:nrow(obs) + year1 - 1, `Release Strategy` = rs_names)) %>%
     reshape2::melt() %>%
-    mutate(`Release Strategy` = factor(`Release Strategy`, rs_names))
+    mutate(`Release Strategy` = factor(`Release Strategy`, rs_names), `Brood Year` = RelYear - 1)
 
-  g <- ggplot(dat, aes(.data$Year, .data$value, colour = .data$`Release Strategy`)) +
+  g <- ggplot(dat, aes(.data$`Brood Year`, .data$value, colour = .data$`Release Strategy`)) +
     geom_point() +
     geom_line() +
-    labs(y = "CWT release") +
+    labs(x = "Brood Year", y = "CWT release") +
     theme(legend.position = "bottom")
 
   if (length(unique(dat$`Release Strategy`)) == 1) {
@@ -218,10 +219,10 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
   ebrood <- sapply(report, getElement, "ebrood", simplify = "array") %>%
     apply(1:3, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
+    mutate(RelYear = Var2 + year1 - 1, BroodYear = RelYear - 1) %>%
     mutate(Age = paste("Age", Var3)) %>%
     mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
-    reshape2::dcast(Age + Year + `Release Strategy` ~ Var1, value.var = "value")
+    reshape2::dcast(Age + BroodYear + `Release Strategy` ~ Var1, value.var = "value")
 
   dat <- d$cwtesc
 
@@ -230,18 +231,20 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
   n_r <- dim(dat)[3]
 
   cwtesc <- dat %>%
-    structure(dimnames = list(Year = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
+    structure(dimnames = list(RelYear = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
     reshape2::melt() %>%
-    mutate(Age = paste("Age", Age), `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
+    mutate(Age = paste("Age", Age),
+           BroodYear = RelYear - 1,
+           `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
     dplyr::filter(value > 0)
 
-  g <- ggplot(ebrood, aes(.data$Year, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
+  g <- ggplot(ebrood, aes(.data$BroodYear, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
     geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
     geom_line(aes(y = .data$`50%`), linewidth = 0.75) +
     facet_wrap(vars(Age), scales = "free_y") +
     geom_point(data = cwtesc, aes(y = .data$value)) +
     geom_line(data = cwtesc, aes(y = .data$value), linetype = 3) +
-    labs(x = "Brood year", y = "CWT Escapement") +
+    labs(x = "Brood Year", y = "CWT Escapement") +
     theme(legend.position = "bottom")
 
   if (n_r == 1) {
@@ -271,26 +274,28 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1, rs_names) {
     if (missing(rs_names)) rs_names <- seq(1, n_r)
 
     cwtcat <- dat %>%
-      structure(dimnames = list(Year = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
+      structure(dimnames = list(RelYear = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
       reshape2::melt() %>%
-      mutate(Age = paste("Age", Age), `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
+      mutate(Age = paste("Age", Age),
+             BroodYear = RelYear - 1,
+             `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
       dplyr::filter(value > 0)
 
     cbrood <- sapply(report, getElement, ifelse(PT, "cbroodPT", "cbroodT"), simplify = "array") %>%
       apply(1:3, quantile, probs = c(0.025, 0.5, 0.975)) %>%
       reshape2::melt() %>%
-      mutate(Year = Var2 + year1 - 1) %>%
+      mutate(RelYear = Var2 + year1 - 1, BroodYear = RelYear - 1) %>%
       mutate(Age = paste("Age", Var3)) %>%
       mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
-      reshape2::dcast(Age + Year + `Release Strategy` ~ Var1, value.var = "value")
+      reshape2::dcast(Age + BroodYear + `Release Strategy` ~ Var1, value.var = "value")
 
-    g <- ggplot(cbrood, aes(.data$Year, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
+    g <- ggplot(cbrood, aes(.data$BroodYear, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
       geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), colour = NA, alpha = ifelse(n_r > 1, 0.25, 0.5)) +
       geom_line(aes(y = .data$`50%`), linewidth = 0.75) +
       facet_wrap(vars(Age), scales = "free_y") +
       geom_point(data = cwtcat, aes(y = .data$value)) +
       geom_line(data = cwtcat, aes(y = .data$value), linetype = 3) +
-      labs(x = "Brood year", y = ifelse(PT, "CWT preterminal catch", "CWT terminal catch")) +
+      labs(x = "Brood Year", y = ifelse(PT, "CWT preterminal catch", "CWT terminal catch")) +
       theme(legend.position = "bottom")
 
     if (n_r == 1) {
@@ -320,7 +325,7 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
 
     if (brood) {
       matt <- sapply(report, function(i) {
-        sapply(1:n_r, function(rr) CY2BY(i[["matt"]][, , rr]), simplify = 'array')
+        sapply(1:n_r, function(rr) CY2BY(i[["matt"]][, , rr]), simplify = 'array') # This is actually release year
       }, simplify = 'array')
     } else {
       matt <- sapply(report, getElement, "matt", simplify = 'array')
@@ -330,8 +335,12 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
       mutate(Year = Var2 + year1 - 1) %>%
       rename(Age = Var3) %>%
       mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
-      reshape2::dcast(Age + Var2 + Year + `Release Strategy` ~ Var1) %>%
+      reshape2::dcast(Age + Var2 + BroodYear + `Release Strategy` ~ Var1) %>%
       filter(!is.na(`50%`))
+
+    if (brood) {
+      matt_q$Year <- matt_q$Year - 1 # Release year offset by 1
+    }
 
     g <- matt_q %>%
       ggplot(aes(Age, .data$`50%`, colour = .data$`Release Strategy`, fill = .data$`Release Strategy`)) +
@@ -345,7 +354,7 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
         strip.background = element_blank()
       ) +
       labs(x = "Age", y = "Proportion mature", colour = "Release strategy", fill = "Release strategy",
-           title = ifelse(brood, "Brood year", "Return year"))
+           title = ifelse(brood, "Brood Year", "Return Year"))
 
     if (n_r == 1) {
       g <- g +
@@ -370,13 +379,17 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
       reshape2::dcast(Age + Var2 + Year ~ Var1) %>%
       filter(!is.na(`50%`))
 
+    if (brood) {
+      matt_q$Year <- matt_q$Year - 1 # Release year offset by 1
+    }
+
     g <- matt_q %>%
       dplyr::filter(Age > 1) %>%
       ggplot(aes(Year, .data$`50%`, fill = factor(.data$Age), colour = factor(.data$Age))) +
       geom_line() +
       geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
       geom_hline(data = bmatt, linetype = 2, aes(yintercept = .data$value, colour = factor(.data$Age))) +
-      labs(x = ifelse(brood, "Brood year", "Return year"), y = "Proportion mature", colour = "Age", fill = "Age")
+      labs(x = ifelse(brood, "Brood Year", "Return Year"), y = "Proportion mature", colour = "Age", fill = "Age")
 
     if (n_r > 1) {
       g <- g +
@@ -417,7 +430,7 @@ CM_vul <- function(report, type = c("vulPT", "vulT")) {
 #' @rdname CMfigures
 #' @returns
 #' - `CM_SRR()` returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
-#' relationship and realized annual values. Years correspond to years of egg production (assumes juvenile production for the following brood year).
+#' relationship and realized annual values. Years correspond to return years of egg production (predicts juvenile production of the following calendar year).
 #' @export
 CM_SRR <- function(report, year1 = 1) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
@@ -498,7 +511,7 @@ CM_prod <- function(report, d, year1 = 1) {
     ggplot(aes(Year, .data$`50%`)) +
     geom_line() +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Year", y = "Productivity")
+    labs(x = "Calendar Year", y = "Productivity")
   g
 
 }
@@ -553,7 +566,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
     ggplot(aes(Year, .data$`50%`)) +
     geom_line() +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Year", y = ifelse(type == "spawner", expression(S[rep]), expression(E[rep])))
+    labs(x = "Calendar Year", y = ifelse(type == "spawner", expression(S[rep]), expression(E[rep])))
 
   g
 }
@@ -619,7 +632,7 @@ CM_SMSY <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
     ggplot(aes(Year, .data$`50%`)) +
     geom_line() +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Year", y = ifelse(type == "spawner", expression(S[MSY]), expression(E[MSY])))
+    labs(x = "Calendar Year", y = ifelse(type == "spawner", expression(S[MSY]), expression(E[MSY])))
 
   g
 }
@@ -765,7 +778,7 @@ CM_M <- function(report, year1 = 1, ci = TRUE) {
   g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
     geom_line() +
     facet_wrap(vars(Age), scales = "free_y") +
-    labs(x = "Year", y = "Natural mortality") +
+    labs(x = "Calendar Year", y = "Natural mortality") +
     expand_limits(y = 0)
 
   if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
@@ -791,7 +804,7 @@ CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
 
   g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
     geom_line() +
-    labs(x = "Year", y = ifelse(surv, "Egg-smolt survival", "Egg-smolt mortality")) +
+    labs(x = "Brood Year", y = ifelse(surv, "Egg-smolt survival", "Egg-smolt mortality")) +
     expand_limits(y = 0)
 
   if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
@@ -804,7 +817,7 @@ CM_Megg <- function(report, year1 = 1, ci = TRUE, surv = FALSE) {
 #' - `CM_Njuv()` returns ggplot of juvenile abundance
 #' @export
 CM_Njuv <- function(report, year1 = 1, ci = TRUE) {
-  .CM_statevarage(report, year1, ci, "N", "Juvenile abundance") +
+  .CM_statevarage(report, year1, ci, "N", "Juvenile abundance", xlab = "Calendar Year") +
     theme(legend.position = "bottom")
 }
 
@@ -813,7 +826,7 @@ CM_Njuv <- function(report, year1 = 1, ci = TRUE) {
 #' - `CM_recr()` returns ggplot of recruitment (mature return)
 #' @export
 CM_recr <- function(report, year1 = 1, ci = TRUE) {
-  .CM_statevarage(report, year1, ci, "recr", "Recruitment") +
+  .CM_statevarage(report, year1, ci, "recr", "Recruitment", xlab = "Return Year") +
     theme(legend.position = "bottom")
 }
 
@@ -822,7 +835,7 @@ CM_recr <- function(report, year1 = 1, ci = TRUE) {
 #' - `CM_esc()` returns ggplot of escapement (after terminal harvest)
 #' @export
 CM_esc <- function(report, year1 = 1, ci = TRUE) {
-  .CM_statevarage(report, year1, ci, "escyear", "Escapement") +
+  .CM_statevarage(report, year1, ci, "escyear", "Escapement", xlab = "Return Year") +
     theme(legend.position = "bottom")
 }
 
@@ -834,7 +847,8 @@ CM_F <- function(report, PT = TRUE, year1 = 1, ci = TRUE) {
   .CM_ts(
     report, year1, ci,
     var = ifelse(PT, "FPT", "FT"),
-    ylab = ifelse(PT, "Preterminal fishing mortality", "Terminal fishing mortality")
+    ylab = ifelse(PT, "Preterminal fishing mortality", "Terminal fishing mortality"),
+    xlab = "Calendar Year"
   )
 }
 
@@ -872,7 +886,7 @@ CM_surv <- function(report, year1 = 1, ci = TRUE) {
   g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
     geom_line() +
     facet_wrap(vars(Age), scales = "free_y") +
-    labs(x = "Year", y = "Natural survival") +
+    labs(x = "Calendar Year", y = "Natural survival") +
     expand_limits(y = 0)
 
   if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
@@ -899,7 +913,7 @@ CM_wt <- function(stanfit, year1 = 1, ci = TRUE) {
       geom_line() +
       geom_point() +
       geom_hline(yintercept = 0, linetype = 2) +
-      labs(x = "Year", y = "Egg mortality deviation")
+      labs(x = "Brood Year", y = "Egg mortality deviation")
 
     if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
@@ -927,11 +941,12 @@ CM_surv2 <- function(report, year1 = 1, ci = TRUE, ylab = "Survival to age 2") {
     as.data.frame() %>%
     mutate(type = "Hatchery", Year = year1 + 1:n() - 1)
 
-  df <- rbind(NO, HO)
+  df <- rbind(NO, HO) %>%
+    mutate(BroodYear = .data$Year - 1)
 
-  g <- ggplot(df, aes(.data$Year, .data$`50%`)) +
+  g <- ggplot(df, aes(.data$BroodYear, .data$`50%`)) +
     geom_line(aes(colour = .data$type)) +
-    labs(x = "Year", y = ylab, fill = "Origin", colour = "Origin") +
+    labs(x = "Brood Year", y = ylab, fill = "Origin", colour = "Origin") +
     expand_limits(y = 0) +
     theme(legend.position = "bottom")
 
@@ -951,14 +966,14 @@ CM_wto <- function(stanfit, year1 = 1, ci = TRUE) {
     ts <- wto %>%
       apply(2, quantile, probs = c(0.025, 0.5, 0.975)) %>%
       reshape2::melt() %>%
-      mutate(Year = Var2 + year1 - 1) %>%
-      reshape2::dcast(list("Year", "Var1"), value.var = "value")
+      mutate(Year = Var2 + year1 - 1, BroodYear = Year - 1) %>%
+      reshape2::dcast(list("BroodYear", "Var1"), value.var = "value")
 
-    g <- ggplot(ts, aes(.data$Year, .data$`50%`)) +
+    g <- ggplot(ts, aes(.data$BroodYear, .data$`50%`)) +
       geom_line() +
       geom_point() +
       geom_hline(yintercept = 0, linetype = 2) +
-      labs(x = "Year", y = "Age 1 mortality deviation")
+      labs(x = "Brood Year", y = "Age 1 mortality deviation")
 
     if (ci) g <- g + geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), fill = alpha("grey", 0.5))
     g
@@ -1045,7 +1060,7 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
 
     g <- .CM_statevarage(
       ER_list,
-      year1,
+      year1 = if (brood) year1 - 1 else year1,
       ci,
       "ER",
       ylab = switch(
@@ -1053,7 +1068,7 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
         "PT" = "Preterminal exploitation rate",
         "T" = "Terminal exploitation rate"
       ),
-      xlab = ifelse(brood, "Brood year", "Return year"),
+      xlab = ifelse(brood, "Brood Year", "Calendar Year"),
       scales = "fixed"
     )
 
@@ -1087,9 +1102,11 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
     })
 
     g <- .CM_ts(
-      ER_list, year1, ci,
+      ER_list,
+      year1 = if (brood) year1 - 1 else year1,
+      ci,
       var = "ER",
-      xlab = ifelse(brood, "Brood year", "Return year"),
+      xlab = ifelse(brood, "Brood Year", "Calendar Year"),
       ylab = switch(
         type,
         "PT" = "Preterminal exploitation rate",
@@ -1216,7 +1233,7 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
         ggplot(aes(.data$Year, .data$value, colour = .data$Covariate)) +
         geom_line() +
         geom_point() +
-        labs(y = ylab, colour = NULL) +
+        labs(x = "Calendar Year", y = ylab, colour = NULL) +
         expand_limits(y = 0) +
         theme(legend.position = "bottom")
 
@@ -1248,7 +1265,7 @@ CM_covariate <- function(x, names, year1 = 1, b, ylab = "Covariate") {
         ggplot(aes(.data$Year, .data$`50%`, colour = .data$Covariate, fill = .data$Covariate)) +
         geom_line() +
         geom_ribbon(aes(ymin = .data$`2.5%`, ymax = .data$`97.5%`), alpha = 0.2) +
-        labs(y = ylab, colour = NULL, fill = NULL) +
+        labs(x = "Calendar Year", y = ylab, colour = NULL, fill = NULL) +
         expand_limits(y = 0) +
         theme(legend.position = "bottom")
     }

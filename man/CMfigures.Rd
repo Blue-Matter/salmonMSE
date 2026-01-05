@@ -194,7 +194,7 @@ otherwise, the dot product \code{sum(x * b)} is calculated by individual simulat
 
 \itemize{
 \item \code{CM_SRR()} returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
-relationship and realized annual values. Years correspond to years of egg production (assumes juvenile production for the following brood year).
+relationship and realized annual values. Years correspond to return years of egg production (predicts juvenile production of the following calendar year).
 }
 
 \itemize{

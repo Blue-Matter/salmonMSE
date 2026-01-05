@@ -41,11 +41,11 @@
 #' - `Ldyr` Integer, number of years in the model
 #' - `lht` Integer, life history type. Should be 1 for now
 #' - `n_r` Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.
-#' - `cwtrelease` Matrix `[Ldyr, n_r]`, coded wire tag (CWT) releases by year and release strategy
-#' - `cwtesc` Array `[Ldyr, Nages, n_r]`. CWT escapement **by brood year, age, and release strategy**. Poisson likelhood.
-#' - `cwtcatPT` Array `[Ldyr, Nages, n_r]`. CWT preterminal catch (juvenile fish), **by brood year, age, and release strategy**. Poisson likelhood. Set all values to zero to turn off
+#' - `cwtrelease` Matrix `[Ldyr, n_r]`, coded wire tag (CWT) releases by **release year and release strategy**
+#' - `cwtesc` Array `[Ldyr, Nages, n_r]`. CWT escapement **by release year, age, and release strategy** (assumes broodyear is release year minus 1). Poisson likelihood.
+#' - `cwtcatPT` Array `[Ldyr, Nages, n_r]`. CWT preterminal catch (juvenile fish), **by release year, age, and release strategy**. Poisson likelihood. Set all values to zero to turn off
 #' parameters related to the preterminal fishery.
-#' - `cwtcatT` Array `[Ldyr, Nages, n_r]`. CWT terminal catch (returning, mature fish), **by brood year, age, and release strategy**. Poisson likelhood. Set all values to zero to turn off
+#' - `cwtcatT` Array `[Ldyr, Nages, n_r]`. CWT terminal catch (returning, mature fish), **by release year, age, and release strategy**. Poisson likelihood. Set all values to zero to turn off
 #' parameters related to the terminal fishery.
 #'
 #' - `bvulPT` Vector length `Nages`. Prior mean for the vulnerability at age to the preterminal fishery.
@@ -73,9 +73,10 @@
 #' - `fec` Vector length `Nages`. Fecundity, egg production at age
 #'
 #' - `r_matt` Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
-#' - `obsescape` Vector length `Ldyr`, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
-#' - `propwildspawn` Vector length `Ldyr`, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
-#' - `obs_pHOS` *Optional*. Vector length `Ldyr`, observations of proportion of hatchery origin spawners (census) (between 0-1) *by brood year*. Fitted to model with logistic-normal likelihood.
+#' - `obsescape` Vector length `Ldyr` by **return year**, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
+#' - `propwildspawn` Vector length `Ldyr` by **return year**, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
+#' - `hatchrelease` Vector length `Ldyr+1` by **release year**, number of hatchery releases for the population. Default is zero.
+#' - `obs_pHOS` *Optional*. Vector length `Ldyr` by **return year**, observations of proportion of hatchery origin spawners (census) (between 0-1) *by brood year*. Fitted to model with logistic-normal likelihood.
 #' - `pHOS_sd` Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
 #' - `pHOS_init` Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.
 #' - `s_enroute` Numeric, survival of escapement to spawning grounds. Default is 1.

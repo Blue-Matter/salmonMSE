@@ -70,11 +70,11 @@ Data should passed through a named list with the following entries.
 \item \code{Ldyr} Integer, number of years in the model
 \item \code{lht} Integer, life history type. Should be 1 for now
 \item \code{n_r} Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.
-\item \code{cwtrelease} Matrix \verb{[Ldyr, n_r]}, coded wire tag (CWT) releases by year and release strategy
-\item \code{cwtesc} Array \verb{[Ldyr, Nages, n_r]}. CWT escapement \strong{by brood year, age, and release strategy}. Poisson likelhood.
-\item \code{cwtcatPT} Array \verb{[Ldyr, Nages, n_r]}. CWT preterminal catch (juvenile fish), \strong{by brood year, age, and release strategy}. Poisson likelhood. Set all values to zero to turn off
+\item \code{cwtrelease} Matrix \verb{[Ldyr, n_r]}, coded wire tag (CWT) releases by \strong{release year and release strategy}
+\item \code{cwtesc} Array \verb{[Ldyr, Nages, n_r]}. CWT escapement \strong{by release year, age, and release strategy} (assumes broodyear is release year minus 1). Poisson likelihood.
+\item \code{cwtcatPT} Array \verb{[Ldyr, Nages, n_r]}. CWT preterminal catch (juvenile fish), \strong{by release year, age, and release strategy}. Poisson likelihood. Set all values to zero to turn off
 parameters related to the preterminal fishery.
-\item \code{cwtcatT} Array \verb{[Ldyr, Nages, n_r]}. CWT terminal catch (returning, mature fish), \strong{by brood year, age, and release strategy}. Poisson likelhood. Set all values to zero to turn off
+\item \code{cwtcatT} Array \verb{[Ldyr, Nages, n_r]}. CWT terminal catch (returning, mature fish), \strong{by release year, age, and release strategy}. Poisson likelihood. Set all values to zero to turn off
 parameters related to the terminal fishery.
 \item \code{bvulPT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the preterminal fishery.
 \item \code{bvulT} Vector length \code{Nages}. Prior mean for the vulnerability at age to the terminal fishery.
@@ -94,9 +94,10 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 \item \code{ssum} Numeric, proportion of spawners that is female. Can also be a vector \code{Nages}
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
 \item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
-\item \code{obsescape} Vector length \code{Ldyr}, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
-\item \code{propwildspawn} Vector length \code{Ldyr}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
-\item \code{obs_pHOS} \emph{Optional}. Vector length \code{Ldyr}, observations of proportion of hatchery origin spawners (census) (between 0-1) \emph{by brood year}. Fitted to model with logistic-normal likelihood.
+\item \code{obsescape} Vector length \code{Ldyr} by \strong{return year}, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
+\item \code{propwildspawn} Vector length \code{Ldyr} by \strong{return year}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
+\item \code{hatchrelease} Vector length \code{Ldyr+1} by \strong{release year}, number of hatchery releases for the population. Default is zero.
+\item \code{obs_pHOS} \emph{Optional}. Vector length \code{Ldyr} by \strong{return year}, observations of proportion of hatchery origin spawners (census) (between 0-1) \emph{by brood year}. Fitted to model with logistic-normal likelihood.
 \item \code{pHOS_sd} Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
 \item \code{pHOS_init} Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.
 \item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
