@@ -142,11 +142,11 @@ and parameter bounds (<code>lower</code> and <code>upper</code>)</p></li>
 <li><p><code>Ldyr</code> Integer, number of years in the model</p></li>
 <li><p><code>lht</code> Integer, life history type. Should be 1 for now</p></li>
 <li><p><code>n_r</code> Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.</p></li>
-<li><p><code>cwtrelease</code> Matrix <code>[Ldyr, n_r]</code>, coded wire tag (CWT) releases by year and release strategy</p></li>
-<li><p><code>cwtesc</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT escapement <strong>by brood year, age, and release strategy</strong>. Poisson likelhood.</p></li>
-<li><p><code>cwtcatPT</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT preterminal catch (juvenile fish), <strong>by brood year, age, and release strategy</strong>. Poisson likelhood. Set all values to zero to turn off
+<li><p><code>cwtrelease</code> Matrix <code>[Ldyr, n_r]</code>, coded wire tag (CWT) releases by <strong>release year and release strategy</strong></p></li>
+<li><p><code>cwtesc</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT escapement <strong>by release year, age, and release strategy</strong> (assumes broodyear is release year minus 1). Poisson likelihood.</p></li>
+<li><p><code>cwtcatPT</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT preterminal catch (juvenile fish), <strong>by release year, age, and release strategy</strong>. Poisson likelihood. Set all values to zero to turn off
 parameters related to the preterminal fishery.</p></li>
-<li><p><code>cwtcatT</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT terminal catch (returning, mature fish), <strong>by brood year, age, and release strategy</strong>. Poisson likelhood. Set all values to zero to turn off
+<li><p><code>cwtcatT</code> Array <code>[Ldyr, Nages, n_r]</code>. CWT terminal catch (returning, mature fish), <strong>by release year, age, and release strategy</strong>. Poisson likelihood. Set all values to zero to turn off
 parameters related to the terminal fishery.</p></li>
 <li><p><code>bvulPT</code> Vector length <code>Nages</code>. Prior mean for the vulnerability at age to the preterminal fishery.</p></li>
 <li><p><code>bvulT</code> Vector length <code>Nages</code>. Prior mean for the vulnerability at age to the terminal fishery.</p></li>
@@ -166,9 +166,10 @@ lower survival to age 2 (after first year of marine life stage) compared to natu
 <li><p><code>ssum</code> Numeric, proportion of spawners that is female. Can also be a vector <code>Nages</code></p></li>
 <li><p><code>fec</code> Vector length <code>Nages</code>. Fecundity, egg production at age</p></li>
 <li><p><code>r_matt</code> Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.</p></li>
-<li><p><code>obsescape</code> Vector length <code>Ldyr</code>, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
-<li><p><code>propwildspawn</code> Vector length <code>Ldyr</code>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
-<li><p><code>obs_pHOS</code> <em>Optional</em>. Vector length <code>Ldyr</code>, observations of proportion of hatchery origin spawners (census) (between 0-1) <em>by brood year</em>. Fitted to model with logistic-normal likelihood.</p></li>
+<li><p><code>obsescape</code> Vector length <code>Ldyr</code> by <strong>return year</strong>, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.</p></li>
+<li><p><code>propwildspawn</code> Vector length <code>Ldyr</code> by <strong>return year</strong>, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)</p></li>
+<li><p><code>hatchrelease</code> Vector length <code>Ldyr+1</code> by <strong>release year</strong>, number of hatchery releases for the population. Default is zero.</p></li>
+<li><p><code>obs_pHOS</code> <em>Optional</em>. Vector length <code>Ldyr</code> by <strong>return year</strong>, observations of proportion of hatchery origin spawners (census) (between 0-1) <em>by brood year</em>. Fitted to model with logistic-normal likelihood.</p></li>
 <li><p><code>pHOS_sd</code> Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.</p></li>
 <li><p><code>pHOS_init</code> Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.</p></li>
 <li><p><code>s_enroute</code> Numeric, survival of escapement to spawning grounds. Default is 1.</p></li>

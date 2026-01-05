@@ -237,8 +237,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 - `CM_SRR()` returns ggplot of estimated stock-recruit relationship
   (density-dependent juvenile production from egg production) with
   average relationship and realized annual values. Years correspond to
-  years of egg production (assumes juvenile production for the following
-  brood year).
+  return years of egg production (predicts juvenile production of the
+  following calendar year).
 
 &nbsp;
 
