@@ -335,7 +335,7 @@ CM_maturity <- function(report, d, year1 = 1, r = 1, brood = TRUE, annual = FALS
       mutate(Year = Var2 + year1 - 1) %>%
       rename(Age = Var3) %>%
       mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
-      reshape2::dcast(Age + Var2 + BroodYear + `Release Strategy` ~ Var1) %>%
+      reshape2::dcast(Age + Var2 + Year + `Release Strategy` ~ Var1) %>%
       filter(!is.na(`50%`))
 
     if (brood) {
