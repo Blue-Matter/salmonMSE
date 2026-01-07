@@ -1013,22 +1013,16 @@ calc_AEQ <- function(report, brood = TRUE) {
   na <- dim(report$matt)[2]
   n_r <- dim(report$matt)[3]
 
-  Msurv <- array(NA_real_, c(nt, na))
-  if (brood) {
-    matt <- sapply(1:n_r, function(r) CY2BY(report$matt[, , r]), simplify = "array")
-    Msurv[, -na] <- CY2BY(report$mo)
-  } else {
-    matt <- report$matt
-    Msurv[, -na] <- report$mo
-  }
-  Msurv[, na] <- 1
+  # Always by brood year
+  matt <- sapply(1:n_r, function(r) CY2BY(report$matt[, , r]), simplify = "array")
+  M_BY <- CY2BY(report$mo)
+  surv <- exp(-M_BY)
 
   AEQ <- array(NA_real_, dim(matt))
   AEQ[, na, ] <- 1
-
   for (t in seq(nt, 2) - 1) {
     for (a in seq(na, 2) - 1) {
-      AEQ[t, a, ] <- matt[t, a, ] + (1 - matt[t, a, ]) * Msurv[t, a+1] * AEQ[t, a+1, ]
+      AEQ[t, a, ] <- matt[t, a, ] + (1 - matt[t, a, ]) * surv[t, a] * AEQ[t, a+1, ]
     }
   }
 
@@ -1079,16 +1073,26 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
       esc <- apply(i$escyear, 1:2, sum)
       morts_PT <- apply(i$cyearPT, 1:2, sum)
       morts_T <- apply(i$cyearT, 1:2, sum)
-      AEQ_PT <- calc_AEQ(i, brood = brood)[, , r]
+
+      AEQ_PT <- calc_AEQ(i)[, , r] # Always by release year
       AEQ_T <- array(1, dim(esc))
 
       if (brood) {
         esc <- CY2BY(esc)
         morts_PT <- CY2BY(morts_PT)
         morts_T <- CY2BY(morts_T)
-      }
 
-      denom <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T + esc)
+        denom <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T + esc)
+
+      } else {
+        AEQ_PT2 <- array(NA_real_, dim(esc)) # Re-index to align with calendar year
+        nt <- nrow(AEQ_PT2)
+        na <- ncol(AEQ_PT2)
+        for (t in 1:nt) {
+          for (a in 1:na) if (t-a+1>0) AEQ_PT2[t, a] <- AEQ_PT[t-a+1, a]
+        }
+        denom <- rowSums(morts_PT * AEQ_PT2 + morts_T * AEQ_T + esc)
+      }
 
       if (type == "PT") {
         num <- rowSums(morts_PT * AEQ_PT)
