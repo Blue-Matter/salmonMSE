@@ -159,12 +159,10 @@ setClass(
   "Historical",
   slots = c(
     Name = "character",
-    HistSpawner_NOS = "num.array",
-    HistSpawner_HOS = "num.array",
-    HistNjuv_NOS = "array",
-    HistNjuv_HOS = "array",
-    HistFPT = "num.array",
-    HistFT = "num.array"
+    InitNOS = "num.array",
+    InitHOS = "num.array",
+    InitNjuv_NOS = "array",
+    InitNjuv_HOS = "array"
   )
 )
 

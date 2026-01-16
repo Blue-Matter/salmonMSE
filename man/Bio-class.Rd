@@ -27,7 +27,7 @@ Default is 1.}
 if \code{Bio@n_g <- 2}, then \code{Bio@p_LHG <- c(0.9, 0.1)}, then 90 percent of the egg production in the first population is assigned to the first life history group and
 ten percent to the second LHG. Default is \code{rep(1/Bio@n_g, Bio@n_g)}}
 
-\item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The proportion mature by age.}
+\item{\code{p_mature}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears]}. The proportion mature by age.}
 
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
 Not used if habitat component is used. See \code{Habitat} object.}
@@ -49,11 +49,11 @@ The \code{alpha} parameter of the stock-recruit function will be the ratio of \c
 this is the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, and \code{p_LHG} corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.}
 
-\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_g]}.
+\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_g]}.
 Natural mortality of immature natural origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
 
-\item{\code{fec}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. Female fecundity of natural origin spawners.}
+\item{\code{fec}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears]}. Female fecundity of natural origin spawners.}
 
 \item{\code{p_female}}{Numeric. The proportion of females in the spawning population. Default is 0.5. Can also be a vector \verb{[maxage]} (for situations where older spawners are predominantly female)}
 

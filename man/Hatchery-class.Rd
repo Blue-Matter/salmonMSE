@@ -36,11 +36,11 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
-\item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_r]}.
+\item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_r]}.
 Natural mortality of immature hatchery origin fish.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
-\item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, nyears+proyears, n_r]} for the maturity of hatchery spawners.
+\item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_r]} for the maturity of hatchery spawners.
 Default is set equal to \code{Bio@p_mature} for all release strategies.}
 
 \item{\code{stray_external}}{Matrix by age (length \code{maxage}) and release strategy \code{n_r} that denotes the annual number of hatchery origin strays from other populations/systems
@@ -76,7 +76,7 @@ The removed hatchery origin fish do not spawn and are not available for broodtak
 imperfect implementation of weir removal. Default is zero. This can also be a function that returns the proportion based on hatchery and natural escapement (after brood removal),
 Allows for bespoke rules for harvest. The function should be of the form: \code{function(NO, HO, m) {return(p)}}.}
 
-\item{\code{fec_brood}}{Vector of length \code{maxage} or an array with dimension \verb{[nsim, maxage, nyears+proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
+\item{\code{fec_brood}}{Vector of length \code{maxage} or an array with dimension \verb{[nsim, maxage, proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
 
 \item{\code{fitness_type}}{Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".}
 

@@ -22,24 +22,18 @@ parameters of the operating model.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{HistSpawner_NOS}}{Natural origin spawners at age. Either a numeric to specify the total natural spawners (in the oldest age class)
-at the beginning of the projection, otherwise, an array by \verb{[nsim, maxage, nyears, n_g]}. Default is 1,000 spawners.}
+\item{\code{InitNOS}}{Natural origin spawners at age at the start of the projection. Either a numeric to specify the total natural spawners (in the oldest age class)
+otherwise, an array by \verb{[nsim, maxage, n_g]}. Default is 1,000 spawners in the oldest age class.}
 
-\item{\code{HistSpawner_HOS}}{Hatchery origin spawners at age. Either a numeric to specify the total hatchery spawners (in the oldest age class)
-at the beginning of the projection, otherwise, an array by \verb{[nsim, maxage, nyears, n_r]}.
-Default is 1,000 spawners if there is hatchery production or zero otherwise.}
+\item{\code{InitHOS}}{Hatchery origin spawners at age at the start of the projection. Either a numeric to specify the total hatchery spawners (in the oldest age class)
+otherwise, an array by \verb{[nsim, maxage, n_r]}.
+Default is 1,000 spawners in the oldest age class if there is hatchery production or zero otherwise.}
 
-\item{\code{HistNjuv_NOS}}{Array by \verb{[nsim, maxage, nyears+1, n_g]}. The abundance of immature natural origin fish at the beginning of the annual time step.
-Default assumes 1000 smolts (age-1) fish annually.}
+\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage-1, n_g]}. The abundance of immature natural origin fish at the beginning of the projection.
+Default assumes 1000 juveniles in each age class.}
 
-\item{\code{HistNjuv_HOS}}{Array by \verb{[nsim, maxage, nyears+1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the annual time step.
-Default assumes 1000 smolts (age-1) fish annually.}
-
-\item{\code{HistFPT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the preterminal fishery.
-The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish. Default is zero.}
-
-\item{\code{HistFT}}{Vector by historical years (\code{nyears}) or an array by dimension \verb{[nsim, nyears, 2]}. The instantaneous fishing mortality in the terminal fishery.
-The first array slice corresponds to F for natural origin fish and the second array slice corresponds to hatchery origin fish. Default is zero.}
+\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage-1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection.
+Default assumes 1000 juveniles in each age class.}
 }}
 
 \section{Creating Object}{

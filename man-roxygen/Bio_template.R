@@ -7,7 +7,7 @@
 #' @slot p_LHG The proportion of the total egg production assigned to each life history group within a cohort. For example,
 #' if `Bio@n_g <- 2`, then `Bio@p_LHG <- c(0.9, 0.1)`, then 90 percent of the egg production in the first population is assigned to the first life history group and
 #' ten percent to the second LHG. Default is `rep(1/Bio@n_g, Bio@n_g)`
-#' @slot p_mature Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`. The proportion mature by age.
+#' @slot p_mature Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears]`. The proportion mature by age.
 #' @slot SRrel Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
 #'  Not used if habitat component is used. See `Habitat` object.
 #' @slot capacity Vector length `nsim`. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
@@ -23,9 +23,9 @@
 #'  The `alpha` parameter of the stock-recruit function will be the ratio of `kappa` and `phi`. In stage-based models,
 #'  this is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.
-#' @slot Mjuv_NOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears, n_g]`.
+#' @slot Mjuv_NOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears, n_g]`.
 #'  Natural mortality of immature natural origin fish.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_NOS[a] = -log(SAR)` where `a` is the age class prior to maturation (and zero for all other ages).
-#' @slot fec Vector by age (length `maxage`) or an array with dimension `[nsim, maxage, nyears+proyears]`. Female fecundity of natural origin spawners.
+#' @slot fec Vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears]`. Female fecundity of natural origin spawners.
 #' @slot p_female Numeric. The proportion of females in the spawning population. Default is 0.5. Can also be a vector `[maxage]` (for situations where older spawners are predominantly female)
 #' @slot s_enroute Numeric. Survival of escapement to the spawning grounds (for spawning and for broodtake). Default is 1.

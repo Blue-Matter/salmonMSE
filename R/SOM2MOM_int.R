@@ -26,25 +26,29 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   # Fish spawn at the beginning of the terminal age + 1
   n_age <- 2 * Bio@maxage + 1
   Stock@maxage <- n_age - 1
-  nyears <- 2 * SOM@nyears
+  nyears_real <- 2
+  nyears <- 2 * nyears_real
   proyears <- 2 * SOM@proyears
 
   # Time steps for first and second half of the year
   t1 <- seq(1, nyears, 2)
   t2 <- seq(2, nyears, 2)
 
+  t1_proj <- nyears + seq(1, proyears, 2)
+  t2_proj <- nyears + seq(2, proyears, 2)
+
   all_t1 <- seq(1, nyears + proyears, 2)
   all_t2 <- seq(2, nyears + proyears, 2)
 
   a2 <- seq(2, n_age, 2)
 
-  # Survival to be modeled in cpars
+  # Arbitrary placeholder, survival to be modeled in cpars
   Stock@M <- Stock@Msd <- c(0, 0)
 
   # Stock-recruit relationship (custom option)
   Stock@SRrel <- 3
-  Stock@h <- rep(0.99, 2)
-  Stock@R0 <- 1
+  Stock@h <- rep(0.99, 2) # Arbitrary placeholder, not used
+  Stock@R0 <- 1 # Arbitrary placeholder, not used
 
   # Custom SRR
   if (NOS && !Habitat@use_habitat) {
@@ -83,12 +87,12 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   }
 
   # Custom pars
-  # openMSE catch is in biomass so we need to set weight at age = 1 to operate as numbers
+  # openMSE catch is in biomass so we need to set weight at age = 1 so that catch is in numbers, i.e., pieces
   cpars_bio$Wt_age <- array(1, c(SOM@nsim, n_age, nyears + proyears))
-  cpars_bio$Wa <- cpars_bio$Wb <- 1 # Avoids lm fitting in MSEtool::SampleStockPars()
+  cpars_bio$Wa <- cpars_bio$Wb <- 1 # Arbitrary placeholders, avoids lm fitting in MSEtool::SampleStockPars()
 
   # Spawning at the last age class, solely for necessary but irrelevant per recruit calculations
-  # Maturity that activates return phase modeled by Herm feature
+  # Proportion maturity that activates return phase is actually modeled by Herm feature
   # Unfished spawners per recruit must be identical between immature and mature NOS population
   cpars_bio$Mat_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "escapement") { # All escapement are mature and will spawn in the beginning of the first half of the year
@@ -101,9 +105,9 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   cpars_bio$M_ageArray <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "immature") {
     if (NOS) {
-      cpars_bio$M_ageArray[, a2, all_t2] <- Bio@Mjuv_NOS[, , , g]
+      cpars_bio$M_ageArray[, a2, t2_proj] <- Bio@Mjuv_NOS[, , , g]
     } else {
-      cpars_bio$M_ageArray[, a2, all_t2] <- Hatchery@Mjuv_HOS[, , , r]
+      cpars_bio$M_ageArray[, a2, t2_proj] <- Hatchery@Mjuv_HOS[, , , r]
     }
   } else if (stage == "return") {
     cpars_bio$M_ageArray[, n_age, ] <- 0.1 # Return does not experience M, n_age should be an empty age class
@@ -115,12 +119,12 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
   # Unfished spawners per recruit must be identical between immature and mature NOS populations (?)
   cpars_bio$Fec_age <- array(0, c(SOM@nsim, n_age, nyears + proyears))
   if (stage == "escapement") {
-    age_fec <- seq(3, n_age, 2)
+    age_fec <- seq(3, n_age, 2) # We have to shift the age up once integer age class due to delay in the
     p_female <- array(Bio@p_female, c(Bio@maxage, SOM@nsim, SOM@nyears + SOM@proyears)) %>% aperm(c(2, 1, 3))
     if (NOS) {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- p_female * Bio@fec
+      cpars_bio$Fec_age[, age_fec, t1_proj] <- p_female * Bio@fec
     } else {
-      cpars_bio$Fec_age[, age_fec, all_t1] <- p_female * Hatchery@gamma * Bio@fec
+      cpars_bio$Fec_age[, age_fec, t1_proj] <- p_female * Hatchery@gamma * Bio@fec
     }
   } else {
     cpars_bio$Fec_age[, n_age, ] <- 1
@@ -128,7 +132,7 @@ make_Stock <- function(SOM, s = 1, g = 1, r = 1, NOS = TRUE, stage = c("immature
 
   #cpars_bio$spawn_time_frac <- rep(0, SOM@nsim) # Spawn at the beginning of the year, i.e., same time step when age-1 smolts appear
 
-  # No plus group
+  # No plus group - salmon are terminal spawners
   cpars_bio$plusgroup <- 0L
 
   # Generate recruitment devs from Historical object. Specify future rec dev = 1, updated by hatchery Rel
