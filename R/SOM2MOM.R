@@ -157,7 +157,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
         })
 
         prop_escapement_HOS[, 2 * seq(1, maxage_s[s]) + 1, nyears + seq(1, proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
-          sapply(1:(SOM@nyears + SOM@proyears), function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
+          sapply(1:SOM@proyears, function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
         }, simplify = "array") %>%
           aperm(c(3, 1, 2))
 
@@ -250,7 +250,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
       if (habitat_args$use_habitat) {
         habitat_args$Habitat <- Habitat
-        habitat_args$nyears_om <- 2 * SOM@nyears
+        habitat_args$nyears_om <- 2 * nyears_real
       }
 
       if (do_hatchery_s || has_strays_s) {
@@ -315,8 +315,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
         if (do_hatchery_s && Hatchery@fitness_type[1] != "none" && Hatchery@rel_loss[3] > 0) {
           Rel_SAR_NOS_g[[g]] <- makeRel_SAR(
             p_smolt = p_nat_smolt, s = s, envir = "natural",
-            rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-            Mbase = S[[p_nat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+            rel_loss = Hatchery@rel_loss[3], nyears = 2 * nyears_real,
+            Mbase = S[[p_nat_smolt]]$cpars_bio$M_ageArray[, , nyears + seq(1, 2 * SOM@proyears)]
           )
         }
       }
@@ -341,8 +341,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           if (Hatchery@fitness_type[2] != "none" && Hatchery@rel_loss[3] > 0) {
             Rel_SAR_HOS[[1]] <- makeRel_SAR(
               p_smolt = p_hat_smolt, s = s, envir = "hatchery",
-              rel_loss = Hatchery@rel_loss[3], nyears = 2 * SOM@nyears,
-              Mbase = S[[p_hat_smolt]]$cpars_bio$M_ageArray[, , 2 * SOM@nyears + seq(1, 2 * SOM@proyears)]
+              rel_loss = Hatchery@rel_loss[3], nyears = 2 * nyears_real,
+              Mbase = S[[p_hat_smolt]]$cpars_bio$M_ageArray[, , 2 * nyears + seq(1, 2 * SOM@proyears)]
             )
           }
         }
@@ -375,11 +375,11 @@ check_SOM <- function(SOM, silent = FALSE) {
 
   ### Base slots ----
   if (!length(SOM@nsim)) stop("Need SOM@nsim")
-  if (!length(SOM@nyears)) stop("Need SOM@nyears")
+  #if (!length(SOM@nyears)) stop("Need SOM@nyears")
   if (!length(SOM@proyears)) stop("Need SOM@proyears")
   if (!length(SOM@seed)) stop("Need SOM@seed")
   nsim <- SOM@nsim
-  years <- SOM@nyears + SOM@proyears
+  proyears <- SOM@proyears
 
   # Convert sub class objects to lists
   obj <- c("Bio", "Habitat", "Hatchery", "Harvest", "Historical")
@@ -405,21 +405,21 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_numeric(Bio, "n_g", default = 1)
     Bio <- check_numeric(Bio, "p_LHG", size = Bio@n_g, default = rep(1/Bio@n_g, Bio@n_g))
 
-    Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, years)
+    Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, proyears)
     if (length(Bio@p_female) == 1) Bio@p_female <- rep(Bio@p_female, maxage)
     Bio <- check_numeric(Bio, "p_female", size = maxage, default = rep(0.5, maxage))
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
-    Bio <- check_maxage2array(Bio, "fec", maxage, nsim, years)
+    Bio <- check_maxage2array(Bio, "fec", maxage, nsim, proyears)
 
     ### Check Habitat (initial) ----
     Habitat <- SOM@Habitat[[s]]
     Habitat <- check_numeric(Habitat, "use_habitat", default = FALSE)
 
     if (length(dim(Bio@Mjuv_NOS)) == 3 && Bio@n_g == 1) {
-      Bio <- check_maxage2array(Bio, "Mjuv_NOS", maxage, nsim, years)
+      Bio <- check_maxage2array(Bio, "Mjuv_NOS", maxage-1, nsim, proyears)
       Bio@Mjuv_NOS <- array(Bio@Mjuv_NOS, c(dim(Bio@Mjuv_NOS), Bio@n_g))
     }
-    Bio <- check_maxage2garray(Bio, "Mjuv_NOS", maxage, nsim, years, Bio@n_g)
+    Bio <- check_maxage2garray(Bio, "Mjuv_NOS", maxage-1, nsim, proyears, Bio@n_g)
 
     if (!Habitat@use_habitat) {
       # SRR pars
@@ -435,7 +435,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Bio@phi)) {
         Bio@phi <- sapply(1:SOM@nsim, function(x) {
           calc_phi(
-            Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage, Bio@n_g),
+            Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage-1, Bio@n_g),
             p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
             p_female = Bio@p_female,
             fec = matrix(Bio@fec[x, , 1], Bio@maxage, Bio@n_g),
@@ -459,17 +459,17 @@ check_SOM <- function(SOM, silent = FALSE) {
       Habitat <- check_numeric(Habitat, "fry_prod", default = 0.4)
       Habitat <- check_numeric(Habitat, "fry_capacity", default = Inf)
       if (!length(Habitat@fry_sdev)) {
-        Habitat@fry_sdev <- matrix(1, nsim, SOM@proyears)
+        Habitat@fry_sdev <- matrix(1, nsim, proyears)
       }
-      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", SOM@proyears, nsim)
+      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", proyears, nsim)
 
       Habitat <- check_numeric(Habitat, "smolt_rel", default = "BH")
       Habitat <- check_numeric(Habitat, "smolt_prod", default = 1)
       Habitat <- check_numeric(Habitat, "smolt_capacity", default = Inf)
       if (!length(Habitat@smolt_sdev)) {
-        Habitat@smolt_sdev <- matrix(1, nsim, SOM@proyears)
+        Habitat@smolt_sdev <- matrix(1, nsim, proyears)
       }
-      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", SOM@proyears, nsim)
+      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", proyears, nsim)
     }
 
     ### Check Hatchery ----
@@ -492,19 +492,19 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
 
       if (length(dim(Hatchery@Mjuv_HOS)) == 3 && Hatchery@n_r == 1) {
-        Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage, nsim, years)
+        Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage-1, nsim, proyears)
         Hatchery@Mjuv_HOS <- array(Hatchery@Mjuv_HOS, c(dim(Hatchery@Mjuv_HOS), 1))
       }
-      Hatchery <- check_maxage2garray(Hatchery, "Mjuv_HOS", maxage, nsim, years, Hatchery@n_r)
+      Hatchery <- check_maxage2garray(Hatchery, "Mjuv_HOS", maxage-1, nsim, proyears, Hatchery@n_r)
 
       if (!length(Hatchery@p_mature_HOS)) {
-        Hatchery@p_mature_HOS <- array(Bio@p_mature, c(nsim, maxage, years, Hatchery@n_r))
+        Hatchery@p_mature_HOS <- array(Bio@p_mature, c(nsim, maxage, proyears, Hatchery@n_r))
       }
       if (length(dim(Hatchery@p_mature_HOS)) == 3 && Hatchery@n_r == 1) {
-        Hatchery <- check_maxage2array(Hatchery, "p_mature_HOS", maxage, nsim, years)
-        Hatchery@p_mature_HOS <- array(Hatchery@p_mature_HOS, c(dim(Hatchery@Mjuv_HOS), 1))
+        Hatchery <- check_maxage2array(Hatchery, "p_mature_HOS", maxage, nsim, proyears)
+        Hatchery@p_mature_HOS <- array(Hatchery@p_mature_HOS, c(nsim, maxage, proyears, 1))
       }
-      Hatchery <- check_maxage2garray(Hatchery, "p_mature_HOS", maxage, nsim, years, Hatchery@n_r)
+      Hatchery <- check_maxage2garray(Hatchery, "p_mature_HOS", maxage, nsim, proyears, Hatchery@n_r)
       Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
 
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
@@ -515,7 +515,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "ptarget_NOB", default = 0.9)
 
       if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
-      Hatchery <- check_maxage2array(Hatchery, "fec_brood", maxage, nsim, years)
+      Hatchery <- check_maxage2array(Hatchery, "fec_brood", maxage, nsim, proyears)
 
       Hatchery <- check_numeric(Hatchery, "phatchery", default = NA)
 
@@ -606,91 +606,39 @@ check_SOM <- function(SOM, silent = FALSE) {
     ### Check Historical (initial) ----
     Historical <- SOM@Historical[[s]]
 
-    #init_NOS <- init_HOS <- NA_real_
-#
-    #if (!length(Historical@HistSpawner_NOS)) {
-    #  init_NOS <- 1000
-    #} else if (!is.array(Historical@HistSpawner_NOS) && length(Historical@HistSpawner_NOS) == 1) {
-    #  init_NOS <- Historical@Init_NOS
-    #} else {
-    #  if (length(dim(Historical@HistSpawner_NOS)) == 3 && Bio@n_g == 1) {
-    #    Historical <- check_array(Historical, "HistSpawner_NOS", dims = c(nsim, maxage, SOM@nyears))
-    #    Historical@InitSpawner_NOS <- array(Historical@HistSpawner_NOS, c(dim(Historical@HistSpawner_NOS), 1))
-    #  } else {
-    #    Historical <- check_array(Historical, "HistSpawner_NOS", dims = c(nsim, maxage, SOM@nyears, Bio@n_g))
-    #  }
-    #}
-#
-    #if (!length(Historical@HistNjuv_NOS)) {
-    #  if (SOM@nyears > maxage) stop("No historical abundance was provided for natural origin fish. Set historical years (SOM@nyears) < maxage")
-#
-    #  HistNjuv_NOS <- array(0, c(nsim, maxage, SOM@nyears + 1, Bio@n_g))
-    #  HistNjuv_NOS[, maxage, SOM@nyears + 1, ] <- local({
-    #    init_Njuv <- init_NOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)
-    #    outer(init_Njuv, Bio@p_LHG) # matrix nsim x n_g
-    #  })
-#
-    #  for (a in seq(maxage - 1, 1)) {
-    #    y <- SOM@nyears + a - maxage + 1
-    #    if (y > 0) {
-    #      ZNOS <- matrix(Harvest@vulPT[, a] * Historical@HistFPT[, y, 1], nsim, Bio@n_g) + Bio@Mjuv_NOS[, a, y, ]
-    #      HistNjuv_NOS[, a, y, ] <- HistNjuv_NOS[, a+1, y+1, ] * exp(ZNOS) / (1 - matrix(Bio@p_mature[, a, y], nsim, Bio@n_g))
-    #    }
-    #  }
-    #  Historical@HistNjuv_NOS <- HistNjuv_NOS
-    #} else if (length(dim(Historical@HistNjuv_NOS)) == 3 && Bio@n_g == 1) {
-    #  Historical <- check_array(Historical, "HistNjuv_NOS", dims = c(nsim, maxage, SOM@nyears+1))
-    #  Historical@HistNjuv_NOS <- array(Historical@HistNjuv_NOS, c(dim(Historical@HistNjuv_NOS), 1))
-    #} else {
-    #  Historical <- check_array(Historical, "HistNjuv_NOS", dims = c(nsim, maxage, SOM@nyears+1, Bio@n_g))
-    #}
-#
-    #if (do_hatchery || has_strays) {
-#
-    #  if (!length(Historical@HistSpawner_HOS)) {
-    #    init_HOS <- ifelse(do_hatchery, 1000, 0)
-    #  } else if (!is.array(Historical@HistSpawner_HOS) && length(Historical@HistSpawner_HOS) == 1) {
-    #    init_HOS <- Historical@HistSpawner_HOS
-    #  } else {
-    #    if (length(dim(Historical@HistSpawner_HOS)) == 3 && Hatchery@n_r == 1) {
-    #      Historical <- check_array(Historical, "HistSpawner_HOS", dims = c(nsim, maxage, SOM@nyears))
-    #      Historical@HistSpawner_HOS <- array(Historical@HistSpawner_HOS, c(dim(Historical@HistSpawner_HOS), 1))
-    #    } else {
-    #      Historical <- check_array(Historical, "HistSpawner_HOS", dims = c(nsim, maxage, SOM@nyears, Hatchery@n_r))
-    #    }
-    #  }
-#
-    #  if (!length(Historical@HistNjuv_HOS)) {
-    #    if (SOM@nyears > maxage) stop("No historical abundance was provided for hatchery origin fish. Set historical years (SOM@nyears) < maxage")
-    #    HistNjuv_HOS <- array(0, c(nsim, maxage, SOM@nyears + 1, Hatchery@n_r))
-#
-    #    HistNjuv_HOS[, maxage, SOM@nyears + 1, ] <- local({
-#
-    #      if (is.na(Hatchery@phatchery)) {
-    #        init_Njuv <- init_HOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)/(1 - Hatchery@premove_HOS * Hatchery@m)
-    #      } else {
-    #        init_Njuv <- init_HOS/(1 - Harvest@u_terminal)/(1 - Harvest@u_preterminal)/
-    #          (1 - Hatchery@phatchery)/(1 - Hatchery@premove_HOS * Hatchery@m)
-    #      }
-    #      outer(init_Njuv, 1/Hatchery@n_r) # matrix nsim x n_r
-    #    })
-#
-    #    for (a in seq(maxage - 1, 1)) {
-    #      y <- SOM@nyears + a - maxage + 1
-    #      if (y > 0) {
-    #        ZHOS <- matrix(Harvest@vulPT[, a] * Historical@HistFPT[, y, 2], nsim, Hatchery@n_r) + Hatchery@Mjuv_HOS[, a, y, ]
-    #        HistNjuv_HOS[, a, y, ] <- HistNjuv_HOS[, a+1, y+1, ] * exp(ZHOS) /
-    #          (1 - matrix(Hatchery@p_mature_HOS[, a, y, ], nsim, Hatchery@n_r))
-    #      }
-    #    }
-    #    Historical@HistNjuv_HOS <- HistNjuv_HOS
-    #  } else if (length(dim(Historical@HistNjuv_HOS)) == 3 && Hatchery@n_r == 1) {
-    #    Historical <- check_array(Historical, "HistNjuv_HOS", dims = c(nsim, maxage, SOM@nyears+1))
-    #    Historical@HistNjuv_HOS <- array(Historical@HistNjuv_HOS, c(dim(Historical@HistNjuv_HOS), 1))
-    #  } else {
-    #    Historical <- check_array(Historical, "HistNjuv_HOS", dims = c(nsim, maxage, SOM@nyears+1, Hatchery@n_r))
-    #  }
-    #}
+    init_NOS <- init_HOS <- NA_real_
+
+    if (!length(Historical@InitNOS)) {
+      init_NOS <- 1000
+    } else if (!is.array(Historical@InitNOS) && length(Historical@InitNOS) == 1) {
+      init_NOS <- Historical@InitNOS
+    }
+    if (!length(Historical@InitHOS)) {
+      init_HOS <- ifelse(do_hatchery, 1000, 0)
+    } else if (!is.array(Historical@InitHOS) && length(Historical@InitHOS) == 1) {
+      init_HOS <- Historical@InitHOS
+    }
+
+    if (!is.na(init_NOS)) {
+      Historical@InitNOS <- array(0, c(nsim, maxage, Bio@n_g))
+      Historical@InitNOS[, maxage, ] <- init_NOS/Bio@n_g
+    }
+    if (!is.na(init_HOS)) {
+      Historical@InitHOS <- array(0, c(nsim, maxage, Hatchery@n_r))
+      Historical@InitHOS[, maxage, ] <- init_HOS/Hatchery@n_r
+    }
+
+    Historical <- check_array(Historical, "InitNOS", dims = c(nsim, maxage, Bio@n_g))
+    Historical <- check_array(Historical, "InitHOS", dims = c(nsim, maxage, Hatchery@n_r))
+
+    if (!length(Historical@InitNjuv_NOS)) {
+      Historical@InitNjuv_NOS <- array(0, c(nsim, maxage-1, Bio@n_g))
+    }
+    if (!length(Historical@InitNjuv_HOS)) {
+      Historical@InitNjuv_HOS <- array(0, c(nsim, maxage-1, Hatchery@n_r))
+    }
+    Historical <- check_array(Historical, "InitNjuv_NOS", dims = c(nsim, maxage-1, Bio@n_g))
+    Historical <- check_array(Historical, "InitNjuv_HOS", dims = c(nsim, maxage-1, Hatchery@n_r))
 
     SOM@Bio[[s]] <- Bio
     SOM@Habitat[[s]] <- Habitat

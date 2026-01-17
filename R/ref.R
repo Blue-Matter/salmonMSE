@@ -28,7 +28,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
 
   ns <- length(SOM@Bio)
 
-  y <- SOM@nyears + SOM@proyears
+  y <- SOM@proyears
 
   if (missing(rel_F)) rel_F <- c(0, 1)
   rel_F_s <- lapply(1:ns, function(...) rel_F)
@@ -51,7 +51,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
 
     val <- sapply(1:SOM@nsim, function(x) {
       fec <- matrix(SOM@Bio[[s]]@fec[x, , y], maxage, n_g)
-      Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage, n_g)
+      Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage-1, n_g)
       p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
 
       ref <- calc_MSY(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
@@ -231,7 +231,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   FPT <- vulPT * .F * rel_F[1]
   FT <- vulT * .F * rel_F[2]
 
-  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g] + FPT, p_mature[, g])) # First semester due to exploitation
+  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g] + FPT[-length(FPT)], p_mature[, g])) # First semester due to exploitation
   surv_return <- surv_juv * p_mature
   surv_esc <- surv_return * exp(-FT)
   surv_spawn <- surv_esc * s_enroute

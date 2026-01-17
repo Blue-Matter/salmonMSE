@@ -28,8 +28,6 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nyears}}{Integer. The number of historical years}
-
 \item{\code{proyears}}{Integer. The number of projected years}
 
 \item{\code{nsim}}{Integer. The number of simulations}

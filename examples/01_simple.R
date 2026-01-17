@@ -17,9 +17,9 @@ Bio <- new(
   maxage = 3,
   p_mature = c(0, 0, 1),
   SRrel = "BH",
-  capacity = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
-  kappa = 3,                  # Productivity in recruits per spawner
-  Mjuv_NOS = c(0, -log(SAR), 0),
+  capacity = 17250,           # Beverton-Holt asymptote of freshwater environment. Not unfished capacity!!
+  kappa = 3,                  # Productivity in returns per spawner
+  Mjuv_NOS = c(0, -log(SAR)),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49,
   s_enroute = 1
@@ -71,14 +71,17 @@ Harvest <- new(
 # 1000 natural and hatchery spawners each for the first generation
 Historical <- new(
   "Historical",
-  HistSpawner_NOS = 1000,
-  HistSpawner_HOS = 1000
+  InitNOS = 1000,
+  InitHOS = 1000
 )
 
 # Stitched salmon operating model
 SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
-           nsim = nsim, nyears = 2, proyears = 50)
+           nsim = nsim, proyears = 50)
+
+MOM <- SOM2MOM(SOM)
+MHist <- SimulateMOM(MOM, parallel = FALSE)
 
 SMSE <- salmonMSE(SOM)
 saveRDS(SMSE, "examples/SMSE/SMSE_simple.rds")
@@ -128,11 +131,15 @@ Harvest_MSF <- new(
 # Stitched salmon operating model
 SOM_MSF <- new("SOM",
                Bio, Habitat, Hatchery, Harvest_MSF, Historical,
-               nsim = nsim, nyears = 2, proyears = 50)
+               nsim = nsim, proyears = 50)
 
 SMSE_MSF <- salmonMSE(SOM_MSF)
 saveRDS(SMSE_MSF, "examples/SMSE/SMSE_MSF.rds")
 
+# Exploitation rate of NOS vs. HOS
+par(mfrow = c(1, 2), mar = c(5, 4, 1, 1))
+plot_fishery(SMSE_MSF)
+plot_fishery(SMSE_MSF, type = "exploit")
 
 
 #### Stochastic example ----
@@ -150,7 +157,7 @@ Bio_stochastic <- new(
   SRrel = "BH",
   capacity = 17250,     # Beverton-Holt asymptote. Not unfished capacity!!
   kappa = kappa,                  # Productivity in recruits per spawner
-  Mjuv_NOS = c(0, -log(SAR), 0),
+  Mjuv_NOS = c(0, -log(SAR)),
   fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
   p_female = 0.49,
   s_enroute = 1
@@ -160,7 +167,7 @@ Bio_stochastic <- new(
 # Run simulation
 SOM_stochastic <- new("SOM",
                       Bio_stochastic, Habitat, Hatchery, Harvest, Historical,
-                      nsim = nsim_stochastic, nyears = 2, proyears = 50)
+                      nsim = nsim_stochastic, proyears = 50)
 
 tictoc::tic()
 SMSE_stochastic <- salmonMSE(SOM_stochastic)

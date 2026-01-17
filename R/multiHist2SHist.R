@@ -10,23 +10,24 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
 
   ns <- length(SOM@Bio) # Number of stocks
   nage <- SOM@Bio[[1]]@maxage
+  nyears_real <- 2
 
   # Declare arrays
-  Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@nyears))
-  Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@nyears))
-  KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, SOM@nyears))
-  DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, SOM@nyears))
-  UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, SOM@nyears))
-  ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, SOM@nyears))
+  Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, nyears_real))
+  Return_NOS <- Return_HOS <- array(0, c(SOM@nsim, ns, nage, nyears_real))
+  KPT_NOS <- KT_NOS <- KPT_HOS <- KT_HOS <- array(0, c(SOM@nsim, ns, nyears_real))
+  DPT_NOS <- DT_NOS <- DPT_HOS <- DT_HOS <- array(0, c(SOM@nsim, ns, nyears_real))
+  UPT_NOS <- UT_NOS <- UPT_HOS <- UT_HOS <- array(0, c(SOM@nsim, ns, nyears_real))
+  ExPT_NOS <- ExT_NOS <- ExPT_HOS <- ExT_HOS <- array(0, c(SOM@nsim, ns, nyears_real))
 
-  Egg_NOS <- Egg_HOS <- array(0, c(SOM@nsim, ns, SOM@nyears))
-  Smolt <- Smolt_Rel <- array(0, c(SOM@nsim, ns, SOM@nyears))
+  Egg_NOS <- Egg_HOS <- array(0, c(SOM@nsim, ns, nyears_real))
+  Smolt <- Smolt_Rel <- array(0, c(SOM@nsim, ns, nyears_real))
 
-  NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, SOM@nyears))
+  NOS <- HOS <- HOS_effective <- array(0, c(SOM@nsim, ns, nyears_real))
 
   # openMSE year and age indices
-  t1 <- seq(1, 2 * SOM@nyears, 2)
-  t2 <- seq(2, 2 * SOM@nyears, 2)
+  t1 <- seq(1, 2 * nyears_real, 2)
+  t2 <- seq(2, 2 * nyears_real, 2)
 
   a1 <- seq(1, 2 * nage + 1, 2)
   a2 <- seq(2, 2 * nage + 1, 2)
@@ -200,7 +201,7 @@ multiHist2SHist <- function(multiHist, SOM, check = TRUE) {
   SHist <- new(
     "SHist",
     Name = SOM@Name,
-    nyears = SOM@nyears,
+    nyears = nyears_real,
     nsim = SOM@nsim,
     nstocks = ns,
     Snames = sapply(1:ns, function(s) if (length(SOM@Bio[[s]]@Name)) SOM@Bio[[s]]@Name else paste("Population", s)),

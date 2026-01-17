@@ -268,7 +268,7 @@ SOM <- setClass(
   slots = c(
     Name = "character",
     nsim = "numeric",
-    nyears = "numeric",
+    #nyears = "numeric",
     proyears = "numeric",
     seed = "numeric",
     Bio = "Bio.list",
@@ -283,12 +283,12 @@ SOM <- setClass(
 #' @importFrom utils packageVersion
 setMethod("initialize", "SOM",
           function(.Object, Bio, Habitat, Hatchery, Harvest, Historical,
-                   nsim = 3, nyears = 2, proyears = 20, seed = 1, Name = "Salmon operating model", ...) {
+                   nsim = 3, proyears = 20, seed = 1, Name = "Salmon operating model", ...) {
 
             dots <- list(...)
 
             .Object@nsim <- nsim
-            .Object@nyears <- nyears
+            #.Object@nyears <- nyears
             .Object@proyears <- proyears
             .Object@seed <- seed
 
@@ -314,7 +314,6 @@ setMethod("initialize", "SOM",
 #' @name SMSE-class
 #' @docType class
 #' @slot Name Character. Identifying name
-#' @slot nyears Integer. The number of historical years
 #' @slot proyears Integer. The number of projected years
 #' @slot nsim Integer. The number of simulations
 #' @slot nstocks Integer. The number of stocks
@@ -401,7 +400,6 @@ setClass(
   "SMSE",
   slots = c(
     Name = "character",
-    nyears = "numeric",
     proyears = "numeric",
     nsim = "numeric",
     nstocks = "numeric",
@@ -480,7 +478,6 @@ setMethod("initialize", "SMSE",
 #' @name SHist-class
 #' @docType class
 #' @slot Name Character. Identifying name
-#' @slot nyears Integer. The number of historical years
 #' @slot nsim Integer. The number of simulations
 #' @slot nstocks Integer. The number of stocks
 #' @slot Snames Character. Stock names

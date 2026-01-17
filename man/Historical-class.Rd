@@ -22,18 +22,18 @@ parameters of the operating model.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{InitNOS}}{Natural origin spawners at age at the start of the projection. Either a numeric to specify the total natural spawners (in the oldest age class)
+\item{\code{InitNOS}}{Natural origin spawners at age at the start of the projection. Either a numeric to specify the total natural origin spawners (in the oldest age class)
 otherwise, an array by \verb{[nsim, maxage, n_g]}. Default is 1,000 spawners in the oldest age class.}
 
-\item{\code{InitHOS}}{Hatchery origin spawners at age at the start of the projection. Either a numeric to specify the total hatchery spawners (in the oldest age class)
+\item{\code{InitHOS}}{Hatchery origin spawners at age at the start of the projection. Either a numeric to specify the total hatchery origin spawners (in the oldest age class)
 otherwise, an array by \verb{[nsim, maxage, n_r]}.
 Default is 1,000 spawners in the oldest age class if there is hatchery production or zero otherwise.}
 
-\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage-1, n_g]}. The abundance of immature natural origin fish at the beginning of the projection.
-Default assumes 1000 juveniles in each age class.}
+\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage-1, n_g]}. The abundance of immature natural origin fish at the beginning of the projection (first age class in array represents age 2).
+Default assumes zero, which creates a population with single brood year returns.}
 
-\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage-1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection.
-Default assumes 1000 juveniles in each age class.}
+\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage-1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection (first age class in array represents age 2.
+Default assumes zero, which creates a population with single brood year returns.}
 }}
 
 \section{Creating Object}{

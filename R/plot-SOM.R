@@ -1,7 +1,7 @@
 
 plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequency",
                      type = c("hist", "age", "age_ts", "ts"),
-                     maxage, nsim, nyears, proyears, g = 1, surv = FALSE, ...) {
+                     maxage, nsim, proyears, g = 1, surv = FALSE, ...) {
 
   type <- match.arg(type)
   x <- slot(object, var)
@@ -24,8 +24,8 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
       xplot <- apply(x, 2, quantile, quant)
     } else if (is.array(x)) {
       if (length(dim(x)) == 4) x <- x[, , , g]
-      if (all(dim(x) == c(nsim, maxage, nyears + proyears))) {
-        xplot <- apply(x[, , nyears + proyears], 2, quantile, quant)
+      if (all(dim(x) == c(nsim, maxage, proyears))) {
+        xplot <- apply(x[, , proyears], 2, quantile, quant)
       }
     } else if (is.numeric(x) && length(x) == maxage) {
       xplot <- matrix(x, 3, maxage, byrow = TRUE)

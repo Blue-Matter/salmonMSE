@@ -13,6 +13,7 @@
 MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   ns <- length(SOM@Bio) # Number of stocks
   nage <- SOM@Bio[[1]]@maxage
+  nyears_real <- 2
 
   # Declare arrays
   Njuv_NOS <- Njuv_HOS <- Escapement_NOS <- Escapement_HOS <- array(0, c(SOM@nsim, ns, nage, SOM@proyears))
@@ -219,9 +220,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       HOB_stray[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB_stray", s)
       HOB_import[, s, y_spawn] <- get_salmonMSE_var(H, var = "HOB_import", s)
 
-      fitness[, s, 1, y_spawn + 1] <- filter(Ford, .data$type == "natural", .data$t > 2 * SOM@nyears) %>%
+      fitness[, s, 1, y_spawn + 1] <- filter(Ford, .data$type == "natural", .data$t > 2 * nyears_real) %>%
         get_salmonMSE_var(var = "fitness", s)
-      fitness[, s, 2, y_spawn + 1] <- filter(Ford, .data$type == "hatchery", .data$t > 2 * SOM@nyears) %>%
+      fitness[, s, 2, y_spawn + 1] <- filter(Ford, .data$type == "hatchery", .data$t > 2 * nyears_real) %>%
         get_salmonMSE_var(var = "fitness", s)
 
       # Smolt releases and SAR loss from openMSE
@@ -252,7 +253,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       #PNI[, s, ] <- (h2 + (1 - h2 + fitness_variance) * pNOB[, s, ])/(h2 + (1 - h2 + fitness_variance) * (pHOS_effective[, s, ] + pNOB[, s, ]))
 
-      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec[, , SOM@nyears + seq(1, SOM@proyears)], SOM@Hatchery[[s]]@gamma)
+      p_wild[, s, ] <- calc_pwild_age(NOS[, s, , ], HOS[, s, , ], SOM@Bio[[s]]@fec[, , seq(1, SOM@proyears)], SOM@Hatchery[[s]]@gamma)
 
       if (n_r > 1) {
         Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
@@ -312,7 +313,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
   SMSE <- new(
     "SMSE",
     Name = "salmon MSE results",
-    nyears = SOM@nyears,
+    #nyears = SOM@nyears,
     proyears = SOM@proyears,
     nsim = SOM@nsim,
     nstocks = ns,

@@ -57,8 +57,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
                        hatchery_args, fitness_args, habitat_args, stray_args, s, g, prop_LHG, r) {
 
   if (y %% 2 != 0 || x < 0) return(0) # Odd time steps
-
-  yy <- max(floor(y/2), 1)
+  nyears <- 4
+  yy <- max(floor((nyears-4)/2), 1)
   fec_t <- fec[x, , yy]
   if (!is.null(hatchery_args$fec_brood)) fec_brood_t <- hatchery_args$fec_brood[x, , yy]
 

@@ -49,8 +49,8 @@ The \code{alpha} parameter of the stock-recruit function will be the ratio of \c
 this is the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, and \code{p_LHG} corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.}
 
-\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_g]}.
-Natural mortality of immature natural origin fish.
+\item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage-1}) or an array with dimension \verb{[nsim, maxage-1, proyears, n_g]}.
+Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_NOS[a] = -log(SAR)} where \code{a} is the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{fec}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears]}. Female fecundity of natural origin spawners.}

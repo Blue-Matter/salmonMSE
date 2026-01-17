@@ -13,7 +13,7 @@
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
 #' @slot s_egg_subyearling Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 #' Used to back-calculate the broodtake from `n_yearling` and `n_subyearling`. Default is 1.
-#' @slot Mjuv_HOS Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears, n_r]`.
+#' @slot Mjuv_HOS Either vector by age (length `maxage-1`) or an array with dimension `[nsim, maxage-1, proyears, n_r]`.
 #'  Natural mortality of immature hatchery origin fish.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to maturation (and zero for all other ages).
 #' @slot p_mature_HOS Vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears, n_r]` for the maturity of hatchery spawners.

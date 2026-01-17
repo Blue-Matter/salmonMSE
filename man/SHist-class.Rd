@@ -12,8 +12,6 @@ Stores the outputs from the historical reconstruction of salmon operating models
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nyears}}{Integer. The number of historical years}
-
 \item{\code{nsim}}{Integer. The number of simulations}
 
 \item{\code{nstocks}}{Integer. The number of stocks}

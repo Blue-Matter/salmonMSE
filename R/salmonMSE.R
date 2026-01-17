@@ -35,7 +35,11 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   salmonMSE_env$stateH <- data.frame()
 
   if (!silent) message("Generating historical dynamics..")
+
   H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
+
+  # Add numbers at age
+  H <- initialize_population(H, SOM)
 
   if (Hist) {
     if (!silent) message("Returning historical simulations..")
@@ -81,10 +85,11 @@ initialize_zbar <- function(SOM) {
     if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
 
       zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
+      nyears_real <- 2
       df <- data.frame(
         x = zbar_start$Var1,
         s = s,
-        t = 2 * (SOM@nyears + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
+        t = 2 * (nyears_real + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
         type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
         zbar = zbar_start$value
       )
@@ -118,3 +123,60 @@ initialize_zbar <- function(SOM) {
   return(bind_rows(zbar_df))
 }
 
+
+initialize_population <- function(H, SOM) {
+  pindex <- make_stock_index(SOM)
+  ns <- length(SOM@Bio)
+  nyears <- 4
+  nareas <- 2
+
+  for (s in 1:ns) {
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
+
+    Bio <- SOM@Bio[[s]]
+    Hatchery <- SOM@Hatchery[[s]]
+    a_esc <- seq(2, 2 * Bio@maxage, 2)
+    a_juv <- seq(1, 2 * (Bio@maxage-1), 2) + 1 # Plus one for second semester
+
+    for (g in 1:Bio@n_g) {
+
+      # Add spawners
+      p_NOesc <- pindex$p[pindex$s == s & pindex$g == g &
+                            pindex$stage == "escapement" &
+                            pindex$origin == "natural"]
+      H[[p_NOesc]][[1]]@AtAge$Number[, a_esc, nyears, ] <-
+        array(SOM@Historical[[s]]@InitNOS[, , g]/nareas, c(SOM@nsim, Bio@maxage, nareas))
+
+      # Add juvenile population
+      p_NOjuv <- pindex$p[pindex$s == s & pindex$g == g &
+                            pindex$stage == "juvenile" &
+                            pindex$origin == "natural"]
+      H[[p_NOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
+        array(SOM@Historical[[s]]@InitNjuv_NOS[, , g]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
+
+    }
+
+    if (do_hatchery || has_strays) {
+      for (r in 1:Hatchery@n_r) {
+
+        # Add spawners
+        p_HOesc <- pindex$p[pindex$s == s & pindex$r == r &
+                              pindex$stage == "escapement" &
+                              pindex$origin == "hatchery"]
+        H[[p_HOesc]][[1]]@AtAge$Number[, a_esc, nyears, ] <-
+          array(SOM@Historical[[s]]@InitHOS[, , r]/nareas, c(SOM@nsim, Bio@maxage, nareas))
+
+        # Add juvenile population
+        p_HOjuv <- pindex$p[pindex$s == s & pindex$r == r &
+                              pindex$stage == "juvenile" &
+                              pindex$origin == "hatchery"]
+        H[[p_HOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
+          array(SOM@Historical[[s]]@InitNjuv_HOS[, , r]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
+
+      }
+    }
+  }
+
+  return(H)
+}
