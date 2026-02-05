@@ -45,7 +45,8 @@ p_\textrm{NOB},Realized proportion of the total broodtake of hatchery origin (vs
 \textrm{NOR},Natural origin return,Natural production,SMSE,Return_NOS
 \textrm{HOR},Hachery origin return,Hatchery,SMSE,Return_HOS
 p^\textrm{hatchery},"Proportion of hatchery origin escapement to hatchery, available for broodtake",Hatchery,SOM,phatchery
-p^\textrm{HOS}_\textrm{removal},"Proportion of hatchery origin escapement removed from spawning grounds, not available for broodtake",Hatchery,SOM,premove_HOS
+p^\textrm{HOS}_\textrm{removal},"Proportion of hatchery origin fish removed from spawning grounds, not available for broodtake",Hatchery,SOM,premove_HOS
+p^\textrm{NOS}_\textrm{removal},"Proportion of natural origin fish removed from spawning grounds, not available for broodtake",Hatchery,SOM,premove_NOS
 \gamma,Reduced reproductive success of HOS (relative to NOS),Hatchery,SOM,gamma
 \bar{z},Mean phenotypic value of cohort in natural and hatchery environments,Fitness,Internal state variable and SOM,zbar_start
 \theta,Optimal phenotypic value for natural and hatchery environments,Fitness,SOM,theta

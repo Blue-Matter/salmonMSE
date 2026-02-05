@@ -209,6 +209,7 @@ setClass(
     ptarget_NOB = "numeric",
     phatchery = "num.logical",
     premove_HOS = "num.function",
+    premove_NOS = "num.function",
     fec_brood = "num.array",
     fitness_type = "character",
     theta = "numeric",

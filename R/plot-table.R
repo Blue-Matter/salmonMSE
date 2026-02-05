@@ -1,7 +1,7 @@
 
 
 make_hatchery_table <- function(SMSE, s = 1) {
-  hatch_settings <- c("n_yearling", "n_subyearling", "pmax_esc", "pmax_NOB", "premove_HOS",
+  hatch_settings <- c("n_yearling", "n_subyearling", "pmax_esc", "pmax_NOB", "premove_HOS", "premove_NOS",
                       "s_prespawn", "s_egg_smolt", "s_egg_subyearling", "ptarget_NOB",
                       "phatchery", "m")
 

@@ -129,9 +129,11 @@ Hatchery control parameters are included in a named list with the following argu
 \item \code{p_yearling} Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
 \item \code{phatchery} Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
 for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.
-\item \code{premove_HOS} Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
-grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
+\item \code{premove_HOS} Numeric or function, the proportion of the hatchery origin fish to be removed from the spawning
+grounds (in order to ensure a high proportion of NOS or for an in-river fishery). These fish are not available for broodtake.
 For example, a value less than one can represent imperfect implementation of weir removal.
+\item \code{premove_NOS} Numeric or function, the proportion of the natural origin fish to be removed from the spawning
+grounds, for example, an in-river fishery.
 \item \code{s_prespawn} Numeric, the survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish
 not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.
 \item \code{gamma} Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)

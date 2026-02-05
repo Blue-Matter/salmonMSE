@@ -70,11 +70,16 @@ this target proportion identifies the proportion of unmarked fished in the brood
 or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
 With the default option, \code{NA} allows all hatchery origin escapement that is not used brood to go to the spawning grounds.}
 
-\item{\code{premove_HOS}}{Numeric or function. The target proportion of the hatchery origin escapement to be removed from the spawning grounds (in order to
-ensure a high proportion of NOS). The proportion of hatchery spawners removed is discounted by the mark rate, i.e., \code{p = premove_HOS * m}.
-The removed hatchery origin fish do not spawn and are not available for broodtake. A value less than one can represent
-imperfect implementation of weir removal. Default is zero. This can also be a function that returns the proportion based on hatchery and natural escapement (after brood removal),
-Allows for bespoke rules for harvest. The function should be of the form: \code{function(NO, HO, m) {return(p)}}.}
+\item{\code{premove_HOS}}{Numeric or function. The target proportion of the hatchery origin fish to be removed from the spawning grounds (in order to
+ensure a high proportion of NOS). The proportion of hatchery fish removed is discounted by the mark rate, i.e., \code{p = premove_HOS * m}.
+The removed hatchery-origin fish do not spawn and are not available for broodtake. A value less than one can represent
+imperfect implementation of weir removal. Default is zero. This slot can take a function that returns the proportion (p) based on hatchery-origin and natural-origin abundance (after brood removal), thus
+allowing for bespoke rules for in-river harvest. The function should be of the form: \code{function(NO, HO, m) {return(p)}}.}
+
+\item{\code{premove_NOS}}{Numeric or function. The target proportion of the natural origin fish to be removed from the spawning grounds, for example, through an in-river fishery.
+The proportion of natural fish removed is adjusted by the mark rate, i.e., \code{p = premove_NOS * (1-m)}.
+Default is zero. This slot can take a function that returns the proportion (p) based on hatchery-origin and natural-origin abundance (after brood removal), thus
+allowing for bespoke rules for in-river harvest. The function should be of the form: \code{function(NO, HO, m) {return(p)}}.}
 
 \item{\code{fec_brood}}{Vector of length \code{maxage} or an array with dimension \verb{[nsim, maxage, proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
 

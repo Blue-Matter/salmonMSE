@@ -110,15 +110,18 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
   return(output)
 }
 
-calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phatchery, premove_HOS, m) {
+calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phatchery, premove_HOS, premove_NOS, m) {
   spawners <- list()
-  spawners$NOS <- escapement_NOS - broodtake$NOB
+
+  NO <- escapement_NOS - broodtake$NOB
+  #spawners$NOS <- escapement_NOS - broodtake$NOB
 
   if (sum(stray)) {
     spawners$HOS_stray <- stray - broodtake$HOB_stray # Assume unmarked so not subject to premove_HOS!
   } else {
     spawners$HOS_stray <- array(0, dim(escapement_HOS))
   }
+
   if (sum(escapement_HOS)) {
     if (is.na(phatchery)) {
       HO <- escapement_HOS - broodtake$HOB_marked - broodtake$HOB_unmarked
@@ -126,7 +129,7 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
       HO <- escapement_HOS * (1 - phatchery)
     }
     if (is.function(premove_HOS)) {
-      p <- premove_HOS(spawners$NOS, HO, m)
+      p <- premove_HOS(NO, HO, m)
     } else if (is.numeric(premove_HOS)) {
       p <- premove_HOS * m
     } else {
@@ -135,9 +138,26 @@ calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phat
     HOS_local <- HO * (1 - p)
     spawners$HO_remove <- HO * p
   } else {
-    HOS_local <- spawners$HO_remove <- array(0, dim(escapement_HOS))
+    HOS_local <- spawners$HO_remove <- HO <- array(0, dim(escapement_HOS))
   }
   spawners$HOS <- HOS_local + spawners$HOS_stray
+
+  if (sum(escapement_NOS)) {
+
+    if (is.function(premove_NOS)) {
+      pp <- premove_NOS(NO, HO, m)
+    } else if (is.numeric(premove_NOS)) {
+      pp <- premove_NOS * (1 - m)
+    } else {
+      stop("Error with premove_NOS")
+    }
+
+    spawners$NOS <- NO * (1 - pp)
+    spawners$NO_remove <- NO * pp
+  } else {
+    spawners$NOS <- spawners$NO_remove <- array(0, dim(escapement_NOS))
+  }
+
   return(spawners)
 }
 

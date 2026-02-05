@@ -40,9 +40,11 @@
 #' - `p_yearling` Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)
 #' - `phatchery` Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
 #' for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.
-#' - `premove_HOS` Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
-#' grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
+#' - `premove_HOS` Numeric or function, the proportion of the hatchery origin fish to be removed from the spawning
+#' grounds (in order to ensure a high proportion of NOS or for an in-river fishery). These fish are not available for broodtake.
 #' For example, a value less than one can represent imperfect implementation of weir removal.
+#' - `premove_NOS` Numeric or function, the proportion of the natural origin fish to be removed from the spawning
+#' grounds, for example, an in-river fishery.
 #' - `s_prespawn` Numeric, the survival of broodtake prior to egg production. `1 - s_prespawn` is the proportion of fish
 #' not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.
 #' - `gamma` Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)
@@ -162,7 +164,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   # Preliminary spawners after broodtake
   spawners <- calc_spawners(
     broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
-    hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$m
+    hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$premove_NOS, hatchery_args$m
   )
 
   # Add habitat density-dependence on pre-spawn mortality
@@ -422,9 +424,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         a = 1:nrow(Nage_NOS),
         Esc_NOS = Nage_NOS[, g],
         NOB = broodtake$NOB[, g],
-        NOS = NOS[, g]
+        NOS = NOS[, g],
+        NOS_remove = spawners$NO_remove[, g]
       )
-    }) %>% bind_rows()
+    }) %>%
+      bind_rows()
     salmonMSE_env$N <- rbind(salmonMSE_env$N, df_N)
 
     df_stateN <- lapply(1:ng, function(g) {
@@ -443,7 +447,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         pHOScensus = as.numeric(pHOScensus),
         Perr_y = Perr_y
       )
-    }) %>% bind_rows()
+    }) %>%
+      bind_rows()
     salmonMSE_env$stateN <- rbind(salmonMSE_env$stateN, df_stateN)
 
     # Save zbar

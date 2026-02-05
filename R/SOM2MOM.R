@@ -269,6 +269,7 @@ SOM2MOM <- function(SOM, check = TRUE) {
           p_subyearling = p_subyearling,
           phatchery = Hatchery@phatchery,
           premove_HOS = Hatchery@premove_HOS,
+          premove_NOS = Hatchery@premove_NOS,
           s_prespawn = Hatchery@s_prespawn,
           gamma = Hatchery@gamma,
           m = Hatchery@m,
@@ -521,6 +522,9 @@ check_SOM <- function(SOM, silent = FALSE) {
 
       if (!is.function(Hatchery@premove_HOS) && is.numeric(Hatchery@premove_HOS)) {
         Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
+      }
+      if (!is.function(Hatchery@premove_NOS) && is.numeric(Hatchery@premove_NOS)) {
+        Hatchery <- check_numeric(Hatchery, "premove_NOS", default = 0)
       }
 
       Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
