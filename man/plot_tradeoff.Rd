@@ -14,7 +14,8 @@ plot_tradeoff(
   x1lab,
   x2lab,
   scenario,
-  ncol = NULL
+  ncol = NULL,
+  dir = "v"
 )
 }
 \arguments{
@@ -38,7 +39,9 @@ to the lower bound, central tendency, and upper bound.}
 
 \item{scenario}{Atomic, vector of faceting variables (same length as \code{pm1}, \code{pm2}) used to generate a grid of decision tables}
 
-\item{ncol}{Integer, number of columns for decision table grid, only used if \verb{scenario is provided}}
+\item{ncol}{Integer, number of columns for decision table grid, only used if \code{scenario} is provided}
+
+\item{dir}{Character, either "h" or "v" to describe how the grid of tables should be organized (horizontally or vertically) , only used if \code{scenario} is provided}
 }
 \value{
 ggplot object

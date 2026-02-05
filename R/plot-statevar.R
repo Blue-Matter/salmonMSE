@@ -419,12 +419,13 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 #' @param xlab Character, optional x-axis label
 #' @param ylab Character, optional y-axis label
 #' @param scenario Atomic, vector of faceting variables (same length as z) used to generate a grid of decision tables
-#' @param ncol Integer, number of columns for decision table grid, only used if `scenario is provided`
+#' @param ncol Integer, number of columns for decision table grid, only used if `scenario` is provided
+#' @param dir Character, either "h" or "v" to describe how the grid of tables should be organized (horizontally or vertically)
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_tradeoff()]
 #' @import ggplot2
 #' @export
-plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NULL) {
+plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NULL, dir = "v") {
   dt <- data.frame(x = x, y = y, z = z)
   dt$txt <- format(round(dt$z, 2))
 
@@ -441,7 +442,7 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NUL
 
   if (!missing(scenario)) {
     g <- g +
-      facet_wrap(vars(.data$scenario), ncol = ncol) +
+      facet_wrap(vars(.data$scenario), ncol = ncol, dir = dir) +
       theme(strip.background = element_blank())
   }
 
@@ -469,12 +470,13 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NUL
 #' @param x1lab Character, optional label for the first grouping variable
 #' @param x2lab Character, optional label for the second grouping variable
 #' @param scenario Atomic, vector of faceting variables (same length as `pm1`, `pm2`) used to generate a grid of decision tables
-#' @param ncol Integer, number of columns for decision table grid, only used if `scenario is provided`
+#' @param ncol Integer, number of columns for decision table grid, only used if `scenario` is provided
+#' @param dir Character, either "h" or "v" to describe how the grid of tables should be organized (horizontally or vertically) , only used if `scenario` is provided
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_decision_table()]
 #' @import ggplot2
 #' @export
-plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, ncol = NULL) {
+plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, ncol = NULL, dir = "v") {
 
   if (missing(x1)) x1 <- 0
   if (missing(x2)) x2 <- 1
@@ -511,7 +513,7 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, 
 
   if (!missing(scenario)) {
     g <- g +
-      facet_wrap(vars(.data$scenario), ncol = ncol) +
+      facet_wrap(vars(.data$scenario), ncol = ncol, dir = dir) +
       theme(strip.background = element_blank())
   }
 
