@@ -80,9 +80,6 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
            nsim = nsim, proyears = 50)
 
-MOM <- SOM2MOM(SOM)
-MHist <- SimulateMOM(MOM, parallel = FALSE)
-
 SMSE <- salmonMSE(SOM)
 saveRDS(SMSE, "examples/SMSE/SMSE_simple.rds")
 class?SMSE
@@ -200,7 +197,7 @@ if (FALSE) {
   dev.off()
 
   # Probability PNI > 0.8
-  PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
+  PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
   mean(PNI_LT >= 0.8)
   quantile(PNI_LT, c(0.025, 0.5, 0.975))
 
