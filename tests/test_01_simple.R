@@ -36,7 +36,7 @@ test_that("Stochastic SMSE", {
 
 test_that("Stochastic SMSE: P[PNI > 0.8] = 0.13?", {
   expect_true({
-    PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
+    PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
     mean(PNI_LT >= 0.8) == 0.13
   })
 })
