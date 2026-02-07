@@ -22,6 +22,8 @@ make_hatchery_table <- function(SMSE, s = 1) {
       v <- NA
     } else if (i == "brood_import") {
       v <- sum(v)
+    } else if (is.function(v)) {
+      v <- "User function"
     }
     return(format(v))
   })
@@ -48,7 +50,11 @@ make_fitness_table <- function(SMSE, s = 1) {
     v <- slot(SOM@Hatchery[[s]], i)
     if (!length(v)) v <- NA
     if (length(v) > 1) {
-      v <- paste(v, sep = ",")
+      if (i == "heritability") {
+        v <- paste("Mean =", mean(v) %>% round(3))
+      } else {
+        v <- paste(v, sep = ",")
+      }
     }
     return(format(v))
   })
