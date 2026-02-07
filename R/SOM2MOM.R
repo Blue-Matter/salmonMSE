@@ -230,7 +230,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
 
       fitness_args <- list()
       hatchery_args <- list(
-        egg_target = egg_target
+        egg_target = egg_target,
+        premove_NOS = Hatchery@premove_NOS
       )
       habitat_args <- list(
         use_habitat = Habitat@use_habitat
@@ -551,6 +552,9 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
     } else {
       Hatchery <- check_numeric(Hatchery, "m", default = 0)
+      Hatchery <- check_numeric(Hatchery, "premove_HOS", default = 0)
+      Hatchery <- check_numeric(Hatchery, "premove_NOS", default = 0)
+      Hatchery <- check_numeric(Hatchery, "gamma", default = 1)
     }
 
     ### Check for PNI_wild calculation ----

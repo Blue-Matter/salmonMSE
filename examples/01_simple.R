@@ -193,7 +193,7 @@ if (FALSE) {
   # Plot PNI histogram
   png("man/figures/example-PNI-hist.png", height = 4, width = 6, res = 300, units = 'in')
   par(mar = c(5, 4, 1, 1))
-  plot_statevar_hist(SMSE_stochastic, "PNI", y = 49, breaks = 10, xlim = c(0.5, 0.9))
+  plot_statevar_hist(SMSE_stochastic, "PNI", y = 48, breaks = 10, xlim = c(0.5, 0.9))
   dev.off()
 
   # Probability PNI > 0.8

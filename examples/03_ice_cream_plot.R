@@ -22,7 +22,7 @@ wrapper <- function(x, Design) {
     SRrel = "BH",
     capacity = 17250,
     kappa = kappa,
-    Mjuv_NOS = c(0, -log(SAR), 0),
+    Mjuv_NOS = c(0, -log(SAR)),
     fec = c(0, 0, 5040),
     p_female = 0.49,
     s_enroute = 1
@@ -41,10 +41,6 @@ wrapper <- function(x, Design) {
     pmax_esc = 0.50,
     pmax_NOB = 1,
     ptarget_NOB = 0.75,
-    #m = 1,
-    #pmax_esc = 1,
-    #pmax_NOB = 0.7,
-    #ptarget_NOB = 0.51,
     phatchery = 0.8,
     premove_HOS = 0,
     theta = c(100, 80),
@@ -77,14 +73,14 @@ wrapper <- function(x, Design) {
   # 1000 natural and hatchery spawners each for the first generation
   Historical <- new(
     "Historical",
-    HistSpawner_NOS = 1000,
-    HistSpawner_HOS = 1000
+    InitNOS = 1000,
+    InitHOS = 1000
   )
 
   # Stitched salmon operating model
   SOM <- new("SOM",
              Bio, Habitat, Hatchery, Harvest, Historical,
-             nsim = nsim, nyears = 2, proyears = 50)
+             nsim = nsim, proyears = 50)
 
   SMSE <- salmonMSE(SOM)
 
@@ -105,17 +101,18 @@ if (FALSE) {
 
   # Make ice cream plot (PNI, catch, SMSY)
   pm_fn <- function(x, SMSE_list, Design) {
+    y <- 48
     out <- Design[x, ]
-    out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
-    out$PNI_50 <- PNI50(SMSE_list[[x]], Yrs = c(49, 49))
-    out$PNI_80 <- PNI80(SMSE_list[[x]], Yrs = c(49, 49))
+    out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, y])
+    out$PNI_50 <- PNI50(SMSE_list[[x]], Yrs = c(y, y))
+    out$PNI_80 <- PNI80(SMSE_list[[x]], Yrs = c(y, y))
 
-    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
-    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, y] # Catch of natural fish
+    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, y] # Catch of hatchery fish
 
     out$Catch <- mean(KNOS + KHOS)
     out$Catch60 <- mean((KNOS + KHOS) >= 60)
-    out$`S/SMSY` <- SMSY85(SMSE_list[[x]], Yrs = c(49, 49))
+    out$`S/SMSY` <- SMSY85(SMSE_list[[x]], Yrs = c(y, y))
     return(out)
   }
 
@@ -149,9 +146,10 @@ if (FALSE) {
 
   # Make tradeoff figure with median and confidence intervals
   PNI_fn <- function(x, SMSE_list, Design) {
+    y <- 48
     out <- Design[x, ]
 
-    val <- quantile(SMSE_list[[x]]@PNI[, 1, 49], c(0.025, 0.5, 0.975))
+    val <- quantile(SMSE_list[[x]]@PNI[, 1, y], c(0.025, 0.5, 0.975))
 
     out$lower <- val[1]
     out$median <- val[2]
@@ -163,10 +161,11 @@ if (FALSE) {
 
   # Next calculate the median and bounds for catch for each scenario
   Catch_fn <- function(x, SMSE_list, Design) {
+    y <- 48
     out <- Design[x, ]
 
-    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
-    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, y] # Catch of natural fish
+    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, y] # Catch of hatchery fish
     val <- quantile(KNOS + KHOS, c(0.025, 0.5, 0.975))
 
     out$lower <- val[1]
@@ -187,16 +186,17 @@ if (FALSE) {
 
   # Kobe figure
   Kobe_fn <- function(x, SMSE_list, Design) {
+    y <- 48
     out <- Design[x, ]
 
-    Sp <- rowSums(SMSE_list[[x]]@NOS[, 1, , 49] + SMSE_list[[x]]@HOS[, 1, , 49])
+    Sp <- rowSums(SMSE_list[[x]]@NOS[, 1, , y] + SMSE_list[[x]]@HOS[, 1, , y])
     SMSY <- SMSE_list[[x]]@Misc$Ref[[1]]["Spawners_MSY", ]
 
-    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
-    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+    KNOS <- SMSE_list[[x]]@KT_NOS[, 1, y] # Catch of natural fish
+    KHOS <- SMSE_list[[x]]@KT_HOS[, 1, y] # Catch of hatchery fish
 
-    RNOS <- rowSums(SMSE_list[[x]]@Return_NOS[, 1, , 49])
-    RHOS <- rowSums(SMSE_list[[x]]@Return_HOS[, 1, , 49])
+    RNOS <- rowSums(SMSE_list[[x]]@Return_NOS[, 1, , y])
+    RHOS <- rowSums(SMSE_list[[x]]@Return_HOS[, 1, , y])
 
     U <- (KNOS + KHOS)/(RNOS + RHOS)
     UMSY <- SMSE_list[[x]]@Misc$Ref[[1]]["UT_MSY", ]

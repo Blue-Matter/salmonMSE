@@ -111,6 +111,10 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
 }
 
 calc_spawners <- function(broodtake, escapement_NOS, escapement_HOS, stray, phatchery, premove_HOS, premove_NOS, m) {
+  if (is.null(premove_HOS)) premove_HOS <- 0
+  if (is.null(premove_NOS)) premove_NOS <- 0
+  if (is.null(m)) m <- 0
+
   spawners <- list()
 
   NO <- escapement_NOS - broodtake$NOB
