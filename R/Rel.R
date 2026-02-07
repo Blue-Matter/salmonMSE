@@ -191,6 +191,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     HOS <- spawners$HOS # Includes local and strays!
   }
   HOS_effective <- HOS * hatchery_args$gamma
+  if (!sum(HOS) && is.null(hatchery_args$gamma)) HOS_effective <- HOS
 
   # Spawners weighted by fecundity
   pHOSeff <- sum(fec_t * HOS_effective)/sum(fec_t * NOS, fec_t * HOS_effective)
