@@ -68,11 +68,11 @@ Harvest <- new(
   vulT = c(1, 1, 1)
 )
 
-# 1000 natural and hatchery spawners each for the first generation
+# 1,000 natural-origin and hatchery-origin juveniles each for the first generation
 Historical <- new(
   "Historical",
-  InitNOS = 1000,
-  InitHOS = 1000
+  InitNjuv_NOS = 1000,
+  InitNjuv_HOS = 1000
 )
 
 # Stitched salmon operating model
@@ -98,7 +98,7 @@ if (FALSE) {
             panel.first = graphics::grid())
     if (!missing(yline)) abline(h = yline, lty = 2)
     matplot(t(y), xlab = "Projection year", ylab = paste("salmonMSE:", ylab),
-            ylim = ylim, typ = 'o', pch = 1, lwd = 1, col = 1,
+            ylim = ylim, type = 'o', pch = 1, lwd = 1, col = 1,
             panel.first = graphics::grid())
     if (!missing(yline)) abline(h = yline, lty = 2)
   }

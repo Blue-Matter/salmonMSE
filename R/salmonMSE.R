@@ -131,49 +131,62 @@ initialize_population <- function(H, SOM) {
   nareas <- 2
 
   for (s in 1:ns) {
-    do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
 
     Bio <- SOM@Bio[[s]]
     Hatchery <- SOM@Hatchery[[s]]
-    a_esc <- seq(2, 2 * Bio@maxage, 2)
-    a_juv <- seq(1, 2 * (Bio@maxage-1), 2) + 1 # Plus one for second semester
+    a_juv <- seq(1, 2 * (Bio@maxage-1), 2) + 1 # Age classes in second semester of last historical year, leading into first projection year
+
+    do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
 
     for (g in 1:Bio@n_g) {
 
-      # Add spawners
-      p_NOesc <- pindex$p[pindex$s == s & pindex$g == g &
-                            pindex$stage == "escapement" &
-                            pindex$origin == "natural"]
-      H[[p_NOesc]][[1]]@AtAge$Number[, a_esc, nyears, ] <-
-        array(SOM@Historical[[s]]@InitNOS[, , g]/nareas, c(SOM@nsim, Bio@maxage, nareas))
-
-      # Add juvenile population
+      # Add juvenile population (for real age class 2, 3, ...)
       p_NOjuv <- pindex$p[pindex$s == s & pindex$g == g &
                             pindex$stage == "juvenile" &
                             pindex$origin == "natural"]
       H[[p_NOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
-        array(SOM@Historical[[s]]@InitNjuv_NOS[, , g]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
+        array(SOM@Historical[[s]]@InitNjuv_NOS[, -1, g]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
 
+      # Add arbitrary 100 natural-origin spawners in first openMSE year which corresponds to last projection year in real salmon dynamics
+      # Will not show up in the results
+      p_NOesc <- pindex$p[pindex$s == s & pindex$g == g &
+                            pindex$stage == "escapement" &
+                            pindex$origin == "natural"]
+      H[[p_NOesc]][[1]]@AtAge$Number[, 2 * Bio@maxage, nyears, ] <- array(100/nareas, c(SOM@nsim, 1, nareas))
+
+      # Update Perr_y parameter to parameterize age 1 abundance in first openMSE projection year
+      Perr_new <- sapply(1:SOM@nsim, function(x) {
+        Egg_openMSE <- sum(100 * Bio@p_female[Bio@maxage] * Bio@fec[x, Bio@maxage, 1])
+        SRRpars <- H[[p_NOjuv]][[1]]@SampPars$Stock$SRRpars[[x]]
+
+        Pred_N1 <- H[[p_NOjuv]][[1]]@SampPars$Stock$SRRfun(Egg_openMSE, SRRpars)
+        Perr <- SOM@Historical[[s]]@InitNjuv_NOS[x, 1, g]/Pred_N1
+        return(Perr)
+      })
+      nyears <- 4 # Hard coded in
+      H[[p_NOjuv]][[1]]@SampPars$Stock$Perr_y[, 2 * Bio@maxage + nyears + 1] <- Perr_new
     }
 
     if (do_hatchery || has_strays) {
       for (r in 1:Hatchery@n_r) {
-
-        # Add spawners
-        p_HOesc <- pindex$p[pindex$s == s & pindex$r == r &
-                              pindex$stage == "escapement" &
-                              pindex$origin == "hatchery"]
-        H[[p_HOesc]][[1]]@AtAge$Number[, a_esc, nyears, ] <-
-          array(SOM@Historical[[s]]@InitHOS[, , r]/nareas, c(SOM@nsim, Bio@maxage, nareas))
 
         # Add juvenile population
         p_HOjuv <- pindex$p[pindex$s == s & pindex$r == r &
                               pindex$stage == "juvenile" &
                               pindex$origin == "hatchery"]
         H[[p_HOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
-          array(SOM@Historical[[s]]@InitNjuv_HOS[, , r]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
+          array(SOM@Historical[[s]]@InitNjuv_HOS[, -1, r]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
 
+        # Add arbitrary 100 hatchery-origin spawners in first openMSE year which corresponds to last projection year in real salmon dynamics
+        # Will not show up in the results
+        p_HOesc <- pindex$p[pindex$s == s & pindex$r == r &
+                              pindex$stage == "escapement" &
+                              pindex$origin == "hatchery"]
+        H[[p_HOesc]][[1]]@AtAge$Number[, 2 * Bio@maxage, nyears, ] <- array(100/nareas, c(SOM@nsim, 1, nareas))
+
+        # Update Perr_y parameter to parameterize age 1 abundance in first openMSE projection year
+        H[[p_HOjuv]][[1]]@SampPars$Stock$Perr_y[, 2 * Bio@maxage + nyears + 1] <- SOM@Historical[[s]]@InitNjuv_HOS[, 1, r]
       }
     }
   }

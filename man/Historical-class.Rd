@@ -5,35 +5,21 @@
 \alias{Historical-class}
 \title{Class \code{"Historical"}}
 \description{
-Optional component of the operating model that specifies the historical dynamics.
-}
-\details{
-Several approaches are possible:
-\itemize{
-\item No set up. Default option sets 1000 natural-origin juveniles (age 1), and 1000 hatchery-origin juveniles (age 1) if there is hatchery production (otherwise, zero).
-\item \emph{Recommended option}: specify the initial spawning abundance in the terminal age class.
-\item Detailed setup that reconstructs a historical population by specifying the juvenile abundance (at the beginning of the year),
-annual fishing mortality rates, and spawner abundance. Typically used if there an estimation/conditioning model is used to inform
-parameters of the operating model.
-}
+Optional component of the operating model that specifies the historical dynamics. The default option starts the projection with 1000
+natural-origin juveniles and 1000 hatchery-origin juveniles (if there is hatchery production) in the oldest age class, representing
+single-brood year returns since there is only one age class in the population. Specify the abundance in all age class to simulate multiple
+brood-year returns.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{InitNOS}}{Natural origin spawners at age at the start of the projection. Either a numeric to specify the total natural origin spawners (in the oldest age class)
-otherwise, an array by \verb{[nsim, maxage, n_g]}. Default is 1,000 spawners in the oldest age class.}
+\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage, n_g]}. The abundance of immature natural origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.}
 
-\item{\code{InitHOS}}{Hatchery origin spawners at age at the start of the projection. Either a numeric to specify the total hatchery origin spawners (in the oldest age class)
-otherwise, an array by \verb{[nsim, maxage, n_r]}.
-Default is 1,000 spawners in the oldest age class if there is hatchery production or zero otherwise.}
-
-\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage-1, n_g]}. The abundance of immature natural origin fish at the beginning of the projection (first age class in array represents age 2).
-Default assumes zero, which creates a population with single brood year returns.}
-
-\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage-1, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection (first age class in array represents age 2.
-Default assumes zero, which creates a population with single brood year returns.}
+\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.}
 }}
 
 \section{Creating Object}{
