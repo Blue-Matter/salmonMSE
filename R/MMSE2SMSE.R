@@ -225,6 +225,10 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       fitness[, s, 2, y_spawn + 1] <- filter(Ford, .data$type == "hatchery", .data$t > 2 * nyears_real) %>%
         get_salmonMSE_var(var = "fitness", s)
 
+      # Convert fitness to NA for empty cohorts
+      y_empty <- colSums(Smolt_NOS[, s, ] + Smolt_Rel[, s, ]) == 0
+      fitness[, s, , y_empty] <- NA
+
       # Smolt releases and SAR loss from openMSE
       a_smolt <- 1
 

@@ -241,14 +241,18 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
     # Fitness in the natural and hatchery environments
     fitness <- rep(1, 2)
-    for (i in 1:2) {
-      if (fitness_args$fitness_type[i] == "Ford") {
-        fitness[i] <- calc_fitness(
-          zbar[i], fitness_args$theta[i], fitness_args$fitness_variance,
-          fitness_args$phenotype_variance, fitness_args$fitness_floor
-        )
+
+    if (sum(Nage_NOS, Nage_HOS)) {
+      for (i in 1:2) {
+        if (fitness_args$fitness_type[i] == "Ford") {
+          fitness[i] <- calc_fitness(
+            zbar[i], fitness_args$theta[i], fitness_args$fitness_variance,
+            fitness_args$phenotype_variance, fitness_args$fitness_floor
+          )
+        }
       }
     }
+
     fitness_loss <- outer(fitness, fitness_args$rel_loss, "^")
   } else {
     zbar <- rep(100, 2)
