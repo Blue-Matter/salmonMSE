@@ -630,11 +630,11 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     if (!is.array(Historical@InitNjuv_NOS)) {
       Historical@InitNjuv_NOS <- array(0, c(nsim, maxage, Bio@n_g))
-      Historical@InitNjuv_NOS[, maxage, ] <- 1000/Bio@n_g
+      Historical@InitNjuv_NOS[, maxage, ] <- Njuv_NOS/Bio@n_g
     }
     if (!is.array(Historical@InitNjuv_HOS)) {
       Historical@InitNjuv_HOS <- array(0, c(nsim, maxage, Hatchery@n_r))
-      Historical@InitNjuv_HOS[, maxage, ] <- 1000/Hatchery@n_r
+      Historical@InitNjuv_HOS[, maxage, ] <- Njuv_HOS/Hatchery@n_r
     }
     Historical <- check_array(Historical, "InitNjuv_NOS", dims = c(nsim, maxage, Bio@n_g))
     Historical <- check_array(Historical, "InitNjuv_HOS", dims = c(nsim, maxage, Hatchery@n_r))

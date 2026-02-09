@@ -15,7 +15,7 @@ Bio <- lapply(1:ns, function(s) {
     SRrel = "BH",
     capacity = ifelse(s == 1, 17250, 1000),     # Beverton-Holt asymptote. Not unfished capacity!!
     kappa = ifelse(s == 1, 3, 2),                     # Productivity in recruits per spawner
-    Mjuv_NOS = c(0, -log(SAR), 0),
+    Mjuv_NOS = c(0, -log(SAR)),
     fec = c(0, 0, 5040),        # Spawning fecundity of NOS and HOS
     p_female = 0.49,
     s_enroute = 1
@@ -75,18 +75,16 @@ Harvest <- lapply(1:ns, function(s) {
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
-    HistSpawner_NOS = 100,
-    HistSpawner_HOS = ifelse(s == 1, 100, 0)
+    InitNjuv_NOS = 1000,
+    InitNjuv_HOS = ifelse(s == 1, 1000, 0)
   )
 })
-
 
 
 # Stitched salmon operating model
 SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
            nsim = nsim,
-           nyears = 2,
            proyears = 50)
 
 # Stray
@@ -107,6 +105,9 @@ if (FALSE) {
   dev.off()
 
   # As of June 26, 2025
-  max(out@p_wild[, 2, ], na.rm = TRUE) %>% round(3) # 0.444
-  max(out@p_wild[, 1, ], na.rm = TRUE) %>% round(3) # 0.626
+  max(out@p_wild[, 2, 49], na.rm = TRUE) %>% round(3) # 0.009
+  max(out@p_wild[, 1, 49], na.rm = TRUE) %>% round(3) # 0.591
+
+  # No hatchery-origin juveniles in the second population
+  out@Njuv_HOS[, 2, , ] |> max()
 }

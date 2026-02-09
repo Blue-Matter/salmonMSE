@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Introduction
 
 salmonMSE can be used to evaluate the performance of alternative management actions, conditional on various states of nature. 
 Each model projection describes a unique combination of management actions and biological state of nature. The results of multiple model runs can then be summarized in a decision table.
@@ -22,10 +23,19 @@ Each model projection describes a unique combination of management actions and b
 This article provides an example of how a decision table can be created in salmonMSE.
 Decision tables and supporting visualizations require multiple model runs to compare management actions and states of nature.
 
-The code below demonstrates how a full simulation design can be specified in a data frame, where each row specifies a specific set of conditions. 
-The simulation is repeated for each row in the data in parallel using the `snowfall` R package to minimize computing time.
+The code below demonstrates how a full simulation design can be executed:
+
+1. Specify scenarios in a data frame, where each row specifies a specific set of conditions. 
+2. Repeat the simulation for each row in the data frame. Parallel computation with the `snowfall` R package minimizes computing time.
+3. Store the simulation results in a list of objects.
+4. Calculate performance outcomes for each entry in the list. Aggregate the performance metrics in data frame or vector.
+5. Plot results with facetted figures as necessary evaluate outcomes across the alternative states of nature and management levers. 
+
+# Example 
 
 The example here extends the [simple example](../articles/example.html) of a salmon operating model that has a single brood year recruitment where all fish mature at age 3.
+
+## Simulation design
 
 A motivating research question for this analysis would be: What amount of hatchery production ensures catch opportunities while minimizing the hatchery influence of the natural spawning population? And how robust is this choice to uncertainty in the productivity of the natural population?
 
@@ -118,11 +128,11 @@ wrapper <- function(x, Design) {
     vulT = c(1, 1, 1)
   )
 
-  # 1000 natural and hatchery spawners each for the first generation
+  # 1000 natural-origin and hatchery-origin juveniles each for the first generation
   Historical <- new(
     "Historical",
-    InitNOS = 1000,
-    InitHOS = 1000
+    InitNjuv_NOS = 1000,
+    InitNjuv_HOS = 1000
   )
 
   # Stitched salmon operating model
@@ -145,6 +155,8 @@ sfExport("Design")
 SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
 # SMSE_list <- lapply(1:nrow(Design), wrapper, Design = Design) # Non-parallel version
 ```
+
+## Processing results 
 
 We now have a list of SMSE objects, where each entry contains the results from a specific scenario.
 
@@ -208,7 +220,6 @@ With high hatchery production (10 thousand or more), catches are mostly likely a
 The low probabilities in the zero hatchery production scenario tells us the system is likely dependent on hatchery production to sustain such levels of catch while maintaining the specified harvest rate.
 
 At the intermediate hatchery production level (5 thousand), the ability to achieve catches of 60 is very likely with medium and high productivity. At low productivity, there is insufficient return to meet the catch threshold. 
-
 
 ## Tradeoff figure
 

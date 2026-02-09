@@ -73,8 +73,8 @@ wrapper <- function(x, Design) {
   # 1000 natural and hatchery spawners each for the first generation
   Historical <- new(
     "Historical",
-    InitNOS = 1000,
-    InitHOS = 1000
+    InitNjuv_NOS = 1000,
+    InitNjuv_HOS = 1000
   )
 
   # Stitched salmon operating model
@@ -101,7 +101,7 @@ if (FALSE) {
 
   # Make ice cream plot (PNI, catch, SMSY)
   pm_fn <- function(x, SMSE_list, Design) {
-    y <- 48
+    y <- 49
     out <- Design[x, ]
     out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, y])
     out$PNI_50 <- PNI50(SMSE_list[[x]], Yrs = c(y, y))
@@ -128,14 +128,14 @@ if (FALSE) {
                            xlab =  "Hatchery releases", ylab = "Productivity")
   ggsave("man/figures/decision_table_catch60.png", g, height = 3, width = 3)
 
-  g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability NOS > SMSY",
-                           xlab =  "Hatchery releases", ylab = "Productivity")
+  #g <- plot_decision_table(pm$hatch, pm$kappa, pm$`S/SMSY`, title = "Probability NOS > SMSY",
+  #                         xlab =  "Hatchery releases", ylab = "Productivity")
   #ggsave("man/figures/decision_table_SMSY.png", g, height = 3, width = 3)
 
   # Make tradeoff plot
-  g <- plot_tradeoff(pm$PNI_80, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_80", "Catch60",
-                     x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
-    scale_shape_manual(values = c(1, 2, 4, 16))
+  #g <- plot_tradeoff(pm$PNI_80, pm$Catch60, factor(pm$kappa), factor(pm$hatch), "PNI_80", "Catch60",
+  #                   x1lab = "Productivity", x2lab = "Hatchery\nreleases") +
+  #  scale_shape_manual(values = c(1, 2, 4, 16))
   #ggsave("man/figures/tradeoff_plot_pm.png", g, height = 3, width = 4.5)
 
   g <- plot_tradeoff(pm$PNI, pm$Catch, factor(pm$kappa), factor(pm$hatch), "Mean PNI", "Mean Catch",
@@ -146,7 +146,7 @@ if (FALSE) {
 
   # Make tradeoff figure with median and confidence intervals
   PNI_fn <- function(x, SMSE_list, Design) {
-    y <- 48
+    y <- 49
     out <- Design[x, ]
 
     val <- quantile(SMSE_list[[x]]@PNI[, 1, y], c(0.025, 0.5, 0.975))
@@ -161,7 +161,7 @@ if (FALSE) {
 
   # Next calculate the median and bounds for catch for each scenario
   Catch_fn <- function(x, SMSE_list, Design) {
-    y <- 48
+    y <- 49
     out <- Design[x, ]
 
     KNOS <- SMSE_list[[x]]@KT_NOS[, 1, y] # Catch of natural fish
@@ -186,7 +186,7 @@ if (FALSE) {
 
   # Kobe figure
   Kobe_fn <- function(x, SMSE_list, Design) {
-    y <- 48
+    y <- 49
     out <- Design[x, ]
 
     Sp <- rowSums(SMSE_list[[x]]@NOS[, 1, , y] + SMSE_list[[x]]@HOS[, 1, , y])

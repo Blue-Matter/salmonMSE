@@ -139,15 +139,15 @@ Harvest <- new(
 
 # Simulation and results
 
-To start the projection, we can specify the number of spawners at the beginning of the projection in the Historical object. 
+To start the projection, we can specify the abundance of juveniles at the beginning of the first projection year.
 Here, we specify 
-1000 natural-origin fish and 1000 hatchery-origin fish each in the first generation (for all simulations):
+1000 natural-origin fish and 1000 hatchery-origin juveniles each in the first generation for all simulations (corresponding to an escapement of approximately 800 after the 20.3 percent terminal harvest rate):
 
 ```{r, eval = FALSE}
 Historical <- new(
   "Historical",
-  InitNOS = 1000,
-  InitHOS = 1000
+  InitNjuv_NOS = 1000,
+  InitNjuv_HOS = 1000
 )
 ```
 
@@ -217,8 +217,8 @@ Bio_stochastic <- new(
 
 Historical <- new(
   "Historical",
-  InitNOS = 1000,
-  InitHOS = 1000
+  InitNjuv_NOS = 1000,
+  InitNjuv_HOS = 1000
 )
 
 SOM_stochastic <- new(
@@ -244,7 +244,7 @@ knitr::include_graphics("../man/figures/example-PNI-ts.png")
 Here is the distribution of PNI in the last generation (note that we model single brood year returns so PNI is only defined once every 3 years):
 
 ```{r, eval = FALSE, echo = TRUE}
-plot_statevar_hist(SMSE_stochastic, "PNI", y = 48)
+plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -270,7 +270,7 @@ quantile(PNI_LT, c(0.025, 0.5, 0.975))
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-print(c("2.5%" = 0.6351725, "50%" = 0.7655319, "97.5%" = 0.8140553))
+print(c("2.5%" = 0.6338964, "50%" = 0.7651637, "97.5%" = 0.8139232))
 ```
 
 Here is the relationship between the performance metrics and productivity:

@@ -143,8 +143,8 @@ The operating model is initialized with a return of 1000 natural-origin and hatc
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
-    HistSpawner_NOS = 100,
-    HistSpawner_HOS = ifelse(s == 1, 100, 0)
+    InitNjuv_NOS = 100,
+    InitNjuv_HOS = ifelse(s == 1, 100, 0)
   )
 })
 ```
@@ -204,3 +204,12 @@ plot_spawners(out, s = 2, prop = FALSE)
 knitr::include_graphics("../man/figures/multipop_spawners.png")
 ```
 
+The reduction in wild spawners are exclusively from strays as no hatchery-origin juveniles are present in the second population:
+
+```{r eval = FALSE}
+max(out@Njuv_HOS[, 2, , ])
+```
+
+```{r echo = FALSE}
+print(0)
+```
