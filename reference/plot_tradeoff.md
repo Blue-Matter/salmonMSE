@@ -19,7 +19,8 @@ plot_tradeoff(
   x1lab,
   x2lab,
   scenario,
-  ncol = NULL
+  ncol = NULL,
+  dir = "v"
 )
 ```
 
@@ -72,7 +73,13 @@ plot_tradeoff(
 - ncol:
 
   Integer, number of columns for decision table grid, only used if
-  `scenario is provided`
+  `scenario` is provided
+
+- dir:
+
+  Character, either "h" or "v" to describe how the grid of tables should
+  be organized (horizontally or vertically) , only used if `scenario` is
+  provided
 
 ## Value
 

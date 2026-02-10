@@ -59,8 +59,8 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 
 - `Mjuv_HOS`:
 
-  Either vector by age (length `maxage`) or an array with dimension
-  `[nsim, maxage, nyears+proyears, n_r]`. Natural mortality of immature
+  Either vector by age (length `maxage-1`) or an array with dimension
+  `[nsim, maxage-1, proyears, n_r]`. Natural mortality of immature
   hatchery origin fish. To replicate the SAR parameter of a
   stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class
   prior to maturation (and zero for all other ages).
@@ -68,9 +68,8 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 - `p_mature_HOS`:
 
   Vector by age (length `maxage`) or an array with dimension
-  `[nsim, maxage, nyears+proyears, n_r]` for the maturity of hatchery
-  spawners. Default is set equal to `Bio@p_mature` for all release
-  strategies.
+  `[nsim, maxage, proyears, n_r]` for the maturity of hatchery spawners.
+  Default is set equal to `Bio@p_mature` for all release strategies.
 
 - `stray_external`:
 
@@ -146,24 +145,35 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 
 - `premove_HOS`:
 
-  Numeric or function. The target proportion of the hatchery origin
-  escapement to be removed from the spawning grounds (in order to ensure
-  a high proportion of NOS). The proportion of hatchery spawners removed
-  is discounted by the mark rate, i.e., `p = premove_HOS * m`. The
-  removed hatchery origin fish do not spawn and are not available for
-  broodtake. A value less than one can represent imperfect
-  implementation of weir removal. Default is zero. This can also be a
-  function that returns the proportion based on hatchery and natural
-  escapement (after brood removal), Allows for bespoke rules for
-  harvest. The function should be of the form:
+  Numeric or function. The target proportion of the hatchery origin fish
+  to be removed from the spawning grounds (in order to ensure a high
+  proportion of NOS). The proportion of hatchery fish removed is
+  discounted by the mark rate, i.e., `p = premove_HOS * m`. The removed
+  hatchery-origin fish do not spawn and are not available for broodtake.
+  A value less than one can represent imperfect implementation of weir
+  removal. Default is zero. This slot can take a function that returns
+  the proportion (p) based on hatchery-origin and natural-origin
+  abundance (after brood removal), thus allowing for bespoke rules for
+  in-river harvest. The function should be of the form:
   `function(NO, HO, m) {return(p)}`.
+
+- `premove_NOS`:
+
+  Numeric or function. The target proportion of the natural origin fish
+  to be removed from the spawning grounds, for example, through an
+  in-river fishery. The proportion of natural fish removed is adjusted
+  by the mark rate, i.e., `p = premove_NOS * (1-m)`. Default is zero.
+  This slot can take a function that returns the proportion (p) based on
+  hatchery-origin and natural-origin abundance (after brood removal),
+  thus allowing for bespoke rules for in-river harvest. The function
+  should be of the form: `function(NO, HO, m) {return(p)}`.
 
 - `fec_brood`:
 
   Vector of length `maxage` or an array with dimension
-  `[nsim, maxage, nyears+proyears]`. The fecundity schedule of broodtake
-  to calculate the total egg production for the hatchery. If missing,
-  uses `Bio@fec`.
+  `[nsim, maxage, proyears]`. The fecundity schedule of broodtake to
+  calculate the total egg production for the hatchery. If missing, uses
+  `Bio@fec`.
 
 - `fitness_type`:
 
@@ -243,17 +253,17 @@ showClass("Hatchery")
 #> Name:            pmax_NOB        ptarget_NOB          phatchery
 #> Class:            numeric            numeric        num.logical
 #>                                                                
-#> Name:         premove_HOS          fec_brood       fitness_type
-#> Class:       num.function          num.array          character
+#> Name:         premove_HOS        premove_NOS          fec_brood
+#> Class:       num.function       num.function          num.array
 #>                                                                
-#> Name:               theta           rel_loss         zbar_start
-#> Class:            numeric            numeric          num.array
+#> Name:        fitness_type              theta           rel_loss
+#> Class:          character            numeric            numeric
 #>                                                                
-#> Name:  phenotype_variance   fitness_variance       heritability
-#> Class:            numeric            numeric            numeric
-#>                          
-#> Name:       fitness_floor
-#> Class:            numeric
+#> Name:          zbar_start phenotype_variance   fitness_variance
+#> Class:          num.array            numeric            numeric
+#>                                             
+#> Name:        heritability      fitness_floor
+#> Class:            numeric            numeric
 #> 
 #> Extends: "Hatchery.list"
 ```

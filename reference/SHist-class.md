@@ -1,7 +1,7 @@
 # Class `"SHist"`
 
 Stores the outputs from the historical reconstruction of salmon
-operating models.
+operating models. Primarily used for development and debugging.
 
 ## Slots
 
@@ -11,7 +11,7 @@ operating models.
 
 - `nyears`:
 
-  Integer. The number of historical years
+  Integer, number of historica years
 
 - `nsim`:
 

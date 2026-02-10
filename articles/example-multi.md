@@ -165,8 +165,8 @@ and hatchery-origin fish each in the first population, and a return of
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
-    HistSpawner_NOS = 100,
-    HistSpawner_HOS = ifelse(s == 1, 100, 0)
+    InitNjuv_NOS = 100,
+    InitNjuv_HOS = ifelse(s == 1, 100, 0)
   )
 })
 ```
@@ -233,3 +233,12 @@ plot_spawners(out, s = 2, prop = FALSE)
 ```
 
 ![](../reference/figures/multipop_spawners.png)
+
+The reduction in wild spawners are exclusively from strays as no
+hatchery-origin juveniles are present in the second population:
+
+``` r
+max(out@Njuv_HOS[, 2, , ])
+```
+
+    #> [1] 0

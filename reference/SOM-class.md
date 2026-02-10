@@ -13,10 +13,6 @@ An object containing all the parameters for a salmon operating model
 
   Integer. Number of simulations
 
-- `nyears`:
-
-  Integer. The number of historical years
-
 - `proyears`:
 
   Integer. The number of projected years

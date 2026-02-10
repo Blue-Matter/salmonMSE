@@ -1,15 +1,38 @@
 # Decision table
 
-The performance of alternative management actions, conditional on
-various states of nature, can be summarized in a decision table.
+## Introduction
+
+salmonMSE can be used to evaluate the performance of alternative
+management actions, conditional on various states of nature. Each model
+projection describes a unique combination of management actions and
+biological state of nature. The results of multiple model runs can then
+be summarized in a decision table.
 
 This article provides an example of how a decision table can be created
 in salmonMSE. Decision tables and supporting visualizations require
 multiple model runs to compare management actions and states of nature.
-We extend the [simple
+
+The code below demonstrates how a full simulation design can be
+executed:
+
+1.  Specify scenarios in a data frame, where each row specifies a
+    specific set of conditions.
+2.  Repeat the simulation for each row in the data frame. Parallel
+    computation with the `snowfall` R package minimizes computing time.
+3.  Store the simulation results in a list of objects.
+4.  Calculate performance outcomes for each entry in the list. Aggregate
+    the performance metrics in data frame or vector.
+5.  Plot results with facetted figures as necessary evaluate outcomes
+    across the alternative states of nature and management levers.
+
+## Example
+
+The example here extends the [simple
 example](https://docs.salmonmse.com/articles/example.md) of a salmon
 operating model that has a single brood year recruitment where all fish
 mature at age 3.
+
+### Simulation design
 
 A motivating research question for this analysis would be: What amount
 of hatchery production ensures catch opportunities while minimizing the
@@ -35,11 +58,12 @@ The decision-making context here assumes that the harvest rate is fixed.
 
 Below is the code for performing such a simulation. We specify the
 various simulation conditions (natural productivity and hatchery
-production) in a data frame and write a wrapper function that loops over
-each row of the data frame. The simulations initialize at 1000 natural
-and hatchery spawners each, and project forward 50 years to obtain the
-system dynamics in the long-term equilibrium (the generation time is 3
-years).
+production) in a data frame and write a wrapper function that repeats
+for each row of the data frame.
+
+The simulations initialize at 1000 natural and hatchery spawners each,
+and project forward 50 years to obtain the system dynamics in the
+long-term equilibrium (the generation time is 3 years).
 
 ``` r
 library(salmonMSE)
@@ -71,12 +95,12 @@ wrapper <- function(x, Design) {
     SRrel = "BH",
     capacity = 17250,
     kappa = kappa,
-    Mjuv_NOS = c(0, -log(SAR), 0),
+    Mjuv_NOS = c(0, -log(SAR)),
     fec = c(0, 0, 5040),
     p_female = 0.49,
     s_enroute = 1
   )
-  
+
   Hatchery <- new(
     "Hatchery",
     n_yearling = Design$hatch[x],
@@ -112,23 +136,24 @@ wrapper <- function(x, Design) {
     "Harvest",
     u_preterminal = 0,             # No pre-terminal fishery
     u_terminal = 0.5,              # Specify fixed harvest rate of mature fish
-    MSF_PT = FALSE,                # No mark-selective fishing
-    MSF_T = FALSE,                 # No mark-selective fishing
+    MSF_PT = FALSE,
+    MSF_T = FALSE,
     release_mort = c(0.1, 0.1),
     vulPT = c(0, 0, 0),
     vulT = c(1, 1, 1)
   )
-  
+
+  # 1000 natural-origin and hatchery-origin juveniles each for the first generation
   Historical <- new(
     "Historical",
-    HistSpawner_NOS = 1000,
-    HistSpawner_HOS = 1000
+    InitNjuv_NOS = 1000,
+    InitNjuv_HOS = 1000
   )
 
   # Stitched salmon operating model
   SOM <- new("SOM",
              Bio, Habitat, Hatchery, Harvest, Historical,
-             nsim = nsim, nyears = 2, proyears = 50)
+             nsim = nsim, proyears = 50)
   
   # Run projection
   SMSE <- salmonMSE(SOM)
@@ -146,7 +171,23 @@ SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
 # SMSE_list <- lapply(1:nrow(Design), wrapper, Design = Design) # Non-parallel version
 ```
 
-We now have a list of SMSE objects.
+### Processing results
+
+We now have a list of SMSE objects, where each entry contains the
+results from a specific scenario.
+
+The [`compare()`](https://docs.salmonmse.com/reference/compare.md)
+function provides a quick markdown report to compare outcomes across
+scenarios. This may be useful to ensure that the models are behaving as
+intended:
+
+``` r
+# Showing a subset of 4 scenarios where productivity is 3 but release target varies
+names <- paste("Hatchery =", seq(0, 15000, 5000))
+compare(SMSE_list[c(1, 4, 7, 10)], names = names)
+```
+
+### Performance table
 
 Next, we need to define performance metrics that describe the outcomes
 of the various
@@ -162,8 +203,8 @@ pm_fn <- function(x, SMSE_list, Design) {
   out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
   out$PNI_80 <- PNI80(SMSE_list[[x]], Yrs = c(49, 49))
 
-  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural fish
-  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery fish
+  KNOS <- SMSE_list[[x]]@KT_NOS[, 1, 49] # Catch of natural-origin fish
+  KHOS <- SMSE_list[[x]]@KT_HOS[, 1, 49] # Catch of hatchery-origin fish
 
   out$Catch <- mean(KNOS + KHOS)
   out$Catch60 <- mean((KNOS + KHOS) >= 60)
@@ -222,7 +263,7 @@ to achieve catches of 60 is very likely with medium and high
 productivity. At low productivity, there is insufficient return to meet
 the catch threshold.
 
-## Tradeoff figure
+### Tradeoff figure
 
 A trade off plot compares two performance metrics across the suite of
 management actions. A tradeoff between the metrics may appear where a
@@ -260,7 +301,7 @@ g
 
 ![](../reference/figures/tradeoff_plot_mean.png)
 
-### With confidence intervals
+#### With confidence intervals
 
 Tradeoff figures can be created with intervals by passing a matrix to
 [`plot_tradeoff()`](https://docs.salmonmse.com/reference/plot_tradeoff.md).
@@ -313,7 +354,7 @@ g <- plot_tradeoff(as.matrix(PNI[, 3:5]), as.matrix(Catch[, 3:5]),
 
 ![](../reference/figures/tradeoff_plot_median_ci.png)
 
-## Time series figures
+### Time series figures
 
 Here’s the time series of the median PNI (solid lines) and the 95
 percent prediction interval (shaded region) during the projection. It

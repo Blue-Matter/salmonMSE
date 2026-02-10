@@ -9,7 +9,17 @@ strategy). See example at
 ## Usage
 
 ``` r
-plot_decision_table(x, y, z, title, xlab, ylab, scenario, ncol = NULL)
+plot_decision_table(
+  x,
+  y,
+  z,
+  title,
+  xlab,
+  ylab,
+  scenario,
+  ncol = NULL,
+  dir = "v"
+)
 ```
 
 ## Arguments
@@ -48,7 +58,12 @@ plot_decision_table(x, y, z, title, xlab, ylab, scenario, ncol = NULL)
 - ncol:
 
   Integer, number of columns for decision table grid, only used if
-  `scenario is provided`
+  `scenario` is provided
+
+- dir:
+
+  Character, either "h" or "v" to describe how the grid of tables should
+  be organized (horizontally or vertically)
 
 ## Value
 

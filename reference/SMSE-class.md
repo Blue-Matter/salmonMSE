@@ -29,10 +29,6 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 
   Character. Identifying name
 
-- `nyears`:
-
-  Integer. The number of historical years
-
 - `proyears`:
 
   Integer. The number of projected years
@@ -303,42 +299,42 @@ showClass("SMSE")
 #> 
 #> Slots:
 #>                                                                   
-#> Name:            Name         nyears       proyears           nsim
+#> Name:            Name       proyears           nsim        nstocks
 #> Class:      character        numeric        numeric        numeric
 #>                                                                   
-#> Name:         nstocks         Snames        Egg_NOS        Egg_HOS
-#> Class:        numeric      character          array          array
+#> Name:          Snames        Egg_NOS        Egg_HOS        Fry_NOS
+#> Class:      character          array          array          array
 #>                                                                   
-#> Name:         Fry_NOS        Fry_HOS      Smolt_NOS      Smolt_HOS
+#> Name:         Fry_HOS      Smolt_NOS      Smolt_HOS      Smolt_Rel
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:       Smolt_Rel       Njuv_NOS       Njuv_HOS     Return_NOS
+#> Name:        Njuv_NOS       Njuv_HOS     Return_NOS     Return_HOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:      Return_HOS Escapement_NOS Escapement_HOS            NOB
+#> Name:  Escapement_NOS Escapement_HOS            NOB            HOB
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:             HOB      HOB_stray     HOB_import            NOS
+#> Name:       HOB_stray     HOB_import            NOS            HOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS
+#> Name:       HOS_stray  HOS_effective        KPT_NOS         KT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS
+#> Name:         KPT_HOS         KT_HOS        DPT_NOS         DT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS
+#> Name:         DPT_HOS         DT_HOS        UPT_NOS         UT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS
+#> Name:         UPT_HOS         UT_HOS       ExPT_NOS        ExT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:         ExT_NOS       ExPT_HOS        ExT_HOS        fitness
+#> Name:        ExPT_HOS        ExT_HOS        fitness           pNOB
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:            pNOB    pHOS_census pHOS_effective      Mjuv_loss
+#> Name:     pHOS_census pHOS_effective      Mjuv_loss            PNI
 #> Class:          array          array          array          array
-#>                                                    
-#> Name:             PNI         p_wild           Misc
-#> Class:          array          array           list
+#>                                     
+#> Name:          p_wild           Misc
+#> Class:          array           list
 ```

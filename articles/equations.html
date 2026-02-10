@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2026-01-05</h4>
+            <h4 data-toc-skip class="date">2026-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -529,13 +529,21 @@ available for broodtake</td>
 </tr>
 <tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">HOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{HOS}_\textrm{removal}</annotation></semantics></math></td>
-<td align="left">Proportion of hatchery origin escapement removed from
+<td align="left">Proportion of hatchery origin fish removed from
 spawning grounds, not available for broodtake</td>
 <td align="left">Hatchery</td>
 <td align="left">SOM</td>
 <td align="left">premove_HOS</td>
 </tr>
 <tr class="odd">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>p</mi><mtext mathvariant="normal">removal</mtext><mtext mathvariant="normal">NOS</mtext></msubsup><annotation encoding="application/x-tex">p^\textrm{NOS}_\textrm{removal}</annotation></semantics></math></td>
+<td align="left">Proportion of natural origin fish removed from spawning
+grounds, not available for broodtake</td>
+<td align="left">Hatchery</td>
+<td align="left">SOM</td>
+<td align="left">premove_NOS</td>
+</tr>
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></td>
 <td align="left">Reduced reproductive success of HOS (relative to
 NOS)</td>
@@ -543,7 +551,7 @@ NOS)</td>
 <td align="left">SOM</td>
 <td align="left">gamma</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>z</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{z}</annotation></semantics></math></td>
 <td align="left">Mean phenotypic value of cohort in natural and hatchery
 environments</td>
@@ -551,7 +559,7 @@ environments</td>
 <td align="left">Internal state variable and SOM</td>
 <td align="left">zbar_start</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math></td>
 <td align="left">Optimal phenotypic value for natural and hatchery
 environments</td>
@@ -559,28 +567,28 @@ environments</td>
 <td align="left">SOM</td>
 <td align="left">theta</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></td>
 <td align="left">Variance of phenotypic traits in population</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">phenotype_variance</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ω</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\omega^2</annotation></semantics></math></td>
 <td align="left">Variance of fitness function</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">fitness_variance</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>h</mi><mn>2</mn></msup><annotation encoding="application/x-tex">h^2</annotation></semantics></math></td>
 <td align="left">Heritability of phenotypic traits</td>
 <td align="left">Fitness</td>
 <td align="left">SOM</td>
 <td align="left">heritability</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>W</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{W}</annotation></semantics></math></td>
 <td align="left">Population fitness in the natural and hatchery
 environments</td>
@@ -588,7 +596,7 @@ environments</td>
 <td align="left">SMSE</td>
 <td align="left">fitness</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>i</mi></msub><annotation encoding="application/x-tex">\ell_i</annotation></semantics></math></td>
 <td align="left">Relative fitness loss at the life stage i (egg, fry,
 smolt)</td>
@@ -596,7 +604,7 @@ smolt)</td>
 <td align="left">SOM</td>
 <td align="left">rel_loss</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">PNI</mtext><annotation encoding="application/x-tex">\textrm{PNI}</annotation></semantics></math></td>
 <td align="left">Proportionate natural influence</td>
 <td align="left">Fitness</td>

@@ -37,7 +37,7 @@ single numeric (value identical across all simulations).
 - `p_mature`:
 
   Either vector by age (length `maxage`) or an array with dimension
-  `[nsim, maxage, nyears+proyears]`. The proportion mature by age.
+  `[nsim, maxage, proyears]`. The proportion mature by age.
 
 - `SRrel`:
 
@@ -82,16 +82,18 @@ single numeric (value identical across all simulations).
 
 - `Mjuv_NOS`:
 
-  Either vector by age (length `maxage`) or an array with dimension
-  `[nsim, maxage, nyears+proyears, n_g]`. Natural mortality of immature
-  natural origin fish. To replicate the SAR parameter of a
-  stage-specific model, set `Mjuv_NOS[a] = -log(SAR)` where `a` is the
-  age class prior to maturation (and zero for all other ages).
+  Either vector by age (length `maxage-1`) or an array with dimension
+  `[nsim, maxage-1, proyears, n_g]`. Natural mortality of immature
+  natural origin fish, the value for the first age represents natural
+  mortality from age 1 to 2, second age is mortality from age 2 to 3,
+  and so on. To replicate the SAR parameter of a stage-specific model,
+  set `Mjuv_NOS[a] = -log(SAR)` where `a` is the age class prior to
+  maturation (and zero for all other ages).
 
 - `fec`:
 
   Vector by age (length `maxage`) or an array with dimension
-  `[nsim, maxage, nyears+proyears]`. Female fecundity of natural origin
+  `[nsim, maxage, proyears]`. Female fecundity of natural origin
   spawners.
 
 - `p_female`:

@@ -214,11 +214,15 @@ following arguments:
   that return to the hatchery, for example, by removal from spawning
   grounds or swim-in facilities. These fish are available for broodtake.
 
-- `premove_HOS` Numeric, the proportion of the hatchery origin
-  escapement to be removed from the spawning grounds (in order to ensure
-  a high proportion of NOS). These fish are not available for broodtake.
-  For example, a value less than one can represent imperfect
-  implementation of weir removal.
+- `premove_HOS` Numeric or function, the proportion of the hatchery
+  origin fish to be removed from the spawning grounds (in order to
+  ensure a high proportion of NOS or for an in-river fishery). These
+  fish are not available for broodtake. For example, a value less than
+  one can represent imperfect implementation of weir removal.
+
+- `premove_NOS` Numeric or function, the proportion of the natural
+  origin fish to be removed from the spawning grounds, for example, an
+  in-river fishery.
 
 - `s_prespawn` Numeric, the survival of broodtake prior to egg
   production. `1 - s_prespawn` is the proportion of fish not used for

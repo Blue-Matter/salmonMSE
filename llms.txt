@@ -132,10 +132,17 @@ remotes::install_github("Blue-Matter/salmonMSE")
 - [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md) :
   Check inputs to SOM object
 
+- [`compare()`](https://docs.salmonmse.com/reference/compare.md) :
+  Compare scenarios in markdown
+
 - [`compare_spawners()`](https://docs.salmonmse.com/reference/compare_spawners.md)
   [`compare_fitness()`](https://docs.salmonmse.com/reference/compare_spawners.md)
   [`compare_escapement()`](https://docs.salmonmse.com/reference/compare_spawners.md)
   : Compare simulation runs
+
+- [`compare_statevar_ts()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
+  [`compare_statevar_hist()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
+  : Compare state variables from simulation runs
 
 - [`fit_CM()`](https://docs.salmonmse.com/reference/fit_CM.md)
   [`sample_CM()`](https://docs.salmonmse.com/reference/fit_CM.md) : Fit

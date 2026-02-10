@@ -2,24 +2,26 @@
 
 Here, we show a simple example of a salmon operating model where all
 fish mature at age 3 and follows the structure of an analysis done in
-AHA. The historical spool-up is not informed by an estimation model. The
-model is used to project the proposed management levers to determine the
-equilibrium properties of the system.
+AHA. The model is used to project the proposed management levers to
+determine the equilibrium properties of the system.
 
-We create several S4 objects, the `Bio` object contains the natural
-biological dynamics, including the maturity ogive `p_mature`, fecundity,
-as well as the density-dependent survival of smolts through the capacity
-and productivity parameters (`capacity_smolt` and `kappa`,
-respectively).
+## Biological parameters
+
+We create several S4 objects, the `Bio` object contains parameters
+controlling natural biological dynamics, including juvenile ocean
+mortality, proportion mature by age class `p_mature`, fecundity (egg
+production per female), as well as the density-dependent egg-smolt
+survival relationship through the capacity and productivity parameters
+(`capacity_smolt` and `kappa`, respectively).
 
 The first example will be deterministic. With salmonMSE, we must run at
 minimum 2 simulation replicates, but we will run 3 simulations where the
 biological parameters, as well as the results, are identical among
 simulations.
 
-To accommodate the life stage within the age structured model, we model
-ocean survival as an equivalent instantaneous rate `Mjuv_NOS` where all
-mortality occurs in the age class prior to maturation, i.e., age 2.
+We model ocean survival through an equivalent instantaneous mortality
+rate `Mjuv_NOS` where all mortality occurs in the age class prior to
+maturation, i.e., age 2.
 
 ``` r
 library(salmonMSE)
@@ -35,17 +37,29 @@ Bio <- new(
   SRrel = "BH",
   capacity = 17250,                 # Beverton-Holt asymptote. Not unfished capacity!
   kappa = 3,                        # Productivity in recruits per spawner
-  Mjuv_NOS = c(0, -log(SAR), 0),    # Convert marine survival to an instantaneous mortality rate
+  Mjuv_NOS = c(0, -log(SAR)),       # Convert marine survival to an instantaneous mortality rate
   fec = c(0, 0, 5040),              # Spawning fecundity of NOS and HOS
   p_female = 0.49,
   s_enroute = 1
 )
 ```
 
-The next three objects control the management of the conservation unit
-through habitat, hatchery, and harvest options.
+## Management levers
 
-No freshwater habitat specific features are used:
+The next three objects control the management of the population through
+habitat, hatchery, and harvest options.
+
+### Habitat and freshwater survival parameters
+
+Habitat parameters may represent different scenarios regarding
+freshwater restoration and environmental factors that impact survival in
+freshwater life stages, including pre-spawn mortality, egg survival, and
+fry survival. The survival at each life stage can be either be
+density-independent or density-dependent.
+
+These features are not used in this example. Instead, the capacity and
+productivity parameters in the previous section control the egg-juvenile
+survival.
 
 ``` r
 Habitat <- new(
@@ -54,32 +68,50 @@ Habitat <- new(
 )
 ```
 
+### Hatchery dynamics
+
+#### Hatchery production
+
 Next, we work on the hatchery dynamics.
 
 Below, we have a management target to release 10,000 yearlings annually.
 In comparison, the carrying capacity of the natural environment is
-17,250 smolts. Users also specify the survival of broodtake
-(`s_prespawn`), eggs in the hatchery (`s_egg_smolt` and
-`s_egg_subyearling`), the target proportion of natural spawners in the
-broodtake (`ptarget_NOB`), and the maximum proportion of natural
-spawners to be used as broodtake (`pmax_NOB`). The target proportion can
-be obtained when the mark rate `m` = 1 and broodstock origin can be
-identified.
+17,250 smolts. Users also specify the brood survival (`s_prespawn`), egg
+survival in the hatchery (`s_egg_smolt` and `s_egg_subyearling`) to
+determine the hatchery egg production needed to support the release
+strategy.
 
 We place some additional constraints are placed which may prevent us
-from realizing the target releases. In each time step of the projection,
-the model calculates the required number of eggs annually for the target
-releases. The natural broodtake (NOB) and hatchery broodtake (HOB) are
-removed from the escapement to reach the target egg production and
-maintain `NOB/(NOB + HOB) = ptarget_NOB`. The proportion of NOB to the
-natural origin escapement cannot exceed `pmax_NOB`. If the target egg
-production cannot be reached, then the NOB is taken in accordance with
-`pmax_NOB` and HOB is taken (up to the total hatchery origin escapement
-returned to the hatchery) to meet the target egg production.
+from realizing the target releases. The realized number of brood is
+controlled by several parameters, including the maximum proportion of
+the in-river return (escapement from marine fisheries) to be used as
+brood (`pmax_esc`), the maximum proportion of natural spawners to be
+used as broodtake (`pmax_NOB`). The proportion of NOB to the natural
+origin escapement cannot exceed `pmax_NOB`.
 
-We also need to specify the relative spawning success of HOS, and
-various parameters that control fitness of hatchery fish in the natural
-environment.
+The realized brood origin can be controlled by the target proportion of
+natural spawners in the broodtake (`ptarget_NOB`). The target proportion
+can be realized when the mark rate `m` = 1 as the origin of all brood
+can be identified. The natural broodtake (NOB) and hatchery broodtake
+(HOB) are removed from the escapement to reach the target egg production
+and maintain `NOB/(NOB + HOB) = ptarget_NOB`. If the target egg
+production cannot be reached, then the NOB is taken in accordance with
+`pmax_NOB` and HOB is taken to meet the target egg production. The
+realized `pNOB` is then lower than the target.
+
+If the mark rate is less than 1, then `ptarget_NOB` is interpreted as
+the ratio of unmarked fish in the broodstock. This is a second method
+for how the realized `pNOB` can also be lower than the target.
+
+#### Other parameters
+
+Additional parameters can control removal of hatchery-origin and
+natural-origin fish from the spawning grounds, ostensibly as part of an
+in-rivery fishery for pHOS management.
+
+Finally, we also need to specify the relative spawning success of HOS
+(`gamma`), and various parameters that describe the fitness of
+hatchery-origin fish, in the natural environment.
 
 ``` r
 Hatchery <- new(
@@ -109,8 +141,11 @@ Hatchery <- new(
 )
 ```
 
-We specify a harvest rate of 0.203 for the terminal fishery (mature
-component). No hatchery fish are marked.
+### Harvest
+
+We specify a harvest rate of 0.203 for the terminal marine fishery.
+Hatchery-origin fish are marked but mark-selective fishing is not
+evaluated here.
 
 ``` r
 Harvest <- new(
@@ -125,16 +160,19 @@ Harvest <- new(
 )
 ```
 
-To start the projection, we can specify the number of spawners at the
-beginning of the projection in the Historical object. Here, we specify
-1000 natural origin fish and 1000 hatchery origin fish each in the first
-generation (for all simulations):
+## Simulation and results
+
+To start the projection, we can specify the abundance of juveniles at
+the beginning of the first projection year. Here, we specify 1000
+natural-origin fish and 1000 hatchery-origin juveniles each in the first
+generation for all simulations (corresponding to an escapement of
+approximately 800 after the 20.3 percent terminal harvest rate):
 
 ``` r
 Historical <- new(
   "Historical",
-  HistSpawner_NOS = 1000,
-  HistSpawner_HOS = 1000
+  InitNjuv_NOS = 1000,
+  InitNjuv_HOS = 1000
 )
 ```
 
@@ -145,7 +183,7 @@ Now let’s stitch together the operating model and run the simulation for
 SOM <- new(
   "SOM",
   Bio, Habitat, Hatchery, Harvest, Historical,
-  nsim = nsim, nyears = 2, proyears = 50
+  nsim = nsim, proyears = 50
 )
 SMSE <- salmonMSE(SOM)
 ```
@@ -199,7 +237,7 @@ Bio_stochastic <- new(
   SRrel = "BH",
   capacity = 17250,
   kappa = kappa,
-  Mjuv_NOS = c(0, -log(SAR), 0),
+  Mjuv_NOS = c(0, -log(SAR)),
   fec = c(0, 0, 5040),
   p_female = 0.49,
   s_enroute = 1
@@ -207,14 +245,14 @@ Bio_stochastic <- new(
 
 Historical <- new(
   "Historical",
-  HistSpawner_NOS = 1000,
-  HistSpawner_HOS = 1000
+  InitNjuv_NOS = 1000,
+  InitNjuv_HOS = 1000
 )
 
 SOM_stochastic <- new(
   "SOM",
   Bio_stochastic, Habitat, Hatchery, Harvest, Historical,
-  nsim = nsim_stochastic, nyears = 2, proyears = 50
+  nsim = nsim_stochastic, proyears = 50
 )
 
 SMSE_stochastic <- salmonMSE(SOM_stochastic)
@@ -230,7 +268,9 @@ plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
 
 ![](../reference/figures/example-PNI-ts.png)
 
-Here is the distribution of PNI in the last projection year:
+Here is the distribution of PNI in the last generation (note that we
+model single brood year returns so PNI is only defined once every 3
+years):
 
 ``` r
 plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
@@ -244,8 +284,8 @@ management actions. For example, we calculate the long-term probability
 that PNI is at least 0.80:
 
 ``` r
-PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
-mean(PNI_LT >= 0.5)
+PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
+mean(PNI_LT >= 0.8)
 ```
 
     #> [1] 0.13
@@ -258,7 +298,7 @@ quantile(PNI_LT, c(0.025, 0.5, 0.975))
 ```
 
     #>      2.5%       50%     97.5% 
-    #> 0.6266439 0.7634803 0.8133749
+    #> 0.6338964 0.7651637 0.8139232
 
 Here is the relationship between the performance metrics and
 productivity:

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,10 +67,6 @@
 
 <dl><dt><code>Name</code></dt>
 <dd><p>Character. Identifying name</p></dd>
-
-
-<dt><code>nyears</code></dt>
-<dd><p>Integer. The number of historical years</p></dd>
 
 
 <dt><code>proyears</code></dt>
@@ -294,44 +290,44 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name         nyears       proyears           nsim</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            Name       proyears           nsim        nstocks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character        numeric        numeric        numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         nstocks         Snames        Egg_NOS        Egg_HOS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        numeric      character          array          array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          Snames        Egg_NOS        Egg_HOS        Fry_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:      character          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         Fry_NOS        Fry_HOS      Smolt_NOS      Smolt_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         Fry_HOS      Smolt_NOS      Smolt_HOS      Smolt_Rel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Smolt_Rel       Njuv_NOS       Njuv_HOS     Return_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        Njuv_NOS       Njuv_HOS     Return_NOS     Return_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      Return_HOS Escapement_NOS Escapement_HOS            NOB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  Escapement_NOS Escapement_HOS            NOB            HOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOB      HOB_stray     HOB_import            NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       HOB_stray     HOB_import            NOS            HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       HOS_stray  HOS_effective        KPT_NOS         KT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         KPT_HOS         KT_HOS        DPT_NOS         DT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         DPT_HOS         DT_HOS        UPT_NOS         UT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         UPT_HOS         UT_HOS       ExPT_NOS        ExT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ExT_NOS       ExPT_HOS        ExT_HOS        fitness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        ExPT_HOS        ExT_HOS        fitness           pNOB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            pNOB    pHOS_census pHOS_effective      Mjuv_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:     pHOS_census pHOS_effective      Mjuv_loss            PNI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:             PNI         p_wild           Misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array           list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          p_wild           Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array           list</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

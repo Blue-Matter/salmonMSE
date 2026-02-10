@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@ ten percent to the second LHG. Default is <code>rep(1/Bio@n_g, Bio@n_g)</code></
 
 
 <dt><code>p_mature</code></dt>
-<dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. The proportion mature by age.</p></dd>
+<dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. The proportion mature by age.</p></dd>
 
 
 <dt><code>SRrel</code></dt>
@@ -114,13 +114,13 @@ to the first year and weighted by life history groups. Not used if habitat compo
 
 
 <dt><code>Mjuv_NOS</code></dt>
-<dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears, n_g]</code>.
-Natural mortality of immature natural origin fish.
+<dd><p>Either vector by age (length <code>maxage-1</code>) or an array with dimension <code>[nsim, maxage-1, proyears, n_g]</code>.
+Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
 To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] = -log(SAR)</code> where <code>a</code> is the age class prior to maturation (and zero for all other ages).</p></dd>
 
 
 <dt><code>fec</code></dt>
-<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, nyears+proyears]</code>. Female fecundity of natural origin spawners.</p></dd>
+<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. Female fecundity of natural origin spawners.</p></dd>
 
 
 <dt><code>p_female</code></dt>

@@ -4,7 +4,7 @@ Various functions that plot the state variables from salmonMSE
 projections:
 
 - `plot_statevar_ts()` produces a time series for all simulations, or
-  with confidence intervals
+  with medians and 95th percentile intervals
 
 - `plot_statevar_hist()` produces a histogram across all simulations for
   a particular year
@@ -157,3 +157,4 @@ from base graphics
 
 [`plot_decision_table()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
 [`plot_LHG()`](https://docs.salmonmse.com/reference/plot_LHG.md)
+[`compare_statevar_ts()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)

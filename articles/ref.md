@@ -253,6 +253,66 @@ compare_ref(
   p_mature = c(0, 0, 0, 0, 1)
 )
 #> Loading required package: salmonMSE
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
 #>             0.0000000             0.4678228             0.4678228 
@@ -285,6 +345,66 @@ compare_ref(
   fec = rep(1, 5),
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
 #>             0.0000000             0.4678228             0.4678228 
@@ -321,6 +441,58 @@ compare_ref(
   fec = rep(1, 5),
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
 #>             0.0000000             0.7330604             0.4678273 
@@ -355,6 +527,58 @@ compare_ref(
   fec = c(0, 1000, 2000, 3000, 3500),
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
 #>             0.0000000             0.6424027             0.4000761 
@@ -391,6 +615,60 @@ compare_ref(
   fec = c(0, 1000, 2000, 3000, 3500),
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
+#> Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a
+#> multiple of shorter object length
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
 #>             0.4670406             0.4670406             0.2553111 

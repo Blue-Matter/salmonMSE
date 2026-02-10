@@ -1,16 +1,16 @@
-# Generate markdown reports
+# Compare scenarios in markdown
 
-Generate a markdown report for outcomes from a single operating model
-projection
+Generate a markdown report for multiple model runs to compare scenarios.
+3-5 is likely the ideal number of scenarios for comparison.
 
 ## Usage
 
 ``` r
-# S4 method for class 'SMSE'
-report(
-  object,
-  name = object@Name,
-  filename = "SMSE",
+compare(
+  SMSE_list,
+  names,
+  col_vec,
+  filename = "SMSEcompare",
   dir = tempdir(),
   open_file = TRUE,
   render_args = list(),
@@ -20,14 +20,19 @@ report(
 
 ## Arguments
 
-- object:
+- SMSE_list:
 
-  [SMSE](https://docs.salmonmse.com/reference/SMSE-class.md) object
+  List of [SMSE](https://docs.salmonmse.com/reference/SMSE-class.md)
+  objects
 
-- name:
+- names:
 
-  Character string for the model name to include in the report, e.g.,
-  model run number.
+  Character vector `length(SMSE_list)` to label individual model runs
+
+- col_vec:
+
+  Character vector `length(SMSE_list)` for custom colour schemes for
+  comparing across model scenarios in figures
 
 - filename:
 
@@ -58,4 +63,4 @@ typically the path of the output file
 
 ## See also
 
-[`compare()`](https://docs.salmonmse.com/reference/compare.md)
+[`report()`](https://docs.salmonmse.com/reference/report.md)

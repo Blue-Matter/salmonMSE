@@ -17,7 +17,7 @@ makeRel_smolt() generates a list for openMSE to use in the simulations
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -226,9 +226,11 @@ hatchery, en route mortality, or habitat improvement</p></li>
 <li><p><code>p_yearling</code> Numeric, the proportion of annual releases at the yearling life stage (vs. subyearling)</p></li>
 <li><p><code>phatchery</code> Numeric, the proportion of the hatchery origin escapement that return to the hatchery,
 for example, by removal from spawning grounds or swim-in facilities. These fish are available for broodtake.</p></li>
-<li><p><code>premove_HOS</code> Numeric, the proportion of the hatchery origin escapement to be removed from the spawning
-grounds (in order to ensure a high proportion of NOS). These fish are not available for broodtake.
+<li><p><code>premove_HOS</code> Numeric or function, the proportion of the hatchery origin fish to be removed from the spawning
+grounds (in order to ensure a high proportion of NOS or for an in-river fishery). These fish are not available for broodtake.
 For example, a value less than one can represent imperfect implementation of weir removal.</p></li>
+<li><p><code>premove_NOS</code> Numeric or function, the proportion of the natural origin fish to be removed from the spawning
+grounds, for example, an in-river fishery.</p></li>
 <li><p><code>s_prespawn</code> Numeric, the survival of broodtake prior to egg production. <code>1 - s_prespawn</code> is the proportion of fish
 not used for hatchery purposes, e.g., mortality or other resesarch purposes. Used to back-calculate the broodtake.</p></li>
 <li><p><code>gamma</code> Numeric, the relative reproductive success of hatchery origin spawners (relative to natural origin spawners)</p></li>
