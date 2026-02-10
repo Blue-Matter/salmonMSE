@@ -15,8 +15,6 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{nsim}}{Integer. Number of simulations}
 
-\item{\code{nyears}}{Integer. The number of historical years}
-
 \item{\code{proyears}}{Integer. The number of projected years}
 
 \item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}

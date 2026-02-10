@@ -1,10 +1,10 @@
 Package: salmonMSE
 Title: Management Strategy Evaluation for Salmon Species
-Version: 0.1.1
+Version: 1.0.0
 Authors@R: 
     person("Quang", "Huynh", , "quang@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7835-4376"))
-Date: 2026-01-05
+Date: 2026-02-09
 Maintainer: Quang Huynh <quang@bluematterscience.com>
 Description: Simulation tools to evaluate the long-term effects of salmon management strategies, including a combination of habitat, harvest, and
   habitat actions. The stochastic age-structured operating model accommodates complex life histories, including freshwater survival across 
@@ -14,7 +14,7 @@ Description: Simulation tools to evaluate the long-term effects of salmon manage
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
 Imports: abind, MSEtool (>= 3.7.2), RTMB, dplyr, ggplot2, grDevices, gsl, methods, reshape2, rlang, rmarkdown, stats, utils
-Suggests: ggrepel, rstan, testthat (>= 3.0.0), tmbstan
+Suggests: ggrepel, rstan, scales, testthat (>= 3.0.0), tmbstan
 Encoding: UTF-8
 LazyData: yes
 LazyLoad: yes

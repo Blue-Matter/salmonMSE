@@ -188,7 +188,7 @@ CM_CWTrel <- function(obs, year1, rs_names) {
   dat <- obs %>%
     structure(dimnames = list(RelYear = 1:nrow(obs) + year1 - 1, `Release Strategy` = rs_names)) %>%
     reshape2::melt() %>%
-    mutate(`Release Strategy` = factor(`Release Strategy`, rs_names), `Brood Year` = RelYear - 1)
+    mutate(`Release Strategy` = factor(`Release Strategy`, rs_names), `Brood Year` = .data$RelYear - 1)
 
   g <- ggplot(dat, aes(.data$`Brood Year`, .data$value, colour = .data$`Release Strategy`)) +
     geom_point() +
@@ -219,7 +219,7 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
   ebrood <- sapply(report, getElement, "ebrood", simplify = "array") %>%
     apply(1:3, quantile, probs = c(0.025, 0.5, 0.975)) %>%
     reshape2::melt() %>%
-    mutate(RelYear = Var2 + year1 - 1, BroodYear = RelYear - 1) %>%
+    mutate(RelYear = Var2 + year1 - 1, BroodYear = .data$RelYear - 1) %>%
     mutate(Age = paste("Age", Var3)) %>%
     mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
     reshape2::dcast(Age + BroodYear + `Release Strategy` ~ Var1, value.var = "value")
@@ -234,7 +234,7 @@ CM_fit_CWTesc <- function(report, d, year1 = 1, rs_names) {
     structure(dimnames = list(RelYear = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
     reshape2::melt() %>%
     mutate(Age = paste("Age", Age),
-           BroodYear = RelYear - 1,
+           BroodYear = .data$RelYear - 1,
            `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
     dplyr::filter(value > 0)
 
@@ -277,14 +277,14 @@ CM_fit_CWTcatch <- function(report, d, PT = TRUE, year1 = 1, rs_names) {
       structure(dimnames = list(RelYear = year1 + seq(1, nyears) - 1, Age = seq(1, nage), `Release Strategy` = rs_names)) %>%
       reshape2::melt() %>%
       mutate(Age = paste("Age", Age),
-             BroodYear = RelYear - 1,
+             BroodYear = .data$RelYear - 1,
              `Release Strategy` = factor(`Release Strategy`, rs_names)) %>%
       dplyr::filter(value > 0)
 
     cbrood <- sapply(report, getElement, ifelse(PT, "cbroodPT", "cbroodT"), simplify = "array") %>%
       apply(1:3, quantile, probs = c(0.025, 0.5, 0.975)) %>%
       reshape2::melt() %>%
-      mutate(RelYear = Var2 + year1 - 1, BroodYear = RelYear - 1) %>%
+      mutate(RelYear = Var2 + year1 - 1, BroodYear = .data$RelYear - 1) %>%
       mutate(Age = paste("Age", Var3)) %>%
       mutate(`Release Strategy` = factor(rs_names[Var4], rs_names)) %>%
       reshape2::dcast(Age + BroodYear + `Release Strategy` ~ Var1, value.var = "value")

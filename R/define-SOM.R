@@ -247,7 +247,6 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #'
 #' @slot Name Character. Identifying name
 #' @slot nsim Integer. Number of simulations
-#' @slot nyears Integer. The number of historical years
 #' @slot proyears Integer. The number of projected years
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly
 #' @slot Bio \linkS4class{Bio} object informing biological parameters, natural production, and habitat effects. Provide a list of Bio objects for multi-population models.
@@ -470,11 +469,12 @@ setMethod("initialize", "SMSE",
 # ---- SHist Class -----
 #' Class \code{"SHist"}
 #'
-#' Stores the outputs from the historical reconstruction of salmon operating models.
+#' Stores the outputs from the historical reconstruction of salmon operating models. Primarily used for development and debugging.
 #'
 #' @name SHist-class
 #' @docType class
 #' @slot Name Character. Identifying name
+#' @slot nyears Integer, number of historica years
 #' @slot nsim Integer. The number of simulations
 #' @slot nstocks Integer. The number of stocks
 #' @slot Snames Character. Stock names
@@ -589,6 +589,7 @@ setGeneric("report", function(object, ...) standardGeneric("report"))
 #' @importFrom utils browseURL
 #' @aliases report,SMSE-method
 #' @importFrom rmarkdown render
+#' @seealso [compare()]
 #' @return Returns invisibly the output of [rmarkdown::render()], typically the path of the output file
 #' @export
 setMethod("report", "SMSE",

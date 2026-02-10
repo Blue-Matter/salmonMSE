@@ -1,15 +1,64 @@
 
-compare <- function(..., SMSE_list, Design) {
-  dots <- list(...)
+#' @title Compare scenarios in markdown
+#'
+#' @description Generate a markdown report for multiple model runs to compare scenarios. 3-5 is likely the ideal number of scenarios for comparison.
+#'
+#' @param SMSE_list \linkS4class{SMSE} object
+#' @param names Character vector `length(SMSE_list)` to label individual model runs
+#' @param col_vec Character vector `length(SMSE_list)` for custom colour schemes for comparing across model scenarios in figures
+#' @param filename Character string for the name of the markdown and HTML files.
+#' @param dir The directory in which the markdown and HTML files will be saved.
+#' @param open_file Logical, whether the HTML document is opened after it is rendered.
+#' @param render_args List of arguments to pass to [rmarkdown::render()].
+#' @param ... Additional arguments (not used)
+#' @importFrom utils browseURL
+#' @seealso [report()]
+#' @return Returns invisibly the output of [rmarkdown::render()], typically the path of the output file
+#' @export
+compare <- function(SMSE_list, names, col_vec,
+                    filename = "SMSEcompare", dir = tempdir(), open_file = TRUE, render_args = list(), ...) {
 
-  if (length(dots)) {
-    SMSE_list <- dots
-    class_check <- sapply(SMSE_list, inherits, "SMSE")
-    if (!all(class_check)) stop("Not all objects in ... are SMSE objects")
+  class_check <- sapply(SMSE_list, inherits, "SMSE")
+  if (!all(class_check)) stop("Not all objects in SMSE_list are SMSE objects")
+
+  if (missing(names)) names <- paste("Scenario", 1:length(SMSE_list))
+  if (missing(col_vec)) {
+    col_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 1)
+    shade_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 0.25)
   } else {
-    class_check <- sapply(SMSE_list, inherits, "SMSE")
-    if (!all(class_check)) stop("Not all objects in SMSE_list are SMSE objects")
+    if (requireNamespace("scales", quietly = TRUE)) {
+      shade_vec <- scales::alpha(col_vec, 0.25)
+    } else {
+      shade_vec <- col_vec
+    }
   }
+
+  ####### Function arguments for rmarkdown::render
+  rmd <- system.file("include", "SMSEcompare.Rmd", package = "salmonMSE") %>% readLines()
+  rmd_split <- split(rmd, 1:length(rmd))
+
+  stock_ind <- grep("ADD RMD BY STOCK", rmd)
+  rmd_split[[stock_ind]] <- Map(make_rmd_compare, s = 1:SMSE_list[[1]]@nstocks, sname = SMSE_list[[1]]@Snames) %>% unlist()
+
+  filename_rmd <- paste0(filename, ".Rmd")
+
+  render_args$input <- file.path(dir, filename_rmd)
+  if (is.null(render_args$quiet)) render_args$quiet <- TRUE
+
+  # Generate markdown report
+  if (!dir.exists(dir)) {
+    message("Creating directory: ", dir)
+    dir.create(dir)
+  }
+  write(unlist(rmd_split), file = file.path(dir, filename_rmd))
+
+  # Rendering markdown file
+  message("Rendering markdown file: ", file.path(dir, filename_rmd))
+  output_filename <- do.call(rmarkdown::render, render_args)
+  message("Rendered file: ", output_filename)
+
+  if (open_file) browseURL(output_filename)
+  invisible(output_filename)
 }
 
 #' Compare simulation runs

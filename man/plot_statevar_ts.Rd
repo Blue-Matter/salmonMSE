@@ -103,5 +103,5 @@ Various functions that plot the state variables from salmonMSE projections:
 }
 }
 \seealso{
-\code{\link[=plot_decision_table]{plot_decision_table()}} \code{\link[=plot_LHG]{plot_LHG()}}
+\code{\link[=plot_decision_table]{plot_decision_table()}} \code{\link[=plot_LHG]{plot_LHG()}} \code{\link[=compare_statevar_ts]{compare_statevar_ts()}}
 }

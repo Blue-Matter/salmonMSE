@@ -5,12 +5,14 @@
 \alias{SHist-class}
 \title{Class \code{"SHist"}}
 \description{
-Stores the outputs from the historical reconstruction of salmon operating models.
+Stores the outputs from the historical reconstruction of salmon operating models. Primarily used for development and debugging.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{Name}}{Character. Identifying name}
+
+\item{\code{nyears}}{Integer, number of historica years}
 
 \item{\code{nsim}}{Integer. The number of simulations}
 

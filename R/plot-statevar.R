@@ -28,7 +28,7 @@
 #' @importFrom methods slot
 #' @importFrom stats quantile
 #' @importFrom grDevices hcl.colors
-#' @seealso [plot_decision_table()] [plot_LHG()]
+#' @seealso [plot_decision_table()] [plot_LHG()] [compare_statevar_ts()]
 #' @export
 plot_statevar_ts <- function(SMSE, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var, ylim,
                              agg.fun = sum, ...) {
@@ -525,3 +525,127 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, 
   return(g)
 }
 
+
+#' Compare state variables from simulation runs
+#'
+#' Compare outputs from multiple simulations to evaluate performance across states of nature and/or management levers.
+#'
+#' @inheritParams plot_statevar_ts
+#' @param SMSE_list List of SMSE objects for multiple model runs returned by [salmonMSE()]
+#' @param names Character vector `length(SMSE_list)` to label individual model runs
+#' @param col_vec Character vector `length(SMSE_list)` for custom colour schemes for comparing across model scenarios in figures
+#' @returns An array invisibly. Also generates base graphics if `figure = TRUE`
+#' @seealso [plot_statevar_ts()] [compare()]
+#' @importFrom grDevices hcl.colors
+#' @importFrom graphics polygon matlines
+#' @export
+compare_statevar_ts <- function(SMSE_list, var = "PNI", s = 1, figure = TRUE, xlab = "Projection Year", quant = FALSE, ylab = var,
+                                ylim, agg.fun = sum,
+                                names, col_vec, ...) {
+
+  if (missing(names)) names <- paste("Scenario", 1:length(SMSE_list))
+  if (missing(col_vec)) {
+    col_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 1)
+    shade_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 0.25)
+  } else {
+    if (requireNamespace("scales", quietly = TRUE)) {
+      shade_vec <- scales::alpha(col_vec, 0.25)
+    } else {
+      shade_vec <- col_vec
+    }
+  }
+  if (length(s) > 1) stop("s must be a single integer")
+
+  # if quant = FALSE: Sim x year x scenario
+  # if quant = TRUE: 3 x year x scenario
+  output <- sapply(SMSE_list, plot_statevar_ts, var = var, s = s, figure = FALSE, quant = quant, agg.fun = agg.fun,
+                   simplify = "array")
+
+  if (figure) {
+    if (missing(ylim)) ylim <- c(0, 1.1) * range(output, na.rm = TRUE)
+
+    Year <- seq(1, dim(output)[2])
+
+    matplot(Year, Year, type = "n", ylim = ylim, xlab = "Projection Year", ylab = ylab, ...)
+
+    for (i in 1:length(SMSE_list)) {
+      xplot <- output[, , i]
+      if (any(xplot > 0, na.rm = TRUE)) {
+        ind <- colSums(xplot, na.rm = TRUE) > 0
+
+        if (!quant) {
+          matlines(Year[ind], t(xplot[, ind]), type = 'l', col = col_vec, lty = 1, ...)
+        } else {
+          #matlines(Year[ind], t(xplot[, ind]), type = 'o', col = col_vec[i], pch = c(NA, 1, NA), lty = c(2, 1, 2), ...)
+          polygon(c(Year[ind], rev(Year[ind])), c(xplot[1, ind], rev(xplot[3, ind])),
+                  col = shade_vec[i], border = NA)
+          lines(Year[ind], xplot[2, ind], type = 'o', col = col_vec[i], pch = 1, lty = 1, ...)
+        }
+      }
+    }
+    legend("topleft", legend = names, col = col_vec, lty = 1, pch = 1, bty = "n")
+  }
+
+  return(invisible(output))
+}
+
+#' @rdname compare_statevar_ts
+#' @inheritParams plot_statevar_hist
+#' @importFrom stats density
+#' @export
+compare_statevar_hist <- function(SMSE_list, var = "PNI", s = 1, y, figure = TRUE, xlab = var,
+                                  names, col_vec, type = c("density", "hist"), ...) {
+
+  type <- match.arg(type)
+
+  if (missing(names)) names <- paste("Scenario", 1:length(SMSE_list))
+  if (missing(col_vec)) {
+    col_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 1)
+    shade_vec <- hcl.colors(length(SMSE_list), palette = "Dark 3", alpha = 0.25)
+  } else {
+    if (requireNamespace("scales", quietly = TRUE)) {
+      shade_vec <- scales::alpha(col_vec, 0.25)
+    } else {
+      shade_vec <- col_vec
+    }
+  }
+  if (length(s) > 1) stop("s must be a single integer")
+
+  output <- lapply(SMSE_list, plot_statevar_hist, s = s, y = y, var = var, figure = FALSE)
+
+  if (figure) {
+    xlim <- range(unlist(output), na.rm = TRUE)
+
+    if (type == "hist") {
+      hist_all <- hist(unlist(output), plot = FALSE)
+      hist_i <- lapply(output, hist, breaks = hist_all$breaks, plot = FALSE)
+      ylim <- c(0, 1.1) * range(sapply(hist_i, getElement, "counts"))
+
+      for (i in 1:length(SMSE_list)) {
+        plot(hist_i[[i]], xlab = xlab, main = NULL,
+             col = shade_vec[i], border = col_vec[i], add = i > 1, ylim = ylim, ...)
+      }
+
+    } else {
+      output_dens <- lapply(output, function(i) try(density(i), silent = TRUE))
+
+      is_dens <- sapply(output_dens, inherits, "density")
+      xd <- sapply(output_dens[is_dens], getElement, "x")
+      yd <- sapply(output_dens[is_dens], getElement, "y")
+      ylim <- c(0, 1.1) * range(yd)
+      col_vec2 <- col_vec[is_dens]
+      shade_vec2 <- shade_vec[is_dens]
+
+      if (any(is_dens)) {
+        plot(NULL, NULL, xlim = xlim, ylim = ylim, type = "n", xlab = xlab, ylab = "Density")
+        for (i in 1:sum(is_dens)) {
+          polygon(c(xd[, i], rev(xd[, i])), c(yd[, i], rep(0, nrow(yd))), border = col_vec2[i], col = shade_vec2[i])
+        }
+      }
+
+    }
+    legend("topleft", legend = names, col = col_vec, lty = 1, pch = 1, bty = "n")
+  }
+
+  return(invisible(output))
+}
