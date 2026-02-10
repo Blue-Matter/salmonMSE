@@ -68,7 +68,7 @@ this target proportion identifies the proportion of unmarked fished in the brood
 
 \item{\code{phatchery}}{\strong{Not used if \code{f_brood} is provided} Numeric. Optional parameter (default is \code{NA}). If set to a numeric between 0-1, this value is the proportion of the hatchery origin escapement that return to the hatchery, for example, by removal from spawning grounds
 or swim-in facilities. These fish are available for broodtake. None of these fish will spawn in the natural environment.
-With the default option, \code{NA} allows all hatchery origin escapement that is not used brood to go to the spawning grounds.}
+With the default option, \code{NA} allows all hatchery origin escapement to be available for brood (the remainder go to the spawning grounds).}
 
 \item{\code{premove_HOS}}{Numeric or function. The target proportion of the hatchery origin fish to be removed from the spawning grounds (in order to
 ensure a high proportion of NOS). The proportion of hatchery fish removed is discounted by the mark rate, i.e., \code{p = premove_HOS * m}.

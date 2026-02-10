@@ -91,9 +91,10 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   stray_external_enroute <- stray_external * s_enroute
 
   # Broodtake
+  custom_brood_rule <- !is.null(formals(hatchery_args$f_brood))
   if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
-    if (is.null(formals(hatchery_args$f_brood))) {
+    if (!custom_brood_rule) {
       Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
       Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
       broodtake <- calc_broodtake(
@@ -136,6 +137,13 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       hatchery_args$p_subyearling
     )
 
+    # Preliminary spawners after broodtake
+    spawners <- calc_spawners(
+      broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
+      ifelse(custom_brood_rule, NA, hatchery_args$phatchery),
+      hatchery_args$premove_HOS, hatchery_args$premove_NOS, hatchery_args$m
+    )
+
   } else {
 
     # Check for same format as list returned by .broodtake_func
@@ -159,13 +167,14 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       subyearling = rep(0, ncol(Nage_HOS))
     )
 
-  }
+    # Preliminary spawners after broodtake
+    spawners <- calc_spawners(
+      broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
+      NA, # phatchery
+      hatchery_args$premove_HOS, hatchery_args$premove_NOS, hatchery_args$m
+    )
 
-  # Preliminary spawners after broodtake
-  spawners <- calc_spawners(
-    broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
-    hatchery_args$phatchery, hatchery_args$premove_HOS, hatchery_args$premove_NOS, hatchery_args$m
-  )
+  }
 
   # Add habitat density-dependence on pre-spawn mortality
   if (habitat_args$use_habitat) {
