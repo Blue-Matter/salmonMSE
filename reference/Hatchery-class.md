@@ -140,8 +140,8 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
   hatchery, for example, by removal from spawning grounds or swim-in
   facilities. These fish are available for broodtake. None of these fish
   will spawn in the natural environment. With the default option, `NA`
-  allows all hatchery origin escapement that is not used brood to go to
-  the spawning grounds.
+  allows all hatchery origin escapement to be available for brood (the
+  remainder go to the spawning grounds).
 
 - `premove_HOS`:
 
