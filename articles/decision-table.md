@@ -190,7 +190,7 @@ compare(SMSE_list[c(1, 4, 7, 10)], names = names)
 ### Performance table
 
 Next, we need to define performance metrics that describe the outcomes
-of the various
+of the various simulations.
 
 We will look a biological metric (PNI_80, the probability that
 proportionate natural influence is at least 0.80) and a fishery metric,
