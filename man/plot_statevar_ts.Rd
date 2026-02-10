@@ -94,7 +94,7 @@ Functions return the matrix of plotted values invisibly. Figure plotted from bas
 \description{
 Various functions that plot the state variables from salmonMSE projections:
 \itemize{
-\item \code{plot_statevar_ts()} produces a time series for all simulations, or with confidence intervals
+\item \code{plot_statevar_ts()} produces a time series for all simulations, or with medians and 95th percentile intervals
 \item \code{plot_statevar_hist()} produces a histogram across all simulations for a particular year
 \item \code{plot_spawners()} produces a summary barplot of spawners, including NOS, HOS, and wild spawners
 \item \code{plot_escapement()} produces a summary figure of the proportion of spawners and broodtake to escapement

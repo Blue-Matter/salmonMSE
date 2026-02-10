@@ -3,7 +3,7 @@
 #'
 #' @description Generate a markdown report for multiple model runs to compare scenarios. 3-5 is likely the ideal number of scenarios for comparison.
 #'
-#' @param SMSE_list \linkS4class{SMSE} object
+#' @param SMSE_list List of \linkS4class{SMSE} objects
 #' @param names Character vector `length(SMSE_list)` to label individual model runs
 #' @param col_vec Character vector `length(SMSE_list)` for custom colour schemes for comparing across model scenarios in figures
 #' @param filename Character string for the name of the markdown and HTML files.

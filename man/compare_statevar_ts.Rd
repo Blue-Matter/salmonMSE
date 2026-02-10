@@ -63,13 +63,17 @@ possible for reporting apical exploitation rates.}
 
 \item{y}{Integer. Projection year for the state variable to plot the histogram. If missing, the last projection year is used.}
 
-\item{type}{For \code{plot_Kobe}, the fishery state variable to plot. Whether to plot the exploitation rate for the terminal (T) or pre-terminal fishery (PT).}
+\item{type}{Character, whether to generate a density figure or histogram}
 }
 \value{
 An array invisibly. Also generates base graphics if \code{figure = TRUE}
 }
 \description{
-Compare outputs from multiple simulations to evaluate performance across states of nature and/or management levers.
+Compare outputs from multiple simulations to evaluate performance across states of nature and/or management levers (identified by colour):
+\itemize{
+\item \code{compare_statevar_ts()} produces a time series for all simulations, or with medians and 95th percentile intervals
+\item \code{compare_statevar_hist()} produces a histogram or density plot across all simulations for a particular year
+}
 }
 \seealso{
 \code{\link[=plot_statevar_ts]{plot_statevar_ts()}} \code{\link[=compare]{compare()}}

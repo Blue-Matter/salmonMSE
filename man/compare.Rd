@@ -16,7 +16,7 @@ compare(
 )
 }
 \arguments{
-\item{SMSE_list}{\linkS4class{SMSE} object}
+\item{SMSE_list}{List of \linkS4class{SMSE} objects}
 
 \item{names}{Character vector \code{length(SMSE_list)} to label individual model runs}
 

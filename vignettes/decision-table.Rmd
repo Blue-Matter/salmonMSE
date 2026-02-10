@@ -160,6 +160,17 @@ SMSE_list <- sfLapply(1:nrow(Design), wrapper, Design = Design)
 
 We now have a list of SMSE objects, where each entry contains the results from a specific scenario.
 
+The `compare()` function provides a quick markdown report to compare outcomes across scenarios. 
+This may be useful to ensure that the models are behaving as intended:
+
+```{r, eval = FALSE}
+# Showing a subset of 4 scenarios where productivity is 3 but release target varies
+names <- paste("Hatchery =", seq(0, 15000, 5000))
+compare(SMSE_list[c(1, 4, 7, 10)], names = names)
+```
+
+## Performance table
+
 Next, we need to define performance metrics that describe the outcomes of the various 
 
 We will look a biological metric (PNI_80, the probability that proportionate natural influence is at least 0.80) and a fishery metric, the average catch and the probability that the catches exceeds 60, at the end of the projection.

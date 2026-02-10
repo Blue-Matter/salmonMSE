@@ -4,7 +4,7 @@
 #' @description
 #' Various functions that plot the state variables from salmonMSE projections:
 #'
-#' - `plot_statevar_ts()` produces a time series for all simulations, or with confidence intervals
+#' - `plot_statevar_ts()` produces a time series for all simulations, or with medians and 95th percentile intervals
 #' - `plot_statevar_hist()` produces a histogram across all simulations for a particular year
 #' - `plot_spawners()` produces a summary barplot of spawners, including NOS, HOS, and wild spawners
 #' - `plot_escapement()` produces a summary figure of the proportion of spawners and broodtake to escapement
@@ -528,7 +528,10 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, 
 
 #' Compare state variables from simulation runs
 #'
-#' Compare outputs from multiple simulations to evaluate performance across states of nature and/or management levers.
+#' @description
+#' Compare outputs from multiple simulations to evaluate performance across states of nature and/or management levers (identified by colour):
+#' - `compare_statevar_ts()` produces a time series for all simulations, or with medians and 95th percentile intervals
+#' - `compare_statevar_hist()` produces a histogram or density plot across all simulations for a particular year
 #'
 #' @inheritParams plot_statevar_ts
 #' @param SMSE_list List of SMSE objects for multiple model runs returned by [salmonMSE()]
@@ -591,6 +594,7 @@ compare_statevar_ts <- function(SMSE_list, var = "PNI", s = 1, figure = TRUE, xl
 
 #' @rdname compare_statevar_ts
 #' @inheritParams plot_statevar_hist
+#' @param type Character, whether to generate a density figure or histogram
 #' @importFrom stats density
 #' @export
 compare_statevar_hist <- function(SMSE_list, var = "PNI", s = 1, y, figure = TRUE, xlab = var,
