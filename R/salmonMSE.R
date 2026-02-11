@@ -36,7 +36,7 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   if (!silent) message("Generating historical dynamics..")
 
-  H <- SimulateMOM(MOM, parallel = FALSE, silent = !trace)
+  H <- MSEtool::SimulateMOM(MOM, parallel = FALSE, silent = !trace)
 
   # Add numbers at age
   H <- initialize_population(H, SOM)
@@ -58,8 +58,10 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
   # Initialize zbar in data frame
   salmonMSE_env$Ford <- initialize_zbar(SOM)
 
-  M <- ProjectMOM(H, MPs = "HMMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
-                  dropHist = TRUE, extended = FALSE)
+  M <- MSEtool::ProjectMOM(
+    H, MPs = "HMMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
+    dropHist = TRUE, extended = FALSE
+  )
   M@multiHist <- H
 
   if (convert) {

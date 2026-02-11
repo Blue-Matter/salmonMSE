@@ -94,7 +94,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   custom_brood_rule <- !is.null(formals(hatchery_args$f_brood))
   if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
-    if (!custom_brood_rule) {
+    if (!custom_brood_rule) { # AHA approach
       Nage_NOS_avail_brood <- Nage_NOS_enroute * hatchery_args$pmax_esc
       Nage_HOS_avail_brood <- Nage_HOS_enroute * hatchery_args$pmax_esc
       broodtake <- calc_broodtake(
@@ -111,7 +111,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         hatchery_args$s_prespawn,
         hatchery_args$m
       )
-    } else {
+    } else { # Custom brood approach
       broodtake <- calc_broodtake_custom(
         f_brood = hatchery_args$f_brood,
         NOR_escapement = Nage_NOS_enroute,
@@ -137,7 +137,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
       hatchery_args$p_subyearling
     )
 
-    # Preliminary spawners after broodtake
+    # List of preliminary spawners and in-river removals after broodtake
     spawners <- calc_spawners(
       broodtake, Nage_NOS_enroute, Nage_HOS_enroute, stray_external_enroute,
       ifelse(custom_brood_rule, NA, hatchery_args$phatchery),
@@ -274,6 +274,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     t <- max(1, 0.5 * (y - habitat_args$nyears_om))
     Habitat <- habitat_args$Habitat
 
+    ### Incubation survival
     # By parental life cycle group
     Egg_prod_NOS <- calc_SRR(
       Egg_NOS, sum(Egg_HOS, Egg_NOS),
@@ -369,10 +370,11 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     )
   }
 
-  # Predicted smolts from historical SRR parameters and openMSE setup
+  # Predicted egg production naively calculated by openMSE
   # if there were no hatchery production, habitat improvement, enroute mortality, or multiple LHG
   Egg_openMSE <- sum(Nage_NOS[, g] * p_female * fec_t)
 
+  # Predicted juveniles by openMSE
   if (habitat_args$use_habitat) {
     smolt_NOS_SRR <- 1
   } else {
@@ -382,7 +384,12 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     )
   }
 
-  # MICE parameter to be updated in operating model
+  # Perr_y is an adjustment to the predicted juveniles (as a result of everything happening in this function,
+  # including brood, en-route mortality)
+  #
+  # MICE parameter (natural production, Perr = process error for recruitment of new cohort)
+  # Updated here and passed to openMSE operating model so that brood year juveniles in marine life stage
+  # in openMSE is equal to numbers predicted in this function (smolt_NOS + smolt_HOS)
   Perr_y <- (smolt_NOS[g] + smolt_HOS[g])/smolt_NOS_SRR
   if (!smolt_NOS_SRR) Perr_y[] <- 0
 

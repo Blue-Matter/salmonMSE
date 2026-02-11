@@ -471,27 +471,27 @@ make_stock_index <- function(SOM, check = FALSE) {
   return(dat)
 }
 
-calc_Perr_main <- function(Njuv, Fjuv, Fterm, p_mature, nyears, HistSpawner, fec, p_female, gamma = 1, NOS = TRUE,
-                           SRRfun, SRRpars) {
-
-  Recruit <- Njuv[, seq(1, nyears)] * exp(-Fjuv) * p_mature[, seq(1, nyears)]
-  SpawnerOM <- Recruit * exp(-Fterm) # Escapement
-
-  if (!length(HistSpawner)) HistSpawner <- SpawnerOM
-
-  EggOM <- colSums(SpawnerOM * gamma * fec * p_female)
-  EggHist <- colSums(HistSpawner * gamma * fec * p_female)
-
-  fec_ratio <- EggHist/EggOM
-  fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
-
-  if (NOS) {
-    Smolt_pred <- SRRfun(EggHist, SRRpars)
-    Smolt_actual <- Njuv[1, ]
-    dev <- Smolt_actual/c(1, Smolt_pred) # Length nyears + 1
-  } else {
-    dev <- Njuv[1, ]
-  }
-  dev[is.na(dev)] <- 0
-  list(dev = dev, fec_ratio = fec_ratio)
-}
+#calc_Perr_main <- function(Njuv, Fjuv, Fterm, p_mature, nyears, HistSpawner, fec, p_female, gamma = 1, NOS = TRUE,
+#                           SRRfun, SRRpars) {
+#
+#  Recruit <- Njuv[, seq(1, nyears)] * exp(-Fjuv) * p_mature[, seq(1, nyears)]
+#  SpawnerOM <- Recruit * exp(-Fterm) # Escapement
+#
+#  if (!length(HistSpawner)) HistSpawner <- SpawnerOM
+#
+#  EggOM <- colSums(SpawnerOM * gamma * fec * p_female)
+#  EggHist <- colSums(HistSpawner * gamma * fec * p_female)
+#
+#  fec_ratio <- EggHist/EggOM
+#  fec_ratio[is.na(fec_ratio)] <- 1 # No spawners
+#
+#  if (NOS) {
+#    Smolt_pred <- SRRfun(EggHist, SRRpars)
+#    Smolt_actual <- Njuv[1, ]
+#    dev <- Smolt_actual/c(1, Smolt_pred) # Length nyears + 1
+#  } else {
+#    dev <- Njuv[1, ]
+#  }
+#  dev[is.na(dev)] <- 0
+#  list(dev = dev, fec_ratio = fec_ratio)
+#}
