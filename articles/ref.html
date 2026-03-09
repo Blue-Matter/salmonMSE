@@ -65,7 +65,7 @@
 
       <h1>Reference points</h1>
             
-            <h4 data-toc-skip class="date">2026-02-11</h4>
+            <h4 data-toc-skip class="date">2026-03-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/ref.Rmd" class="external-link"><code>vignettes/ref.Rmd</code></a></small>
       <div class="d-none name"><code>ref.Rmd</code></div>
@@ -277,7 +277,7 @@ vulnerability vary with age.</p>
 <span>                        <span class="va">p_female</span> <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                        <span class="va">vulPT</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">maxage</span><span class="op">)</span>,</span>
 <span>                        <span class="va">vulT</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>                        <span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>                        <span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span><span class="op">)</span>,</span>
 <span>                        <span class="va">fec</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1500</span>, <span class="fl">3000</span>, <span class="fl">3200</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
 <span>                        <span class="va">p_mature</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
@@ -366,71 +366,11 @@ Ricker (stock-recruit only) reference points are identical.</p>
 <span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">0.01</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co"># SAR = 0.01</span></span>
+<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">0.01</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co"># SAR = 0.01</span></span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: salmonMSE</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
 <span><span class="co">#&gt;    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return </span></span>
 <span><span class="co">#&gt;             0.0000000             0.4678228             0.4678228 </span></span>
@@ -457,70 +397,10 @@ with fecundity = 1 and fully vulnerable to the fishery.</p>
 <span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
 <span><span class="co">#&gt;    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return </span></span>
 <span><span class="co">#&gt;             0.0000000             0.4678228             0.4678228 </span></span>
@@ -552,62 +432,10 @@ metric.</p>
 <span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
 <span><span class="co">#&gt;    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return </span></span>
 <span><span class="co">#&gt;             0.0000000             0.7330604             0.4678273 </span></span>
@@ -637,62 +465,10 @@ Ricker-only reference points.</p>
 <span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">2000</span>, <span class="fl">3000</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
 <span><span class="co">#&gt;    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return </span></span>
 <span><span class="co">#&gt;             0.0000000             0.6424027             0.4000761 </span></span>
@@ -722,64 +498,10 @@ reference points.</p>
 <span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">2000</span>, <span class="fl">3000</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
-<span><span class="co">#&gt; Warning in Mjuv[, g] + FPT[-length(FPT)]: longer object length is not a</span></span>
-<span><span class="co">#&gt; multiple of shorter object length</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
 <span><span class="co">#&gt;    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return </span></span>
 <span><span class="co">#&gt;             0.4670406             0.4670406             0.2553111 </span></span>
