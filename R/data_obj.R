@@ -13,3 +13,6 @@
 #'
 #' data(multi_SOM)
 "simple_SOM"
+
+#' @rdname simple_SOM
+"multi_SOM"

@@ -33,6 +33,15 @@ For the Beverton-Holt stock recruit relationship:
 For the Ricker stock recruit relationship:
 \deqn{\beta = \dfrac{\alpha}{Ce}}, \eqn{e} is Euler's number.
 }
+\examples{
+
+N1 <- 100
+N2 <- 200
+p <- 10
+capacity <- 250
+
+calc_SRRpars(p, capacity, type = "BH")
+}
 \seealso{
 \code{\link[=calc_SRR]{calc_SRR()}}
 }

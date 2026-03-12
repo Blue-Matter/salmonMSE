@@ -372,6 +372,9 @@ NAor0 <- function(x) !length(x) || is.na(x) || !x
 #' @param SOM [salmonMSE::SOM-class] object
 #' @param silent Logical, whether to report progress in console
 #' @returns Updated [salmonMSE::SOM-class] object with full dimensions in various slots
+#' @examples
+#' SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
+#'
 #' @export
 check_SOM <- function(SOM, silent = FALSE) {
 

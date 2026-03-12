@@ -20,6 +20,10 @@
 #' - `calc_ref` returns a list by stock, each containing a matrix of MSY state variables and Sgen by simulation
 #' @seealso [calc_Smsy_Ricker()]
 #' @importFrom stats optimize
+#' @examples
+#' ref_simple <- calc_ref(simple_SOM)
+#' ref_multi <- calc_ref(multi_SOM)
+#'
 #' @export
 calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
   maximize <- match.arg(maximize)
@@ -301,6 +305,14 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
 #' @references Scheuerell, M.D. 2016. An explicit solution for
 #' calculating optimum spawning stock size from Ricker’s stock recruitment model. PeerJ 4:e1623. \doi{10.7717/peerj.1623}
 #' @seealso [calc_ref()]
+#' @examples
+#' a <- 3
+#' Smax <- 100
+#' b <- 1/Smax
+#'
+#' calc_Smsy_Ricker(log(a), b)
+#' calc_Umsy_Ricker(log(a))
+#' calc_Sgen_Ricker(log(a), b)
 #' @export
 calc_Smsy_Ricker <- function(loga,b) {
   #gives the min Ricker log-likelihood

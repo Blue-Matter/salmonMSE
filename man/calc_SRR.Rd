@@ -44,6 +44,20 @@ p N_1 &, N_1 \le \frac{N_1}{N_2} \times C\\
 \end{cases}
 }
 }
+\examples{
+N1 <- 100
+N2 <- 200
+p <- 10
+capacity <- 250
+
+calc_SRR(N1, N2, p, capacity, type = "BH")
+
+# Validation
+SRRpars <- calc_SRRpars(p, capacity, type = "BH")
+a <- SRRpars[1]
+b <- SRRpars[2]
+a * N1/(1 + b * N2)
+}
 \seealso{
 \code{\link[=calc_SRRpars]{calc_SRRpars()}}
 }

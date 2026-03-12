@@ -95,6 +95,11 @@ in the last year of the projection.
 \item \code{calc_ref()} is a wrapper function that calculates MSY and Sgen for an operating model
 }
 }
+\examples{
+ref_simple <- calc_ref(simple_SOM)
+ref_multi <- calc_ref(multi_SOM)
+
+}
 \seealso{
 \code{\link[=calc_Smsy_Ricker]{calc_Smsy_Ricker()}}
 }

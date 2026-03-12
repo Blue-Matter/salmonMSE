@@ -33,6 +33,19 @@
 #' }
 #'
 #' @seealso [calc_SRRpars()]
+#' @examples
+#' N1 <- 100
+#' N2 <- 200
+#' p <- 10
+#' capacity <- 250
+#'
+#' calc_SRR(N1, N2, p, capacity, type = "BH")
+#'
+#' # Validation
+#' SRRpars <- calc_SRRpars(p, capacity, type = "BH")
+#' a <- SRRpars[1]
+#' b <- SRRpars[2]
+#' a * N1/(1 + b * N2)
 #' @export
 calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
   type <- match.arg(type)
@@ -74,6 +87,14 @@ calc_SRR <- function(N1, N2 = N1, p, capacity, type = c("BH", "Ricker", "HS")) {
 #' For the Ricker stock recruit relationship:
 #' \deqn{\beta = \dfrac{\alpha}{Ce}}, \eqn{e} is Euler's number.
 #' @seealso [calc_SRR()]
+#' @examples
+#'
+#' N1 <- 100
+#' N2 <- 200
+#' p <- 10
+#' capacity <- 250
+#'
+#' calc_SRRpars(p, capacity, type = "BH")
 #' @export
 calc_SRRpars <- function(p, capacity, f = 1, p_female = 1, type = c("BH", "Ricker", "HS")) {
   type <- match.arg(type)

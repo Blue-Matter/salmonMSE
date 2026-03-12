@@ -18,6 +18,11 @@
 #' If `Hist = TRUE`: if `convert = TRUE`, a \linkS4class{SHist} object or if `convert = FALSE`, a multiHist object (list).
 #'
 #' If `Hist = FALSE`: if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a [MSEtool::MMSE-class] object.
+#' @examples
+#' \dontrun{
+#' SMSE <- salmonMSE(simple_SOM)
+#' }
+#'
 #' @export
 salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
 

@@ -32,3 +32,9 @@ If \code{Hist = FALSE}: if \code{convert = TRUE}, a \linkS4class{SMSE} object or
 \item Converts the openMSE output, along with additional state variables recorded in \link{salmonMSE_env}, into a salmon MSE object (SMSE) via \code{\link[=MMSE2SMSE]{MMSE2SMSE()}}
 }
 }
+\examples{
+\dontrun{
+SMSE <- salmonMSE(simple_SOM)
+}
+
+}
