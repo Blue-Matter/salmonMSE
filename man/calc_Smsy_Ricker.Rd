@@ -25,6 +25,15 @@ All three functions return a numeric
 Compute reference points (Umsy, Smsy, and Sgen) from Ricker stock-recruit function
 based on Scheuerell (2016).
 }
+\examples{
+a <- 3
+Smax <- 100
+b <- 1/Smax
+
+calc_Smsy_Ricker(log(a), b)
+calc_Umsy_Ricker(log(a))
+calc_Sgen_Ricker(log(a), b)
+}
 \references{
 Scheuerell, M.D. 2016. An explicit solution for
 calculating optimum spawning stock size from Ricker’s stock recruitment model. PeerJ 4:e1623. \doi{10.7717/peerj.1623}

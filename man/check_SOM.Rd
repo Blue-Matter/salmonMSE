@@ -18,3 +18,7 @@ Updated \linkS4class{SOM} object with full dimensions in various slots
 Ensures that the slots in the \linkS4class{SOM} object have the correct dimensions. Function will
 update some slots to their full dimensions.
 }
+\examples{
+SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
+
+}

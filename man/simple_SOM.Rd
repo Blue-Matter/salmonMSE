@@ -7,12 +7,16 @@
 \title{Example objects from salmonMSE}
 \format{
 An object of class \linkS4class{SOM}.
+
+An object of class \code{SOM} of length 1.
 }
 \source{
 See salmonMSE \href{https://docs.salmonmse.com/articles/example.html}{website}
 }
 \usage{
 simple_SOM
+
+multi_SOM
 }
 \description{
 S4 objects containing operating model inputs to run the projection.

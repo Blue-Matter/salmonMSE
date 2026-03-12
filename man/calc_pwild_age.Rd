@@ -32,4 +32,9 @@ Calculate the proportion of wild spawners from a time series of spawners
 \item \code{calc_pwild_age()} performs the calculation weighted by age class fecundity
 }
 }
+\examples{
+
+calc_pwild(0.9, 0.4, 0.8)
+
+}
 \keyword{internal}
