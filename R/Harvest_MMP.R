@@ -210,8 +210,6 @@ make_Harvest_MMP <- function(SOM, check = TRUE) {
 #' @return Numeric for the apical F
 #'
 #' @keywords internal
-#'
-#' @importFrom stats uniroot
 get_F <- function(u = 0, K = 0, type = c("u", "catch"), M, N = 1, vul = 1, ret = 1, release_mort = 0, Fmax = 20) {
   type <- unique(type)
 
