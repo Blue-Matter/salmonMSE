@@ -386,6 +386,7 @@ check_SOM <- function(SOM, silent = FALSE) {
   if (!length(SOM@proyears)) stop("Need SOM@proyears")
   if (!length(SOM@seed)) stop("Need SOM@seed")
   nsim <- SOM@nsim
+  if (nsim < 2) stop("Need SOM@nsim > 1")
   proyears <- SOM@proyears
 
   # Convert sub class objects to lists
