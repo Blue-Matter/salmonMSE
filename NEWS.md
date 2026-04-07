@@ -1,5 +1,10 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
+# 1.1.0
+
+- Example objects
+- New arguments in Hatchery object to determine if hatchery releases compete with natural-origin juveniles
+
 # 1.0.0
 
 ## salmonMSE projections

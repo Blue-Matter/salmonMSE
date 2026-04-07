@@ -80,7 +80,7 @@ SOM <- new("SOM",
            Bio, Habitat, Hatchery, Harvest, Historical,
            nsim = nsim, proyears = 50)
 simple_SOM <- SOM
-usethis::use_data(simple_SOM)
+usethis::use_data(simple_SOM, overwrite = TRUE)
 
 SMSE <- salmonMSE(SOM)
 saveRDS(SMSE, "examples/SMSE/SMSE_simple.rds")

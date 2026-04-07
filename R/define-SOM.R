@@ -190,6 +190,8 @@ setClass(
     n_r = "numeric",
     n_yearling = "numeric",           # Management lever. No hatchery if both this line and next line are zero
     n_subyearling = "numeric",        # Management lever. No hatchery if both this line and previous line are zero
+    yearling_DD = "logical",
+    subyearling_DD = "logical",
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",

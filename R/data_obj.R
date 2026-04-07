@@ -2,8 +2,8 @@
 
 #' Example objects from salmonMSE
 #'
+#' @description
 #' S4 objects containing operating model inputs to run the projection.
-#'
 #' @format An object of class [salmonMSE::SOM-class].
 #' @source See salmonMSE [website](https://docs.salmonmse.com/articles/example.html)
 #'

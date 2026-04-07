@@ -91,7 +91,7 @@ SOM <- new("SOM",
 SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
 
 multi_SOM <- SOM
-usethis::use_data(multi_SOM)
+usethis::use_data(multi_SOM, overwrite = TRUE)
 
 MOM <- SOM2MOM(SOM)
 

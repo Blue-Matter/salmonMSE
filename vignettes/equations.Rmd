@@ -50,11 +50,11 @@ knitr::kable(param[grepl("Hatchery|Fitness", param$Type), ], row.names = FALSE)
 knitr::kable(param[grepl("Harvest", param$Type), ], row.names = FALSE)
 ```
 
-# Natural production
+# Juvenile natural production
 
 First, we consider natural production in the absence of fitness effects arising from hatchery production.
 
-## Spawning output
+## No habitat modeling
 
 From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding spawning output (units of eggs) of the subsequent generation is calculated as:
 
@@ -65,17 +65,15 @@ From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding spawni
 
 where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the superscript denotes the parentage of the progeny.
 
-## Smolt production - no habitat modeling
-
 If no habitat modeling is used, then fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y$.
 
-Survival from egg to smolt life stage is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
+Survival from fry to smolt life stage, effectively over the entire freshwater life stage, is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}\\
+\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}
+\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}
 \end{align}
 
 where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$, the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
@@ -90,18 +88,38 @@ If there is knife-edge maturity, i.e., all fish mature at the terminal age, the 
 >
 >\begin{align}
 >\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])\\
+>\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
 >\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])
+>\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
 >\end{align}
 >
 >where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$, $S_\textrm{max}$ is the egg production that maximizes smolt production.
 
-## Smolt production - habitat modeling
+## With habitat modeling
 
-Egg to smolt production can also be modeled as a series of density-dependent functions by life stage, following the approach of [Jorgensen et al. 2021](https://doi.org/10.1371/journal.pone.0256792). Three relationships are modeled.
+Freshwater life stages can also be modeled as a series of density-dependent functions by life stage, following the general approach of [Jorgensen et al. 2021](https://doi.org/10.1371/journal.pone.0256792). Four relationships are modeled.
 
-The realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from the spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
+First, pre-spawn (ps) mortality can occur, where the realized number of spawners $\widetilde{\textrm{NOS}}_y$ and $\widetilde{\textrm{HOS}}_y$ is:
+
+\begin{align}
+\widetilde{\textrm{NOS}}_y &= \frac{P^\textrm{ps} \times 
+\textrm{NOS}_y}{1 + \frac{P^\textrm{ps}}{C^\textrm{ps}}(\textrm{NOS}_y + \textrm{HOS}_y)}\\
+\widetilde{\textrm{HOS}}_y &= \frac{P^\textrm{ps} \times 
+\textrm{HOS}_y}{1 + \frac{P^\textrm{ps}}{C^\textrm{ps}}(\textrm{NOS}_y + \textrm{HOS}_y)}\\
+\end{align}
+
+where productivity $P$ is the maximum survival as spawner numbers approaches zero and $C$ is the asymptotic number of spawners, i.e., spawner capacity.
+
+>Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
+
+The initial egg production is calculated after pre-spawn mortality:
+
+\begin{align}
+\textrm{Egg}^\textrm{NOS}_y &= \sum_a\widetilde{\textrm{NOS}}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
+\textrm{Egg}^\textrm{HOS}_y &= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\end{align}
+
+Second, the realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from the spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
 
 \begin{align}
 \widetilde{\textrm{Egg}}^\textrm{NOS}_y &= \frac{P^\textrm{inc} \times 
@@ -110,11 +128,9 @@ The realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from 
 \textrm{Egg}^\textrm{HOS}_y}{1 + \frac{P^\textrm{inc}}{C^\textrm{inc}}(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)}
 \end{align}
 
-where productivity $P$ is the maximum survival as spawning output approaches zero and $C$ is the asymptotic production.
+where productivity $P$ is the maximum survival as spawning output approaches zero and $C$ is the asymptotic production (egg capacity).
 
->Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
-
-Fry production is modeled as:
+Third, fry production is modeled as:
 
 \begin{align}
 \textrm{Fry}^\textrm{NOS}_{y+1} &= \frac{P^\textrm{egg-fry} \times 
@@ -125,7 +141,7 @@ Fry production is modeled as:
 
 where $\varepsilon^\textrm{egg-fry}_y$ is a year-specific deviation in survival. They can be modeled as a function of a proposed time series of environmental variables $\eta$, for example, $\varepsilon^\textrm{egg-fry}_y = \prod_j f(\eta_{y,j})$ or $\varepsilon^\textrm{egg-fry}_y = \sum_j f(\eta_{y,j})$.
 
-Similarly, smolt production is modeled as:
+The last freshwater life stage with smolt production is modeled as:
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_y &= \frac{P^\textrm{fry-smolt} \times 
@@ -137,10 +153,11 @@ Similarly, smolt production is modeled as:
 Alternative scenarios with changes in productivity or capacity parameters can be used to evaluate changes in life stage survival from habitat improvement or mitigation measures as part of a management strategy, or from climate regimes (low productivity vs. high productivity, or low capacity vs. high capacity).
 An increase in capacity can arise from restoration which increases the area of suitable habitat.
 An increase in productivity can arise from improvement in habitat, e.g., sediment quality.
+Year-specific deviations can be used to simulate stochasticity in survival.
 
 Approaches such as [HARP](https://www.fisheries.noaa.gov/resource/tool-app/habitat-assessment-and-restoration-planning-harp-model) and [CEMPRA](https://www.essa.com/explore-essa/projects/cumulative-effects-model-for-priority-of-recovery-actions-cempra/) can inform productivity and capacity parameters across these life stages as quantitative relationships between habitat variables.
 
->For all life stages, a hockey-stick formulation is also possible. For example:
+>For all life stages, a hockey-stick formulation is also possible. For example, egg incubation mortality would be:
 >
 >$$
 >\widetilde{\textrm{Egg}}^\textrm{NOS}_y = 
@@ -152,7 +169,24 @@ Approaches such as [HARP](https://www.fisheries.noaa.gov/resource/tool-app/habit
 >
 >where $C^\textrm{inc*}_y = C^\textrm{inc} \times \textrm{Egg}^\textrm{NOS}_y/(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)$ is the capacity apportioned to natural spawners based on relative abundance.
 
-# Hatchery production
+## Competition with hatchery releases
+
+Competition between natural-origin fry and hatchery releases can be incorporated into the density-dependent survival equation by adjusting the denominator of the Beverton-Holt equation:
+
+\begin{align}
+\textrm{Smolt}^\textrm{NOS}_y &= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y + n^\textrm{subyearling}_y + n^\textrm{yearling}_y)} \times \varepsilon^\textrm{fry-smolt}_y\\
+\textrm{Smolt}^\textrm{HOS}_y &= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y + n^\textrm{subyearling}_y + n^\textrm{yearling}_y)} \times \varepsilon^\textrm{fry-smolt}_y
+\end{align}
+
+where $n^\textrm{subyearling}_y$ and $n^\textrm{yearling}_y$ are subyearling and yearling releases from the hatchery, respectively.
+
+>salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term.
+
+Such competition may be used when hatchery releases do not leave freshwater environment and interact with natural-origin fish.
+
+# Hatchery juvenile production
 
 Hatchery production is controlled by several sets of variables specified by the analyst, roughly following the [AHA](https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/) approach.
 
@@ -242,7 +276,7 @@ The maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ or
 The total egg production in a given year can fail to reach the target if there is insufficient unmarked escapement. 
 In this case, the unmarked take is set to the maximum removal rate ($p^\textrm{broodtake,unmarked}_y = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB (including strays and imports).
 
-## Smolt releases
+## Releases
 
 After the total hatchery egg production is calculated, the production of yearlings and subyearlings is calculated to ensure the annual ratio is equal to the target ratio. To do so, the parameter $p^\textrm{egg,yearling}_y$ is solved subject to the following conditions:
 
@@ -254,16 +288,22 @@ $n^\textrm{subyearling}_{y+1} = (1 - p^\textrm{egg,yearling}_y) \times \textrm{E
 
 $\frac{n^\textrm{yearling}_y}{n^\textrm{subyearling}_y + n^\textrm{yearling}_y} = \frac{n^\textrm{yearling}_\textrm{target}}{n^\textrm{subyearling}_\textrm{target} + n^\textrm{yearling}_\textrm{target}}$
 
-From the total broodtake, the smolt releases is calculated as
+With no density-dependent competition with natural-origin juveniles, the outmigrating releases ("smolt releases") is calculated as
 
 $$
-\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \frac{\alpha \times n^\textrm{subyearling}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1})}
+\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}
+$$
+
+With competition, the outmigrating abundance is:
+
+$$
+\textrm{Smolt}^\textrm{Rel}_{y+1} = \frac{\alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}
 $$
 
 or 
 
 $$
-\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \alpha \times n^\textrm{subyearling}_{y+1} \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1}))
+\textrm{Smolt}^\textrm{Rel}_{y+1} = \alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}) \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}))
 $$
 
 
@@ -342,7 +382,7 @@ Strays not used for brood are also included as hatchery spawners.
 &= (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} + (\textrm{Stray}_{y,a} - \textrm{HOB}^\textrm{stray}_{y,a})
 \end{align}
 
-# Fitness effects on survival
+# Fitness effects on juvenile survival
 
 Reproductive success of first generation hatchery fish has been observed to be lower than their natural counterparts, and is accounted for in the $\gamma$ parameter (see review in [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html)).
 

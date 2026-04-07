@@ -314,29 +314,56 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   # Hatchery production after fitness loss by release strategy (next generation)
   yearling <- hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
   subyearling <- hatchery_production$subyearling * fitness_loss[2, 1]
-  total_fry <- sum(Fry_NOS, Fry_HOS, subyearling)
+
+  # Juveniles in freshwater environment together that experience density-dependent survival
+  total_fry_DD <- sum(Fry_NOS, Fry_HOS)
+  if (hatchery_args$yearling_DD) total_fry_DD <- sum(total_fry_DD, yearling)
+  if (hatchery_args$subyearling_DD) total_fry_DD <- sum(total_fry_DD, subyearling)
 
   # Smolt production
   SRrel <- match.arg(SRRpars[x, "SRrel"], choices = c("BH", "Ricker"))
 
-  # Hatchery releases in competition with natural subyearlings with fitness effects (by release strategy)
-  if (habitat_args$use_habitat) {
-    smolt_subyearling <- calc_SRR(
-      subyearling, total_fry,
-      p = Habitat@smolt_prod * fitness_loss[2, 2], capacity = Habitat@smolt_capacity * fitness_loss[2, 2],
-      type = Habitat@smolt_rel
-    )
+  # Hatchery releases in competition with natural-origin juveniles with fitness effects (by release strategy)
+  if (hatchery_args$yearling_DD) {
+    if (habitat_args$use_habitat) {
+      smolt_yearling <- calc_SRR(
+        yearling, total_fry_DD,
+        p = Habitat@smolt_prod * fitness_loss[2, 2], capacity = Habitat@smolt_capacity * fitness_loss[2, 2],
+        type = Habitat@smolt_rel
+      )
+    } else {
+      smolt_subyearling <- calc_smolt(
+        yearling, total_fry_DD,
+        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+        fitness_loss[2, 1] * fitness_loss[2, 2],
+        SRrel
+      )
+    }
   } else {
-    smolt_subyearling <- calc_smolt(
-      subyearling, total_fry,
-      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
-      fitness_loss[2, 1] * fitness_loss[2, 2],
-      SRrel
-    )
+    smolt_yearling <- yearling
+  }
+
+  if (hatchery_args$subyearling_DD) {
+    if (habitat_args$use_habitat) {
+      smolt_subyearling <- calc_SRR(
+        subyearling, total_fry_DD,
+        p = Habitat@smolt_prod * fitness_loss[2, 2], capacity = Habitat@smolt_capacity * fitness_loss[2, 2],
+        type = Habitat@smolt_rel
+      )
+    } else {
+      smolt_subyearling <- calc_smolt(
+        subyearling, total_fry_DD,
+        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+        fitness_loss[2, 1] * fitness_loss[2, 2],
+        SRrel
+      )
+    }
+  } else {
+    smolt_subyearling <- subyearling
   }
 
   # Total outmigrating hatchery releases
-  smolt_rel <- yearling + smolt_subyearling
+  smolt_rel <- smolt_yearling + smolt_subyearling
   if (output == "hatchery") return(smolt_rel[r])
 
   # Natural fry production for life history group g (next generation)
@@ -346,24 +373,24 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   # Natural smolt production for life history group g (next generation)
   if (habitat_args$use_habitat) {
     smolt_NOS <- calc_SRR(
-      Fry_NOS_g, total_fry,
+      Fry_NOS_g, total_fry_DD,
       p = Habitat@smolt_prod * fitness_loss[1, 2], capacity = Habitat@smolt_capacity * fitness_loss[1, 2],
       type = Habitat@smolt_rel
     ) * Habitat@smolt_sdev[x, t]
     smolt_HOS <- calc_SRR(
-      Fry_HOS_g, total_fry,
+      Fry_HOS_g, total_fry_DD,
       p = Habitat@smolt_prod * fitness_loss[1, 2], capacity = Habitat@smolt_capacity * fitness_loss[1, 2],
       type = Habitat@smolt_rel
     ) * Habitat@smolt_sdev[x, t]
   } else {
     smolt_NOS <- calc_smolt(
-      Fry_NOS_g, total_fry,
+      Fry_NOS_g, total_fry_DD,
       SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
       fitness_loss[1, 2],
       SRrel
     )
     smolt_HOS <- calc_smolt(
-      Fry_HOS_g, total_fry,
+      Fry_HOS_g, total_fry_DD,
       SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
       fitness_loss[1, 2],
       SRrel

@@ -22,10 +22,14 @@ A description of the fitness parameters and hatchery dynamics is available in th
 \item{\code{n_r}}{Integer. Number of release strategies, sub-groups of fish with different survival schedules. Default is one.}
 
 \item{\code{n_yearling}}{Vector length \code{n_r}. The target number of yearlings released by release strategy. No hatchery is modeled if \code{sum(n_yearling, n_subyearling) = 0}.
-are zero. Yearlings survival is density-independent after release. Default is zero.}
+are zero. Default is zero. Yearlings are differentiated from sub-yearlings only in the hatchery survival parameter, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
 
 \item{\code{n_subyearling}}{Vector length \code{n_r}. The target number of subyearlings released. No hatchery is modeled if \code{sum(n_yearling, n_subyearling) = 0} are zero.
-Subyearlings experience density-dependent survival in competition with natural origin young. Default is zero.}
+Default is zero. Yearlings are differentiated from sub-yearlings only in the hatchery survival parameter, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
+
+\item{\code{yearling_DD}}{Logical, whether freshwater yearling survival after release is density-dependent, in competition with natural-origin juveniles. Default is FALSE. Likely relevant only for stream types where there is substantial residence time before outmigration.}
+
+\item{\code{subyearling_DD}}{Logical, whether freshwater subyearling survival after release is density-dependent, in competition with natural-origin juveniles. Default is FALSE. Likely relevant only for stream types where there is substantial residence time before outmigration.}
 
 \item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}

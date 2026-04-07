@@ -268,6 +268,8 @@ SOM2MOM <- function(SOM, check = TRUE) {
           s_subyearling = Hatchery@s_egg_subyearling,
           p_yearling = p_yearling,
           p_subyearling = p_subyearling,
+          yearling_DD = Hatchery@yearling_DD,
+          subyearling_DD = Hatchery@subyearling_DD,
           phatchery = Hatchery@phatchery,
           premove_HOS = Hatchery@premove_HOS,
           premove_NOS = Hatchery@premove_NOS,
@@ -483,6 +485,8 @@ check_SOM <- function(SOM, silent = FALSE) {
     Hatchery <- check_numeric(Hatchery, "n_r", default = 1)
     Hatchery <- check_numeric(Hatchery, "n_yearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
     Hatchery <- check_numeric(Hatchery, "n_subyearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
+    if (!length(Hatchery@yearling_DD)) Hatchery@yearling_DD <- FALSE
+    if (!length(Hatchery@subyearling_DD)) Hatchery@subyearling_DD <- FALSE
 
     do_hatchery <- sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0
 
