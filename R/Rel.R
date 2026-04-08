@@ -317,14 +317,14 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
 
   # Juveniles in freshwater environment together that experience density-dependent survival
   total_fry_DD <- sum(Fry_NOS, Fry_HOS)
-  if (hatchery_args$yearling_DD) total_fry_DD <- sum(total_fry_DD, yearling)
-  if (hatchery_args$subyearling_DD) total_fry_DD <- sum(total_fry_DD, subyearling)
+  if (sum(yearling) && hatchery_args$yearling_DD) total_fry_DD <- sum(total_fry_DD, yearling)
+  if (sum(subyearling) && hatchery_args$subyearling_DD) total_fry_DD <- sum(total_fry_DD, subyearling)
 
   # Smolt production
   SRrel <- match.arg(SRRpars[x, "SRrel"], choices = c("BH", "Ricker"))
 
   # Hatchery releases in competition with natural-origin juveniles with fitness effects (by release strategy)
-  if (hatchery_args$yearling_DD) {
+  if (sum(yearling) && hatchery_args$yearling_DD) {
     if (habitat_args$use_habitat) {
       smolt_yearling <- calc_SRR(
         yearling, total_fry_DD,
@@ -343,7 +343,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     smolt_yearling <- yearling
   }
 
-  if (hatchery_args$subyearling_DD) {
+  if (sum(subyearling) && hatchery_args$subyearling_DD) {
     if (habitat_args$use_habitat) {
       smolt_subyearling <- calc_SRR(
         subyearling, total_fry_DD,
