@@ -91,7 +91,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   stray_external_enroute <- stray_external * s_enroute
 
   # Broodtake
-  custom_brood_rule <- !is.null(formals(hatchery_args$f_brood))
+  custom_brood_rule <- is.function(hatchery_args$f_brood) && !is.null(formals(hatchery_args$f_brood))
   if (hatchery_args$egg_target > 0 && sum(Nage_NOS, Nage_HOS)) {
 
     if (!custom_brood_rule) { # AHA approach
