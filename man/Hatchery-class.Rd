@@ -5,7 +5,7 @@
 \alias{Hatchery-class}
 \title{Class \code{"Hatchery"}}
 \description{
-The component of the operating model that controls the hatchery management.
+The component of the operating model that controls the hatchery management and in-river removals.
 }
 \details{
 Various parameters can be stochastic (length \code{nsim}) or input as a single numeric

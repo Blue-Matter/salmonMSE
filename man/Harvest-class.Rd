@@ -5,7 +5,7 @@
 \alias{Harvest-class}
 \title{Class \code{"Harvest"}}
 \description{
-The component of the operating model that controls harvest.
+The component of the operating model that controls marine harvest.
 }
 \section{Slots}{
 

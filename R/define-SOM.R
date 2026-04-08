@@ -98,7 +98,7 @@ setClass(
 # ---- Harvest Class -----
 #' Class \code{"Harvest"}
 #'
-#' The component of the operating model that controls harvest.
+#' The component of the operating model that controls marine harvest.
 #'
 #' @name Harvest-class
 #' @docType class
@@ -166,7 +166,7 @@ setClass(
 # ---- Hatchery Class -----
 #' Class \code{"Hatchery"}
 #'
-#' The component of the operating model that controls the hatchery management.
+#' The component of the operating model that controls the hatchery management and in-river removals.
 #'
 #' Various parameters can be stochastic (length `nsim`) or input as a single numeric
 #' (value identical across all simulations).
@@ -239,6 +239,7 @@ setClassUnion("Harvest.list", c("Harvest", "list"))
 setClassUnion("Historical.list", c("Historical", "list"))
 
 
+# ---- SOM Class -----
 #' Class \code{"SOM"}
 #'
 #' An object containing all the parameters for a salmon operating model (SOM).
@@ -251,10 +252,10 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' @slot nsim Integer. Number of simulations
 #' @slot proyears Integer. The number of projected years
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly
-#' @slot Bio \linkS4class{Bio} object informing biological parameters, natural production, and habitat effects. Provide a list of Bio objects for multi-population models.
-#' @slot Habitat \linkS4class{Habitat} object containing management levers for habitat mitigation. Provide a list of Habitat objects for multi-population models.
-#' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production. Provide a list of Hatchery objects for multi-population models.
-#' @slot Harvest \linkS4class{Harvest} object containing management levers for harvest. Provide a list of Harvest objects for multi-population models.
+#' @slot Bio \linkS4class{Bio} object informing biological parameters and natural production. Provide a list of Bio objects for multi-population models.
+#' @slot Habitat \linkS4class{Habitat} object containing management levers for controlling survival in the freshwater environment. Provide a list of Habitat objects for multi-population models.
+#' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production and in-river removals. Provide a list of Hatchery objects for multi-population models.
+#' @slot Harvest \linkS4class{Harvest} object containing management levers for marine harvest. Provide a list of Harvest objects for multi-population models.
 #' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.
 #' @slot stray Matrix `[np, np]` where `np = length(Bio)` and row `p` indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
 #' `SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)` indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations. By default, an identity matrix is used (no straying).
@@ -364,9 +365,10 @@ setMethod("initialize", "SOM",
 #' @slot Misc List. Miscellaneous output:
 #'
 #' - `Ref` for reference points
-#' - `SHist` for the [salmonMSE::SHist-class] object
-#' - `SOM` for the [salmonMSE::SOM-class] object.
-#' - `LHG` list `nstocks` long containing state variables by life history group
+#' - `SHist` for the [salmonMSE::SHist-class] object (primarily for developer use)
+#' - `SOM` for the [salmonMSE::SOM-class] object (updated by `check_SOM()`).
+#' - `LHG` list `nstocks` long containing state variables by natural-origin life history group
+#' - `RS` list `nstocks` long containing state variables by hatchery-origin release strategy
 #' @details
 #' In generation \eqn{t}, proportionate natural influence (PNI) is defined as:
 #'
