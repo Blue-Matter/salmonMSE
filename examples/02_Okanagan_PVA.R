@@ -12,7 +12,7 @@ nsim <- 100
 nyears <- 2
 proyears <- 45 # 2020 to 2065
 
-Mjuv_NOS <- Mjuv_HOS <- array(0, c(nsim, maxage, nyears + proyears))
+Mjuv_NOS <- Mjuv_HOS <- array(0, c(nsim, maxage-1, nyears + proyears))
 
 # For the PVA, we want to model:
 # Deviations in the smolt production function to get to age 1
@@ -44,9 +44,6 @@ Mjuv_HOS[, 1, seq(1, nyears)] <- array(Mjuv_HOS[, , nyears + 1], c(nsim, 1, nyea
 # Age 2-4 survival
 Mjuv_NOS[, 2:4, ] <- Mjuv_HOS[, 2:4, ] <- array(-log(surv24), c(3, nsim, nyears + proyears)) |> aperm(c(2, 1, 3))
 
-# Arbitrary juvenile M for age 5
-Mjuv_NOS[, 5, ] <- Mjuv_HOS[, 5, ] <- 0.01
-
 Bio <- new(
   "Bio",
   maxage = maxage,
@@ -54,6 +51,7 @@ Bio <- new(
   SRrel = "Ricker",
   kappa = 136, # set phi = 1 so that kappa = alpha = 136
   phi = 1,
+  tau = 1,
   Smax = 2400,
   Mjuv_NOS = Mjuv_NOS,
   p_female = 1,         # fec = 1, p_female = 1 so egg production = number of spawners

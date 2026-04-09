@@ -206,7 +206,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
         Smolt <- calc_smolt(
           Egg[y],
           kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
-          fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"])
+          tau = SRRpars["tau"], fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"])
         ) %>%
           as.numeric()
         Njuv[1, y+1, ] <- p_LHG * Smolt
@@ -240,12 +240,12 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   surv_esc <- surv_return * exp(-FT)
   surv_spawn <- surv_esc * s_enroute
 
-  EPR <- sum(surv_spawn * gamma * p_female * fec) # Egg per smolt
+  EPR <- sum(surv_spawn * gamma * p_female * fec) # Egg per smolt at F
 
   Smolt <- calc_smolt(
     EPR,
     kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
-    fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"]), per_recruit = TRUE
+    tau = SRRpars["tau"], fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"]), per_recruit = TRUE
   ) %>%
     as.numeric()
 

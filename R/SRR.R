@@ -119,10 +119,11 @@ make_SRR <- function(Bio) {
       capacity = Bio@capacity
     )
   } else {
-    b <- 1/Bio@Smax
+    Emax <- Bio@Smax * Bio@phi/Bio@tau
+    b <- 1/Emax
     SRRpars <- data.frame(
-      a = a, b = b, phi = Bio@phi, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
-      Smax = Bio@Smax
+      a = a, b = b, phi = Bio@phi, tau = Bio@tau, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
+      Emax = Bio@Emax, Smax = Bio@Smax
     )
   }
   SRRfun <- function(SB, SRRpars) {

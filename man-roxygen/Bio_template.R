@@ -10,18 +10,20 @@
 #' @slot p_mature Either vector by age (length `maxage`) or an array with dimension `[nsim, maxage, proyears]`. The proportion mature by age.
 #' @slot SRrel Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
 #'  Not used if habitat component is used. See `Habitat` object.
-#' @slot capacity Vector length `nsim`. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-#'  density-dependent natural smolt production from egg production. **Units of smolts.**
-#'  Not used if habitat component is used.
+#' @slot capacity Vector length `nsim`. Only used if `SRrel = "BH"`. The asymptote, i.e., maximum juvenile production, of the Beverton-Holt stock-recruit function for density-dependent natural smolt production from egg production.
+#'  **Units of smolts.** Not used if habitat component is used.
 #' @slot kappa Vector length `nsim`. The adult productivity ratio for the stock-recruit function. **Units of recruits per spawner.**
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component).
-#'  In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
 #'  Not used if habitat component is used.
-#' @slot Smax Vector length `nsim`. The egg production that maximizes smolt production in the Ricker stock-recruit function. **Units of eggs.**
+#' @slot Smax Vector length `nsim`. Only used if `SRrel = "Ricker"`. The egg production that maximizes smolt production in the Ricker stock-recruit function. **Units of eggs.**
 #' Equivalent to units of spawners if `fec = 1` for all spawners. Not used if habitat component is used.
 #' @slot phi Optional parameter, vector length `nsim`. Egg production per smolt at unfished replacement. **Units of egg per smolt**.
-#'  The `alpha` parameter of the stock-recruit function will be the ratio of `kappa` and `phi`. In stage-based models,
-#'  this is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
+#'  Used to convert `kappa` to the `alpha` parameter in the egg-smolt stock-recruit function, where `alpha = kappa/phi`. In simple models,
+#'  `phi` is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
+#'  to the first year and weighted by life history groups. Not used if habitat component is used.
+#' @slot tau Optional parameter, vector length `nsim`. Only used if `SRrel = "Ricker"`. Spawner per smolt at unfished replacement. **Units of spawner per smolt**.
+#'  Used to convert `Smax` to `Emax`, the corresponding egg production that maximizes smolt production, where `Emax = Smax * phi/tau` and the Ricker parameter `beta = 1/Emax`. In simple models,
+#'  `tau` is the product of marine survival and proportion female. If not provided, `tau` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.
 #' @slot Mjuv_NOS Either vector by age (length `maxage-1`) or an array with dimension `[nsim, maxage-1, proyears, n_g]`.
 #'  Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.

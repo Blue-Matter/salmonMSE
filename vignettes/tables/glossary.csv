@@ -7,9 +7,10 @@ Name,Definition,Type,Class,Slot
 \textrm{Smolt}^\textrm{NOS},"Smolt production by natural origin spawners, density-dependent",Natural production,SMSE,Smolt_NOS
 \textrm{Smolt}^\textrm{HOS},"Smolt production by hatchery origin spawners, density-dependent",Hatchery,SMSE,Smolt_HOS
 C_\textrm{egg-smolt},Carrying capacity of smolts (Beverton-Holt stock-recruit parameter),Natural production,"SOM, Bio",capacity
-S_\textrm{max},Spawning output that maximizes smolt production (Ricker stock-recruit parameter),Natural production,"SOM, Bio",Smax
+S_\textrm{max},Spawner abundance that maximizes smolt production (Ricker stock-recruit parameter),Natural production,"SOM, Bio",Smax
 \kappa,"Productivity (maximum recruitment production rate), units of recruit per spawner",Natural production,"SOM, Bio",kappa
 \phi,"Unfished per capita egg production rate, units of egg per smolt",Natural production,"SOM, Bio",phi
+\tau,"Unfished per capita spawners, units of spawner per smolt",Natural production,"SOM, Bio",tau
 r,"Maturity at age, i.e., recruitment rate",Natural production,"SOM, Bio",p_mature
 \textrm{Fec},Fecundity of spawners (eggs per female),Natural production,"SOM, Bio",fec
 \textrm{Fec}^\textrm{brood},Fecundity of broodtake (eggs per female),Hatchery,SOM,fec_brood

@@ -11,6 +11,7 @@ calc_smolt(
   capacity,
   Smax,
   phi = 1,
+  tau = 1,
   fitness_loss = 1,
   SRrel = c("BH", "Ricker"),
   per_recruit = FALSE
@@ -28,7 +29,9 @@ and \code{Smax} is in units of spawners.}
 
 \item{Smax}{Base Smax parameter if \code{SRrel = "Ricker"}}
 
-\item{phi}{Unfished egg per smolt (\code{1/phi} is the replacement line)}
+\item{phi}{Unfished egg per smolt (\code{1/phi} corresponds to the one-to-one adult/spawner replacement line)}
+
+\item{tau}{Unfished spawner per smolt}
 
 \item{fitness_loss}{Survival term to reduce smolt production due to fitness, between 0-1}
 

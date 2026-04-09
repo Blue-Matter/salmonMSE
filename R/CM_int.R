@@ -388,6 +388,7 @@ CM_int <- function(p, d) {
   REPORT(ebrood)
 
   REPORT(epro)
+  REPORT(spro)
 
   REPORT(brood)
   REPORT(pNOB)

@@ -336,13 +336,14 @@ calc_yearling <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_s
 #' @param kappa Base productivity parameter
 #' @param capacity Base capacity parameter if `SRrel = "BH"`
 #' @param Smax Base Smax parameter if `SRrel = "Ricker"`
-#' @param phi Unfished egg per smolt (`1/phi` is the replacement line)
+#' @param phi Unfished egg per smolt (`1/phi` corresponds to the one-to-one adult/spawner replacement line)
+#' @param tau Unfished spawner per smolt
 #' @param fitness_loss Survival term to reduce smolt production due to fitness, between 0-1
 #' @param SRrel Character for the stock-recruit function
 #' @param per_recruit Logical, whether N1 is a per recruit quantity (TRUE) or in absolute numbers (FALSE)
 #' @return Numeric
 #' @export
-calc_smolt <- function(N1, N2 = N1, kappa, capacity, Smax, phi = 1, fitness_loss = 1,
+calc_smolt <- function(N1, N2 = N1, kappa, capacity, Smax, phi = 1, tau = 1, fitness_loss = 1,
                        SRrel = c("BH", "Ricker"), per_recruit = FALSE) {
   SRrel <- match.arg(SRrel)
 
@@ -356,7 +357,9 @@ calc_smolt <- function(N1, N2 = N1, kappa, capacity, Smax, phi = 1, fitness_loss
       smolt <- a * N1 / (1 + b * N2)
     }
   } else {
-    b <- 1/(Smax * fitness_loss)
+    Smax_prime <- Smax * fitness_loss
+    Emax <- Smax_prime * phi/tau
+    b <- 1/Emax
 
     if (per_recruit) {
       smolt <- log(a * N1)/b/N1

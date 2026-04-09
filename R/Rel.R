@@ -334,7 +334,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     } else {
       smolt_subyearling <- calc_smolt(
         yearling, total_fry_DD,
-        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
         fitness_loss[2, 1] * fitness_loss[2, 2],
         SRrel
       )
@@ -353,7 +353,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     } else {
       smolt_subyearling <- calc_smolt(
         subyearling, total_fry_DD,
-        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+        SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
         fitness_loss[2, 1] * fitness_loss[2, 2],
         SRrel
       )
@@ -385,13 +385,13 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
   } else {
     smolt_NOS <- calc_smolt(
       Fry_NOS_g, total_fry_DD,
-      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
       fitness_loss[1, 2],
       SRrel
     )
     smolt_HOS <- calc_smolt(
       Fry_HOS_g, total_fry_DD,
-      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
       fitness_loss[1, 2],
       SRrel
     )
@@ -406,7 +406,8 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
     smolt_NOS_SRR <- 1
   } else {
     smolt_NOS_SRR <- calc_smolt(
-      Egg_openMSE, Egg_openMSE, SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"],
+      Egg_openMSE, Egg_openMSE,
+      SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
       SRrel = SRrel
     )
   }

@@ -32,21 +32,24 @@ ten percent to the second LHG. Default is \code{rep(1/Bio@n_g, Bio@n_g)}}
 \item{\code{SRrel}}{Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
 Not used if habitat component is used. See \code{Habitat} object.}
 
-\item{\code{capacity}}{Vector length \code{nsim}. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from egg production. \strong{Units of smolts.}
-Not used if habitat component is used.}
+\item{\code{capacity}}{Vector length \code{nsim}. Only used if \code{SRrel = "BH"}. The asymptote, i.e., maximum juvenile production, of the Beverton-Holt stock-recruit function for density-dependent natural smolt production from egg production.
+\strong{Units of smolts.} Not used if habitat component is used.}
 
 \item{\code{kappa}}{Vector length \code{nsim}. The adult productivity ratio for the stock-recruit function. \strong{Units of recruits per spawner.}
 Natural per-capita production of recruits as the population approaches zero (density-independent component).
-In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
 Not used if habitat component is used.}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The egg production that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of eggs.}
+\item{\code{Smax}}{Vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. The egg production that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of eggs.}
 Equivalent to units of spawners if \code{fec = 1} for all spawners. Not used if habitat component is used.}
 
 \item{\code{phi}}{Optional parameter, vector length \code{nsim}. Egg production per smolt at unfished replacement. \strong{Units of egg per smolt}.
-The \code{alpha} parameter of the stock-recruit function will be the ratio of \code{kappa} and \code{phi}. In stage-based models,
-this is the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, and \code{p_LHG} corresponding
+Used to convert \code{kappa} to the \code{alpha} parameter in the egg-smolt stock-recruit function, where \code{alpha = kappa/phi}. In simple models,
+\code{phi} is the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, and \code{p_LHG} corresponding
+to the first year and weighted by life history groups. Not used if habitat component is used.}
+
+\item{\code{tau}}{Optional parameter, vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. Spawner per smolt at unfished replacement. \strong{Units of spawner per smolt}.
+Used to convert \code{Smax} to \code{Emax}, the corresponding egg production that maximizes smolt production, where \code{Emax = Smax * phi/tau} and the Ricker parameter \code{beta = 1/Emax}. In simple models,
+\code{tau} is the product of marine survival and proportion female. If not provided, \code{tau} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, and \code{p_LHG} corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.}
 
 \item{\code{Mjuv_NOS}}{Either vector by age (length \code{maxage-1}) or an array with dimension \verb{[nsim, maxage-1, proyears, n_g]}.

@@ -45,11 +45,11 @@ setClass(
     kappa = "numeric",
     Smax = "numeric",
     phi = "numeric",
+    tau = "numeric",
     Mjuv_NOS = "num.array",
     fec = "num.array",
     p_female = "numeric",
     s_enroute = "numeric"
-    #strays = 0
   )
 )
 

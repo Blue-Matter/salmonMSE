@@ -76,7 +76,7 @@ Survival from fry to smolt life stage, effectively over the entire freshwater li
 \textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}
 \end{align}
 
-where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$, the unfished egg per smolt $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
+where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$, the egg per smolt at replacement $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
 
 >Smolt production can be predicted from total adult spawners by setting $\textrm{Fec}_a = 1$ and $\phi = 1$.
 
@@ -93,7 +93,7 @@ If there is knife-edge maturity, i.e., all fish mature at the terminal age, the 
 >\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
 >\end{align}
 >
->where $\alpha = \kappa/\phi$ and $\beta = 1/{S_\textrm{max}}$, $S_\textrm{max}$ is the egg production that maximizes smolt production.
+>where $\alpha = \kappa/\phi$ and $\beta = 1/{E_\textrm{max}}$, $E_\textrm{max} = S_\textrm{max} \times \phi/\tau$ is the egg production that maximizes smolt production, $\tau = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female}$ is the spawner per juvenile at replacement.
 
 ## With habitat modeling
 
@@ -493,7 +493,7 @@ and the smolt production function is adjusted by loss in productivity and capaci
 with $\alpha'_{y+1} = (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}\times\kappa/\phi$ and $\beta'_{y+1} = \alpha/(C_\textrm{egg-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}})$.
 
 >With the Ricker density-dependent survival, the beta parameter is adjusted with 
->$\beta^*_y = 1/[S_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]$.
+>$\beta^*_y = 1/[E_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]$.
 
 In the marine life stage, the increase in natural mortality is:
 

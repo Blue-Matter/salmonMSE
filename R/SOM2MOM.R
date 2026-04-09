@@ -440,6 +440,13 @@ check_SOM <- function(SOM, silent = FALSE) {
         Bio <- check_numeric2nsim(Bio, "Smax", nsim)
       }
 
+      if (!length(Bio@phi) && length(Bio@tau)) {
+        stop("Bio@tau is specified but not Bio@phi. Should specify both or none.")
+      }
+      if (length(Bio@phi) && !length(Bio@tau)) {
+        stop("Bio@phi is specified but not Bio@tau. Should specify both or none.")
+      }
+
       if (!length(Bio@phi)) {
         Bio@phi <- sapply(1:SOM@nsim, function(x) {
           calc_phi(
@@ -453,6 +460,21 @@ check_SOM <- function(SOM, silent = FALSE) {
           )
         })
       }
+      if (!length(Bio@tau)) {
+        Bio@tau <- sapply(1:SOM@nsim, function(x) {
+          calc_phi(
+            Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage-1, Bio@n_g),
+            p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
+            p_female = Bio@p_female,
+            #fec = matrix(Bio@fec[x, , 1], Bio@maxage, Bio@n_g),
+            s_enroute = Bio@s_enroute,
+            n_g = Bio@n_g,
+            p_LHG = Bio@p_LHG,
+            output = "spawner"
+          )
+        })
+      }
+      Bio <- check_numeric2nsim(Bio, "phi", nsim)
       Bio <- check_numeric2nsim(Bio, "phi", nsim)
     } else {
       Habitat <- check_numeric(Habitat, "prespawn_rel", default = "BH")

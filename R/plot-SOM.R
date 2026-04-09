@@ -122,6 +122,7 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
       capacity = SOM@Bio[[s]]@capacity[x],
       Smax = SOM@Bio[[s]]@Smax[x],
       phi = SOM@Bio[[s]]@phi[x],
+      tau = SOM@Bio[[s]]@tau[x],
       SRrel = SOM@Bio[[s]]@SRrel,
       per_recruit = TRUE
     )
@@ -139,6 +140,7 @@ plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, che
         capacity = SOM@Bio[[s]]@capacity[x],
         Smax = SOM@Bio[[s]]@Smax[x],
         phi = SOM@Bio[[s]]@phi[x],
+        tau = SOM@Bio[[s]]@tau[x],
         SRrel = SOM@Bio[[s]]@SRrel
       )
     })

@@ -240,22 +240,23 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   nsim_om <- length(sims)
   nyears <- data$Ldyr
 
-  SRbeta <- sapply(report, getElement, "beta")
   phi <- sapply(report, getElement, "epro")
+  tau <- sapply(report, getElement, "spro")
+
+  SRbeta <- sapply(report, getElement, "beta")
+  Emax <- 1/SRbeta
+  Smax <- Emax * tau/phi
 
   # Sim, age, year, rs
   matt_HO <- sapply(report, getElement, "matt", simplify = "array") %>%
     aperm(c(4, 2, 1, 3))
   matt_NO <- matt_HO[, , , data$r_matt]
 
-
   mo <- sapply(report, getElement, "mo", simplify = "array") %>%
     aperm(3:1)
-  mo_maxage <- mo[, dim(mo)[2], , drop = FALSE]
-  mo <- abind::abind(mo, mo_maxage, along = 2)
 
   Njuv <- sapply(report, getElement, "N", simplify = "array") %>%
-    aperm(c(4, 2, 1, 3))
+    aperm(c(4, 2, 1, 3)) # nsim x age x year x origin
   Spawner <- sapply(report, getElement, "syear", simplify = "array") %>%
     aperm(c(4, 2, 1, 3))
   FPT <- sapply(1:2, function(...) sapply(report, getElement, "FPT"), simplify = "array") %>%
@@ -271,8 +272,9 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
     p_mature = expand_array(matt_NO, proyears),
     SRrel = "Ricker",
     kappa = as.numeric(exp(pars$log_cr[sims])),
-    Smax = 1/SRbeta,
+    Smax = Smax,
     phi = phi,
+    tau = tau,
     Mjuv_NOS = expand_array(mo, proyears),
     fec = data$fec,
     p_female = data$ssum,
@@ -300,19 +302,15 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   Harvest <- new(
     "Harvest",
     vulPT = sapply(report, getElement, "vulPT") %>% t(),
-    vulT =sapply(report, getElement, "vulT") %>% t()
+    vulT = sapply(report, getElement, "vulT") %>% t()
   )
 
-  Habitat <- new("Habitat")
+  Habitat <- new("Habitat", use_habitat = FALSE)
 
   Historical <- new(
     "Historical",
-    HistSpawner_NOS = Spawner[, , , 1],
-    HistSpawner_HOS = Spawner[, , , 2],
-    HistNjuv_NOS = Njuv[, , , 1, drop = FALSE],
-    HistNjuv_HOS = Njuv[, , , 2, drop = FALSE],
-    HistFPT = FPT,
-    HistFT = FT
+    HistNjuv_NOS = array(Njuv[, , nyears, 1], c(nsim_om, data$Nages, 1)),
+    HistNjuv_HOS = array(Njuv[, , nyears, 2], c(nsim_om, data$Nages, 1)),
   )
 
   if (data$fitness) {
@@ -333,7 +331,7 @@ CM2SOM <- function(stanfit, sims, nsim = 2, seed = 1, proyears = 40) {
   }
 
   SOM <- new("SOM", Bio, Habitat, Hatchery, Harvest, Historical,
-             nsim = nsim_om, nyears = nyears, proyears = proyears)
+             nsim = nsim_om, proyears = proyears)
 
   return(SOM)
 }
