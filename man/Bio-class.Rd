@@ -39,8 +39,8 @@ Not used if habitat component is used. See \code{Habitat} object.}
 Natural per-capita production of recruits as the population approaches zero (density-independent component).
 Not used if habitat component is used.}
 
-\item{\code{Smax}}{Vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. The egg production that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of eggs.}
-Equivalent to units of spawners if \code{fec = 1} for all spawners. Not used if habitat component is used.}
+\item{\code{Smax}}{Vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of spawners.}
+Not used if habitat component is used.}
 
 \item{\code{phi}}{Optional parameter, vector length \code{nsim}. Egg production per smolt at unfished replacement. \strong{Units of egg per smolt}.
 Used to convert \code{kappa} to the \code{alpha} parameter in the egg-smolt stock-recruit function, where \code{alpha = kappa/phi}. In simple models,

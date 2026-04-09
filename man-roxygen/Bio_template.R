@@ -15,8 +15,8 @@
 #' @slot kappa Vector length `nsim`. The adult productivity ratio for the stock-recruit function. **Units of recruits per spawner.**
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component).
 #'  Not used if habitat component is used.
-#' @slot Smax Vector length `nsim`. Only used if `SRrel = "Ricker"`. The egg production that maximizes smolt production in the Ricker stock-recruit function. **Units of eggs.**
-#' Equivalent to units of spawners if `fec = 1` for all spawners. Not used if habitat component is used.
+#' @slot Smax Vector length `nsim`. Only used if `SRrel = "Ricker"`. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. **Units of spawners.**
+#'  Not used if habitat component is used.
 #' @slot phi Optional parameter, vector length `nsim`. Egg production per smolt at unfished replacement. **Units of egg per smolt**.
 #'  Used to convert `kappa` to the `alpha` parameter in the egg-smolt stock-recruit function, where `alpha = kappa/phi`. In simple models,
 #'  `phi` is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
