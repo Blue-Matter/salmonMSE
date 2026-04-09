@@ -469,15 +469,22 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NUL
 #' @param ylab Character, optional y-axis label
 #' @param x1lab Character, optional label for the first grouping variable
 #' @param x2lab Character, optional label for the second grouping variable
-#' @param scenario Atomic, vector of faceting variables (same length as `pm1`, `pm2`) used to generate a grid of decision tables
-#' @param ncol Integer, number of columns for decision table grid, only used if `scenario` is provided
+#' @param scenario Atomic, vector of scenario names (same length as `pm1`, `pm2`) used to identify and create separate panels
+#' @param scenario_rows Atomic, vector of scenario variables (same length as `pm1`, `pm2`) used to identify the rows in a grid of tradeoff figures. Use with `scenario_cols`
+#' @param scenario_cols Atomic, vector of scenario variables (same length as `pm1`, `pm2`) used to identify the columns in a grid of tradeoff figures. Use with `scenario_cols`
+#' @param ncol Integer, number of columns in the grid, only used if `scenario` is provided
 #' @param dir Character, either "h" or "v" to describe how the grid of tables should be organized (horizontally or vertically) , only used if `scenario` is provided
+#' @param add_letters Logical, whether to identify separate panels by letters (only used if scenarios are identified). Helpful for publication-level figures
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_decision_table()]
 #' @import ggplot2
+#' @importFrom dplyr n
 #' @export
-plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, ncol = NULL, dir = "v") {
+plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario,
+                          scenario_rows, scenario_cols, ncol = NULL, dir = "v",
+                          add_letters = FALSE) {
 
+  # Make data frame
   if (missing(x1)) x1 <- 0
   if (missing(x2)) x2 <- 1
 
@@ -492,14 +499,31 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, 
     x2 = x2
   )
 
-  if (!missing(scenario)) dt$scenario <- scenario
+  if (!missing(scenario)) {
+    dt$scenario <- scenario
+  } else if (!missing(scenario_rows) && !missing(scenario_cols)) {
+    dt$scenario_rows <- scenario_rows
+    dt$scenario_cols <- scenario_cols
+  }
 
-  g <- ggplot(dt, aes(.data$pm1, .data$pm2, colour = .data$x1, shape = .data$x2)) +
-    geom_linerange(aes(xmin = .data$pm1_lower, xmax = .data$pm1_upper), linewidth = 0.25) +
-    geom_linerange(aes(ymin = .data$pm2_lower, ymax = .data$pm2_upper), linewidth = 0.25) +
+  # Initial ggplot call
+  g <- ggplot(dt, aes(.data$pm1, .data$pm2, colour = .data$x1, shape = .data$x2))
+
+  # Add points, i.e., the results to figure
+  g <- g +
     geom_point() +
-    theme_bw()
+    theme_bw() +
+    theme(panel.grid = element_blank())
 
+  # Add errorbars
+  if (is.matrix(pm1)) {
+    g <- g + geom_linerange(aes(xmin = .data$pm1_lower, xmax = .data$pm1_upper), linewidth = 0.25)
+  }
+  if (is.matrix(pm2)) {
+    g <- g + geom_linerange(aes(ymin = .data$pm2_lower, ymax = .data$pm2_upper), linewidth = 0.25)
+  }
+
+  # Remove legends if needed
   if (length(x1) == 1) {
     g <- g +
       scale_colour_manual(values = GeomPoint$default_aes$colour) +
@@ -511,12 +535,45 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario, 
       guides(shape = "none")
   }
 
+  # Do faceting
   if (!missing(scenario)) {
+
     g <- g +
       facet_wrap(vars(.data$scenario), ncol = ncol, dir = dir) +
       theme(strip.background = element_blank())
+
+    if (add_letters) {
+      letter_legend <- expand.grid(
+        scenario = unique(dt$scenario)
+      ) %>%
+        mutate(text = paste0("(", letters[1:n()], ")"))
+
+      g <- g +
+        geom_text(data = letter_legend, aes(label = .data$text), inherit.aes = FALSE,
+                  x = Inf, y = Inf, hjust = "inward", vjust = "inward")
+
+    }
+
+  } else if (!missing(scenario_rows) && !missing(scenario_cols)) {
+
+    g <- g +
+      facet_grid(vars(.data$scenario_rows), vars(.data$scenario_cols)) +
+      theme(strip.background = element_blank())
+
+    if (add_letters) {
+      letter_legend <- expand.grid(
+        scenario_cols = unique(dt$scenario_cols),
+        scenario_rows = unique(dt$scenario_rows)
+      ) %>%
+        mutate(text = paste0("(", letters[1:n()], ")"))
+
+      g <- g +
+        geom_text(data = letter_legend, aes(label = .data$text), inherit.aes = FALSE,
+                  x = Inf, y = Inf, hjust = "inward", vjust = "inward")
+    }
   }
 
+  # Add labels
   if (!missing(xlab)) g <- g + labs(x = xlab)
   if (!missing(ylab)) g <- g + labs(y = ylab)
   if (!missing(x1lab)) g <- g + labs(colour = x1lab)

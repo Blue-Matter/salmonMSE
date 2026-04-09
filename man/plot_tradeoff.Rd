@@ -14,8 +14,11 @@ plot_tradeoff(
   x1lab,
   x2lab,
   scenario,
+  scenario_rows,
+  scenario_cols,
   ncol = NULL,
-  dir = "v"
+  dir = "v",
+  add_letters = FALSE
 )
 }
 \arguments{
@@ -37,11 +40,17 @@ to the lower bound, central tendency, and upper bound.}
 
 \item{x2lab}{Character, optional label for the second grouping variable}
 
-\item{scenario}{Atomic, vector of faceting variables (same length as \code{pm1}, \code{pm2}) used to generate a grid of decision tables}
+\item{scenario}{Atomic, vector of scenario names (same length as \code{pm1}, \code{pm2}) used to identify and create separate panels}
 
-\item{ncol}{Integer, number of columns for decision table grid, only used if \code{scenario} is provided}
+\item{scenario_rows}{Atomic, vector of scenario variables (same length as \code{pm1}, \code{pm2}) used to identify the rows in a grid of tradeoff figures. Use with \code{scenario_cols}}
+
+\item{scenario_cols}{Atomic, vector of scenario variables (same length as \code{pm1}, \code{pm2}) used to identify the columns in a grid of tradeoff figures. Use with \code{scenario_cols}}
+
+\item{ncol}{Integer, number of columns in the grid, only used if \code{scenario} is provided}
 
 \item{dir}{Character, either "h" or "v" to describe how the grid of tables should be organized (horizontally or vertically) , only used if \code{scenario} is provided}
+
+\item{add_letters}{Logical, whether to identify separate panels by letters (only used if scenarios are identified). Helpful for publication-level figures}
 }
 \value{
 ggplot object
