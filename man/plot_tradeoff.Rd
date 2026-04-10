@@ -60,6 +60,53 @@ Generates a tradeoff figure, a comparison between two performance metrics, acros
 a population dynamics variable (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
 See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
 }
+\examples{
+
+# Single tradeoff panel
+results <- data.frame(
+  PNI = c(0.7, 0.23, 0.05, 0.9, 0.85, 0.74, 0.95, 0.92, 0.9),
+  Catch = c(10, 14, 12, 8, 7, 7, 8.2, 7.1, 6.9),
+  pNOB = rep(c(0.5, 0.75, 1), each = 3),
+  ER = rep(c(0.2, 0.3, 0.4), 3),
+  scenario = "High productivity"
+)
+
+plot_tradeoff(
+  pm1 = results$PNI,
+  pm2 = results$Catch,
+  x1 = results$ER,
+  x2 = results$pNOB,
+  xlab = "PNI",
+  ylab = "Catch",
+  x1lab = "Exploitation\nrate",
+  x2lab = "pNOB\ntarget"
+)
+
+# Multiple panels, continuing from above code
+results_low <- results
+results_low$scenario <- "Low productivity"
+results_low$PNI <- 0.5 * results$PNI
+results_low$Catch <- c(0.9, 0.8, 0.7) * results$Catch
+
+results_all <- rbind(results, results_low)
+g <- plot_tradeoff(
+  pm1 = results_all$PNI,
+  pm2 = results_all$Catch,
+  x1 = results_all$ER,
+  x2 = results_all$pNOB,
+  xlab = "PNI",
+  ylab = "Catch",
+  x1lab = "Exploitation\nrate",
+  x2lab = "pNOB\ntarget",
+  scenario = results_all$scenario
+)
+
+# Change legend with ggplot2
+library(ggplot2)
+g + scale_shape_manual(values = c(1, 4, 16))
+
+
+}
 \seealso{
 \code{\link[=plot_statevar_ts]{plot_statevar_ts()}} \code{\link[=plot_decision_table]{plot_decision_table()}}
 }

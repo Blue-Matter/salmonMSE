@@ -35,6 +35,5 @@ Calculate the proportion of wild spawners from a time series of spawners
 \examples{
 
 calc_pwild(0.9, 0.4, 0.8)
-
 }
 \keyword{internal}

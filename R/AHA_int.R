@@ -88,7 +88,7 @@ catch_fn <- function(return_size, u, surv_passage = c(1, 1, 1, 1), nfishery = 4)
 #' @examples
 #'
 #' calc_pwild(0.9, 0.4, 0.8)
-#'
+#' @export
 calc_pwild <- function(pHOS_cur, pHOS_prev, gamma) {
   num <- (1 - pHOS_prev)^2
   denom <- num + 2 * gamma * pHOS_prev * (1 - pHOS_prev) + gamma * gamma * pHOS_prev^2

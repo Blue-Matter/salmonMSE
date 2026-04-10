@@ -348,7 +348,7 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LH
   if (n_g == 1) {
     if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
     if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
-    if (!is.matrix(fec)) fec <- matrix(fec, ncol = 1)
+    if (output == "egg" && !is.matrix(fec)) fec <- matrix(fec, ncol = 1)
   }
   if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
 

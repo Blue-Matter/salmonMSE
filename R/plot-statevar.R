@@ -410,7 +410,9 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 #'
 #' Generates a coloured table of a performance metric across two axes, which may be a population dynamics variable
 #' (e.g., productivity) or a management action (e.g., hatchery production levels or harvest strategy).
-#' See example at \url{https://docs.salmonmse.com/articles/decision-table.html}
+#' See example at \url{https://docs.salmonmse.com/articles/decision-table.html}. More examples below.
+#' - `plot_decision_table()` is a simple figure where colour range is intended to continuously transition from pink to white to green corresponding to values of 0, 0.5, and 1, respectively.
+#' - `plot_decision_table2()` is converts performance metrics values into bins and provides more user control in the colour scheme
 #'
 #' @param x Atomic, vector of values for the x axis (same length as z). Will be converted to factors
 #' @param y Atomic, vector of values for the y axis (same length as z). Will be converted to factors
@@ -424,6 +426,39 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 #' @return ggplot object
 #' @seealso [plot_statevar_ts()] [plot_tradeoff()]
 #' @import ggplot2
+#' @examples
+#' # Simple decision table
+#' results <- data.frame(
+#'   PNI = c(0.7, 0.23, 0.05, 0.9, 0.85, 0.74, 0.95, 0.92, 0.9),
+#'   pNOB = rep(c(0.5, 0.75, 1), each = 3),
+#'   ER = rep(c(0.2, 0.3, 0.4), 3),
+#'   scenario = "High productivity"
+#' )
+#' plot_decision_table(
+#'   x = results$ER,
+#'   y = results$pNOB,
+#'   z = results$PNI,
+#'   title = "PNI",
+#'   xlab = "Exploitation rate",
+#'   ylab = "pNOB target"
+#' )
+#'
+#' # Multiple decision tables organized by scenario
+#' # Continuing from above
+#' results_low <- results
+#' results_low$scenario <- "Low productivity"
+#' results_low$PNI <- 0.5 * results$PNI
+#'
+#' results_all <- rbind(results, results_low)
+#' plot_decision_table(
+#'   x = results_all$ER,
+#'   y = results_all$pNOB,
+#'   z = results_all$PNI,
+#'   title = "PNI",
+#'   xlab = "Exploitation rate",
+#'   ylab = "pNOB target",
+#'   scenario = results_all$scenario
+#' )
 #' @export
 plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NULL, dir = "v") {
   dt <- data.frame(x = x, y = y, z = z)
@@ -439,6 +474,78 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NUL
     theme_bw() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
     scale_fill_gradient2(low = "deeppink", high = "green4", mid = "white", midpoint = 0.5)
+
+  if (!missing(scenario)) {
+    g <- g +
+      facet_wrap(vars(.data$scenario), ncol = ncol, dir = dir) +
+      theme(strip.background = element_blank())
+  }
+
+  if (!missing(xlab)) g <- g + labs(x = xlab)
+  if (!missing(ylab)) g <- g + labs(y = ylab)
+  if (!missing(title)) g <- g + ggtitle(title)
+
+  return(g)
+}
+
+#' @name plot_decision_table
+#' @param zlab Character, optional color legend
+#' @param bin Numeric vector of bins to sort values of `z`
+#' @param bin_labels Character vector for bin names for the figure
+#' @param bin_col Character vector of colors for the bins in the figure
+#' @param cell_border Logical, whether to add borders for each cell in the figure
+#' @param add_values Logical, whether to add the values of `z` in the figure
+#' @examples
+#' # Example of binned decision table
+#'
+#' df <- expand.grid(
+#'   SAR = seq(0.005, 0.03, 0.005),
+#'   ER = seq(0, 0.5, 0.1)
+#' )
+#' df$value <- ifelse(5 * df$SAR + 0.2 > df$ER, 0.75, 0.05)
+#' df$value <- ifelse(df$SAR < 0.02 & df$ER > 0.4, 0.04, df$value)
+#'
+#' plot_decision_table2(
+#'   x = df$SAR,
+#'   y = df$ER,
+#'   z = df$value,
+#'   xlab = "Marine survival",
+#'   ylab = "Exploitation rate",
+#'   zlab = "Probability\nof objective"
+#' )
+#' @export
+plot_decision_table2 <- function(x, y, z, title, xlab, ylab, zlab, scenario, ncol = NULL, dir = "v",
+                                 bin = c(0, 0.05, 0.25, 0.5, 0.75, 0.95),
+                                 bin_labels = c("0-0.04", "0.05-0.24", "0.25-0.49", "0.5-0.74", "0.75-0.94", "0.95-1"),
+                                 bin_col = c("purple4", "deeppink", "pink", "white", "green", "green4"),
+                                 cell_border = FALSE,
+                                 add_values = FALSE) {
+
+  n_bin <- length(bin)
+  if (length(bin_labels) != n_bin) stop("length(bin_labels) not equal to length(bin)")
+  if (length(bin_col) != n_bin) stop("length(bin_col) not equal to length(bin)")
+
+  dt <- data.frame(x = x, y = y, z = z)
+  dt$bin_interval <- findInterval(z, bin)
+  dt$bin_value <- factor(bin_col[dt$bin_interval], bin_col)
+  dt$txt <- format(round(dt$z, 2))
+
+  if (!missing(scenario)) dt$scenario <- scenario
+
+  g <- ggplot(dt, aes(factor(.data$x), factor(.data$y), fill = .data$bin_value)) +
+    geom_tile(colour = ifelse(cell_border, "grey20", NA),
+              width = 1, height = 1, alpha = 0.6, show.legend = TRUE) +
+    coord_cartesian(expand = FALSE) +
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+    scale_fill_identity(name = if (missing(zlab)) NULL else zlab,
+                        guide = guide_legend(),
+                        drop = FALSE,
+                        limits = bin_col,
+                        labels = bin_labels) +
+    expand_limits(fill = bin_col)
+
+  if (add_values) g <- g + geom_text(aes(label = .data$txt))
 
   if (!missing(scenario)) {
     g <- g +
@@ -479,6 +586,52 @@ plot_decision_table <- function(x, y, z, title, xlab, ylab, scenario, ncol = NUL
 #' @seealso [plot_statevar_ts()] [plot_decision_table()]
 #' @import ggplot2
 #' @importFrom dplyr n
+#' @examples
+#'
+#' # Single tradeoff panel
+#' results <- data.frame(
+#'   PNI = c(0.7, 0.23, 0.05, 0.9, 0.85, 0.74, 0.95, 0.92, 0.9),
+#'   Catch = c(10, 14, 12, 8, 7, 7, 8.2, 7.1, 6.9),
+#'   pNOB = rep(c(0.5, 0.75, 1), each = 3),
+#'   ER = rep(c(0.2, 0.3, 0.4), 3),
+#'   scenario = "High productivity"
+#' )
+#'
+#' plot_tradeoff(
+#'   pm1 = results$PNI,
+#'   pm2 = results$Catch,
+#'   x1 = results$ER,
+#'   x2 = results$pNOB,
+#'   xlab = "PNI",
+#'   ylab = "Catch",
+#'   x1lab = "Exploitation\nrate",
+#'   x2lab = "pNOB\ntarget"
+#' )
+#'
+#' # Multiple panels, continuing from above code
+#' results_low <- results
+#' results_low$scenario <- "Low productivity"
+#' results_low$PNI <- 0.5 * results$PNI
+#' results_low$Catch <- c(0.9, 0.8, 0.7) * results$Catch
+#'
+#' results_all <- rbind(results, results_low)
+#' g <- plot_tradeoff(
+#'   pm1 = results_all$PNI,
+#'   pm2 = results_all$Catch,
+#'   x1 = results_all$ER,
+#'   x2 = results_all$pNOB,
+#'   xlab = "PNI",
+#'   ylab = "Catch",
+#'   x1lab = "Exploitation\nrate",
+#'   x2lab = "pNOB\ntarget",
+#'   scenario = results_all$scenario
+#' )
+#'
+#' # Change legend with ggplot2
+#' library(ggplot2)
+#' g + scale_shape_manual(values = c(1, 4, 16))
+#'
+#'
 #' @export
 plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario,
                           scenario_rows, scenario_cols, ncol = NULL, dir = "v",
@@ -487,6 +640,8 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario,
   # Make data frame
   if (missing(x1)) x1 <- 0
   if (missing(x2)) x2 <- 1
+  if (is.numeric(x1)) x1 <- factor(x1)
+  if (is.numeric(x2)) x2 <- factor(x2)
 
   dt <- data.frame(
     pm1 = if (is.matrix(pm1)) pm1[, 2] else pm1,
