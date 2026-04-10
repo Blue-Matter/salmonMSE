@@ -776,6 +776,8 @@ compare_statevar_ts <- function(SMSE_list, var = "PNI", s = 1, figure = TRUE, xl
   output <- sapply(SMSE_list, plot_statevar_ts, var = var, s = s, figure = FALSE, quant = quant, agg.fun = agg.fun,
                    simplify = "array")
 
+  if (all(is.na(output))) output[] <- 0
+
   if (figure) {
     if (missing(ylim)) ylim <- c(0, 1.1) * range(output, na.rm = TRUE)
 
@@ -831,6 +833,7 @@ compare_statevar_hist <- function(SMSE_list, var = "PNI", s = 1, y, figure = TRU
 
   if (figure) {
     xlim <- range(unlist(output), na.rm = TRUE)
+    plot_made <- FALSE
 
     if (type == "hist") {
       hist_all <- hist(unlist(output), plot = FALSE)
@@ -841,6 +844,7 @@ compare_statevar_hist <- function(SMSE_list, var = "PNI", s = 1, y, figure = TRU
         plot(hist_i[[i]], xlab = xlab, main = NULL,
              col = shade_vec[i], border = col_vec[i], add = i > 1, ylim = ylim, ...)
       }
+      plot_made <- TRUE
 
     } else {
       output_dens <- lapply(output, function(i) try(density(i), silent = TRUE))
@@ -857,10 +861,11 @@ compare_statevar_hist <- function(SMSE_list, var = "PNI", s = 1, y, figure = TRU
         for (i in 1:sum(is_dens)) {
           polygon(c(xd[, i], rev(xd[, i])), c(yd[, i], rep(0, nrow(yd))), border = col_vec2[i], col = shade_vec2[i])
         }
+        plot_made <- TRUE
       }
 
     }
-    legend("topleft", legend = names, col = col_vec, lty = 1, pch = 1, bty = "n")
+    if (plot_made) legend("topleft", legend = names, col = col_vec, lty = 1, pch = 1, bty = "n")
   }
 
   return(invisible(output))

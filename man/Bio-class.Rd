@@ -19,8 +19,7 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
 \item{\code{n_g}}{Integer. Number of life history groups within a cohort.
-Life history groups (LHGs) are sub-units of a cohort that have different biological parameters, e.g., survival,
-but the egg production and smolt production in the next generation is calculated from the sum across life history groups.
+Life history groups (LHGs) are sub-units of a cohort that have different marine survival.
 Default is 1.}
 
 \item{\code{p_LHG}}{The proportion of the total egg production assigned to each life history group within a cohort. For example,
@@ -42,12 +41,12 @@ Not used if habitat component is used.}
 \item{\code{Smax}}{Vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of spawners.}
 Not used if habitat component is used.}
 
-\item{\code{phi}}{Optional parameter, vector length \code{nsim}. Egg production per smolt at unfished replacement. \strong{Units of egg per smolt}.
-Used to convert \code{kappa} to the \code{alpha} parameter in the egg-smolt stock-recruit function, where \code{alpha = kappa/phi}. In simple models,
+\item{\code{phi}}{Optional, vector length \code{nsim}. Egg production per smolt at unfished replacement. \strong{Units of egg per smolt}.
+Converts productivity from units of recruits/spawner (\code{kappa}) to smolts/egg (\code{alpha}), where \code{alpha = kappa/phi}. In simple models,
 \code{phi} is the product of marine survival, fecundity, and proportion female. If not provided, \code{phi} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, \code{fec}, and \code{p_LHG} corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.}
 
-\item{\code{tau}}{Optional parameter, vector length \code{nsim}. Only used if \code{SRrel = "Ricker"}. Spawner per smolt at unfished replacement. \strong{Units of spawner per smolt}.
+\item{\code{tau}}{Optional, vector length \code{nsim}. Spawner per smolt at unfished replacement, only used if \code{SRrel = "Ricker"}. \strong{Units of spawner per smolt}.
 Used to convert \code{Smax} to \code{Emax}, the corresponding egg production that maximizes smolt production, where \code{Emax = Smax * phi/tau} and the Ricker parameter \code{beta = 1/Emax}. In simple models,
 \code{tau} is the product of marine survival and proportion female. If not provided, \code{tau} will be calculated from \code{Mjuv_NOS}, \code{p_mature}, \code{s_enroute}, \code{p_female}, and \code{p_LHG} corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.}

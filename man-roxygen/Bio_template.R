@@ -1,8 +1,7 @@
 
 #' @slot maxage Integer. The maximum age of the population age structure.
 #' @slot n_g Integer. Number of life history groups within a cohort.
-#' Life history groups (LHGs) are sub-units of a cohort that have different biological parameters, e.g., survival,
-#' but the egg production and smolt production in the next generation is calculated from the sum across life history groups.
+#' Life history groups (LHGs) are sub-units of a cohort that have different marine survival.
 #' Default is 1.
 #' @slot p_LHG The proportion of the total egg production assigned to each life history group within a cohort. For example,
 #' if `Bio@n_g <- 2`, then `Bio@p_LHG <- c(0.9, 0.1)`, then 90 percent of the egg production in the first population is assigned to the first life history group and
@@ -17,11 +16,11 @@
 #'  Not used if habitat component is used.
 #' @slot Smax Vector length `nsim`. Only used if `SRrel = "Ricker"`. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. **Units of spawners.**
 #'  Not used if habitat component is used.
-#' @slot phi Optional parameter, vector length `nsim`. Egg production per smolt at unfished replacement. **Units of egg per smolt**.
-#'  Used to convert `kappa` to the `alpha` parameter in the egg-smolt stock-recruit function, where `alpha = kappa/phi`. In simple models,
+#' @slot phi Optional, vector length `nsim`. Egg production per smolt at unfished replacement. **Units of egg per smolt**.
+#'  Converts productivity from units of recruits/spawner (`kappa`) to smolts/egg (`alpha`), where `alpha = kappa/phi`. In simple models,
 #'  `phi` is the product of marine survival, fecundity, and proportion female. If not provided, `phi` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, `fec`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.
-#' @slot tau Optional parameter, vector length `nsim`. Only used if `SRrel = "Ricker"`. Spawner per smolt at unfished replacement. **Units of spawner per smolt**.
+#' @slot tau Optional, vector length `nsim`. Spawner per smolt at unfished replacement, only used if `SRrel = "Ricker"`. **Units of spawner per smolt**.
 #'  Used to convert `Smax` to `Emax`, the corresponding egg production that maximizes smolt production, where `Emax = Smax * phi/tau` and the Ricker parameter `beta = 1/Emax`. In simple models,
 #'  `tau` is the product of marine survival and proportion female. If not provided, `tau` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.
