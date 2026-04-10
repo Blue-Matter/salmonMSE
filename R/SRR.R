@@ -123,7 +123,7 @@ make_SRR <- function(Bio) {
     b <- 1/Emax
     SRRpars <- data.frame(
       a = a, b = b, phi = Bio@phi, tau = Bio@tau, SPRcrash = 1/a/Bio@phi, SRrel = Bio@SRrel, kappa = Bio@kappa,
-      Emax = Bio@Emax, Smax = Bio@Smax
+      Emax = Emax, Smax = Bio@Smax
     )
   }
   SRRfun <- function(SB, SRRpars) {
