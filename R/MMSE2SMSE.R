@@ -117,6 +117,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
     if (all(!DDPT_NOS)) UPT_NOS[, s, , ] <- ExPT_NOS[, s, , ]
     if (all(!DDT_NOS)) UT_NOS[, s, , ] <- ExT_NOS[, s, , ]
 
+    # Escapement in last projection year (not calculated in openMSE)
+    Escapement_NOS[, s, , proyears] <- Return_NOS[, s, , proyears] * (1 - ExT_NOS[, s, , proyears])
+
     do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling > 0, SOM@Hatchery[[s]]@n_yearling) > 0
     has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
     n_g <- length(unique(pindex$g[pindex$s == s & pindex$origin == "natural"]))
@@ -200,6 +203,9 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
       } else {
         stop("Dead discards of hatchery fish found")
       }
+
+      # Escapement in last projection year (not calculated in openMSE)
+      Escapement_HOS[, s, , proyears] <- Return_HOS[, s, , proyears] * (1 - ExT_HOS[, s, , proyears])
 
       # NOS + HOS state variables from salmonMSE
       ngen <- length(unique(salmonMSE_env$N$t))
