@@ -630,16 +630,19 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     Harvest <- check_numeric(Harvest, "release_mort", size = 2, default = c(0, 0))
 
-    if (!NAor0(Harvest@u_preterminal > 0) || !NAor0(Harvest@K_PT)) {
-      Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
-    } else {
-      Harvest@vulPT <- matrix(0, nsim, maxage)
+    if (!length(Harvest@vulPT)) {
+      if (NAor0(Harvest@u_preterminal > 0) || NAor0(Harvest@K_PT)) {
+        Harvest@vulPT <- matrix(1, nsim, maxage)
+      }
     }
-    if (!NAor0(Harvest@u_terminal > 0) || !NAor0(Harvest@K_T)) {
-      Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
-    } else {
-      Harvest@vulT <- matrix(0, nsim, maxage)
+    if (!length(Harvest@vulT)) {
+      if (NAor0(Harvest@u_terminal > 0) || NAor0(Harvest@K_T)) {
+        Harvest@vulT <- matrix(1, nsim, maxage)
+      }
     }
+
+    Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
+    Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
 
     ### Check Historical (initial) ----
     Historical <- SOM@Historical[[s]]
