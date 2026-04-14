@@ -1,9 +1,13 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
-# 1.1.0
+# 2.0.0
 
-- Example objects
+- Add example objects
 - New arguments in Hatchery object to determine if hatchery releases compete with natural-origin juveniles
+- `plot_tradeoff()` can create panels with scenario rows and columns
+- `plot_decision_table2()` allows more control of colour scheme. Add examples as well in documentation
+- Update units of Ricker Smax to be units of spawners, `tau` argument convert to Emax (corresponding egg production)
+- Projection now reports terminal year escapement, brood, and egg production (long-standing issue)
 
 # 1.0.0
 
