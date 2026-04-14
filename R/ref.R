@@ -68,7 +68,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
 
       } else {
         Sgen <- calc_Sgen(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
-                          SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"], maximize)
+                          SRR$SRRpars[x, ], SMSY = ref["Spawners_MSY"])
         ref["Sgen"] <- Sgen
       }
       return(ref)
