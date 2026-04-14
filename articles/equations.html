@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2026-03-20</h4>
+            <h4 data-toc-skip class="date">2026-04-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -133,8 +133,8 @@ stock-recruit parameter)</td>
 </tr>
 <tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><annotation encoding="application/x-tex">S_\textrm{max}</annotation></semantics></math></td>
-<td align="left">Spawning output that maximizes smolt production (Ricker
-stock-recruit parameter)</td>
+<td align="left">Spawner abundance that maximizes smolt production
+(Ricker stock-recruit parameter)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM, Bio</td>
 <td align="left">Smax</td>
@@ -156,20 +156,28 @@ per smolt</td>
 <td align="left">phi</td>
 </tr>
 <tr class="even">
+<td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math></td>
+<td align="left">Unfished per capita spawners, units of spawner per
+smolt</td>
+<td align="left">Natural production</td>
+<td align="left">SOM, Bio</td>
+<td align="left">tau</td>
+</tr>
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math></td>
 <td align="left">Maturity at age, i.e., recruitment rate</td>
 <td align="left">Natural production</td>
 <td align="left">SOM, Bio</td>
 <td align="left">p_mature</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">Fec</mtext><annotation encoding="application/x-tex">\textrm{Fec}</annotation></semantics></math></td>
 <td align="left">Fecundity of spawners (eggs per female)</td>
 <td align="left">Natural production</td>
 <td align="left">SOM, Bio</td>
 <td align="left">fec</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><annotation encoding="application/x-tex">p^\textrm{female}</annotation></semantics></math></td>
 <td align="left">Proportion of female spawners in broodtake and
 spawners</td>
@@ -177,14 +185,14 @@ spawners</td>
 <td align="left">SOM, Bio</td>
 <td align="left">p_female</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">SAR</mtext><annotation encoding="application/x-tex">\textrm{SAR}</annotation></semantics></math></td>
 <td align="left">Smolt-to-adult recruit survival</td>
 <td align="left">Natural production</td>
 <td align="left">-</td>
 <td align="left">-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math></td>
 <td align="left">Juvenile instantaneous natural mortality of juvenile
 (either the freshwater or marine environment by age class)</td>
@@ -192,7 +200,7 @@ spawners</td>
 <td align="left">SOM, Bio</td>
 <td align="left">Mjuv_NOS, Mjuv_HOS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mtext mathvariant="normal">enroute</mtext></msub><annotation encoding="application/x-tex">s_\textrm{enroute}</annotation></semantics></math></td>
 <td align="left">Survival of escapement to spawning grounds and
 hatchery</td>
@@ -200,14 +208,14 @@ hatchery</td>
 <td align="left">SOM, Bio</td>
 <td align="left">s_enroute</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">NOR</mtext><annotation encoding="application/x-tex">\textrm{NOR}</annotation></semantics></math></td>
 <td align="left">Natural origin return</td>
 <td align="left">Natural production</td>
 <td align="left">SMSE</td>
 <td align="left">Return_NOS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOSeff</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOSeff}</annotation></semantics></math></td>
 <td align="left">Proportion of effective hatchery origin spawners
 (vs. NOS)</td>
@@ -215,14 +223,14 @@ hatchery</td>
 <td align="left">SMSE</td>
 <td align="left">pHOS_effective</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">HOScensus</mtext></msub><annotation encoding="application/x-tex">p_\textrm{HOScensus}</annotation></semantics></math></td>
 <td align="left">Proportion of hatchery origin spawners (vs. NOS)</td>
 <td align="left">Population dynamics</td>
 <td align="left">SMSE</td>
 <td align="left">pHOS_census</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>p</mi><mtext mathvariant="normal">WILD</mtext></msup><annotation encoding="application/x-tex">p^\textrm{WILD}</annotation></semantics></math></td>
 <td align="left">Proportion of wild spawners</td>
 <td align="left">Population dynamics</td>
@@ -674,12 +682,12 @@ of hatchery fish relative to natural fish)</td>
 </div>
 </div>
 <div class="section level2">
-<h2 id="natural-production-1">Natural production<a class="anchor" aria-label="anchor" href="#natural-production-1"></a>
+<h2 id="juvenile-natural-production">Juvenile natural production<a class="anchor" aria-label="anchor" href="#juvenile-natural-production"></a>
 </h2>
 <p>First, we consider natural production in the absence of fitness
 effects arising from hatchery production.</p>
 <div class="section level3">
-<h3 id="spawning-output">Spawning output<a class="anchor" aria-label="anchor" href="#spawning-output"></a>
+<h3 id="no-habitat-modeling">No habitat modeling<a class="anchor" aria-label="anchor" href="#no-habitat-modeling"></a>
 </h3>
 <p>From the spawners (NOS and HOS) of age
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
@@ -694,28 +702,24 @@ generation is calculated as:</p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext mathvariant="normal">HOS</mtext><mtext mathvariant="normal">eff</mtext></msub><mo>=</mo><mi>γ</mi><mo>×</mo><mtext mathvariant="normal">HOS</mtext></mrow><annotation encoding="application/x-tex">\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}</annotation></semantics></math>
 and the superscript denotes the parentage of the progeny.</p>
-</div>
-<div class="section level3">
-<h3 id="smolt-production---no-habitat-modeling">Smolt production - no habitat modeling<a class="anchor" aria-label="anchor" href="#smolt-production---no-habitat-modeling"></a>
-</h3>
 <p>If no habitat modeling is used, then fry production is assumed to be
 equal to spawning output, i.e.,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>=</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><annotation encoding="application/x-tex">\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>=</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><annotation encoding="application/x-tex">\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y</annotation></semantics></math>.</p>
-<p>Survival from egg to smolt life stage is density-dependent. With the
-Beverton-Holt stock-recruit relationship, the age-1 smolt production
-is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">sub</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">sub</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+<p>Survival from fry to smolt life stage, effectively over the entire
+freshwater life stage, is density-dependent. With the Beverton-Holt
+stock-recruit relationship, the age-1 smolt production is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha \times 
-\textrm{Fry}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}\\
+\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha \times 
-\textrm{Fry}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1})}
+\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}
 \end{align}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mi>α</mi><mi>/</mi><msub><mi>C</mi><mtext mathvariant="normal">egg-smolt</mtext></msub></mrow><annotation encoding="application/x-tex">\beta = \alpha/{C_\textrm{egg-smolt}}</annotation></semantics></math>,
-the unfished egg per smolt
+the egg per smolt at replacement
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mi>i</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>r</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>a</mi></msub><annotation encoding="application/x-tex">r_a</annotation></semantics></math>
@@ -743,27 +747,57 @@ with
 as the marine survival (between 0-1).</p>
 <blockquote>
 <p>With the Ricker stock-recruit relationship, smolt production is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">sub</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">sub</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>α</mi><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \alpha \times 
-\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])\\
+\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \alpha \times 
-\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{sub}_{y+1}])
+\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
 \end{align}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>κ</mi><mi>/</mi><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\alpha = \kappa/\phi</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub></mrow><annotation encoding="application/x-tex">\beta = 1/{S_\textrm{max}}</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><annotation encoding="application/x-tex">S_\textrm{max}</annotation></semantics></math>
-is the egg production that maximizes smolt production.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>E</mi><mtext mathvariant="normal">max</mtext></msub></mrow><annotation encoding="application/x-tex">\beta = 1/{E_\textrm{max}}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mtext mathvariant="normal">max</mtext></msub><mo>=</mo><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><mo>×</mo><mi>ϕ</mi><mi>/</mi><mi>τ</mi></mrow><annotation encoding="application/x-tex">E_\textrm{max} = S_\textrm{max} \times \phi/\tau</annotation></semantics></math>
+is the egg production that maximizes smolt production,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></msubsup><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mi>i</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>r</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\tau = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female}</annotation></semantics></math>
+is the spawner per juvenile at replacement.</p>
 </blockquote>
 </div>
 <div class="section level3">
-<h3 id="smolt-production---habitat-modeling">Smolt production - habitat modeling<a class="anchor" aria-label="anchor" href="#smolt-production---habitat-modeling"></a>
+<h3 id="with-habitat-modeling">With habitat modeling<a class="anchor" aria-label="anchor" href="#with-habitat-modeling"></a>
 </h3>
-<p>Egg to smolt production can also be modeled as a series of
-density-dependent functions by life stage, following the approach of <a href="https://doi.org/10.1371/journal.pone.0256792" class="external-link">Jorgensen et
-al. 2021</a>. Three relationships are modeled.</p>
-<p>The realized egg production
+<p>Freshwater life stages can also be modeled as a series of
+density-dependent functions by life stage, following the general
+approach of <a href="https://doi.org/10.1371/journal.pone.0256792" class="external-link">Jorgensen et
+al. 2021</a>. Four relationships are modeled.</p>
+<p>First, pre-spawn (ps) mortality can occur, where the realized number
+of spawners
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mtext mathvariant="normal">NOS</mtext><mo accent="true">̃</mo></mover><mi>y</mi></msub><annotation encoding="application/x-tex">\widetilde{\textrm{NOS}}_y</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mtext mathvariant="normal">HOS</mtext><mo accent="true">̃</mo></mover><mi>y</mi></msub><annotation encoding="application/x-tex">\widetilde{\textrm{HOS}}_y</annotation></semantics></math>
+is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mover><mtext mathvariant="normal">NOS</mtext><mo accent="true">̃</mo></mover><mi>y</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">ps</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">NOS</mtext><mi>y</mi></msub></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">ps</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">ps</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mi>y</mi></msub><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mover><mtext mathvariant="normal">HOS</mtext><mo accent="true">̃</mo></mover><mi>y</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">ps</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">HOS</mtext><mi>y</mi></msub></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">ps</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">ps</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">NOS</mtext><mi>y</mi></msub><mo>+</mo><msub><mtext mathvariant="normal">HOS</mtext><mi>y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\widetilde{\textrm{NOS}}_y &amp;= \frac{P^\textrm{ps} \times 
+\textrm{NOS}_y}{1 + \frac{P^\textrm{ps}}{C^\textrm{ps}}(\textrm{NOS}_y + \textrm{HOS}_y)}\\
+\widetilde{\textrm{HOS}}_y &amp;= \frac{P^\textrm{ps} \times 
+\textrm{HOS}_y}{1 + \frac{P^\textrm{ps}}{C^\textrm{ps}}(\textrm{NOS}_y + \textrm{HOS}_y)}\\
+\end{align}</annotation></semantics></math></p>
+<p>where productivity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+is the maximum survival as spawner numbers approaches zero and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+is the asymptotic number of spawners, i.e., spawner capacity.</p>
+<blockquote>
+<p>Set the capacity to infinite to model density-independence. The
+productivity parameter is then the survival to the next life stage.</p>
+</blockquote>
+<p>The initial egg production is calculated after pre-spawn
+mortality:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mover><mtext mathvariant="normal">NOS</mtext><mo accent="true">̃</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><msub><mover><mtext mathvariant="normal">HOS</mtext><mo accent="true">̃</mo></mover><mrow><mtext mathvariant="normal">eff</mtext><mi>y</mi><mo>,</mo><mi>a</mi></mrow></msub><mo>×</mo><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup><mo>×</mo><msub><mtext mathvariant="normal">Fec</mtext><mi>a</mi></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Egg}^\textrm{NOS}_y &amp;= \sum_a\widetilde{\textrm{NOS}}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
+\textrm{Egg}^\textrm{HOS}_y &amp;= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\end{align}</annotation></semantics></math></p>
+<p>Second, the realized egg production
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi></msub><annotation encoding="application/x-tex">\widetilde{\textrm{Egg}}_y</annotation></semantics></math>)
 can be modified from the spawning output
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">Egg</mtext><mi>y</mi></msub><annotation encoding="application/x-tex">\textrm{Egg}_y</annotation></semantics></math>)
@@ -778,12 +812,8 @@ due to incubation mortality. With a Beverton-Holt function:</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
 is the maximum survival as spawning output approaches zero and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
-is the asymptotic production.</p>
-<blockquote>
-<p>Set the capacity to infinite to model density-independence. The
-productivity parameter is then the survival to the next life stage.</p>
-</blockquote>
-<p>Fry production is modeled as:</p>
+is the asymptotic production (egg capacity).</p>
+<p>Third, fry production is modeled as:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">egg-fry</mtext></msup><mo>×</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">egg-fry</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">egg-fry</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">egg-fry</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">egg-fry</mtext></msup><mo>×</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">egg-fry</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">egg-fry</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">egg-fry</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \textrm{Fry}^\textrm{NOS}_{y+1} &amp;= \frac{P^\textrm{egg-fry} \times 
 \widetilde{\textrm{Egg}}^\textrm{NOS}_y}{1 + \frac{P^\textrm{egg-fry}}{C^\textrm{egg-fry}}(\widetilde{\textrm{Egg}}^\textrm{NOS}_y + \widetilde{\textrm{Egg}}^\textrm{HOS}_y)} \times \varepsilon^\textrm{egg-fry}_y\\
@@ -799,7 +829,8 @@ for example,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">egg-fry</mtext></msubsup><mo>=</mo><msub><mo>∏</mo><mi>j</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mrow><mi>y</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\varepsilon^\textrm{egg-fry}_y = \prod_j f(\eta_{y,j})</annotation></semantics></math>
 or
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">egg-fry</mtext></msubsup><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mrow><mi>y</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\varepsilon^\textrm{egg-fry}_y = \sum_j f(\eta_{y,j})</annotation></semantics></math>.</p>
-<p>Similarly, smolt production is modeled as:</p>
+<p>The last freshwater life stage with smolt production is modeled
+as:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">fry-smolt</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">fry-smolt</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">fry-smolt</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">fry-smolt</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
 \textrm{Smolt}^\textrm{NOS}_y &amp;= \frac{P^\textrm{fry-smolt} \times 
 \textrm{Fry}^\textrm{NOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y)} \times \varepsilon^\textrm{fry-smolt}_y\\
@@ -813,14 +844,15 @@ strategy, or from climate regimes (low productivity vs. high
 productivity, or low capacity vs. high capacity). An increase in
 capacity can arise from restoration which increases the area of suitable
 habitat. An increase in productivity can arise from improvement in
-habitat, e.g., sediment quality.</p>
+habitat, e.g., sediment quality. Year-specific deviations can be used to
+simulate stochasticity in survival.</p>
 <p>Approaches such as <a href="https://www.fisheries.noaa.gov/resource/tool-app/habitat-assessment-and-restoration-planning-harp-model" class="external-link">HARP</a>
 and <a href="https://www.essa.com/explore-essa/projects/cumulative-effects-model-for-priority-of-recovery-actions-cempra/" class="external-link">CEMPRA</a>
 can inform productivity and capacity parameters across these life stages
 as quantitative relationships between habitat variables.</p>
 <blockquote>
 <p>For all life stages, a hockey-stick formulation is also possible. For
-example:</p>
+example, egg incubation mortality would be:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mtext mathvariant="normal">Egg</mtext><mo accent="true">̃</mo></mover><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msup><mi>P</mi><mtext mathvariant="normal">inc</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><msubsup><mtext mathvariant="normal">Egg</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>≤</mo><msubsup><mi>C</mi><mi>y</mi><mtext mathvariant="normal">inc*</mtext></msubsup><mi>/</mi><msup><mi>P</mi><mtext mathvariant="normal">inc</mtext></msup></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msubsup><mi>C</mi><mi>y</mi><mtext mathvariant="normal">inc*</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>,</mo><mtext mathvariant="normal">otherwise</mtext></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
 \widetilde{\textrm{Egg}}^\textrm{NOS}_y = 
 \begin{cases}
@@ -834,9 +866,34 @@ is the capacity apportioned to natural spawners based on relative
 abundance.</p>
 </blockquote>
 </div>
+<div class="section level3">
+<h3 id="competition-with-hatchery-releases">Competition with hatchery releases<a class="anchor" aria-label="anchor" href="#competition-with-hatchery-releases"></a>
+</h3>
+<p>Competition between natural-origin fry and hatchery releases can be
+incorporated into the density-dependent survival equation by adjusting
+the denominator of the Beverton-Holt equation:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">fry-smolt</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">fry-smolt</mtext></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mtext mathvariant="normal">Smolt</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><mo>×</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><msup><mi>P</mi><mtext mathvariant="normal">fry-smolt</mtext></msup><msup><mi>C</mi><mtext mathvariant="normal">fry-smolt</mtext></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mi>y</mi><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><msubsup><mi>ε</mi><mi>y</mi><mtext mathvariant="normal">fry-smolt</mtext></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\textrm{Smolt}^\textrm{NOS}_y &amp;= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{NOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y + n^\textrm{subyearling}_y + n^\textrm{yearling}_y)} \times \varepsilon^\textrm{fry-smolt}_y\\
+\textrm{Smolt}^\textrm{HOS}_y &amp;= \frac{P^\textrm{fry-smolt} \times 
+\textrm{Fry}^\textrm{HOS}_y}{1 + \frac{P^\textrm{fry-smolt}}{C^\textrm{fry-smolt}}(\textrm{Fry}^\textrm{NOS}_y + \textrm{Fry}^\textrm{HOS}_y + n^\textrm{subyearling}_y + n^\textrm{yearling}_y)} \times \varepsilon^\textrm{fry-smolt}_y
+\end{align}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">subyearling</mtext></msubsup><annotation encoding="application/x-tex">n^\textrm{subyearling}_y</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">yearling</mtext></msubsup><annotation encoding="application/x-tex">n^\textrm{yearling}_y</annotation></semantics></math>
+are subyearling and yearling releases from the hatchery,
+respectively.</p>
+<blockquote>
+<p>salmonMSE can be modified so that either subyearling, yearling, or
+both types of releases are included in the density-dependence term.</p>
+</blockquote>
+<p>Such competition may be used when hatchery releases do not leave
+freshwater environment and interact with natural-origin fish.</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="hatchery-production">Hatchery production<a class="anchor" aria-label="anchor" href="#hatchery-production"></a>
+<h2 id="hatchery-juvenile-production">Hatchery juvenile production<a class="anchor" aria-label="anchor" href="#hatchery-juvenile-production"></a>
 </h2>
 <p>Hatchery production is controlled by several sets of variables
 specified by the analyst, roughly following the <a href="https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/" class="external-link">AHA</a>
@@ -979,7 +1036,7 @@ and the remaining deficit in egg production is met using HOB (including
 strays and imports).</p>
 </div>
 <div class="section level3">
-<h3 id="smolt-releases">Smolt releases<a class="anchor" aria-label="anchor" href="#smolt-releases"></a>
+<h3 id="releases">Releases<a class="anchor" aria-label="anchor" href="#releases"></a>
 </h3>
 <p>After the total hatchery egg production is calculated, the production
 of yearlings and subyearlings is calculated to ensure the annual ratio
@@ -990,13 +1047,18 @@ is solved subject to the following conditions:</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo>=</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">egg,yearling</mtext></msubsup><mo>×</mo><msub><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">brood,y</mtext></msub><mo>×</mo><msup><mi>s</mi><mtext mathvariant="normal">yearling</mtext></msup></mrow><annotation encoding="application/x-tex">n^\textrm{yearling}_{y+1} = p^\textrm{egg,yearling}_y \times \textrm{Egg}_\textrm{brood,y} \times s^\textrm{yearling}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>y</mi><mtext mathvariant="normal">egg,yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msub><mtext mathvariant="normal">Egg</mtext><mtext mathvariant="normal">brood,y</mtext></msub><mo>×</mo><msup><mi>s</mi><mtext mathvariant="normal">subyearling</mtext></msup></mrow><annotation encoding="application/x-tex">n^\textrm{subyearling}_{y+1} = (1 - p^\textrm{egg,yearling}_y) \times \textrm{Egg}_\textrm{brood,y} \times s^\textrm{subyearling}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">yearling</mtext></msubsup><mrow><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mi>y</mi><mtext mathvariant="normal">yearling</mtext></msubsup></mrow></mfrac><mo>=</mo><mfrac><msubsup><mi>n</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">yearling</mtext></msubsup><mrow><msubsup><mi>n</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mtext mathvariant="normal">target</mtext><mtext mathvariant="normal">yearling</mtext></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{n^\textrm{yearling}_y}{n^\textrm{subyearling}_y + n^\textrm{yearling}_y} = \frac{n^\textrm{yearling}_\textrm{target}}{n^\textrm{subyearling}_\textrm{target} + n^\textrm{yearling}_\textrm{target}}</annotation></semantics></math></p>
-<p>From the total broodtake, the smolt releases is calculated as</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo>+</mo><mfrac><mrow><mi>α</mi><mo>×</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">
-\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \frac{\alpha \times n^\textrm{subyearling}_{y+1}}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1})}
+<p>With no density-dependent competition with natural-origin juveniles,
+the outmigrating releases (“smolt releases”) is calculated as</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup></mrow><annotation encoding="application/x-tex">
+\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}
+</annotation></semantics></math></p>
+<p>With competition, the outmigrating abundance is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><mfrac><mrow><mi>α</mi><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+\textrm{Smolt}^\textrm{Rel}_{y+1} = \frac{\alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}
 </annotation></semantics></math></p>
 <p>or</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo>+</mo><mi>α</mi><mo>×</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\textrm{Smolt}^\textrm{Rel}_{y+1} = n^\textrm{yearling}_{y+1} + \alpha \times n^\textrm{subyearling}_{y+1} \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1}))
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">Smolt</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">Rel</mtext></msubsup><mo>=</mo><mi>α</mi><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>+</mo><msubsup><mtext mathvariant="normal">Fry</mtext><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">HOS</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">subyearling</mtext></msubsup><mo>+</mo><msubsup><mi>n</mi><mrow><mi>y</mi><mo>+</mo><mn>1</mn></mrow><mtext mathvariant="normal">yearling</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\textrm{Smolt}^\textrm{Rel}_{y+1} = \alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}) \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}))
 </annotation></semantics></math></p>
 </div>
 </div>
@@ -1116,7 +1178,7 @@ spawners.</p>
 \end{align}</annotation></semantics></math></p>
 </div>
 <div class="section level2">
-<h2 id="fitness-effects-on-survival">Fitness effects on survival<a class="anchor" aria-label="anchor" href="#fitness-effects-on-survival"></a>
+<h2 id="fitness-effects-on-juvenile-survival">Fitness effects on juvenile survival<a class="anchor" aria-label="anchor" href="#fitness-effects-on-juvenile-survival"></a>
 </h2>
 <p>Reproductive success of first generation hatchery fish has been
 observed to be lower than their natural counterparts, and is accounted
@@ -1285,7 +1347,7 @@ and
 <blockquote>
 <p>With the Ricker density-dependent survival, the beta parameter is
 adjusted with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>β</mi><mi>y</mi><mo>*</mo></msubsup><mo>=</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>S</mi><mtext mathvariant="normal">max</mtext></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mi>y</mi><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\beta^*_y = 1/[S_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>β</mi><mi>y</mi><mo>*</mo></msubsup><mo>=</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>E</mi><mtext mathvariant="normal">max</mtext></msub><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mi>y</mi><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">fry</mtext></msub></msup><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\beta^*_y = 1/[E_\textrm{max} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}]</annotation></semantics></math>.</p>
 </blockquote>
 <p>In the marine life stage, the increase in natural mortality is:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">NOS</mtext></msubsup><mo>=</mo><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>M</mi><mrow><mi>y</mi><mo>,</mo><mi>a</mi></mrow><mtext mathvariant="normal">base,NOS</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mrow><mi>y</mi><mo>−</mo><mi>a</mi></mrow><mtext mathvariant="normal">nat.</mtext></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>ℓ</mo><mtext mathvariant="normal">juv</mtext></msub></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">

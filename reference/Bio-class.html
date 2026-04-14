@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,7 @@
 
 <dt><code>n_g</code></dt>
 <dd><p>Integer. Number of life history groups within a cohort.
-Life history groups (LHGs) are sub-units of a cohort that have different biological parameters, e.g., survival,
-but the egg production and smolt production in the next generation is calculated from the sum across life history groups.
+Life history groups (LHGs) are sub-units of a cohort that have different marine survival.
 Default is 1.</p></dd>
 
 
@@ -89,27 +88,32 @@ Not used if habitat component is used. See <code>Habitat</code> object.</p></dd>
 
 
 <dt><code>capacity</code></dt>
-<dd><p>Vector length <code>nsim</code>. The asymptote of the Beverton-Holt stock-recruit function, or the Ricker maximum for
-density-dependent natural smolt production from egg production. <strong>Units of smolts.</strong>
-Not used if habitat component is used.</p></dd>
+<dd><p>Vector length <code>nsim</code>. Only used if <code>SRrel = "BH"</code>. The asymptote, i.e., maximum juvenile production, of the Beverton-Holt stock-recruit function for density-dependent natural smolt production from egg production.
+<strong>Units of smolts.</strong> Not used if habitat component is used.</p></dd>
 
 
 <dt><code>kappa</code></dt>
 <dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function. <strong>Units of recruits per spawner.</strong>
 Natural per-capita production of recruits as the population approaches zero (density-independent component).
-In stage-based models, equivalent to the product of smolt productivity (smolts per spawner) and marine survival.
 Not used if habitat component is used.</p></dd>
 
 
 <dt><code>Smax</code></dt>
-<dd><p>Vector length <code>nsim</code>. The egg production that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of eggs.</strong>
-Equivalent to units of spawners if <code>fec = 1</code> for all spawners. Not used if habitat component is used.</p></dd>
+<dd><p>Vector length <code>nsim</code>. Only used if <code>SRrel = "Ricker"</code>. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of spawners.</strong>
+Not used if habitat component is used.</p></dd>
 
 
 <dt><code>phi</code></dt>
-<dd><p>Optional parameter, vector length <code>nsim</code>. Egg production per smolt at unfished replacement. <strong>Units of egg per smolt</strong>.
-The <code>alpha</code> parameter of the stock-recruit function will be the ratio of <code>kappa</code> and <code>phi</code>. In stage-based models,
-this is the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, <code>fec</code>, and <code>p_LHG</code> corresponding
+<dd><p>Optional, vector length <code>nsim</code>. Egg production per smolt at unfished replacement. <strong>Units of egg per smolt</strong>.
+Converts productivity from units of recruits/spawner (<code>kappa</code>) to smolts/egg (<code>alpha</code>), where <code>alpha = kappa/phi</code>. In simple models,
+<code>phi</code> is the product of marine survival, fecundity, and proportion female. If not provided, <code>phi</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, <code>fec</code>, and <code>p_LHG</code> corresponding
+to the first year and weighted by life history groups. Not used if habitat component is used.</p></dd>
+
+
+<dt><code>tau</code></dt>
+<dd><p>Optional, vector length <code>nsim</code>. Spawner per smolt at unfished replacement, only used if <code>SRrel = "Ricker"</code>. <strong>Units of spawner per smolt</strong>.
+Used to convert <code>Smax</code> to <code>Emax</code>, the corresponding egg production that maximizes smolt production, where <code>Emax = Smax * phi/tau</code> and the Ricker parameter <code>beta = 1/Emax</code>. In simple models,
+<code>tau</code> is the product of marine survival and proportion female. If not provided, <code>tau</code> will be calculated from <code>Mjuv_NOS</code>, <code>p_mature</code>, <code>s_enroute</code>, <code>p_female</code>, and <code>p_LHG</code> corresponding
 to the first year and weighted by life history groups. Not used if habitat component is used.</p></dd>
 
 
@@ -149,8 +153,11 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Name    maxage       n_g     p_LHG  p_mature     SRrel  capacity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class: character   numeric   numeric   numeric num.array character   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi  Mjuv_NOS       fec  p_female s_enroute</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric num.array num.array   numeric   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi       tau  Mjuv_NOS       fec  p_female</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric   numeric num.array num.array   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  s_enroute</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Bio.list"</span>
 </code></pre></div>

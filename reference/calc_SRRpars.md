@@ -50,3 +50,15 @@ For the Ricker stock recruit relationship: \$\$\beta =
 ## See also
 
 [`calc_SRR()`](https://docs.salmonmse.com/reference/calc_SRR.md)
+
+## Examples
+
+``` r
+N1 <- 100
+N2 <- 200
+p <- 10
+capacity <- 250
+
+calc_SRRpars(p, capacity, type = "BH")
+#> [1] 10.00  0.04
+```

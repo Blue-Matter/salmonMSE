@@ -1,6 +1,6 @@
 # Class `"Harvest"`
 
-The component of the operating model that controls harvest.
+The component of the operating model that controls marine harvest.
 
 ## Slots
 

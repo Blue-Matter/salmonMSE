@@ -149,3 +149,12 @@ calc_Sgen(
 ## See also
 
 [`calc_Smsy_Ricker()`](https://docs.salmonmse.com/reference/calc_Smsy_Ricker.md)
+
+## Examples
+
+``` r
+ref_simple <- calc_ref(simple_SOM)
+ref_multi <- calc_ref(multi_SOM)
+#> Checking parameters for population 1
+#> Checking parameters for population 2
+```

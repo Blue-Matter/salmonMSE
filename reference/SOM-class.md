@@ -24,26 +24,28 @@ An object containing all the parameters for a salmon operating model
 - `Bio`:
 
   [Bio](https://docs.salmonmse.com/reference/Bio-class.md) object
-  informing biological parameters, natural production, and habitat
-  effects. Provide a list of Bio objects for multi-population models.
+  informing biological parameters and natural production. Provide a list
+  of Bio objects for multi-population models.
 
 - `Habitat`:
 
   [Habitat](https://docs.salmonmse.com/reference/Habitat-class.md)
-  object containing management levers for habitat mitigation. Provide a
-  list of Habitat objects for multi-population models.
+  object containing management levers for controlling survival in the
+  freshwater environment. Provide a list of Habitat objects for
+  multi-population models.
 
 - `Hatchery`:
 
   [Hatchery](https://docs.salmonmse.com/reference/Hatchery-class.md)
-  object containing management levers for hatchery production. Provide a
-  list of Hatchery objects for multi-population models.
+  object containing management levers for hatchery production and
+  in-river removals. Provide a list of Hatchery objects for
+  multi-population models.
 
 - `Harvest`:
 
   [Harvest](https://docs.salmonmse.com/reference/Harvest-class.md)
-  object containing management levers for harvest. Provide a list of
-  Harvest objects for multi-population models.
+  object containing management levers for marine harvest. Provide a list
+  of Harvest objects for multi-population models.
 
 - `Historical`:
 

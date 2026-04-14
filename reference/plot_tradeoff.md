@@ -19,8 +19,11 @@ plot_tradeoff(
   x1lab,
   x2lab,
   scenario,
+  scenario_rows,
+  scenario_cols,
   ncol = NULL,
-  dir = "v"
+  dir = "v",
+  add_letters = FALSE
 )
 ```
 
@@ -67,19 +70,36 @@ plot_tradeoff(
 
 - scenario:
 
-  Atomic, vector of faceting variables (same length as `pm1`, `pm2`)
-  used to generate a grid of decision tables
+  Atomic, vector of scenario names (same length as `pm1`, `pm2`) used to
+  identify and create separate panels
+
+- scenario_rows:
+
+  Atomic, vector of scenario variables (same length as `pm1`, `pm2`)
+  used to identify the rows in a grid of tradeoff figures. Use with
+  `scenario_cols`
+
+- scenario_cols:
+
+  Atomic, vector of scenario variables (same length as `pm1`, `pm2`)
+  used to identify the columns in a grid of tradeoff figures. Use with
+  `scenario_cols`
 
 - ncol:
 
-  Integer, number of columns for decision table grid, only used if
-  `scenario` is provided
+  Integer, number of columns in the grid, only used if `scenario` is
+  provided
 
 - dir:
 
   Character, either "h" or "v" to describe how the grid of tables should
   be organized (horizontally or vertically) , only used if `scenario` is
   provided
+
+- add_letters:
+
+  Logical, whether to identify separate panels by letters (only used if
+  scenarios are identified). Helpful for publication-level figures
 
 ## Value
 
@@ -89,3 +109,53 @@ ggplot object
 
 [`plot_statevar_ts()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
 [`plot_decision_table()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
+
+## Examples
+
+``` r
+# Single tradeoff panel
+results <- data.frame(
+  PNI = c(0.7, 0.23, 0.05, 0.9, 0.85, 0.74, 0.95, 0.92, 0.9),
+  Catch = c(10, 14, 12, 8, 7, 7, 8.2, 7.1, 6.9),
+  pNOB = rep(c(0.5, 0.75, 1), each = 3),
+  ER = rep(c(0.2, 0.3, 0.4), 3),
+  scenario = "High productivity"
+)
+
+plot_tradeoff(
+  pm1 = results$PNI,
+  pm2 = results$Catch,
+  x1 = results$ER,
+  x2 = results$pNOB,
+  xlab = "PNI",
+  ylab = "Catch",
+  x1lab = "Exploitation\nrate",
+  x2lab = "pNOB\ntarget"
+)
+
+
+# Multiple panels, continuing from above code
+results_low <- results
+results_low$scenario <- "Low productivity"
+results_low$PNI <- 0.5 * results$PNI
+results_low$Catch <- c(0.9, 0.8, 0.7) * results$Catch
+
+results_all <- rbind(results, results_low)
+g <- plot_tradeoff(
+  pm1 = results_all$PNI,
+  pm2 = results_all$Catch,
+  x1 = results_all$ER,
+  x2 = results_all$pNOB,
+  xlab = "PNI",
+  ylab = "Catch",
+  x1lab = "Exploitation\nrate",
+  x2lab = "pNOB\ntarget",
+  scenario = results_all$scenario
+)
+
+# Change legend with ggplot2
+library(ggplot2)
+g + scale_shape_manual(values = c(1, 4, 16))
+
+
+```

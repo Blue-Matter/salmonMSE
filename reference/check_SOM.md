@@ -25,3 +25,9 @@ check_SOM(SOM, silent = FALSE)
 
 Updated [SOM](https://docs.salmonmse.com/reference/SOM-class.md) object
 with full dimensions in various slots
+
+## Examples
+
+``` r
+SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
+```

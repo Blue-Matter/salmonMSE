@@ -21,10 +21,8 @@ single numeric (value identical across all simulations).
 - `n_g`:
 
   Integer. Number of life history groups within a cohort. Life history
-  groups (LHGs) are sub-units of a cohort that have different biological
-  parameters, e.g., survival, but the egg production and smolt
-  production in the next generation is calculated from the sum across
-  life history groups. Default is 1.
+  groups (LHGs) are sub-units of a cohort that have different marine
+  survival. Default is 1.
 
 - `p_LHG`:
 
@@ -47,38 +45,51 @@ single numeric (value identical across all simulations).
 
 - `capacity`:
 
-  Vector length `nsim`. The asymptote of the Beverton-Holt stock-recruit
-  function, or the Ricker maximum for density-dependent natural smolt
-  production from egg production. **Units of smolts.** Not used if
-  habitat component is used.
+  Vector length `nsim`. Only used if `SRrel = "BH"`. The asymptote,
+  i.e., maximum juvenile production, of the Beverton-Holt stock-recruit
+  function for density-dependent natural smolt production from egg
+  production. **Units of smolts.** Not used if habitat component is
+  used.
 
 - `kappa`:
 
   Vector length `nsim`. The adult productivity ratio for the
   stock-recruit function. **Units of recruits per spawner.** Natural
   per-capita production of recruits as the population approaches zero
-  (density-independent component). In stage-based models, equivalent to
-  the product of smolt productivity (smolts per spawner) and marine
-  survival. Not used if habitat component is used.
+  (density-independent component). Not used if habitat component is
+  used.
 
 - `Smax`:
 
-  Vector length `nsim`. The egg production that maximizes smolt
-  production in the Ricker stock-recruit function. **Units of eggs.**
-  Equivalent to units of spawners if `fec = 1` for all spawners. Not
-  used if habitat component is used.
+  Vector length `nsim`. Only used if `SRrel = "Ricker"`. The spawner
+  abundance that maximizes smolt production in the Ricker stock-recruit
+  function. **Units of spawners.** Not used if habitat component is
+  used.
 
 - `phi`:
 
-  Optional parameter, vector length `nsim`. Egg production per smolt at
-  unfished replacement. **Units of egg per smolt**. The `alpha`
-  parameter of the stock-recruit function will be the ratio of `kappa`
-  and `phi`. In stage-based models, this is the product of marine
+  Optional, vector length `nsim`. Egg production per smolt at unfished
+  replacement. **Units of egg per smolt**. Converts productivity from
+  units of recruits/spawner (`kappa`) to smolts/egg (`alpha`), where
+  `alpha = kappa/phi`. In simple models, `phi` is the product of marine
   survival, fecundity, and proportion female. If not provided, `phi`
   will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`,
   `p_female`, `fec`, and `p_LHG` corresponding to the first year and
   weighted by life history groups. Not used if habitat component is
   used.
+
+- `tau`:
+
+  Optional, vector length `nsim`. Spawner per smolt at unfished
+  replacement, only used if `SRrel = "Ricker"`. **Units of spawner per
+  smolt**. Used to convert `Smax` to `Emax`, the corresponding egg
+  production that maximizes smolt production, where
+  `Emax = Smax * phi/tau` and the Ricker parameter `beta = 1/Emax`. In
+  simple models, `tau` is the product of marine survival and proportion
+  female. If not provided, `tau` will be calculated from `Mjuv_NOS`,
+  `p_mature`, `s_enroute`, `p_female`, and `p_LHG` corresponding to the
+  first year and weighted by life history groups. Not used if habitat
+  component is used.
 
 - `Mjuv_NOS`:
 
@@ -122,8 +133,11 @@ showClass("Bio")
 #> Name:       Name    maxage       n_g     p_LHG  p_mature     SRrel  capacity
 #> Class: character   numeric   numeric   numeric num.array character   numeric
 #>                                                                             
-#> Name:      kappa      Smax       phi  Mjuv_NOS       fec  p_female s_enroute
-#> Class:   numeric   numeric   numeric num.array num.array   numeric   numeric
+#> Name:      kappa      Smax       phi       tau  Mjuv_NOS       fec  p_female
+#> Class:   numeric   numeric   numeric   numeric num.array num.array   numeric
+#>                 
+#> Name:  s_enroute
+#> Class:   numeric
 #> 
 #> Extends: "Bio.list"
 ```

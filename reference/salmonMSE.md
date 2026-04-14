@@ -65,3 +65,11 @@ If `Hist = FALSE`: if `convert = TRUE`, a
 `convert = FALSE`, a
 [MSEtool::MMSE](https://msetool.openmse.com/reference/MMSE-class.html)
 object.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+SMSE <- salmonMSE(simple_SOM)
+} # }
+```

@@ -38,3 +38,18 @@ spawning stock size from Ricker’s stock recruitment model. PeerJ
 ## See also
 
 [`calc_ref()`](https://docs.salmonmse.com/reference/calc_ref.md)
+
+## Examples
+
+``` r
+a <- 3
+Smax <- 100
+b <- 1/Smax
+
+calc_Smsy_Ricker(log(a), b)
+#> [1] 46.78265
+calc_Umsy_Ricker(log(a))
+#> [1] 0.4678265
+calc_Sgen_Ricker(log(a), b)
+#> [1] 18.82417
+```

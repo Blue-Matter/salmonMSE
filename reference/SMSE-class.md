@@ -274,12 +274,18 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 
   - `SHist` for the
     [SHist](https://docs.salmonmse.com/reference/SHist-class.md) object
+    (primarily for developer use)
 
   - `SOM` for the
-    [SOM](https://docs.salmonmse.com/reference/SOM-class.md) object.
+    [SOM](https://docs.salmonmse.com/reference/SOM-class.md) object
+    (updated by
+    [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md)).
 
-  - `LHG` list `nstocks` long containing state variables by life history
-    group
+  - `LHG` list `nstocks` long containing state variables by
+    natural-origin life history group
+
+  - `RS` list `nstocks` long containing state variables by
+    hatchery-origin release strategy
 
 ## Creating Object
 

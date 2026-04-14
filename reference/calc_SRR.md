@@ -60,3 +60,22 @@ The hockey stick is of the following form:
 ## See also
 
 [`calc_SRRpars()`](https://docs.salmonmse.com/reference/calc_SRRpars.md)
+
+## Examples
+
+``` r
+N1 <- 100
+N2 <- 200
+p <- 10
+capacity <- 250
+
+calc_SRR(N1, N2, p, capacity, type = "BH")
+#> [1] 111.1111
+
+# Validation
+SRRpars <- calc_SRRpars(p, capacity, type = "BH")
+a <- SRRpars[1]
+b <- SRRpars[2]
+a * N1/(1 + b * N2)
+#> [1] 111.1111
+```

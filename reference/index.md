@@ -126,6 +126,7 @@
   life history groups and release strategies
 
 - [`plot_decision_table()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
+  [`plot_decision_table2()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
   : Decision table of performance metrics
 
 - [`plot_statevar_ts()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
@@ -161,3 +162,7 @@
 - [`salmonMSE_env`](https://docs.salmonmse.com/reference/salmonMSE_env.md)
   : Environment to store salmon specific variables, e.g, fitness, during
   the simulation
+
+- [`simple_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md)
+  [`multi_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md) :
+  Example objects from salmonMSE

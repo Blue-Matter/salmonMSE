@@ -46,3 +46,10 @@ calc_pwild_age(NOS_a, HOS_a, fec, gamma)
 
 `calc_pwild_age()` a matrix of pWILD by simulation and year.
 `calc_pwild()` returns a numeric
+
+## Examples
+
+``` r
+calc_pwild(0.9, 0.4, 0.8)
+#> [1] 0.04253308
+```

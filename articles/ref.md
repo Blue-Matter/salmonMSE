@@ -177,7 +177,7 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
   # 2. Calculate spawners per juvenile (spro)
   # 3. Calculate smolt per egg (phi)
   # 4. unfished eggs (eo) = unfished spawners * juvenile per spawner * egg per smolt
-  # 5. Smax_eggs = log(a) / unfished eggs
+  # 5. Emax = log(a) / unfished eggs
   spro <- salmonMSE:::calc_phi(
     Mjuv = M,
     p_mature = p_mature,
@@ -191,11 +191,13 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
   so <- Smax * log(a)
   eo <- so / spro * phi
   beta_eggs <- log(a)/eo
-  Smax_eggs <- 1/beta_eggs
+  Emax_eggs <- 1/beta_eggs
 
   SRRpars <- data.frame(
     kappa = a,
-    Smax = Smax_eggs,
+    Smax = Smax,
+    Emax = Emax_eggs,
+    tau = spro,
     phi = phi,
     SRrel = "Ricker"
   )

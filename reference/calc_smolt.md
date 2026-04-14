@@ -13,6 +13,7 @@ calc_smolt(
   capacity,
   Smax,
   phi = 1,
+  tau = 1,
   fitness_loss = 1,
   SRrel = c("BH", "Ricker"),
   per_recruit = FALSE
@@ -46,7 +47,12 @@ calc_smolt(
 
 - phi:
 
-  Unfished egg per smolt (`1/phi` is the replacement line)
+  Unfished egg per smolt (`1/phi` corresponds to the one-to-one
+  adult/spawner replacement line)
+
+- tau:
+
+  Unfished spawner per smolt
 
 - fitness_loss:
 

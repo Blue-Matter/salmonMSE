@@ -1,7 +1,7 @@
 # Class `"Hatchery"`
 
 The component of the operating model that controls the hatchery
-management.
+management and in-river removals.
 
 ## Details
 
@@ -27,15 +27,33 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 
   Vector length `n_r`. The target number of yearlings released by
   release strategy. No hatchery is modeled if
-  `sum(n_yearling, n_subyearling) = 0`. are zero. Yearlings survival is
-  density-independent after release. Default is zero.
+  `sum(n_yearling, n_subyearling) = 0`. are zero. Default is zero.
+  Yearlings are differentiated from sub-yearlings only in the hatchery
+  survival parameter, e.g., lower egg-yearling survival than for
+  egg-subyearling, so more brood is needed for yearling releases.
 
 - `n_subyearling`:
 
   Vector length `n_r`. The target number of subyearlings released. No
   hatchery is modeled if `sum(n_yearling, n_subyearling) = 0` are zero.
-  Subyearlings experience density-dependent survival in competition with
-  natural origin young. Default is zero.
+  Default is zero. Yearlings are differentiated from sub-yearlings only
+  in the hatchery survival parameter, e.g., lower egg-yearling survival
+  than for egg-subyearling, so more brood is needed for yearling
+  releases.
+
+- `yearling_DD`:
+
+  Logical, whether freshwater yearling survival after release is
+  density-dependent, in competition with natural-origin juveniles.
+  Default is FALSE. Likely relevant only for stream types where there is
+  substantial residence time before outmigration.
+
+- `subyearling_DD`:
+
+  Logical, whether freshwater subyearling survival after release is
+  density-dependent, in competition with natural-origin juveniles.
+  Default is FALSE. Likely relevant only for stream types where there is
+  substantial residence time before outmigration.
 
 - `s_prespawn`:
 
@@ -238,32 +256,35 @@ showClass("Hatchery")
 #> Name:                Name                n_r         n_yearling
 #> Class:          character            numeric            numeric
 #>                                                                
-#> Name:       n_subyearling         s_prespawn        s_egg_smolt
+#> Name:       n_subyearling        yearling_DD     subyearling_DD
+#> Class:            numeric            logical            logical
+#>                                                                
+#> Name:          s_prespawn        s_egg_smolt  s_egg_subyearling
 #> Class:            numeric            numeric            numeric
 #>                                                                
-#> Name:   s_egg_subyearling           Mjuv_HOS       p_mature_HOS
-#> Class:            numeric          num.array          num.array
+#> Name:            Mjuv_HOS       p_mature_HOS     stray_external
+#> Class:          num.array          num.array             matrix
 #>                                                                
-#> Name:      stray_external              gamma                  m
-#> Class:             matrix            numeric            numeric
+#> Name:               gamma                  m            f_brood
+#> Class:            numeric            numeric           function
 #>                                                                
-#> Name:             f_brood       brood_import           pmax_esc
-#> Class:           function            numeric            numeric
+#> Name:        brood_import           pmax_esc           pmax_NOB
+#> Class:            numeric            numeric            numeric
 #>                                                                
-#> Name:            pmax_NOB        ptarget_NOB          phatchery
-#> Class:            numeric            numeric        num.logical
+#> Name:         ptarget_NOB          phatchery        premove_HOS
+#> Class:            numeric        num.logical       num.function
 #>                                                                
-#> Name:         premove_HOS        premove_NOS          fec_brood
-#> Class:       num.function       num.function          num.array
+#> Name:         premove_NOS          fec_brood       fitness_type
+#> Class:       num.function          num.array          character
 #>                                                                
-#> Name:        fitness_type              theta           rel_loss
-#> Class:          character            numeric            numeric
+#> Name:               theta           rel_loss         zbar_start
+#> Class:            numeric            numeric          num.array
 #>                                                                
-#> Name:          zbar_start phenotype_variance   fitness_variance
-#> Class:          num.array            numeric            numeric
-#>                                             
-#> Name:        heritability      fitness_floor
-#> Class:            numeric            numeric
+#> Name:  phenotype_variance   fitness_variance       heritability
+#> Class:            numeric            numeric            numeric
+#>                          
+#> Name:       fitness_floor
+#> Class:            numeric
 #> 
 #> Extends: "Hatchery.list"
 ```
