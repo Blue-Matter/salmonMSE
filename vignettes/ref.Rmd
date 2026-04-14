@@ -180,7 +180,9 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
 
   SRRpars <- data.frame(
     kappa = a,
-    Smax = Emax_eggs,
+    Smax = Smax,
+    Emax = Emax_eggs,
+    tau = spro,
     phi = phi,
     SRrel = "Ricker"
   )
