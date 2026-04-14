@@ -71,8 +71,12 @@ salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert 
 
   if (convert) {
     if (!silent) message("Converting to salmon MSE object..")
+
+    calculate_last_projection_year(SOM, MOM, M)
+
     SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, salmonMSE_env$stateN, Ford = salmonMSE_env$Ford, salmonMSE_env$H, salmonMSE_env$stateH)
     SMSE@Misc$SHist <- multiHist2SHist(H, SOM, check = FALSE)
+
     return(SMSE)
 
   } else {
@@ -200,3 +204,72 @@ initialize_population <- function(H, SOM) {
 
   return(H)
 }
+
+
+
+calculate_last_projection_year <- function(SOM, MOM, MMSE) {
+
+  # Run this to get last escapement
+  SMSE_prelim <- MMSE2SMSE(MMSE, SOM,
+                           N = salmonMSE_env$N, stateN = salmonMSE_env$stateN, Ford = salmonMSE_env$Ford,
+                           H = salmonMSE_env$H, stateH = salmonMSE_env$stateH)
+
+  # Run additional calculations for spawners, brood, and egg production in last projection year
+  pindex <- make_stock_index(SOM)
+
+  Rel <- MOM@Rel
+  ns <- length(SOM)
+
+  for (i in 1:length(Rel)) {
+    terms_i <- grepl("Nage_", Rel[[i]]$terms)
+    if (any(terms_i)) {
+
+      p <- Rel[[i]]$terms[grepl("Nage_", Rel[[i]]$terms)] %>%
+        strsplit("_") %>%
+        sapply(getElement, 2) %>%
+        as.numeric()
+
+      p_natural <- p[Rel[[i]]$natural_origin]
+      s_natural <- unique(pindex$s[pindex$p == p_natural])
+      stopifnot(length(s_natural) == 1)
+
+      p_hatchery <- p[!Rel[[i]]$natural_origin]
+      if (length(p_hatchery)) {
+        s_hatchery <- pindex$s[pindex$p == p_hatchery]
+        stopifnot(length(s_hatchery) == 1)
+      }
+
+      p_stray <- p[Rel[[i]]$stray]
+      if (length(p_stray)) {
+        s_stray <- unique(pindex$s[pindex$p == p_stray & pindex$stage == "escapement"])
+      }
+
+      maxage <- SOM@Bio[[1]]@maxage
+      proyears <- MMSE@proyears
+
+      run_func <- sapply(1:SOM@nsim, function(x) {
+        Nage_NOS <- matrix(SMSE_prelim@Escapement_NOS[x, s_natural, , SOM@proyears], length(s_natural), maxage) %>% t()
+
+        if (length(p_hatchery)) {
+          s_hatchery <- pindex$s[pindex$p == p_hatchery]
+          stopifnot(length(s_hatchery) == 1)
+          Nage_HOS <- matrix(SMSE_prelim@Escapement_HOS[x, s_hatchery, , SOM@proyears], length(s_hatchery), maxage) %>% t()
+        } else {
+          Nage_HOS <- matrix(0, maxage, 1)
+        }
+        if (length(p_stray)) {
+          Nage_stray <- matrix(SMSE_prelim@Escapement_HOS[x, s_stray, , SOM@proyears], length(s_stray), maxage) %>% t()
+        } else {
+          Nage_stray <- array(0, dim(Nage_HOS))
+        }
+
+        Rel[[i]]$func(
+          Nage_NOS = Nage_NOS, Nage_HOS = Nage_HOS, Nage_stray = Nage_stray,
+          x = x, y = MMSE@nyears + MMSE@proyears
+        )
+      })
+    }
+  }
+  invisible()
+}
+
