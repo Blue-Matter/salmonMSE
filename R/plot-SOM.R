@@ -114,34 +114,48 @@ plot_stray <- function(stray, xlab = "Destination", ylab = "Origin") {
 
 plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, check = TRUE, ylim, ...) {
   if (check) SOM <- check_SOM(SOM)
+  Bio <- SOM@Bio[[s]]
+  maxage <- Bio@maxage
 
+  # Smolt production at replacement
+  real_phi <- sapply(1:SOM@nsim, function(x) {
+    calc_phi(
+      Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage-1, Bio@n_g),
+      p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
+      p_female = Bio@p_female,
+      fec = matrix(Bio@fec[x, , 1], Bio@maxage, Bio@n_g),
+      s_enroute = Bio@s_enroute,
+      n_g = Bio@n_g,
+      p_LHG = Bio@p_LHG
+    )
+  })
   smolt0 <- sapply(1:SOM@nsim, function(x) {
     calc_smolt(
-      N1 = SOM@Bio[[s]]@phi[x],
-      kappa = SOM@Bio[[s]]@kappa[x],
-      capacity = SOM@Bio[[s]]@capacity[x],
-      Smax = SOM@Bio[[s]]@Smax[x],
-      phi = SOM@Bio[[s]]@phi[x],
-      tau = SOM@Bio[[s]]@tau[x],
-      SRrel = SOM@Bio[[s]]@SRrel,
+      N1 = real_phi[x],
+      kappa = Bio@kappa[x],
+      capacity = Bio@capacity[x],
+      Smax = Bio@Smax[x],
+      phi = Bio@phi[x],
+      tau = Bio@tau[x],
+      SRrel = Bio@SRrel,
       per_recruit = TRUE
     )
   })
 
   # Egg production
-  E0 <- smolt0 * SOM@Bio[[s]]@phi
+  E0 <- smolt0 * real_phi
   E <- seq(0, 1.5 * max(E0), length.out = 100)
 
   Smolt <- sapply(1:SOM@nsim, function(x) {
     sapply(E, function(N) {
       calc_smolt(
         N1 = N,
-        kappa = SOM@Bio[[s]]@kappa[x],
-        capacity = SOM@Bio[[s]]@capacity[x],
-        Smax = SOM@Bio[[s]]@Smax[x],
-        phi = SOM@Bio[[s]]@phi[x],
-        tau = SOM@Bio[[s]]@tau[x],
-        SRrel = SOM@Bio[[s]]@SRrel
+        kappa = Bio@kappa[x],
+        capacity = Bio@capacity[x],
+        Smax = Bio@Smax[x],
+        phi = Bio@phi[x],
+        tau = Bio@tau[x],
+        SRrel = Bio@SRrel
       )
     })
   })
