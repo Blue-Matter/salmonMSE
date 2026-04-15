@@ -332,7 +332,7 @@ smolt_func <- function(Nage_NOS, Nage_HOS, Nage_stray, x = -1, y, output = c("na
         type = Habitat@smolt_rel
       )
     } else {
-      smolt_subyearling <- calc_smolt(
+      smolt_yearling <- calc_smolt(
         yearling, total_fry_DD,
         SRRpars[x, "kappa"], SRRpars[x, "capacity"], SRRpars[x, "Smax"], SRRpars[x, "phi"], SRRpars[x, "tau"],
         fitness_loss[2, 1] * fitness_loss[2, 2],
