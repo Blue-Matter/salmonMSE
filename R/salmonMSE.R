@@ -230,35 +230,68 @@ calculate_last_projection_year <- function(SOM, MOM, MMSE) {
         as.numeric()
 
       p_natural <- p[Rel[[i]]$natural_origin]
-      s_natural <- unique(pindex$s[pindex$p == p_natural])
-      stopifnot(length(s_natural) == 1)
+      s_natural <- unique(pindex$s[pindex$p %in% p_natural])
+      if (length(p_natural) > 1) {
+        p_NOR <- pindex$p[pindex$s %in% s_natural & pindex$stage == "recruitment" & pindex$origin == "natural"]
+      }
 
       p_hatchery <- p[!Rel[[i]]$natural_origin]
       if (length(p_hatchery)) {
-        s_hatchery <- pindex$s[pindex$p == p_hatchery]
-        stopifnot(length(s_hatchery) == 1)
+        s_hatchery <- unique(pindex$s[pindex$p %in% p_hatchery])
+        if (length(p_hatchery) > 1) {
+          p_HOR <- pindex$p[pindex$s %in% s_hatchery & pindex$stage == "recruitment" & pindex$origin == "hatchery"]
+        }
       }
 
       p_stray <- p[Rel[[i]]$stray]
       if (length(p_stray)) {
-        s_stray <- unique(pindex$s[pindex$p == p_stray & pindex$stage == "escapement"])
+        s_stray <- sapply(p_stray, function(p) pindex$s[pindex$p == p])
+        p_stray_return <- sapply(p_stray, function(p) {
+          s <- pindex$s[pindex$p == p]
+          r <- pindex$r[pindex$p == p]
+          pindex$p[pindex$s == s & pindex$r == r & pindex$stage == "recruitment" & pindex$origin == "hatchery"]
+        })
       }
 
       maxage <- SOM@Bio[[1]]@maxage
       proyears <- MMSE@proyears
 
       run_func <- sapply(1:SOM@nsim, function(x) {
-        Nage_NOS <- matrix(SMSE_prelim@Escapement_NOS[x, s_natural, , SOM@proyears], length(s_natural), maxage) %>% t()
+        if (length(p_natural) == 1) {
+          Nage_NOS <- matrix(
+            SMSE_prelim@Escapement_NOS[x, s_natural, , SOM@proyears],
+            length(s_natural), maxage
+          ) %>% t()
+        } else {
+          a <- seq(2, 2 * maxage, 2)
+          Return_NOS <- apply(MMSE@N[x, p_NOR, a, 1, proyears, ], 1:2, sum)
+          FT <- outer(MMSE@FM[x, p_NOR, 1, 1, proyears], SOM@Harvest[[s_natural]]@vulT[x, ])
+          Nage_NOS <- matrix(Return_NOS * exp(-FT), length(p_natural), maxage) %>% t()
+        }
 
         if (length(p_hatchery)) {
-          s_hatchery <- pindex$s[pindex$p == p_hatchery]
-          stopifnot(length(s_hatchery) == 1)
-          Nage_HOS <- matrix(SMSE_prelim@Escapement_HOS[x, s_hatchery, , SOM@proyears], length(s_hatchery), maxage) %>% t()
+          if (length(p_hatchery) == 1) {
+            Nage_HOS <- matrix(
+              SMSE_prelim@Escapement_HOS[x, s_hatchery, , SOM@proyears],
+              length(p_hatchery), maxage
+            ) %>% t()
+          } else {
+            a <- seq(2, 2 * maxage, 2)
+            Return_HOS <- apply(MMSE@N[x, p_HOR, a, 1, proyears, ], 1:2, sum)
+            FT <- outer(MMSE@FM[x, p_HOR, 1, 1, proyears], SOM@Harvest[[s_hatchery]]@vulT[x, ])
+            Nage_HOS <- matrix(Return_HOS * exp(-FT), length(p_hatchery), maxage) %>% t()
+          }
         } else {
           Nage_HOS <- matrix(0, maxage, 1)
         }
+
         if (length(p_stray)) {
-          Nage_stray <- matrix(SMSE_prelim@Escapement_HOS[x, s_stray, , SOM@proyears], length(s_stray), maxage) %>% t()
+          a <- seq(2, 2 * maxage, 2)
+          Return_stray <- apply(MMSE@N[x, p_stray_return, a, 1, proyears, , drop = FALSE], 2:3, sum)
+          vulT <- sapply(SOM@Harvest[s_stray], function(i) i@vulT[x, ])
+          FM <- MMSE@FM[x, p_stray_return, 1, 1, proyears]
+          FT <- FM * t(vulT)
+          Nage_stray <- matrix(Return_stray * exp(-FT), length(s_stray), maxage) %>% t()
         } else {
           Nage_stray <- array(0, dim(Nage_HOS))
         }

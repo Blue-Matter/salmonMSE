@@ -274,13 +274,14 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       if (n_r > 1) {
         Smolt_r <- array(NA_real_, c(SOM@nsim, n_r, SOM@proyears))
-        Esc_r <- HOS_r <- array(NA_real_, c(SOM@nsim, n_r, nage, SOM@proyears))
+        Esc_r <- Return_r <- HOS_r <- array(NA_real_, c(SOM@nsim, n_r, nage, SOM@proyears))
 
         x <- a <- r <- t <- NULL
 
         a_smolt <- 1
         Smolt_r[] <- apply(MMSE@N[, p_HOS_imm, a_smolt, mp, t1, , drop = FALSE], c(1, 2, 5), sum)
-        Esc_r[, , , y_spawn] <- apply(MMSE@N[, p_HOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 2, 3, 5), sum)
+        Return_r[] <- apply(MMSE@N[, p_HOS_return, a_return, mp, t2, , drop = FALSE], c(1, 2, 3, 5), sum)
+        for (r in 1:n_r) Esc_r[, r, , ] <- Return_r[, r, , ] * (1 - ExT_HOS[, s, , ])
         HOS_r[, , , y_spawn] <- dplyr::filter(H, .data$s == .env$s) %>%
           summarise(value = sum(.data$HOS), .by = c(x, r, a, t)) %>%
           reshape2::acast(list("x", "r", "a", "t"), value.var = "value")
@@ -299,7 +300,7 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
     if (n_g > 1) {
       Egg_g <- Fry_g <- Smolt_g <- array(NA_real_, c(SOM@nsim, n_g, SOM@proyears))
-      Esc_g <- NOS_g <- array(NA_real_, c(SOM@nsim, n_g, nage, SOM@proyears))
+      Esc_g <- Return_g <- NOS_g <- array(NA_real_, c(SOM@nsim, n_g, nage, SOM@proyears))
 
       x <- a <- g <- t <- NULL
       Egg_g[, , y_spawn] <- dplyr::filter(stateN, .data$s == .env$s) %>%
@@ -312,7 +313,8 @@ MMSE2SMSE <- function(MMSE, SOM, Harvest_MMP, N, stateN, Ford, H, stateH) {
 
       a_smolt <- 1
       Smolt_g[] <- apply(MMSE@N[, p_NOS_imm, a_smolt, mp, t1, , drop = FALSE], c(1, 2, 5), sum)
-      Esc_g[, , , y_spawn] <- apply(MMSE@N[, p_NOS_escapement, a_esc, mp, y_spawnOM, , drop = FALSE], c(1, 2, 3, 5), sum)
+      Return_g[] <- apply(MMSE@N[, p_NOS_return, a_return, mp, t2, , drop = FALSE], c(1, 2, 3, 5), sum)
+      for (g in 1:n_g) Esc_g[, g, , ] <- Return_g[, g, , ] * (1 - ExT_NOS[, s, , ])
       NOS_g[, , , y_spawn] <- dplyr::filter(N, .data$s == .env$s) %>%
         summarise(value = sum(.data$NOS), .by = c(x, g, a, t)) %>%
         reshape2::acast(list("x", "g", "a", "t"), value.var = "value")
