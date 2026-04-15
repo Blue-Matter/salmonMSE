@@ -791,7 +791,7 @@ compare_statevar_ts <- function(SMSE_list, var = "PNI", s = 1, figure = TRUE, xl
         ind <- colSums(xplot, na.rm = TRUE) > 0
 
         if (!quant) {
-          matlines(Year[ind], t(xplot[, ind]), type = 'l', col = col_vec, lty = 1, ...)
+          matlines(Year[ind], t(xplot[, ind]), type = 'l', col = col_vec[i], lty = 1, ...)
         } else {
           #matlines(Year[ind], t(xplot[, ind]), type = 'o', col = col_vec[i], pch = c(NA, 1, NA), lty = c(2, 1, 2), ...)
           polygon(c(Year[ind], rev(Year[ind])), c(xplot[1, ind], rev(xplot[3, ind])),
