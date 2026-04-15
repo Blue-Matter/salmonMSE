@@ -198,7 +198,7 @@ calc_broodtake_custom <- function(f_brood, NOR_escapement, HOR_escapement, stray
   egg_HOB_unmarked <- sum((HOB_unmarked + HOB_stray) * s_prespawn * fec * p_female)
   egg_HOB_marked <- sum(HOB_marked * s_prespawn * fec * p_female)
 
-  pNOB <- sum(fec * NOB)/sum(fec * (NOB + HOB_unmarked + HOB_marked + HOB_stray))
+  pNOB <- sum(fec * NOB)/sum(fec * NOB, fec * HOB_unmarked, fec * HOB_marked, fec * HOB_stray)
 
   # Check output is the same as .broodtake_func()
   output <- list(
@@ -269,7 +269,8 @@ calc_broodtake_custom <- function(f_brood, NOR_escapement, HOR_escapement, stray
     obj <- log(p_unmarked) - log(ptarget_NOB)   # Objective function, get close to zero, if not stay positive
     return(obj)
   } else {
-    pNOB <- sum(fec * NOB)/sum(fec * (NOB + HOB_unmarked + HOB_marked + HOB_stray), fec * HOB_import)
+
+    pNOB <- sum(fec * NOB)/sum(fec * NOB, fec * HOB_unmarked, fec * HOB_marked, fec * HOB_stray, fec * HOB_import)
     output <- list(
       egg_NOB = egg_NOB,
       egg_HOB_unmarked = egg_HOB_unmarked,
