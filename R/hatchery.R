@@ -21,11 +21,12 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
 
   if (sum(HO_avail)) {
 
-    # Optimization can fail for two reasons:
+    # Optimization for pNOB target, but can fail for two reasons:
     # (1) not enough unmarked fish
     # (2) more than enough but too many unmarked hatchery fish but can't solve for ptarget_NOB
     opt <- try(
-      uniroot(.broodtake_func, c(1e-8, pmax_NOB),
+      uniroot(.broodtake_func, c(.Machine$double.eps, pmax_NOB),
+              tol = .Machine$double.eps,
               NOR_escapement = NOR_escapement, HOR_escapement = HOR_escapement, stray = stray, brood_import = brood_import,
               phatchery = phatchery, p_female = p_female,
               fec = fec_brood, gamma = 1, egg_target = egg_target, s_prespawn = s_prespawn, ptarget_NOB = ptarget_NOB, m = m),
@@ -51,7 +52,9 @@ calc_broodtake <- function(NOR_escapement, HOR_escapement, stray, brood_import, 
     # If it does, then optimization failed for reason (2), in which case, we use unmarked fish only to reach production target
     if (egg_total/egg_target > 1.01) {
       unmarked_opt <- try(
-        uniroot(.egg_func, c(1e-8, pmax_NOB), N = NOR_escapement + (1 - m) * HOR_escapement,
+        uniroot(.egg_func, c(.Machine$double.eps, pmax_NOB),
+                tol = .Machine$double.eps,
+                N = NOR_escapement + (1 - m) * HOR_escapement,
                 gamma = 1, fec = fec_brood, p_female = p_female,
                 s_prespawn = s_prespawn, val = egg_target),
         silent = TRUE
