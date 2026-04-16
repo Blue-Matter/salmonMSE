@@ -11,12 +11,12 @@ Source:
 [`DESCRIPTION`](https://github.com/Blue-Matter/salmonMSE/blob/master/DESCRIPTION)
 
 Huynh Q (2026). *salmonMSE: Management Strategy Evaluation for Salmon
-Species*. R package version 2.0.0, <https://docs.salmonmse.com/>.
+Species*. R package version 2.1.0, <https://docs.salmonmse.com/>.
 
     @Manual{,
       title = {salmonMSE: Management Strategy Evaluation for Salmon Species},
       author = {Quang Huynh},
       year = {2026},
-      note = {R package version 2.0.0},
+      note = {R package version 2.1.0},
       url = {https://docs.salmonmse.com/},
     }
