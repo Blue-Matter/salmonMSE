@@ -28,9 +28,9 @@ to the lower bound, central tendency, and upper bound.}
 \item{pm2}{Numeric or matrix. A vector of values for the second performance metric on the y-axis (same length as pm1). Alternatively, provide a three column matrix corresponding
 to the lower bound, central tendency, and upper bound.}
 
-\item{x1}{Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1.}
+\item{x1}{Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1. If numeric, you may want to convert values to factors.}
 
-\item{x2}{Numeric, vector of values for the second grouping variable. Various levels are represented by shapes. Same length as pm1.}
+\item{x2}{Atomic, vector of values for the second grouping variable. Various levels are represented by shapes. Same length as pm1. If numeric, will be converted to factors.}
 
 \item{xlab}{Character, optional x-axis label}
 

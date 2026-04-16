@@ -570,8 +570,8 @@ plot_decision_table2 <- function(x, y, z, title, xlab, ylab, zlab, scenario, nco
 #' to the lower bound, central tendency, and upper bound.
 #' @param pm2 Numeric or matrix. A vector of values for the second performance metric on the y-axis (same length as pm1). Alternatively, provide a three column matrix corresponding
 #' to the lower bound, central tendency, and upper bound.
-#' @param x1 Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1.
-#' @param x2 Numeric, vector of values for the second grouping variable. Various levels are represented by shapes. Same length as pm1.
+#' @param x1 Atomic, vector of values for the first grouping variable. Various levels are represented by colours. Same length as pm1. If numeric, you may want to convert values to factors.
+#' @param x2 Atomic, vector of values for the second grouping variable. Various levels are represented by shapes. Same length as pm1. If numeric, will be converted to factors.
 #' @param xlab Character, optional x-axis label
 #' @param ylab Character, optional y-axis label
 #' @param x1lab Character, optional label for the first grouping variable
@@ -640,7 +640,7 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario,
   # Make data frame
   if (missing(x1)) x1 <- 0
   if (missing(x2)) x2 <- 1
-  if (is.numeric(x1)) x1 <- factor(x1)
+  #if (is.numeric(x1)) x1 <- factor(x1)
   if (is.numeric(x2)) x2 <- factor(x2)
 
   dt <- data.frame(
@@ -679,15 +679,11 @@ plot_tradeoff <- function(pm1, pm2, x1, x2, xlab, ylab, x1lab, x2lab, scenario,
   }
 
   # Remove legends if needed
-  if (length(x1) == 1) {
-    g <- g +
-      scale_colour_manual(values = GeomPoint$default_aes$colour) +
-      guides(colour = "none")
+  if (length(unique(x1)) == 1) {
+    g <- g + guides(colour = "none")
   }
-  if (length(x2) == 2) {
-    g <- g +
-      scale_shape_manual(values = GeomPoint$default_aes$shape) +
-      guides(shape = "none")
+  if (length(unique(x2)) == 1) {
+    g <- g + guides(shape = "none")
   }
 
   # Do faceting
