@@ -45,12 +45,14 @@ plot_tradeoff(
 - x1:
 
   Atomic, vector of values for the first grouping variable. Various
-  levels are represented by colours. Same length as pm1.
+  levels are represented by colours. Same length as pm1. If numeric, you
+  may want to convert values to factors.
 
 - x2:
 
-  Numeric, vector of values for the second grouping variable. Various
-  levels are represented by shapes. Same length as pm1.
+  Atomic, vector of values for the second grouping variable. Various
+  levels are represented by shapes. Same length as pm1. If numeric, will
+  be converted to factors.
 
 - xlab:
 
