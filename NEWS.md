@@ -5,6 +5,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Update terminal year escapement, brood, and egg production calculations for multiple release strategies and life cycle groups
 - Fix typos in `smolt_func()` and `compare_statevar_ts()`
 - Broodtake optimization uses `uniroot()` with tolerance to machine precision (need this when population is very large and broodtake is small)
+- `plot_tradeoff` can plot `x1` as a continuous variable (numerics were previously coerced to factors)
 
 # 2.0.0
 
