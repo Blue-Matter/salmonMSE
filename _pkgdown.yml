@@ -1,6 +1,7 @@
 url: https://docs.salmonmse.com/
 template:
   bootstrap: 5
+  math-rendering: mathjax
 
 navbar:
   components:

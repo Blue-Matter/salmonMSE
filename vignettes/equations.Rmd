@@ -1,12 +1,15 @@
 ---
 title: "Dynamics equations"
 date: "`r Sys.Date()`"
-output: 
-  rmarkdown::html_vignette:
-    toc: true
+output:
+  bookdown::html_document2:
+    number_sections: true    
+    mathjax: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+pkgdown:
+  as_is: true
 vignette: >
   %\VignetteIndexEntry{Dynamics equations}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
