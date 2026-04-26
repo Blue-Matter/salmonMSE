@@ -16,3 +16,5 @@ LICENSE
 ^man/figures$
 ^data-raw$
 ^manuscript$
+^\.positai$
+^\.claude$
