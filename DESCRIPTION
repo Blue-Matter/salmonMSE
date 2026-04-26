@@ -14,7 +14,7 @@ Description: Simulation tools to evaluate the long-term effects of salmon manage
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
 Imports: abind, MSEtool (>= 3.7.2), RTMB (>= 1.9), dplyr, ggplot2, grDevices, gsl, methods, reshape2, rlang, rmarkdown, stats, utils
-Suggests: ggrepel, rstan, scales, testthat (>= 3.0.0), tmbstan
+Suggests: bookdown, ggrepel, knitr, rstan, scales, testthat (>= 3.0.0), tmbstan
 Encoding: UTF-8
 LazyData: yes
 LazyLoad: yes
