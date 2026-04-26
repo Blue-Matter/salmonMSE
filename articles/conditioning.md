@@ -51,26 +51,26 @@ added to run the projection.
 
 ## Variable definitions
 
-| Name                 | Definition                                         |
-|:---------------------|:---------------------------------------------------|
-| $C$                  | Catch                                              |
-| $\text{CWT}$         | Coded wire tag                                     |
-| $E$                  | Escapement                                         |
-| $F$                  | Instantaneous fishing mortality                    |
-| $\text{HO}$          | Hatchery origin                                    |
-| $\text{HOS}$         | Hatchery origin spawner                            |
-| $M$                  | Instantaneous natural mortality                    |
-| $N^{\text{juv}}$     | Juvenile abundance                                 |
-| $\text{NO}$          | Natural origin                                     |
-| $\text{NOS}$         | Natural origin spawner                             |
-| $\text{PT}$          | Preterminal fishery                                |
-| $R$                  | Recruitment                                        |
-| $\text{T}$           | Terminal fishery                                   |
-| $m$                  | Proportion mature                                  |
-| $p^{\text{female}}$  | Proportion female                                  |
-| $p^{\text{spawn}}$   | Proportion spawning                                |
-| $s^{\text{enroute}}$ | En-route survival (escapement to spawning grounds) |
-| $v$                  | Fishery vulnerability                              |
+| Name                   | Definition                                         |
+|:-----------------------|:---------------------------------------------------|
+| \\C\\                  | Catch                                              |
+| \\\textrm{CWT}\\       | Coded wire tag                                     |
+| \\E\\                  | Escapement                                         |
+| \\F\\                  | Instantaneous fishing mortality                    |
+| \\\textrm{HO}\\        | Hatchery origin                                    |
+| \\\textrm{HOS}\\       | Hatchery origin spawner                            |
+| \\M\\                  | Instantaneous natural mortality                    |
+| \\N^\textrm{juv}\\     | Juvenile abundance                                 |
+| \\\textrm{NO}\\        | Natural origin                                     |
+| \\\textrm{NOS}\\       | Natural origin spawner                             |
+| \\\textrm{PT}\\        | Preterminal fishery                                |
+| \\R\\                  | Recruitment                                        |
+| \\\textrm{T}\\         | Terminal fishery                                   |
+| \\m\\                  | Proportion mature                                  |
+| \\p^\textrm{female}\\  | Proportion female                                  |
+| \\p^\textrm{spawn}\\   | Proportion spawning                                |
+| \\s^\textrm{enroute}\\ | En-route survival (escapement to spawning grounds) |
+| \\v\\                  | Fishery vulnerability                              |
 
 ## Life cycle parameters from CWT
 
@@ -78,84 +78,93 @@ Life cycle parameters are informed by CWT. Mortality rates are
 parameterized in instantaneous units, which can be converted to survival
 terms.
 
-Fishing mortality $F$ is separated into a preterminal (PT) component
+Fishing mortality \\F\\ is separated into a preterminal (PT) component
 which acts on juvenile fish and a terminal (T) component on mature fish.
 Separable effects are modeled where the fishing mortality is
-year-specific and modified by age class by a vulnerability term $v$.
+year-specific and modified by age class by a vulnerability term \\v\\.
 
-Survival of juvenile CWT to the next age class $a$ at the beginning of
-year $y$ is calculated after exploitation, maturation $m$, and natural
-mortality $M$:
+Survival of juvenile CWT to the next age class \\a\\ at the beginning of
+year \\y\\ is calculated after exploitation, maturation \\m\\, and
+natural mortality \\M\\:
 
-$$N_{y + 1,a + 1}^{\text{juv,CWT}} = N_{y,a}^{\text{juv,CWT}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)\left( 1 - m_{y,a} \right)\exp\left( - M_{y,a} \right)$$
+\\ N^\textrm{juv,CWT}\_{y+1,a+1} =
+N^\textrm{juv,CWT}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)(1 -
+m\_{y,a})\exp(-M\_{y,a}) \\
 
 An additional mortality term, associated with release mortality, can be
 applied for survival in the first year of life shortly after release:
 
-$$N_{y,a = 1}^{\text{juv,CWT}} = N_{y}^{\text{rel,CWT}}s^{\text{rel}}$$
+\\ N^\textrm{juv,CWT}\_{y,a=1} = N^\textrm{rel,CWT}\_y s^\textrm{rel} \\
 
-where $s^{\text{rel}}$ is the survival after release into the wild.
+where \\s^\textrm{rel}\\ is the survival after release into the wild.
 
-The CWT return $R$ is the fraction of maturing juveniles after
+The CWT return \\R\\ is the fraction of maturing juveniles after
 preterminal exploitation
 
-$$R_{y,a}^{\text{CWT}} = N_{y,a}^{\text{juv,CWT}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)m_{y,a}$$
+\\ R^\textrm{CWT}\_{y,a} =
+N^\textrm{juv,CWT}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)m\_{y,a}
+\\
 
 The escapement is the return that survive terminal exploitation
 
-$$E_{y,a}^{\text{CWT}} = R_{y,a}^{\text{CWT}}\exp\left( - v_{a}^{\text{T}}F_{y}^{\text{T}} \right)$$
+\\ E^\textrm{CWT}\_{y,a} =
+R^\textrm{CWT}\_{y,a}\exp(-v^\textrm{T}\_aF^\textrm{T}\_y) \\
 
-The catch $C$ is
+The catch \\C\\ is
 
-$$\begin{aligned}
-C_{y,a}^{\text{CWT,PT}} & {= N_{y,a}^{\text{juv,CWT}}\left( 1 - \exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right) \right)} \\
-C_{y,a}^{\text{CWT,T}} & {= R_{y,a}^{\text{CWT}}\left( 1 - \exp\left( - v_{a}^{\text{T}}F_{y}^{\text{T}} \right) \right)}
-\end{aligned}$$
+\\\begin{align} C^\textrm{CWT,PT}\_{y,a} &=
+N^\textrm{juv,CWT}\_{y,a}(1 - \exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y))\\
+C^\textrm{CWT,T}\_{y,a} &= R^\textrm{CWT}\_{y,a}(1 -
+\exp(-v^\textrm{T}\_aF^\textrm{T}\_y)) \end{align}\\
 
 ## Population reconstruction
 
-The model does separate accounting of natural-origin ($\text{NO}$) and
-hatchery-origin ($\text{HO}$) fish in the population of interest.
+The model does separate accounting of natural-origin (\\\textrm{NO}\\)
+and hatchery-origin (\\\textrm{HO}\\) fish in the population of
+interest.
 
 ### Juvenile life stage
 
 The age-1 HO fish is obtained from the number of releases and an
-assumption about survival after release:
-$N_{y,a = 1}^{\text{juv,HO}} = N_{y}^{\text{rel}}s^{\text{rel}}$.
+assumption about survival after release: \\N^\textrm{juv,HO}\_{y,a=1} =
+N^\textrm{rel}\_y s^\textrm{rel}\\.
 
 The age-1 NO fish is equal to the smolt production, usually considered
 to be the juveniles migrating out of the freshwater environment:
-$N_{y,a = 1}^{\text{juv,NO}} = \text{Smolt}_{y}$
+\\N^\textrm{juv,NO}\_{y,a=1} = \textrm{Smolt}\_y\\
 
 > In the first year in the marine life stage, both HO and NO fish
-> experience the natural mortality rate associated with $M$. Additional
-> mortality can be applied to HO fish associated with release mortality
-> (not experienced by NO fish). In effect, since the CWT data inform
-> hatchery survival in the first year, the release mortality assumption
-> effectively allows the analyst to attribute a smaller proportion of
-> the mortality experienced by hatchery fish to natural origin fish.
+> experience the natural mortality rate associated with \\M\\.
+> Additional mortality can be applied to HO fish associated with release
+> mortality (not experienced by NO fish). In effect, since the CWT data
+> inform hatchery survival in the first year, the release mortality
+> assumption effectively allows the analyst to attribute a smaller
+> proportion of the mortality experienced by hatchery fish to natural
+> origin fish.
 
-The abundance of juvenile fish $N$, uses the same preterminal fishing
+The abundance of juvenile fish \\N\\, uses the same preterminal fishing
 mortality, maturity, and natural mortality paramaters estimated from the
-CWT: $$\begin{aligned}
-N_{y + 1,a + 1}^{\text{juv,NO}} & {= N_{y,a}^{\text{juv,NO}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)\left( 1 - m_{y,a} \right)\exp\left( - M_{y,a} \right)} \\
-N_{y + 1,a + 1}^{\text{juv,HO}} & {= N_{y,a}^{\text{juv,HO}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)\left( 1 - m_{y,a} \right)\exp\left( - M_{y,a} \right)}
-\end{aligned}$$
+CWT: \\\begin{align} N^\textrm{juv,NO}\_{y+1,a+1} &=
+N^\textrm{juv,NO}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)(1 -
+m\_{y,a})\exp(-M\_{y,a})\\ N^\textrm{juv,HO}\_{y+1,a+1} &=
+N^\textrm{juv,HO}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)(1 -
+m\_{y,a})\exp(-M\_{y,a}) \end{align}\\
 
 ### Adult life stage
 
-The return $R$, and escapement $E$ is calculated from the terminal
+The return \\R\\, and escapement \\E\\ is calculated from the terminal
 fishing mortality and maturity parameters estimated from the CWT:
 
-$$\begin{aligned}
-R_{y,a}^{\text{NO}} & {= N_{y,a}^{\text{juv,NO}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)m_{y,a}} \\
-R_{y,a}^{\text{HO}} & {= N_{y,a}^{\text{juv,HO}}\exp\left( - v_{a}^{\text{PT}}F_{y}^{\text{PT}} \right)m_{y,a}}
-\end{aligned}$$
+\\\begin{align} R^\textrm{NO}\_{y,a} &=
+N^\textrm{juv,NO}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)m\_{y,a}\\
+R^\textrm{HO}\_{y,a} &=
+N^\textrm{juv,HO}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)m\_{y,a}
+\end{align}\\
 
-$$\begin{aligned}
-E_{y,a}^{\text{NO}} & {= R_{y,a}^{\text{NO}}\exp\left( - v_{a}^{\text{T}}F_{y}^{\text{T}} \right)} \\
-E_{y,a}^{\text{HO}} & {= R_{y,a}^{\text{HO}}\exp\left( - v_{a}^{\text{T}}F_{y}^{\text{T}} \right)}
-\end{aligned}$$
+\\\begin{align} E^\textrm{NO}\_{y,a} &=
+R^\textrm{NO}\_{y,a}\exp(-v^\textrm{T}\_aF^\textrm{T}\_y)\\
+E^\textrm{HO}\_{y,a} &=
+R^\textrm{HO}\_{y,a}\exp(-v^\textrm{T}\_aF^\textrm{T}\_y) \end{align}\\
 
 The number of spawners is calculated from the escapement, the en-route
 survival, and the proportion of escapement that spawn. This proportion
@@ -163,23 +172,25 @@ can be calculated from the ratio of broodtake to observed escapement
 (the model is parameterized in this manner for numerical stability and
 it is assumed broodtake is non-selective with respect to origin):
 
-$$\begin{aligned}
-\text{NOS}_{y,a} & {= E_{y,a}^{\text{NO}}s^{\text{enroute}}p_{y}^{\text{spawn}}} \\
-\text{HOS}_{y,a} & {= E_{y,a}^{\text{HO}}s^{\text{enroute}}p_{y}^{\text{spawn}}}
-\end{aligned}$$
+\\\begin{align} \textrm{NOS}\_{y,a} &= E^\textrm{NO}\_{y,a}
+s^\textrm{enroute} p^\textrm{spawn}\_y\\ \textrm{HOS}\_{y,a} &=
+E^\textrm{HO}\_{y,a} s^\textrm{enroute} p^\textrm{spawn}\_y
+\end{align}\\
 
 ### Egg and juvenile production
 
 The egg production is calculated from the proportion females and
-fecundity $f$ at age:
+fecundity \\f\\ at age:
 
-$$\text{Egg}_{y} = p^{\text{female}}\sum\limits_{a}f_{a}\left( \text{NOS}_{y,a} + \gamma \times \text{HOS}_{y,a} \right)$$
+\\ \textrm{Egg}\_y = p^\textrm{female}\sum_a f_a (\textrm{NOS}\_{y,a} +
+\gamma \times \textrm{HOS}\_{y,a}) \\
 
 The smolt production is calculated from a Ricker stock-recruit function:
 
-$$\text{Smolt}_{y + 1} = \alpha \times \text{Egg}_{y} \times \exp\left( - \beta \times \text{Egg}_{y} \right)\exp\left( - \delta_{y} \right)$$
+\\ \textrm{Smolt}\_{y+1} = \alpha\times\textrm{Egg}\_y \times
+\exp(-\beta \times \textrm{Egg}\_y) \exp(-\delta_y) \\
 
-where $\delta_{y}$ is an annual deviation from the density-dependent
+where \\\delta_y\\ is an annual deviation from the density-dependent
 function, expressed as an instantaneous mortality rate. Here, smolts can
 be considered to be outmigrating juveniles. Thus, the egg-smolt survival
 occurs over freshwater life stages.
@@ -190,34 +201,34 @@ occurs over freshwater life stages.
 (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html)
 show that the realized egg-smolt mortality rate can be defined as
 
-$$M_{y}^{\text{egg}} = M_{\text{min}}^{\text{egg}} + \beta \times \text{Egg}_{y} + \delta_{y}$$
+\\ M_y^\textrm{egg} = M^\textrm{egg}\_\textrm{min} + \beta \times
+\textrm{Egg}\_y + \delta_y \\
 
-where
-$M_{\text{min}}^{\text{egg}} = - \log\left( \phi^{- 1} \right) - \log(\kappa)$
+where \\M^\textrm{egg}\_\textrm{min} = -\log(\phi^{-1}) - \log(\kappa)\\
 is the density-independent egg mortality rate when the egg production
-approaches zero, $\beta \times \text{Egg}_{y}$ is the density-dependent
-mortality term, and $\delta_{y}$ is a year-specific deviation.
+approaches zero, \\\beta \times \textrm{Egg}\_y\\ is the
+density-dependent mortality term, and \\\delta_y\\ is a year-specific
+deviation.
 
-The Ricker $\alpha$ parameter is $\alpha = \kappa/\phi$ in units of
-juvenile-per-egg, where $\kappa$ is productivity (return/spawner) and
-$\phi$ is the egg-per-juvenile at replacement (corresponding to the
-one-to-one return per spawner line), with
-$\phi = \sum_{a}\ell_{a}m_{a}^{\text{base}}f_{a}p^{\text{female}}$.
+The Ricker \\\alpha\\ parameter is \\\alpha = \kappa/\phi\\ in units of
+juvenile-per-egg, where \\\kappa\\ is productivity (return/spawner) and
+\\\phi\\ is the egg-per-juvenile at replacement (corresponding to the
+one-to-one return per spawner line), with \\\phi = \sum_a \ell_a
+m^\textrm{base}\_a f_a p^\textrm{female}\\.
 
-$\ell_{a}$ is the juvenile survival at age:
+\\\ell_a\\ is the juvenile survival at age:
 
-$$\ell_{a} = \begin{cases}
-1 & {,a = 1} \\
-{\ell_{a - 1}\exp\left( - M_{a - 1}^{\text{base}} \right)\left( 1 - m_{a - 1}^{\text{base}} \right)} & {,a = 2,\ldots,A}
-\end{cases}$$
+\\ \ell_a = \begin{cases} 1 &, a = 1\\ \ell\_{a-1}
+\exp(-M^\textrm{base}\_{a-1}) (1 - m^\textrm{base}\_{a-1}) &, a = 2,
+\ldots, A \end{cases} \\
 
-The $\beta$ parameter is
-$\beta = \log(\kappa)/\left( \phi \times J^{\text{rep}} \right)$ is in
-units of reciprocal eggs, where $J^{\text{rep}}$ is the juvenile smolt
-production at replacement. The equilibrium spawners at replacement is
-$S^{\text{rep}}$ and $J^{\text{rep}} = S^{\text{rep}}/\tau$, where
-$\tau = \sum_{a}\ell_{a}m_{a}^{\text{base}}p^{\text{female}}$ is the
-equilibrium female spawners per juvenile.
+The \\\beta\\ parameter is \\\beta = \log(\kappa)/(\phi \times
+J^\textrm{rep})\\ is in units of reciprocal eggs, where
+\\J^\textrm{rep}\\ is the juvenile smolt production at replacement. The
+equilibrium spawners at replacement is \\S^\textrm{rep}\\ and
+\\J^\textrm{rep} = S^\textrm{rep}/\tau\\, where \\\tau = \sum_a \ell_a
+m^\textrm{base}\_a p^\textrm{female}\\ is the equilibrium female
+spawners per juvenile.
 
 ### Realized productivity
 
@@ -229,52 +240,52 @@ series because these parameters change the egg production over the
 lifetime of a juvenile.
 
 To obtain the realized productivity in a particular year, we can
-calculate the egg-per-juvenile
-$\phi_{y} = \sum_{a}\ell_{y,a}m_{y,a}f_{a}p^{\text{female}}$ and
-spawner-per-juvenile
-$\tau_{y} = \sum_{a}\ell_{y,a}m_{y,a}p^{\text{female}}$ from the
-historical maturity and mortality, where
+calculate the egg-per-juvenile \\\phi_y = \sum_a \ell\_{y,a} m\_{y,a}
+f_a p^\textrm{female}\\ and spawner-per-juvenile \\\tau_y = \sum_a
+\ell\_{y,a} m\_{y,a} p^\textrm{female}\\ from the historical maturity
+and mortality, where
 
-$$\ell_{y,a} = \begin{cases}
-1 & {,a = 1} \\
-{\ell_{y,a - 1}\exp\left( - M_{y,a - 1} \right)\left( 1 - m_{y,a - 1} \right)} & {,a = 2,\ldots,A}
-\end{cases}$$
+\\ \ell\_{y,a} = \begin{cases} 1 &, a = 1\\ \ell\_{y,a-1}
+\exp(-M\_{y,a-1}) (1 - m\_{y,a-1}) &, a = 2, \ldots, A \end{cases} \\
 
-The realized productivity is $\kappa_{y} = \alpha\phi_{y}$ with
-corresponding
-$S_{y}^{\text{rep}} = \log\left( \kappa_{y} \right) \times \tau_{y}/\left( \beta\phi_{y} \right)$
-and $E_{y}^{\text{rep}} = S_{y}^{\text{rep}}\phi_{y}/\tau_{y}$
-($E_{y}^{\text{rep}}$ is the egg production at replacement).
+The realized productivity is \\\kappa_y = \alpha \phi_y\\ with
+corresponding \\S^\textrm{rep}\_y =
+\log(\kappa_y)\times\tau_y/(\beta\phi_y)\\ and \\E^\textrm{rep}\_y =
+S^\textrm{rep}\_y \phi_y / \tau_y\\ (\\E^\textrm{rep}\_y\\ is the egg
+production at replacement).
 
-The realized productivity can be less than one (and
-$S_{y}^{\text{rep}} < 0$) in an individual year. If juvenile marine
-mortality is high or maturity is late, then there are too few returns to
-replace the population.
+The realized productivity can be less than one (and \\S^\textrm{rep}\_y
+\< 0\\) in an individual year. If juvenile marine mortality is high or
+maturity is late, then there are too few returns to replace the
+population.
 
 ### Initial abundance
 
 As a forward-projecting model, an assumption about the equilibrium age
 distribution in the first year of the model is required. This age
 distribution is calculated from the initial fishing mortality rate
-$F^{\text{init}}$ of preterminal and terminal fisheries.
+\\F^\textrm{init}\\ of preterminal and terminal fisheries.
 
 The initial equilibrium juvenile survival at age is:
 
-$$\ell_{a}^{\text{Finit}} = \begin{cases}
-1 & {,a = 1} \\
-{\ell_{a - 1}\exp\left( - v_{a - 1}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - M_{a - 1}^{\text{base}} \right)\left( 1 - m_{a - 1}^{\text{base}} \right)} & {,a = 2,\ldots,A}
-\end{cases}$$
+\\ \ell^\textrm{Finit}\_a = \begin{cases} 1 &, a = 1\\ \ell\_{a-1}
+\exp(-v^\textrm{PT}\_{a-1}F^\textrm{init,PT})\exp(-M^\textrm{base}\_{a-1})
+(1 - m^\textrm{base}\_{a-1}) &, a = 2, \ldots, A \end{cases} \\
 
 The juvenile abundance is back-calculated from an initial equilibrium
-spawners $S^{\text{init}}$ and pHOS assumptions:
+spawners \\S^\textrm{init}\\ and pHOS assumptions:
 
-$$\begin{aligned}
-N_{y = 1,a}^{\text{juv,NO}} & {= \frac{S^{\text{init}}}{\tau^{\text{init}}} \times \left( 1 - p\text{HOS}^{\text{init}} \right) \times \ell_{a}^{\text{Finit}}} \\
-N_{y = 1,a}^{\text{juv,HO}} & {= \frac{S^{\text{init}}}{\tau^{\text{init}}} \times p\text{HOS}^{\text{init}} \times \ell_{a}^{\text{Finit}}}
-\end{aligned}$$
+\\\begin{align} N^\textrm{juv,NO}\_{y=1,a} &=
+\dfrac{S^\textrm{init}}{\tau^\textrm{init}} \times (1 -
+p\textrm{HOS}^\textrm{init}) \times \ell^\textrm{Finit}\_a\\
+N^\textrm{juv,HO}\_{y=1,a} &=
+\dfrac{S^\textrm{init}}{\tau^\textrm{init}} \times
+p\textrm{HOS}^\textrm{init} \times \ell^\textrm{Finit}\_a \end{align}\\
 
-where spawner-per-juvenile
-$\tau^{\text{init}} = \sum_{a}\ell_{a}^{\text{Finit}}\exp\left( - v_{a}^{\text{PT}}F^{\text{init,PT}} \right)\exp\left( - v_{a}^{\text{T}}F^{\text{init,T}} \right)m_{a}^{\text{base}}p^{\text{female}}$.
+where spawner-per-juvenile \\\tau^\textrm{init} = \sum_a
+\ell^\textrm{Finit}\_a
+\exp(-v^\textrm{PT}\_aF^\textrm{init,PT})\exp(-v^\textrm{T}\_aF^\textrm{init,T})
+m^\textrm{base}\_a p^\textrm{female}\\.
 
 ## Parameter estimation and priors
 
@@ -282,45 +293,40 @@ $\tau^{\text{init}} = \sum_{a}\ell_{a}^{\text{Finit}}\exp\left( - v_{a}^{\text{P
 
 Year-specific fishing mortality is parameterized as
 
-$$\begin{aligned}
-F_{y}^{\text{PT}} & {= \exp\left( a^{\text{PT}} \right)F_{y}^{\text{trend,PT}}\exp\left( \omega_{y}^{\text{FPT}} \right)} \\
-F_{y}^{\text{T}} & {= \exp\left( a^{\text{T}} \right)F_{y}^{\text{trend,T}}\exp\left( \omega_{y}^{\text{FT}} \right)} \\
- & 
-\end{aligned}$$
+\\\begin{align} F^\textrm{PT}\_y &= \exp(a^\textrm{PT})
+F^\textrm{trend,PT}\_y \exp(\omega^\textrm{FPT}\_y)\\ F^\textrm{T}\_y &=
+\exp(a^\textrm{T}) F^\textrm{trend,T}\_y \exp(\omega^\textrm{FT}\_y)\\
+\end{align}\\
 
-where $F^{\text{trend,PT}}$ is a time series of relative exploitation
-provided by the analyst. The model estimates a scaling coefficient $a$
-and annual deviations $\omega$ to estimate fishing mortality.
+where \\F^\textrm{trend,PT}\\ is a time series of relative exploitation
+provided by the analyst. The model estimates a scaling coefficient \\a\\
+and annual deviations \\\omega\\ to estimate fishing mortality.
 
 The prior for the annual deviations is
 
-$$\begin{aligned}
-\omega_{y}^{\text{FPT}} & {\sim N\left( 0,\sigma_{\text{FPT}}^{2} \right)} \\
-\omega_{y}^{\text{FT}} & {\sim N\left( 0,\sigma_{\text{FT}}^{2} \right)}
-\end{aligned}$$
+\\\begin{align} \omega^\textrm{FPT}\_y &\sim N(0,
+\sigma\_\textrm{FPT}^2)\\ \omega^\textrm{FT}\_y &\sim N(0,
+\sigma\_\textrm{FT}^2) \end{align}\\
 
-with hyperpriors for $\sigma_{\text{FPT}}^{2}$ and
-$\sigma_{\text{FT}}^{2}$:
+with hyperpriors for \\\sigma\_\textrm{FPT}^2\\ and
+\\\sigma\_\textrm{FT}^2\\:
 
-$$\begin{aligned}
-\sigma_{\text{FPT}} & {\sim \text{Gamma}(2,5)} \\
-\sigma_{\text{FT}} & {\sim \text{Gamma}(2,5)}
-\end{aligned}$$
+\\\begin{align} \sigma\_\textrm{FPT} &\sim \textrm{Gamma}(2, 5)\\
+\sigma\_\textrm{FT} &\sim \textrm{Gamma}(2, 5) \end{align}\\
 
 ### Vulnerability
 
 Vulnerability at age are independent terms estimated in logit space:
 
-$$\begin{aligned}
-{\text{logit}\left( v_{a}^{\text{PT}} \right)} & {\sim N\left( \text{logit}\left( \mu_{a}^{vPT} \right),1.6^{2} \right)} \\
-{\text{logit}\left( v_{a}^{\text{T}} \right)} & {\sim N\left( \text{logit}\left( \mu_{a}^{vT} \right),1.6^{2} \right)}
-\end{aligned}$$
+\\\begin{align} \textrm{logit}(v^\textrm{PT}\_a) &\sim
+N(\textrm{logit}(\mu^{vPT}\_a), 1.6^2)\\ \textrm{logit}(v^\textrm{T}\_a)
+&\sim N(\textrm{logit}(\mu^{vT}\_a), 1.6^2) \end{align}\\
 
-where $\mu$ is the prior mean specified by the analyst. Vulnerability is
-fixed at zero and one for the age 1 and maximum age ($A$), respectively
-($v_{1} = 0$ and $v_{A} = 1$).
+where \\\mu\\ is the prior mean specified by the analyst. Vulnerability
+is fixed at zero and one for the age 1 and maximum age (\\A\\),
+respectively (\\v_1 = 0\\ and \\v_A = 1\\).
 
-A useful prior may be with $\mu = 0.5$. When transformed to normal
+A useful prior may be with \\\mu = 0.5\\. When transformed to normal
 space, the prior density is relatively uniform between 0-1 with low
 density at the bounds:
 
@@ -342,11 +348,12 @@ plot(y, log(g_y), type = 'l', xlab = expression(v[a]), ylab = "log prior density
 
 Maturity is estimated in logit space as deviations from base parameters
 provided by the analyst. The prior density function is Gaussian with
-separate standard deviation $\sigma_{a}^{m}$ by age:
+separate standard deviation \\\sigma^m_a\\ by age:
 
-$$\text{logit}\left( m_{y,a} \right) \sim N\left( \text{logit}\left( m_{a}^{\text{base}} \right),\left\lbrack \sigma_{a}^{m} \right\rbrack^{2} \right)$$
+\\ \textrm{logit}(m\_{y,a}) \sim N(\textrm{logit}(m_a^\textrm{base}),
+\[\sigma^m_a\]^2) \\
 
-with hyperprior $\sigma_{a}^{m} \sim \text{Gamma}(2,5)$ (mode of 0.2,
+with hyperprior \\\sigma^m_a \sim \textrm{Gamma}(2, 5)\\ (mode of 0.2,
 mean of 0.4, and standard deviation of 0.28).
 
 ``` r
@@ -367,33 +374,33 @@ mtext("Gamma(2, 5) prior distribution", outer = TRUE, line = 1)
 
 Natural mortality is parameterized as
 
-$$M_{y,a} = \begin{cases}
-{M_{a}^{\text{base}} + \sum\limits_{i}X_{i,y}\beta_{i} + M^{\text{add}} + \varepsilon_{y}} & {,a = 1} \\
-{M_{a}^{\text{base}} + \sum\limits_{j}X_{j,y}\beta_{j}} & {,a = 2,\ldots,A - 1}
-\end{cases}$$
+\\ M\_{y,a} = \begin{cases} M^\textrm{base}\_a +
+\sum_iX\_{i,y}\beta_i+M^\textrm{add} + \varepsilon_y &, a = 1\\
+M^\textrm{base}\_a + \sum_jX\_{j,y}\beta_j &, a = 2, \ldots, A-1
+\end{cases} \\
 
 From base values provided by the analyst, year-specific mortality rates
-can be estimated from linear combination of environmental covariates $X$
-and estimated coefficients $\beta$. Separate covariates are used for
-age-1 and age-2+ fish.
+can be estimated from linear combination of environmental covariates
+\\X\\ and estimated coefficients \\\beta\\. Separate covariates are used
+for age-1 and age-2+ fish.
 
-For age-1, an additional scalar $M^{\text{add}}$ and annual deviations
-$\varepsilon_{y}$ can be estimated from the base parameter.
+For age-1, an additional scalar \\M^\textrm{add}\\ and annual deviations
+\\\varepsilon_y\\ can be estimated from the base parameter.
 
-Gaussion priors are used for $\varepsilon_{y}$:
+Gaussion priors are used for \\\varepsilon_y\\:
 
-$$\varepsilon_{y} \sim N\left( 0,\left\lbrack \sigma^{M} \right\rbrack^{2} \right)$$
+\\ \varepsilon_y \sim N(0, \[\sigma^M\]^2) \\
 
-with hyperprior $\sigma^{M} \sim \text{Gamma}(2,5)$.
+with hyperprior \\\sigma^M \sim \textrm{Gamma}(2, 5)\\.
 
 ### Natural production
 
-A uniform prior is used for $\log(\kappa)$, and a lognormal prior is
-used to estimate $S_{0}$.
+A uniform prior is used for \\\log(\kappa)\\, and a lognormal prior is
+used to estimate \\S_0\\.
 
 The annual deviations in smolt production are estimated with prior
-$\delta_{y} \sim N\left( 0,\sigma_{\delta}^{2} \right)$ and hyperprior
-$\sigma_{\delta} \sim \text{Gamma}(2,5)$.
+\\\delta_y \sim N(0, \sigma\_\delta^2)\\ and hyperprior \\\sigma\_\delta
+\sim \textrm{Gamma}(2, 5)\\.
 
 ## Likelihoods
 
@@ -402,37 +409,45 @@ $\sigma_{\delta} \sim \text{Gamma}(2,5)$.
 The likelihood of the total escapement for the population of interest
 uses a lognormal distribution:
 
-$$\log\left( E_{y} \right) \sim N\left( \log\left( \sum\limits_{a}\left( {\widehat{E}}_{y,a}^{\text{NO}} + {\widehat{E}}_{y,a}^{\text{HO}} \right) \right),\left\lbrack \sigma^{E} \right\rbrack^{2} \right)$$
+\\ \log(E_y) \sim N\left(\log\left(\sum_a(\hat{E}^\textrm{NO}\_{y,a} +
+\hat{E}^\textrm{HO}\_{y,a})\right), \[\sigma^E\]^2\right) \\
 
 ### pHOS
 
 The model can also be fitted to observations of pHOS (proportion
-hatchery origin spawners by brood year $t$) for the population of
+hatchery origin spawners by brood year \\t\\) for the population of
 interest. A logistic normal distribution is used:
 
-$$\log\left( \frac{p\text{HOS}_{t}}{1 - p\text{HOS}_{t}} \right) \sim N\left( \log\left( \frac{{\widehat{p\text{HOS}}}_{t}}{1 - {\widehat{p\text{HOS}}}_{t}} \right),\left\lbrack \sigma^{p\text{HOS}} \right\rbrack^{2} \right)$$
+\\ \log\left(\dfrac{p\textrm{HOS}\_t}{1 - p\textrm{HOS}\_t}\right) \sim
+N\left(\log\left(\dfrac{\widehat{p\textrm{HOS}}\_t}{1 -
+\widehat{p\textrm{HOS}}\_t}\right), \[\sigma^{p\textrm{HOS}}\]^2\right)
+\\
 
 where the predicted value is
 
-$$p\text{HOS}_{t} = \frac{\sum\limits_{a}\text{HOS}_{t + a - 1} \times f_{t + a - 1}}{\sum\limits_{a}(\left\lbrack \text{NOS}_{t + a - 1} + \text{HOS}_{t + a - 1}) \times f_{t + a - 1} \right\rbrack}$$
+\\ p\textrm{HOS}\_t = \dfrac{\sum_a\textrm{HOS}\_{t+a-1}\times
+f\_{t+a-1}}{\sum_a(\[\textrm{NOS}\_{t+a-1} +
+\textrm{HOS}\_{t+a-1})\times f\_{t+a-1}\]} \\
 
 ### CWT catch and escapement at age
 
 The likelihood of the CWT at age uses a Poisson distribution:
 
-$$\begin{aligned}
-C_{y,a}^{\text{CWT,PT}} & {\sim \text{Poisson}\left( \frac{1}{\lambda} \times {\widehat{C}}_{y,a}^{\text{CWT,PT}} \right)} \\
-C_{y,a}^{\text{CWT,T}} & {\sim \text{Poisson}\left( \frac{1}{\lambda} \times {\widehat{C}}_{y,a}^{\text{CWT,T}} \right)} \\
-E_{y,a}^{\text{CWT}} & {\sim \text{Poisson}\left( \frac{1}{\lambda} \times {\widehat{E}}_{y,a}^{\text{CWT}} \right)}
-\end{aligned}$$
+\\\begin{align} C^\textrm{CWT,PT}\_{y,a} &\sim
+\textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,PT}\_{y,a}\right)\\
+C^\textrm{CWT,T}\_{y,a} &\sim
+\textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{C}^\textrm{CWT,T}\_{y,a}\right)\\
+E^\textrm{CWT}\_{y,a} &\sim
+\textrm{Poisson}\left(\dfrac{1}{\lambda}\times\hat{E}^\textrm{CWT}\_{y,a}\right)
+\end{align}\\
 
-where the $\land$ symbol denotes an estimate of the corresponding
-observed quantity and $\lambda$ is the expansion factor.
+where the \\\wedge\\ symbol denotes an estimate of the corresponding
+observed quantity and \\\lambda\\ is the expansion factor.
 
 The expansion factor is the scalar to ensure CWT data are representative
 of total recoveries (typically greater or equal to 1). For example,
-$\lambda = 10$ may be appropriate if 10 percent of the fishery catch is
-sampled for coded wire tags. It is assumed that the CWT data are
+\\\lambda = 10\\ may be appropriate if 10 percent of the fishery catch
+is sampled for coded wire tags. It is assumed that the CWT data are
 unexpanded numbers.
 
 ### Likelihood re-weighting
@@ -445,8 +460,8 @@ distribution).
 The data needed to be adjusted simultaneously to preserve the magnitude
 of predicted CWT catch and escapement between alternative fits. For
 example, if the true sampling rate is 0.1, then an initial fit may use
-$\lambda = 10$, but the CWT can be up-weighted assuming a higher
-sampling rate of 0.5 ($\lambda = 2$). The analyst should multiply the
+\\\lambda = 10\\, but the CWT can be up-weighted assuming a higher
+sampling rate of 0.5 (\\\lambda = 2\\). The analyst should multiply the
 CWT catch and escapement by 5. \# Release strategies
 
 The equations above assume that CWT come from a single release strategy,
@@ -462,14 +477,16 @@ Fishing and natural mortality rates are identical by year and age but
 maturity differs by release strategy.
 
 The maturity is estimated by year and age for a particular release
-strategy indexed by $r = 1$:
+strategy indexed by \\r = 1\\:
 
-$$\text{logit}\left( m_{y,a,r} \right) \sim N\left( \text{logit}\left( m_{a}^{\text{base}} \right),\left\lbrack \sigma_{a}^{m} \right\rbrack^{2} \right)$$
+\\ \textrm{logit}(m\_{y,a,r}) \sim N(\textrm{logit}(m_a^\textrm{base}),
+\[\sigma^m_a\]^2) \\
 
-For all other release strategies $r = 2,\ldots,n_{r}$, logit deviations
+For all other release strategies \\r = 2,\dots,n_r\\, logit deviations
 by age (constant with time) are estimated as fixed effects:
 
-$$\text{logit}\left( m_{y,a,r} \right) = \text{logit}\left( m_{y,a,1} \right) + \delta_{a,r}$$
+\\ \textrm{logit}(m\_{y,a,r}) = \textrm{logit}(m\_{y,a,1}) +
+\delta\_{a,r} \\
 
 The user then specifies the release strategy from which the maturity
 estimates then apply towards the population of interest.

@@ -9,37 +9,39 @@ brood year returns.
 
 The Ricker function is
 
-$$R = a \times S\exp( - bS)$$
+\\ R = a\times S\exp(-bS) \\
 
-where $R$ is the return and $S$ is the spawners. Parameters $a$ is in
-units of returns/spawner and $b$ is in units of reciprocal spawners.
+where \\R\\ is the return and \\S\\ is the spawners. Parameters \\a\\ is
+in units of returns/spawner and \\b\\ is in units of reciprocal
+spawners.
 
-Let $S_{\text{MSY}}$ be the spawner abundance that maximizes catch
-$R - S$, which can be obtained by maximizing the function:
+Let \\S\_\textrm{MSY}\\ be the spawner abundance that maximizes catch
+\\R-S\\, which can be obtained by maximizing the function:
 
-$$R - S = a \times S\exp( - bS) - S$$
+\\ R - S = a\times S\exp(-b S) - S \\
 
-The implicit solution, where $\alpha = \log(a)$, satisfies
+The implicit solution, where \\\alpha = \log(a)\\, satisfies
 
-$$\left( 1 - bS_{\text{MSY}} \right)\exp\left( \alpha - bS_{\text{MSY}} \right) = 1$$
+\\ (1 - bS\_\textrm{MSY})\exp(\alpha - bS\_\textrm{MSY}) = 1 \\
 
 and can be solved numerically ([Scheuerell
 2016](https://doi.org/10.7717/peerj.1623)).
 
-$S_{\text{MSY}}$ is also the spawner abundance that maximizes excess
+\\S\_\textrm{MSY}\\ is also the spawner abundance that maximizes excess
 returns above the one-to-one line.
 
-The harvest rate corresponding to $S_{\text{MSY}}$ is
+The harvest rate corresponding to \\S\_\textrm{MSY}\\ is
 
-$$U_{\text{MSY}} = bS_{\text{MSY}}$$
+\\ U\_\textrm{MSY} = bS\_\textrm{MSY} \\
 
-The quantity $S_{\text{gen}}$ is the spawner abundance that would reach
-the spawner abundance at MSY after one generation without fishing ([Holt
-et
+The quantity \\S\_\textrm{gen}\\ is the spawner abundance that would
+reach the spawner abundance at MSY after one generation without fishing
+([Holt et
 al. 2009](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2009/2009_058-eng.htm)),
 and satisfies the equation:
 
-$$S_{\text{MSY}} = a \times S_{\text{gen}}\exp\left( - b \times S_{\text{gen}} \right)$$
+\\ S\_\textrm{MSY}=a\times S\_\textrm{gen}\exp(-b\times S\_\textrm{gen})
+\\
 
 There are several implicit assumptions frequently associated with these
 reference points:
@@ -74,62 +76,66 @@ overlap with the typical salmon approach.
 
 Given exploitation in both the immature and mature component of the
 population, the juvenile survival of an outmigrating individual
-(“smolt”) to age $a$ is
+(“smolt”) to age \\a\\ is
 
-$$\ell_{a} = \prod\limits_{j = 1}^{a - 1}\exp\left( - \left\lbrack M_{j} + v_{j}^{\text{PT}}F^{\text{PT}} \right\rbrack \right)\left( 1 - p_{j} \right)$$
-where $M$ is natural mortality, $v^{\text{PT}}$ is vulnerability at age
-in the preterminal fishery, $F^{\text{PT}}$ is fishing mortality in the
-preterminal fishery, and $p$ is maturity.
+\\ \ell_a =
+\prod\_{j=1}^{a-1}\exp(-\[M_j+v^\textrm{PT}\_jF^\textrm{PT}\])(1 - p_j)
+\\ where \\M\\ is natural mortality, \\v^\textrm{PT}\\ is vulnerability
+at age in the preterminal fishery, \\F^\textrm{PT}\\ is fishing
+mortality in the preterminal fishery, and \\p\\ is maturity.
 
-The corresponding return per juvenile
-$r_{a} = \ell_{a}\exp\left( - v_{a}^{\text{PT}}F^{\text{PT}}\rbrack \right)\left( 1 - p_{a} \right)$.
+The corresponding return per juvenile \\r_a = \ell_a
+\exp(-v^\textrm{PT}\_aF^\textrm{PT}\])(1 - p_a)\\.
 
-The corresponding escapement per juvenile is
-$s_{a} = r_{a}\exp\left( - v_{a}^{\text{T}}F^{\text{T}}\rbrack \right)$,
-with $v^{\text{T}}$ is vulnerability at age in the fishery and
-$F^{\text{T}}$ is fishing mortality in the terminal fishery.
+The corresponding escapement per juvenile is \\s_a = r_a
+\exp(-v^\textrm{T}\_aF^\textrm{T}\])\\, with \\v^\textrm{T}\\ is
+vulnerability at age in the fishery and \\F^\textrm{T}\\ is fishing
+mortality in the terminal fishery.
 
-The corresponding egg production per juvenile
-$\phi = \sum_{a}s_{a}f_{a}p^{\text{female}}$.
+The corresponding egg production per juvenile \\\phi = \sum_a s_a f_a
+p^\textrm{female}\\.
 
-The equilibrium juvenile production $J$ is calculated from $\phi$ as:
+The equilibrium juvenile production \\J\\ is calculated from \\\phi\\
+as:
 
-$J = \log(a\prime\phi)/(b\prime\phi)$
+\\J = \log(a'\phi)/(b'\phi)\\
 
-where $a\prime$ is in units of juvenile per egg and $b\prime$ is in
-units of per egg.
+where \\a'\\ is in units of juvenile per egg and \\b'\\ is in units of
+per egg.
 
-The total return is $\sum_{a}J \times r_{a}$ and total spawners is
-$\sum_{a}J \times s_{a}$.
+The total return is \\\sum_a J \times r_a\\ and total spawners is
+\\\sum_a J \times s_a\\.
 
 The maximum sustainable yield state variables are values obtained from
 maximizing the total catch:
 
-$$C = \sum\limits_{a}J \times \ell_{a} \times \left( 1 - \exp\left( v_{a}^{\text{PT}}F^{\text{PT}} \right) \right) + \sum\limits_{a}J \times r_{a} \times \left( 1 - \exp\left( v_{a}^{\text{T}}F^{\text{T}} \right) \right)$$
+\\ C = \sum_a J\times\ell_a\times(1 -
+\exp(v^\textrm{PT}\_aF^\textrm{PT})) + \sum_a J\times r_a\times(1 -
+\exp(v^\textrm{T}\_aF^\textrm{T})) \\
 
 The optimization calculates the corresponding fishery effort
-$E_{\text{MSY}}$. The user needs to specify the relative effort to the
-preterminal and terminal fisheries ($e_{1}$ and $e_{2}$), with
-$F^{\text{PT,MSY}} = e_{1} \times E_{\text{MSY}}$ and
-$F^{\text{T,MSY}} = e_{2} \times E_{\text{MSY}}$.
+\\E\_\textrm{MSY}\\. The user needs to specify the relative effort to
+the preterminal and terminal fisheries (\\e_1\\ and \\e_2\\), with
+\\F^\textrm{PT,MSY} = e_1 \times E\_\textrm{MSY}\\ and
+\\F^\textrm{T,MSY} = e_2 \times E\_\textrm{MSY}\\.
 
-An alternative optimization scheme maximizes excess recruitment
-($R - S$) but should be equivalent to maximizing terminal fishery catch
-(no preterminal fishery catch):
+An alternative optimization scheme maximizes excess recruitment (\\R -
+S\\) but should be equivalent to maximizing terminal fishery catch (no
+preterminal fishery catch):
 
-$$R - S = \sum\limits_{a}J \times r_{a} - \sum\limits_{a}J \times s_{a}$$
+\\ R - S = \sum_a J \times r_a - \sum_a J \times s_a \\
 
 ### Calculations for Sgen
 
 Sgen is calculated by a subsequent optimization algorithm to search for
-the fishery effort $E_{\text{gen}}$ that generates an equilibrium
+the fishery effort \\E\_\textrm{gen}\\ that generates an equilibrium
 distribution at age, then projects that equilibrium population for
-$n_{\text{gen}}$ years with no fishing, such that the spawning abundance
-reaches $S_{\text{MSY}}$ after $n_{\text{gen}}$ years.
+\\n\_\textrm{gen}\\ years with no fishing, such that the spawning
+abundance reaches \\S\_\textrm{MSY}\\ after \\n\_\textrm{gen}\\ years.
 
 If there is partial maturity at several age classes, the number of years
 for the projection is unclear. The population can recover to
-$S_{\text{MSY}}$ with either increased survival, increased juvenile
+\\S\_\textrm{MSY}\\ with either increased survival, increased juvenile
 production, or both. Currently, salmonMSE will use the first age of
 maturity, e.g., typically two years for Chinook salmon, for the
 projection duration. Comparisons in the next section indicate that Sgen
@@ -137,12 +143,12 @@ between the two methods sometimes, but not always, agree.
 
 ## Comparison between methods
 
-Currently, salmonMSE parameterizes the operating model with $a$
-(returns/spawner), $\phi$ (juveniles/egg) and $Smax = 1/b\prime$ (eggs).
+Currently, salmonMSE parameterizes the operating model with \\a\\
+(returns/spawner), \\\phi\\ (juveniles/egg) and \\Smax = 1/b'\\ (eggs).
 
 The following function facilitates comparison of the salmonMSE and
 Ricker SRR reference points in the various examples. Some conversion is
-also needed to convert between $b\prime$ (1/eggs) to $b$ (1/spawner).
+also needed to convert between \\b'\\ (1/eggs) to \\b\\ (1/spawner).
 
 In summary, if the age-structured reference point calculation only
 includes terminal exploitation, then the reference points are equivalent

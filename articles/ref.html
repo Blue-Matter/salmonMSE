@@ -6,7 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Reference points • salmonMSE</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -65,7 +71,7 @@
 
       <h1>Reference points</h1>
             
-            <h4 data-toc-skip class="date">2026-04-20</h4>
+            <h4 data-toc-skip class="date">2026-04-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/ref.Rmd" class="external-link"><code>vignettes/ref.Rmd</code></a></small>
       <div class="d-none name"><code>ref.Rmd</code></div>
@@ -81,50 +87,38 @@ that predict the return as a density-dependent relationship with the
 number of spawners, typically of the previous generation for salmon with
 single brood year returns.</p>
 <p>The Ricker function is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mi>a</mi><mo>×</mo><mi>S</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>b</mi><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
 R = a\times S\exp(-bS)
-</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
-is the return and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is the spawners. Parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
-is in units of returns/spawner and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
-is in units of reciprocal spawners.</p>
-<p>Let
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-be the spawner abundance that maximizes catch
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">R-S</annotation></semantics></math>,
-which can be obtained by maximizing the function:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi><mo>=</mo><mi>a</mi><mo>×</mo><mi>S</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>b</mi><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">
+\]</span></p>
+<p>where <span class="math inline">\(R\)</span> is the return and <span class="math inline">\(S\)</span> is the spawners. Parameters <span class="math inline">\(a\)</span> is in units of returns/spawner and
+<span class="math inline">\(b\)</span> is in units of reciprocal
+spawners.</p>
+<p>Let <span class="math inline">\(S_\textrm{MSY}\)</span> be the
+spawner abundance that maximizes catch <span class="math inline">\(R-S\)</span>, which can be obtained by maximizing
+the function:</p>
+<p><span class="math display">\[
 R - S = a\times S\exp(-b S) - S
-</annotation></semantics></math></p>
-<p>The implicit solution, where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\alpha = \log(a)</annotation></semantics></math>,
-satisfies</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>b</mi><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>α</mi><mo>−</mo><mi>b</mi><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">
+\]</span></p>
+<p>The implicit solution, where <span class="math inline">\(\alpha =
+\log(a)\)</span>, satisfies</p>
+<p><span class="math display">\[
 (1 - bS_\textrm{MSY})\exp(\alpha - bS_\textrm{MSY}) = 1
-</annotation></semantics></math></p>
+\]</span></p>
 <p>and can be solved numerically (<a href="https://doi.org/10.7717/peerj.1623" class="external-link">Scheuerell 2016</a>).</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-is also the spawner abundance that maximizes excess returns above the
-one-to-one line.</p>
-<p>The harvest rate corresponding to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mtext mathvariant="normal">MSY</mtext></msub><mo>=</mo><mi>b</mi><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub></mrow><annotation encoding="application/x-tex">
+<p><span class="math inline">\(S_\textrm{MSY}\)</span> is also the
+spawner abundance that maximizes excess returns above the one-to-one
+line.</p>
+<p>The harvest rate corresponding to <span class="math inline">\(S_\textrm{MSY}\)</span> is</p>
+<p><span class="math display">\[
 U_\textrm{MSY} = bS_\textrm{MSY}
-</annotation></semantics></math></p>
-<p>The quantity
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">S_\textrm{gen}</annotation></semantics></math>
-is the spawner abundance that would reach the spawner abundance at MSY
+\]</span></p>
+<p>The quantity <span class="math inline">\(S_\textrm{gen}\)</span> is
+the spawner abundance that would reach the spawner abundance at MSY
 after one generation without fishing (<a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2009/2009_058-eng.htm" class="external-link">Holt
 et al. 2009</a>), and satisfies the equation:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><mo>=</mo><mi>a</mi><mo>×</mo><msub><mi>S</mi><mtext mathvariant="normal">gen</mtext></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>b</mi><mo>×</mo><msub><mi>S</mi><mtext mathvariant="normal">gen</mtext></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
 S_\textrm{MSY}=a\times S_\textrm{gen}\exp(-b\times S_\textrm{gen})
-</annotation></semantics></math></p>
+\]</span></p>
 <p>There are several implicit assumptions frequently associated with
 these reference points:</p>
 <ol style="list-style-type: decimal">
@@ -160,111 +154,73 @@ overlap with the typical salmon approach.</p>
 </h3>
 <p>Given exploitation in both the immature and mature component of the
 population, the juvenile survival of an outmigrating individual
-(“smolt”) to age
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
-is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mi>a</mi></msub><mo>=</mo><munderover><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>a</mi><mo>−</mo><mn>1</mn></mrow></munderover><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>M</mi><mi>j</mi></msub><mo>+</mo><msubsup><mi>v</mi><mi>j</mi><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">PT</mtext></msup><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>p</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\ell_a = \prod_{j=1}^{a-1}\exp(-[M_j+v^\textrm{PT}_jF^\textrm{PT}])(1 - p_j)
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-is natural mortality,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>v</mi><mtext mathvariant="normal">PT</mtext></msup><annotation encoding="application/x-tex">v^\textrm{PT}</annotation></semantics></math>
-is vulnerability at age in the preterminal fishery,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">PT</mtext></msup><annotation encoding="application/x-tex">F^\textrm{PT}</annotation></semantics></math>
-is fishing mortality in the preterminal fishery, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
-is maturity.</p>
-<p>The corresponding return per juvenile
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>a</mi></msub><mo>=</mo><msub><mo>ℓ</mo><mi>a</mi></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">PT</mtext></msup><mo stretchy="false" form="postfix">]</mo><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>p</mi><mi>a</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">r_a = \ell_a \exp(-v^\textrm{PT}_aF^\textrm{PT}])(1 - p_a)</annotation></semantics></math>.</p>
-<p>The corresponding escapement per juvenile is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mi>a</mi></msub><mo>=</mo><msub><mi>r</mi><mi>a</mi></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">T</mtext></msup><mo stretchy="false" form="postfix">]</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">s_a = r_a \exp(-v^\textrm{T}_aF^\textrm{T}])</annotation></semantics></math>,
-with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>v</mi><mtext mathvariant="normal">T</mtext></msup><annotation encoding="application/x-tex">v^\textrm{T}</annotation></semantics></math>
-is vulnerability at age in the fishery and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>F</mi><mtext mathvariant="normal">T</mtext></msup><annotation encoding="application/x-tex">F^\textrm{T}</annotation></semantics></math>
-is fishing mortality in the terminal fishery.</p>
-<p>The corresponding egg production per juvenile
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mo>∑</mo><mi>a</mi></msub><msub><mi>s</mi><mi>a</mi></msub><msub><mi>f</mi><mi>a</mi></msub><msup><mi>p</mi><mtext mathvariant="normal">female</mtext></msup></mrow><annotation encoding="application/x-tex">\phi = \sum_a s_a f_a p^\textrm{female}</annotation></semantics></math>.</p>
-<p>The equilibrium juvenile production
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>
-is calculated from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>
-as:</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mi>′</mi><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>b</mi><mi>′</mi><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">J = \log(a'\phi)/(b'\phi)</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">a'</annotation></semantics></math>
-is in units of juvenile per egg and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">b'</annotation></semantics></math>
-is in units of per egg.</p>
-<p>The total return is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>a</mi></msub><mi>J</mi><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\sum_a J \times r_a</annotation></semantics></math>
-and total spawners is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>a</mi></msub><mi>J</mi><mo>×</mo><msub><mi>s</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">\sum_a J \times s_a</annotation></semantics></math>.</p>
+(“smolt”) to age <span class="math inline">\(a\)</span> is</p>
+<p><span class="math display">\[
+\ell_a = \prod_{j=1}^{a-1}\exp(-[M_j+v^\textrm{PT}_jF^\textrm{PT}])(1 -
+p_j)
+\]</span> where <span class="math inline">\(M\)</span> is natural
+mortality, <span class="math inline">\(v^\textrm{PT}\)</span> is
+vulnerability at age in the preterminal fishery, <span class="math inline">\(F^\textrm{PT}\)</span> is fishing mortality in the
+preterminal fishery, and <span class="math inline">\(p\)</span> is
+maturity.</p>
+<p>The corresponding return per juvenile <span class="math inline">\(r_a
+= \ell_a \exp(-v^\textrm{PT}_aF^\textrm{PT}])(1 - p_a)\)</span>.</p>
+<p>The corresponding escapement per juvenile is <span class="math inline">\(s_a = r_a
+\exp(-v^\textrm{T}_aF^\textrm{T}])\)</span>, with <span class="math inline">\(v^\textrm{T}\)</span> is vulnerability at age in
+the fishery and <span class="math inline">\(F^\textrm{T}\)</span> is
+fishing mortality in the terminal fishery.</p>
+<p>The corresponding egg production per juvenile <span class="math inline">\(\phi = \sum_a s_a f_a
+p^\textrm{female}\)</span>.</p>
+<p>The equilibrium juvenile production <span class="math inline">\(J\)</span> is calculated from <span class="math inline">\(\phi\)</span> as:</p>
+<p><span class="math inline">\(J =
+\log(a'\phi)/(b'\phi)\)</span></p>
+<p>where <span class="math inline">\(a'\)</span> is in units of
+juvenile per egg and <span class="math inline">\(b'\)</span> is in
+units of per egg.</p>
+<p>The total return is <span class="math inline">\(\sum_a J \times
+r_a\)</span> and total spawners is <span class="math inline">\(\sum_a J
+\times s_a\)</span>.</p>
 <p>The maximum sustainable yield state variables are values obtained
 from maximizing the total catch:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mo>ℓ</mo><mi>a</mi></msub><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">PT</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">PT</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>v</mi><mi>a</mi><mtext mathvariant="normal">T</mtext></msubsup><msup><mi>F</mi><mtext mathvariant="normal">T</mtext></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-C = \sum_a J\times\ell_a\times(1 - \exp(v^\textrm{PT}_aF^\textrm{PT})) + \sum_a J\times r_a\times(1 - \exp(v^\textrm{T}_aF^\textrm{T}))
-</annotation></semantics></math></p>
-<p>The optimization calculates the corresponding fishery effort
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">E_\textrm{MSY}</annotation></semantics></math>.
-The user needs to specify the relative effort to the preterminal and
-terminal fisheries
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mn>1</mn></msub><annotation encoding="application/x-tex">e_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mn>2</mn></msub><annotation encoding="application/x-tex">e_2</annotation></semantics></math>),
-with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>F</mi><mtext mathvariant="normal">PT,MSY</mtext></msup><mo>=</mo><msub><mi>e</mi><mn>1</mn></msub><mo>×</mo><msub><mi>E</mi><mtext mathvariant="normal">MSY</mtext></msub></mrow><annotation encoding="application/x-tex">F^\textrm{PT,MSY} = e_1 \times E_\textrm{MSY}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>F</mi><mtext mathvariant="normal">T,MSY</mtext></msup><mo>=</mo><msub><mi>e</mi><mn>2</mn></msub><mo>×</mo><msub><mi>E</mi><mtext mathvariant="normal">MSY</mtext></msub></mrow><annotation encoding="application/x-tex">F^\textrm{T,MSY} = e_2 \times E_\textrm{MSY}</annotation></semantics></math>.</p>
+<p><span class="math display">\[
+C = \sum_a J\times\ell_a\times(1 - \exp(v^\textrm{PT}_aF^\textrm{PT})) +
+\sum_a J\times r_a\times(1 - \exp(v^\textrm{T}_aF^\textrm{T}))
+\]</span></p>
+<p>The optimization calculates the corresponding fishery effort <span class="math inline">\(E_\textrm{MSY}\)</span>. The user needs to specify
+the relative effort to the preterminal and terminal fisheries (<span class="math inline">\(e_1\)</span> and <span class="math inline">\(e_2\)</span>), with <span class="math inline">\(F^\textrm{PT,MSY} = e_1 \times
+E_\textrm{MSY}\)</span> and <span class="math inline">\(F^\textrm{T,MSY}
+= e_2 \times E_\textrm{MSY}\)</span>.</p>
 <p>An alternative optimization scheme maximizes excess recruitment
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">R - S</annotation></semantics></math>)
-but should be equivalent to maximizing terminal fishery catch (no
-preterminal fishery catch):</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>−</mo><mi>S</mi><mo>=</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mi>r</mi><mi>a</mi></msub><mo>−</mo><munder><mo>∑</mo><mi>a</mi></munder><mi>J</mi><mo>×</mo><msub><mi>s</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">
+(<span class="math inline">\(R - S\)</span>) but should be equivalent to
+maximizing terminal fishery catch (no preterminal fishery catch):</p>
+<p><span class="math display">\[
 R - S = \sum_a J \times r_a - \sum_a J \times s_a
-</annotation></semantics></math></p>
+\]</span></p>
 </div>
 <div class="section level3">
 <h3 id="calculations-for-sgen">Calculations for Sgen<a class="anchor" aria-label="anchor" href="#calculations-for-sgen"></a>
 </h3>
 <p>Sgen is calculated by a subsequent optimization algorithm to search
-for the fishery effort
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">E_\textrm{gen}</annotation></semantics></math>
-that generates an equilibrium distribution at age, then projects that
-equilibrium population for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">n_\textrm{gen}</annotation></semantics></math>
-years with no fishing, such that the spawning abundance reaches
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-after
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mtext mathvariant="normal">gen</mtext></msub><annotation encoding="application/x-tex">n_\textrm{gen}</annotation></semantics></math>
-years.</p>
+for the fishery effort <span class="math inline">\(E_\textrm{gen}\)</span> that generates an
+equilibrium distribution at age, then projects that equilibrium
+population for <span class="math inline">\(n_\textrm{gen}\)</span> years
+with no fishing, such that the spawning abundance reaches <span class="math inline">\(S_\textrm{MSY}\)</span> after <span class="math inline">\(n_\textrm{gen}\)</span> years.</p>
 <p>If there is partial maturity at several age classes, the number of
-years for the projection is unclear. The population can recover to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mtext mathvariant="normal">MSY</mtext></msub><annotation encoding="application/x-tex">S_\textrm{MSY}</annotation></semantics></math>
-with either increased survival, increased juvenile production, or both.
-Currently, salmonMSE will use the first age of maturity, e.g., typically
-two years for Chinook salmon, for the projection duration. Comparisons
-in the next section indicate that Sgen between the two methods
-sometimes, but not always, agree.</p>
+years for the projection is unclear. The population can recover to <span class="math inline">\(S_\textrm{MSY}\)</span> with either increased
+survival, increased juvenile production, or both. Currently, salmonMSE
+will use the first age of maturity, e.g., typically two years for
+Chinook salmon, for the projection duration. Comparisons in the next
+section indicate that Sgen between the two methods sometimes, but not
+always, agree.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="comparison-between-methods">Comparison between methods<a class="anchor" aria-label="anchor" href="#comparison-between-methods"></a>
 </h2>
-<p>Currently, salmonMSE parameterizes the operating model with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
-(returns/spawner),
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>
-(juveniles/egg) and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo>=</mo><mn>1</mn><mi>/</mi><mi>b</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">Smax = 1/b'</annotation></semantics></math>
-(eggs).</p>
+<p>Currently, salmonMSE parameterizes the operating model with <span class="math inline">\(a\)</span> (returns/spawner), <span class="math inline">\(\phi\)</span> (juveniles/egg) and <span class="math inline">\(Smax = 1/b'\)</span> (eggs).</p>
 <p>The following function facilitates comparison of the salmonMSE and
 Ricker SRR reference points in the various examples. Some conversion is
-also needed to convert between
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">b'</annotation></semantics></math>
-(1/eggs) to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
-(1/spawner).</p>
+also needed to convert between <span class="math inline">\(b'\)</span> (1/eggs) to <span class="math inline">\(b\)</span> (1/spawner).</p>
 <p>In summary, if the age-structured reference point calculation only
 includes terminal exploitation, then the reference points are equivalent
 with values from the Ricker model unless both fecundity and
