@@ -168,8 +168,10 @@ SOM_stochastic <- new("SOM",
                       Bio_stochastic, Habitat, Hatchery, Harvest, Historical,
                       nsim = nsim_stochastic, proyears = 50)
 
+# With MSEtool, clocks in at 11.11 minutes
+# Without MSEtool, clocks in at 11.22 seconds
 tictoc::tic()
-SMSE_stochastic <- salmonMSE(SOM_stochastic)
+SMSE_stochastic <- salmonMSE(SOM_stochastic, silent = TRUE)
 tictoc::toc()
 
 # Save simulation object

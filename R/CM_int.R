@@ -191,8 +191,9 @@ CM_int <- function(p, d) {
         }
       }
       zbar[t, ] <- calc_zbar(
-        syear[t, , 1], d$gamma * syear[t, , 2], brood[t, , 1], brood[t, , 2],
-        d$fec, d$fec, zbar_brood,
+        Egg_NOS = d$fec * syear[t, , 1], Egg_HOS = d$gamma * syear[t, , 2],
+        Egg_NOB = d$fec * brood[t, , 1], Egg_HOB = d$fec * brood[t, , 2],
+        zbar_brood,
         d$fitness_variance, d$theta, d$phenotype_variance, d$heritability
       )
       fitness[t, ] <- exp(-0.5 * (zbar[t, ] - d$theta)^2/(d$fitness_variance + d$phenotype_variance)) # fitness_floor not used here!

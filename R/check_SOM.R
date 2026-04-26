@@ -1,369 +1,4 @@
 
-#' @name salmonMSE-int
-#' @title Internal salmonMSE functions for converting operating model inputs and outputs
-#'
-#' @description
-#' - [SOM2MOM()] converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model ([MSEtool::MOM-class])
-#' - [make_Stock()] creates the [MSEtool::Stock-class] object (openMSE) corresponding to salmon life stage
-#' - [make_Fleet()] creates the [MSEtool::Fleet-class] object (openMSE) corresponding to the fishery that interacts with the various salmon life stages
-#' - [multiHist2SHist()] converts the openMSE historical reconstruction into a salmon Hist object (\linkS4class{SHist})
-#' - [MMSE2SMSE()] converts the openMSE projection output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (\linkS4class{SMSE})
-#' - [make_Harvest_MMP()] creates a multi-stock management procedure for the harvest component of the operating model by
-#' specifying exploitation rates through updating the formal arguments for [Harvest_MMP()]
-#'
-#' [salmonMSE()] is the wrapper function that coordinates the simulation and the output.
-#'
-#' @param SOM An object of class \linkS4class{SOM}
-#' @param check Logical, whether to check the `SOM` object using [check_SOM()]
-#' @export
-#' @return
-#' `SOM2MOM`: [MSEtool::MOM-class] object
-SOM2MOM <- function(SOM, check = TRUE) {
-  if (check) SOM <- check_SOM(SOM)
-
-  MOM <- suppressMessages(new("MOM"))
-  MOM@Name <- SOM@Name
-  MOM@proyears <- 2 * SOM@proyears
-  MOM@nsim <- SOM@nsim
-  MOM@interval <- 1
-  MOM@pstar <- 0.5
-  MOM@maxF <- 20
-  MOM@reps <- 1
-
-  # Stock objects
-  ns <- length(SOM@Bio)
-  Stocks_s <- lapply(1:ns, function(s) make_Stock_objects(SOM, s = s))
-  Stocks <- do.call(c, Stocks_s)
-  #ns <- length(Stocks_s)
-  np_s <- sapply(Stocks_s, length)
-  np <- length(Stocks)
-  n_g <- sapply(1:ns, function(s) SOM@Bio[[s]]@n_g)
-  n_r <- sapply(1:ns, function(s) SOM@Hatchery[[s]]@n_r)
-
-  do_hatchery <- vapply(SOM@Hatchery, function(Hatchery) sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0, logical(1))
-  has_strays <- vapply(1:ns, function(s) any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external), logical(1))
-
-  # Fleet objects (one per openMSE population/life stage) ----
-  nf <- 1
-  Fleets_s <- lapply(1:ns, function(s) make_Fleet_objects(SOM, s = s))
-  Fleets <- do.call(c, Fleets_s)
-
-  MOM@Stocks <- lapply(Stocks, getElement, "Stock")
-  MOM@Fleets <- lapply(1:np, function(p) list(Fleets[[p]]$Fleet))
-  MOM@Obs <- lapply(1:np, function(...) {
-    lapply(1:nf, function(...) MSEtool::Generic_Obs)
-  })
-  MOM@Imps <- lapply(1:np, function(...) {
-    lapply(1:nf, function(...) MSEtool::Perfect_Imp)
-  })
-
-  MOM@cpars <- lapply(1:np, function(p) {
-    lapply(1:nf, function(...) {
-      c(Stocks[[p]]$cpars_bio, Fleets[[p]]$cpars_fleet)
-    })
-  })
-
-  # Combine all fisheries into a single fleet
-  MOM@CatchFrac <- MOM@Allocation <- lapply(1:np, function(...) matrix(1, SOM@nsim, nf))
-
-  # Ignore Allocation, nf = 1
-  # Ignore Efactor, nf = 1
-  # Ignore Complexes for now
-
-  # Specify smolt natural production from NOS population
-  pindex <- .make_stock_index(ns, n_g, n_r, np_s)
-  SSBfrom <- matrix(0, np, np)
-  for (s in 1:ns) {
-    for (g in 1:n_g[s]) {
-      # Juv NOS predicted from NOS escapement of the corresponding LHG. Note p_LHG must be full rank
-      p_nat_juv <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "juvenile"]
-      p_nat_esc <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "escapement"]
-      SSBfrom[p_nat_juv, p_nat_esc] <- 1
-
-      # Integrated hatchery: triggers SRRfun so that there is hatchery production only when there is natural escapement for all LHG
-      if (do_hatchery[s]) {
-        for (r in 1:n_r[s]) {
-          p_hat_juv <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
-          SSBfrom[p_hat_juv, p_nat_esc] <- 1
-        }
-      }
-    }
-  }
-
-  # Move stocks around
-  # First generate the escapement, then move juveniles to adult
-  maxage_s <- vapply(SOM@Bio, slot, numeric(1), "maxage")
-  nage <- 2 * maxage_s[1] + 1
-  nyears_real <- 2
-  nyears <- 2 * nyears_real
-  proyears <- 2 * SOM@proyears
-
-  Herm_mature <- lapply(1:ns, function(s) {
-
-    # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
-    prop_mature_NOS <- prop_escapement_NOS <- array(0, c(SOM@nsim, nage, nyears + proyears))
-    prop_mature_NOS[, 2 * seq(1, maxage_s[s]), nyears + seq(2, proyears, 2)] <- SOM@Bio[[s]]@p_mature
-
-    Herm_mature_NOS <- sapply(1:(nyears + proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature_NOS[x, , y])) # Converts from proportion mature to cumulative maturity over brood year
-    }, simplify = "array") %>%
-      aperm(c(2, 1, 3))
-
-    # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
-    # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
-    first_mature_age <- sapply(seq(1, SOM@proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) which(SOM@Bio[[s]]@p_mature[x, , y] > 0)[1])
-    })
-
-    prop_escapement_NOS[, 2 * seq(1, maxage_s[s]) + 1, nyears + seq(1, proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
-      sapply(1:SOM@proyears, function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
-    }, simplify = "array") %>%
-      aperm(c(3, 1, 2))
-
-    Herm_escapement_NOS <- sapply(1:(nyears + proyears), function(y) {
-      sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement_NOS[x, , y]))
-    }, simplify = "array") %>%
-      aperm(c(2, 1, 3))
-
-    # For NOS
-    Herm <- list()
-    Herm_names <- character(0)
-    for (g in 1:n_g[s]) {
-      p_nat_esc <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "escapement"]
-      p_nat_rec <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "recruitment"]
-      p_nat_juv <- pindex$p[pindex$s == s & pindex$g == g & pindex$origin == "natural" & pindex$stage == "juvenile"]
-
-      Herm <- c(Herm, list(Herm_escapement_NOS, Herm_mature_NOS))
-      Herm_names <- c(Herm_names, paste0("H_", p_nat_esc, "_", p_nat_rec), paste0("H_", p_nat_rec, "_", p_nat_juv))
-    }
-
-    # HOS
-    if (do_hatchery[s] || has_strays[s]) {
-      for (r in 1:n_r[s]) {
-
-        # Maturation occurs for even age classes (age class 2, 4, 6) at the beginning of even time steps.
-        prop_mature_HOS <- prop_escapement_HOS <- array(0, c(SOM@nsim, nage, nyears + proyears))
-        prop_mature_HOS[, 2 * seq(1, maxage_s[s]), nyears + seq(2, proyears, 2)] <- SOM@Hatchery[[s]]@p_mature_HOS[, , , r]
-
-        Herm_mature_HOS <- sapply(1:(nyears + proyears), function(y) {
-          sapply(1:SOM@nsim, function(x) solve_Herm(prop_mature_HOS[x, , y]))
-        }, simplify = "array") %>%
-          aperm(c(2, 1, 3))
-
-        # In reality, escapement occurs for even age classes (age class 2, 4, 6) at the end of even time steps.
-        # In openMSE, we do escapement for odd age classes at the beginning of the subsequent odd time steps
-        first_mature_age <- sapply(seq(1, SOM@proyears), function(y) {
-          sapply(1:SOM@nsim, function(x) which(SOM@Hatchery[[s]]@p_mature_HOS[x, , y, r] > 0)[1])
-        })
-
-        prop_escapement_HOS[, 2 * seq(1, maxage_s[s]) + 1, nyears + seq(1, proyears, 2)] <- sapply(1:SOM@nsim, function(x) {
-          sapply(1:SOM@proyears, function(y) ifelse(1:maxage_s[s] >= first_mature_age[x, y], 1, 0))
-        }, simplify = "array") %>%
-          aperm(c(3, 1, 2))
-
-        Herm_escapement_HOS <- sapply(1:(nyears + proyears), function(y) {
-          sapply(1:SOM@nsim, function(x) solve_Herm(prop_escapement_HOS[x, , y]))
-        }, simplify = "array") %>%
-          aperm(c(2, 1, 3))
-
-        p_hat_esc <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "escapement"]
-        p_hat_rec <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "recruitment"]
-        p_hat_juv <- pindex$p[pindex$s == s & pindex$r == r & pindex$origin == "hatchery" & pindex$stage == "juvenile"]
-
-        Herm <- c(Herm, list(Herm_escapement_HOS, Herm_mature_HOS))
-        Herm_names <- c(Herm_names, paste0("H_", p_hat_esc, "_", p_hat_rec), paste0("H_", p_hat_rec, "_", p_hat_juv))
-      }
-    }
-
-    structure(Herm, names = Herm_names)
-  })
-  Herm_mature <- do.call(c, Herm_mature)
-
-  MOM@SexPars <- list(SSBfrom = SSBfrom, Herm = Herm_mature, share_par = FALSE)
-
-  # Rel
-  # The predicted smolt production (juvenile NOS) is from the adult escapement (natural and hatchery)
-  # Combines hatchery and habitat dynamics
-  # Hatchery: Presence/absence of HOS (from strays or own system)
-  # Habitat: Update Perr_y of juvenile NOS from adult escapement from stage specific relationships
-  Rel_s <- lapply(1:ns, function(s) {
-    Bio <- SOM@Bio[[s]]
-    Habitat <- SOM@Habitat[[s]]
-    Hatchery <- SOM@Hatchery[[s]]
-    S <- Stocks_s[[s]]
-    SRRpars <- S[[1]]$cpars_bio$SRR$SRRpars # Assume SRR pars are identical for all LHG
-
-    p_LHG <- Bio@p_LHG
-
-    pind <- pindex[pindex$s == s, ]
-
-    # Not needed if all of the following are true: no hatchery, no strays, s_enroute = 1, n_g = 1
-    # SRR pars in the OM should suffice in that case (the escapement is the spawning output)
-    do_hatchery_s <- do_hatchery[s]
-    has_strays_s <- has_strays[s]
-    g_s <- n_g[s]
-    r_s <- n_r[s]
-
-    use_smolt_func <- TRUE
-
-    Rel_smolt_g <- list()
-    Rel_hatchrel <- list()
-    Rel_SAR_NOS_g <- list()
-    Rel_SAR_HOS <- list()
-
-    if (use_smolt_func) {
-
-      if (do_hatchery_s) {
-        # Determine the total number of eggs needed from the number of yearling and subyearling releases, their survival from egg stage
-        # and fecundity of broodtake (identical between natural and hatchery escapement)
-        # This is a management action, cannot be stochastic
-        # No imports
-        egg_yearling <- ifelse(sum(Hatchery@n_yearling) > 0, sum(Hatchery@n_yearling)/Hatchery@s_egg_smolt, 0)
-        egg_subyearling <- ifelse(sum(Hatchery@n_subyearling) > 0, sum(Hatchery@n_subyearling)/Hatchery@s_egg_subyearling, 0)
-        egg_target <- egg_yearling + egg_subyearling
-
-        p_yearling <- Hatchery@n_yearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
-        p_subyearling <- Hatchery@n_subyearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
-      } else {
-        egg_target <- p_yearling <- p_subyearling <- 0
-      }
-
-      fitness_args <- list()
-      hatchery_args <- list(
-        egg_target = egg_target,
-        premove_NOS = Hatchery@premove_NOS
-      )
-      habitat_args <- list(
-        use_habitat = Habitat@use_habitat
-      )
-      stray_args <- list(
-        stray_external = Hatchery@stray_external
-      )
-
-      donate_stray <- SOM@stray[s, s] < 1
-      receive_stray <- any(SOM@stray[-s, s] > 0)
-
-      if (donate_stray || receive_stray) {
-        if (any(n_r > 1)) stop("Straying matrix not yet configured for multiple release strategies.")
-        stray_args$stray_matrix <- SOM@stray
-        stray_args$p_donor <- pindex[pindex$stage == "escapement" & pindex$origin == "hatchery", c("s", "p")]
-      }
-
-      if (habitat_args$use_habitat) {
-        habitat_args$Habitat <- Habitat
-        habitat_args$nyears_om <- 2 * nyears_real
-      }
-
-      if (do_hatchery_s || has_strays_s) {
-
-        hatchery_args <- list(
-          ptarget_NOB = Hatchery@ptarget_NOB,
-          pmax_esc = Hatchery@pmax_esc,
-          pmax_NOB = Hatchery@pmax_NOB,
-          fec_brood = Hatchery@fec_brood,
-          egg_target = egg_target,
-          brood_import = Hatchery@brood_import,
-          p_female = Bio@p_female,
-          s_yearling = Hatchery@s_egg_smolt,
-          s_subyearling = Hatchery@s_egg_subyearling,
-          p_yearling = p_yearling,
-          p_subyearling = p_subyearling,
-          yearling_DD = Hatchery@yearling_DD,
-          subyearling_DD = Hatchery@subyearling_DD,
-          phatchery = Hatchery@phatchery,
-          premove_HOS = Hatchery@premove_HOS,
-          premove_NOS = Hatchery@premove_NOS,
-          s_prespawn = Hatchery@s_prespawn,
-          gamma = Hatchery@gamma,
-          m = Hatchery@m,
-          f_brood = Hatchery@f_brood
-        )
-
-        if (any(Hatchery@fitness_type == "Ford") && (do_hatchery_s || has_strays_s)) {
-          fitness_args <- list(
-            fitness_type = Hatchery@fitness_type,
-            rel_loss = Hatchery@rel_loss,
-            phenotype_variance = Hatchery@phenotype_variance,
-            fitness_variance = Hatchery@fitness_variance,
-            fitness_floor = Hatchery@fitness_floor,
-            heritability = Hatchery@heritability,
-            #zbar_start = Hatchery@zbar_start # Now assigned by salmonMSE::salmonMSE()
-            theta = Hatchery@theta
-          )
-        }
-      }
-
-      p_nat_esc <- pind$p[pind$origin == "natural" & pind$stage == "escapement"] # length ng
-      p_hat_esc <- if(do_hatchery_s || has_strays_s) {
-        pind$p[pind$origin == "hatchery" & pind$stage == "escapement"]
-      } else {
-        NULL
-      }
-
-      for (g in seq_len(g_s)) {
-        # Natural smolt production from NOS and HOS escapement (including strays), habitat, and/or en-route mortality
-        p_nat_smolt <- pind$p[pind$origin == "natural" & pind$g == g & pind$stage == "juvenile"]
-
-        Rel_smolt_g[[g]] <- makeRel_smolt(
-          p_smolt = p_nat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
-          p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
-          output = "natural", maxage = maxage_s[s],
-          s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
-          SRRpars = SRRpars,
-          hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
-          stray_args = stray_args,
-          g = g, prop_LHG = p_LHG
-        )
-
-        # Marine survival of natural origin fish
-        if (do_hatchery_s && Hatchery@fitness_type[1] != "none" && Hatchery@rel_loss[3] > 0) {
-          Rel_SAR_NOS_g[[g]] <- makeRel_SAR(
-            p_smolt = p_nat_smolt, s = s, envir = "natural",
-            rel_loss = Hatchery@rel_loss[3], nyears = 2 * nyears_real,
-            Mbase = S[[p_nat_smolt]]$cpars_bio$M_ageArray[, , nyears + seq(1, 2 * SOM@proyears)]
-          )
-        }
-      }
-
-      if (do_hatchery_s) {
-        for (r in seq_len(r_s)) {
-          p_hat_smolt <- pind$p[pind$origin == "hatchery" & pind$r == r & pind$stage == "juvenile"]
-
-          # Hatchery smolt releases from NOS and HOS escapement
-          Rel_hatchrel[[r]] <- makeRel_smolt(
-            p_smolt = p_hat_smolt, s = s, p_natural = p_nat_esc, p_hatchery = p_hat_esc,
-            p_stray = setdiff(stray_args$p_donor[, "p"], p_hat_esc),
-            output = "hatchery", maxage = maxage_s[s],
-            s_enroute = Bio@s_enroute, p_female = Bio@p_female, fec = Bio@fec,
-            SRRpars = SRRpars,
-            hatchery_args = hatchery_args, fitness_args = fitness_args, habitat_args = habitat_args,
-            stray_args = stray_args,
-            r = r
-          )
-
-          # Marine survival of hatchery origin fish
-          if (Hatchery@fitness_type[2] != "none" && Hatchery@rel_loss[3] > 0) {
-            Rel_SAR_HOS[[1]] <- makeRel_SAR(
-              p_smolt = p_hat_smolt, s = s, envir = "hatchery",
-              rel_loss = Hatchery@rel_loss[3], nyears = 2 * nyears_real,
-              Mbase = S[[p_hat_smolt]]$cpars_bio$M_ageArray[, , 2 * nyears + seq(1, 2 * SOM@proyears)]
-            )
-          }
-        }
-
-      }
-    }
-    Rel <- c(Rel_smolt_g, Rel_SAR_NOS_g, Rel_SAR_HOS, Rel_hatchrel)
-
-    return(Rel)
-  })
-
-  MOM@Rel <- do.call(c, Rel_s)
-  MOM@cpars$control <- list(HistRel = FALSE, HermEq = FALSE)
-
-  return(MOM)
-}
-
 NAor0 <- function(x) !length(x) || is.na(x) || !x
 
 #' Check inputs to SOM object
@@ -806,11 +441,49 @@ check_numeric2nsim <- function(object, name, nsim) {
 }
 
 
-solve_Herm <- function(h, p1 = 0) {
-  p <- numeric(length(h))
-  p[1] <- p1
-
-  for (a in 2:length(p)) p[a] <- 1 - (1 - h[a])*(1 - p[a-1])
-  #all(!MSEtool:::hrate(p) - h)
-  return(p)
+calc_survival <- function(Mjuv, p_mature, maxage = length(p_mature)) {
+  surv <- rep(NA_real_, maxage)
+  surv[1] <- 1
+  for (a in 2:maxage) {
+    surv[a] <- surv[a-1] * exp(-Mjuv[a-1]) * (1 - p_mature[a-1])
+  }
+  return(surv)
 }
+
+
+#' Calculate equilibrium quantities with life history groups
+#'
+#' Calculate eggs/smolt or spawners/smolt based on life history parameters (survival, maturity, fecundity)
+#'
+#' @param Mjuv Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Juvenile natural mortality
+#' @param p_mature Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Maturity at age
+#' @param p_female Numeric. Proportion female
+#' @param fec Matrix `[maxage, n_g]`, but can be a vector if `n_g = 1`. Fecundity at age. Only used if `output = "egg"`
+#' @param s_enroute Numeric, en-route survival of escapement to spawning grounds
+#' @param n_g Integer. Number of life history groups
+#' @param p_LHG Vector length `n_g` of proportion of life history groups per recruit. Default is `rep(1/n_g, n_g)`
+#' @param output Character to indicate the output units, e.g., "egg" returns eggs per smolt, and "spawner" returns spawners per smolt
+#' @keywords internal
+#' @return Numeric, units depend on `"output"` argument
+calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LHG, output = c("egg", "spawner")) {
+  output <- match.arg(output)
+
+  if (n_g == 1) {
+    if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, ncol = 1)
+    if (!is.matrix(p_mature)) p_mature <- matrix(p_mature, ncol = 1)
+    if (output == "egg" && !is.matrix(fec)) fec <- matrix(fec, ncol = 1)
+  }
+  if (missing(p_LHG)) p_LHG <- rep(1/n_g, n_g)
+
+  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g], p_mature[, g])) # age x g
+  Esc <- p_mature * surv_juv # escapement per smolt
+
+  if (output == "egg") {
+    x <- p_female * Esc * s_enroute * fec
+  } else {
+    x <- p_female * Esc * s_enroute
+  }
+
+  return(sum(x))
+}
+

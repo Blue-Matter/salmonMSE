@@ -1,6 +1,6 @@
 
 
-#' @import MSEtool
+
 #' @importFrom dplyr %>% pull filter
 #' @importFrom methods new slot slotNames slot<-
 #' @importFrom stats rlnorm
@@ -297,7 +297,7 @@ setMethod("initialize", "SOM",
             if (!missing(Harvest)) .Object@Harvest <- Harvest
             if (!missing(Historical)) .Object@Historical <- Historical
 
-            attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
+            attr(.Object, "version") <- packageVersion("salmonMSE")
             attr(.Object, "date") <- date()
             attr(.Object, "R.version") <- getRversion()
 
@@ -361,11 +361,10 @@ setMethod("initialize", "SOM",
 #' @slot PNI Array `[nsim, nstocks, proyears]`. Proportionate natural influence, index of gene flow from hatchery to the natural environment.
 #' @slot p_wild Array `[nsim, nstocks, proyears]`. Proportion of wild spawners, natural spawners whose parents were also produced in the natural environment assuming
 #' non-assortative mating, defined under Canada's Wild Salmon Policy.
-#' @slot Mjuv_loss Array `[nsim, nstocks, nage, proyears]`. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.
+#' @slot Mjuv_loss Array `[nsim, nstocks, nage-1, proyears]`. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.
 #' @slot Misc List. Miscellaneous output:
 #'
 #' - `Ref` for reference points
-#' - `SHist` for the [salmonMSE::SHist-class] object (primarily for developer use)
 #' - `SOM` for the [salmonMSE::SOM-class] object (updated by `check_SOM()`).
 #' - `LHG` list `nstocks` long containing state variables by natural-origin life history group
 #' - `RS` list `nstocks` long containing state variables by hatchery-origin release strategy
@@ -461,7 +460,7 @@ setMethod("initialize", "SMSE",
               for (i in names(dots)) slot(.Object, i) <- dots[[i]]
             }
 
-            attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
+            attr(.Object, "version") <- packageVersion("salmonMSE")
             attr(.Object, "date") <- date()
             attr(.Object, "R.version") <- getRversion()
 
@@ -566,7 +565,7 @@ setMethod("initialize", "SHist",
               for (i in names(dots)) slot(.Object, i) <- dots[[i]]
             }
 
-            attr(.Object, "version") <- paste("salmonMSE", packageVersion("salmonMSE"), "with MSEtool", packageVersion("MSEtool"))
+            attr(.Object, "version") <- packageVersion("salmonMSE")
             attr(.Object, "date") <- date()
             attr(.Object, "R.version") <- getRversion()
 

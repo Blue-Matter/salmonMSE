@@ -3,306 +3,637 @@
 #' Run salmonMSE
 #'
 #' @description
-#' `salmonMSE()` runs a salmon management strategy evaluation through the following steps:
-#' - Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model ([MSEtool::MOM-class]) via [SOM2MOM()]
-#' - Creates a harvest management procedure specifying the harvest control rule
-#' - Generates the historical reconstruction of the state variables
-#' - Runs projection (if `Hist = FALSE`)
-#' - Converts the openMSE output, along with additional state variables recorded in [salmonMSE_env], into a salmon MSE object (SMSE) via [MMSE2SMSE()]
+#' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}).
 #' @param SOM An object of class \linkS4class{SOM}
-#' @param Hist Logical, whether to stop the function stop after historical simulations?
 #' @param silent Logical, whether to report progress in console
-#' @param trace Logical, whether to report additional messages from openMSE
-#' @param convert Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on `Hist`) object
 #' @return
-#' If `Hist = TRUE`: if `convert = TRUE`, a \linkS4class{SHist} object or if `convert = FALSE`, a multiHist object (list).
-#'
-#' If `Hist = FALSE`: if `convert = TRUE`, a \linkS4class{SMSE} object or if `convert = FALSE`, a [MSEtool::MMSE-class] object.
+#' \linkS4class{SMSE} object
 #' @examples
 #' \dontrun{
 #' SMSE <- salmonMSE(simple_SOM)
 #' }
 #'
 #' @export
-salmonMSE <- function(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE) {
+salmonMSE <- function(SOM, silent = FALSE) {
 
-  if (!silent) message("Converting salmon operating model to MOM..")
-
+  #if (!silent) message("Converting salmon operating model to MOM..")
   SOM <- check_SOM(SOM, silent = silent)
-  MOM <- SOM2MOM(SOM, check = FALSE)
+  SMSE <- ProjectSOM(SOM, check = FALSE)
 
-  HMMP <- make_Harvest_MMP(SOM, check = FALSE)
+  SMSE@Misc$SOM <- SOM
+  SMSE@Misc$Ref <- calc_ref(SOM, check = FALSE)
 
-  salmonMSE_env$Ford <- data.frame()
-  salmonMSE_env$N <- data.frame()
-  salmonMSE_env$stateN <- data.frame()
-  salmonMSE_env$H <- data.frame()
-  salmonMSE_env$stateH <- data.frame()
-
-  if (!silent) message("Generating historical dynamics..")
-
-  H <- MSEtool::SimulateMOM(MOM, parallel = FALSE, silent = !trace)
-
-  # Add numbers at age
-  H <- initialize_population(H, SOM)
-
-  if (Hist) {
-    if (!silent) message("Returning historical simulations..")
-
-    if (convert) {
-      if (!silent) message("Converting to salmon Hist object..")
-      SHist <- multiHist2SHist(H, SOM, check = FALSE)
-      return(SHist)
-    } else {
-      return(H)
-    }
-  }
-
-  if (!silent) message("Running forward projections..")
-
-  # Initialize zbar in data frame
-  salmonMSE_env$Ford <- initialize_zbar(SOM)
-
-  M <- MSEtool::ProjectMOM(
-    H, MPs = "HMMP", parallel = FALSE, silent = !trace, checkMPs = FALSE,
-    dropHist = TRUE, extended = FALSE
-  )
-  M@multiHist <- H
-
-  if (convert) {
-    if (!silent) message("Converting to salmon MSE object..")
-
-    calculate_last_projection_year(SOM, MOM, M)
-
-    SMSE <- MMSE2SMSE(M, SOM, HMMP, N = salmonMSE_env$N, salmonMSE_env$stateN, Ford = salmonMSE_env$Ford, salmonMSE_env$H, salmonMSE_env$stateH)
-    SMSE@Misc$SHist <- multiHist2SHist(H, SOM, check = FALSE)
-
-    return(SMSE)
-
-  } else {
-    return(M)
-  }
-
+  return(SMSE)
 }
 
-initialize_zbar <- function(SOM) {
-  pindex <- make_stock_index(SOM)
-  ns <- length(SOM@Bio)
-
-  zbar_df <- lapply(1:ns, function(s) {
-    do_hatchery <- sum(SOM@Hatchery[[s]]@n_subyearling, SOM@Hatchery[[s]]@n_yearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
-
-    if ((has_strays || do_hatchery) && any(SOM@Hatchery[[s]]@fitness_type == "Ford")) {
-
-      zbar_start <- reshape2::melt(SOM@Hatchery[[s]]@zbar_start)
-      nyears_real <- 2
-      df <- data.frame(
-        x = zbar_start$Var1,
-        s = s,
-        t = 2 * (nyears_real + 1 - zbar_start$Var2),  # Even time steps relative to first projection year (remember MICE predicts Perr_y for next time step)
-        type = ifelse(zbar_start$Var3 == 1, "natural", "hatchery"),
-        zbar = zbar_start$value
-      )
-
-      fitness_type <- SOM@Hatchery[[s]]@fitness_type
-      theta <- SOM@Hatchery[[s]]@theta
-
-      fitness_variance <- SOM@Hatchery[[s]]@fitness_variance
-      phenotype_variance <- SOM@Hatchery[[s]]@phenotype_variance
-
-      fitness_floor <- SOM@Hatchery[[s]]@fitness_floor
-
-      df$fitness <- sapply(1:nrow(df), function(i) {
-        theta <- switch(df$type[i], "natural" = theta[1], "hatchery" = theta[2])
-        fitness_fn <- switch(df$type[i], "natural" = fitness_type[1], "hatchery" = fitness_type[2])
-
-        switch(
-          fitness_fn,
-          "Ford" = calc_fitness(df$zbar[i], theta, fitness_variance, phenotype_variance, fitness_floor),
-          "none" = 1
-        )
-      })
-
-      return(df)
-
-    } else {
-      return(data.frame())
-    }
-  })
-
-  return(bind_rows(zbar_df))
-}
-
-
-initialize_population <- function(H, SOM) {
-  pindex <- make_stock_index(SOM)
-  ns <- length(SOM@Bio)
-  nyears <- 4
-  nareas <- 2
-
-  for (s in 1:ns) {
-
-    Bio <- SOM@Bio[[s]]
-    Hatchery <- SOM@Hatchery[[s]]
-    a_juv <- seq(1, 2 * (Bio@maxage-1), 2) + 1 # Age classes in second semester of last historical year, leading into first projection year
-
-    do_hatchery <- sum(SOM@Hatchery[[s]]@n_yearling, SOM@Hatchery[[s]]@n_subyearling) > 0
-    has_strays <- any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
-
-    for (g in 1:Bio@n_g) {
-
-      # Add juvenile population (for real age class 2, 3, ...)
-      p_NOjuv <- pindex$p[pindex$s == s & pindex$g == g &
-                            pindex$stage == "juvenile" &
-                            pindex$origin == "natural"]
-      H[[p_NOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
-        array(SOM@Historical[[s]]@InitNjuv_NOS[, -1, g]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
-
-      # Add arbitrary 100 natural-origin spawners in first openMSE year which corresponds to last projection year in real salmon dynamics
-      # Will not show up in the results
-      p_NOesc <- pindex$p[pindex$s == s & pindex$g == g &
-                            pindex$stage == "escapement" &
-                            pindex$origin == "natural"]
-      H[[p_NOesc]][[1]]@AtAge$Number[, 2 * Bio@maxage, nyears, ] <- array(100/nareas, c(SOM@nsim, 1, nareas))
-
-      # Update Perr_y parameter to parameterize age 1 abundance in first openMSE projection year
-      Perr_new <- sapply(1:SOM@nsim, function(x) {
-        Egg_openMSE <- sum(100 * Bio@p_female[Bio@maxage] * Bio@fec[x, Bio@maxage, 1])
-        SRRpars <- H[[p_NOjuv]][[1]]@SampPars$Stock$SRRpars[[x]]
-
-        Pred_N1 <- H[[p_NOjuv]][[1]]@SampPars$Stock$SRRfun(Egg_openMSE, SRRpars)
-        Perr <- SOM@Historical[[s]]@InitNjuv_NOS[x, 1, g]/Pred_N1
-        return(Perr)
-      })
-      nyears <- 4 # Hard coded in
-      H[[p_NOjuv]][[1]]@SampPars$Stock$Perr_y[, 2 * Bio@maxage + nyears + 1] <- Perr_new
-    }
-
-    if (do_hatchery || has_strays) {
-      for (r in 1:Hatchery@n_r) {
-
-        # Add juvenile population
-        p_HOjuv <- pindex$p[pindex$s == s & pindex$r == r &
-                              pindex$stage == "juvenile" &
-                              pindex$origin == "hatchery"]
-        H[[p_HOjuv]][[1]]@AtAge$Number[, a_juv, nyears, ] <-
-          array(SOM@Historical[[s]]@InitNjuv_HOS[, -1, r]/nareas, c(SOM@nsim, Bio@maxage-1, nareas))
-
-        # Add arbitrary 100 hatchery-origin spawners in first openMSE year which corresponds to last projection year in real salmon dynamics
-        # Will not show up in the results
-        p_HOesc <- pindex$p[pindex$s == s & pindex$r == r &
-                              pindex$stage == "escapement" &
-                              pindex$origin == "hatchery"]
-        H[[p_HOesc]][[1]]@AtAge$Number[, 2 * Bio@maxage, nyears, ] <- array(100/nareas, c(SOM@nsim, 1, nareas))
-
-        # Update Perr_y parameter to parameterize age 1 abundance in first openMSE projection year
-        H[[p_HOjuv]][[1]]@SampPars$Stock$Perr_y[, 2 * Bio@maxage + nyears + 1] <- SOM@Historical[[s]]@InitNjuv_HOS[, 1, r]
-      }
-    }
-  }
-
-  return(H)
-}
-
-
-
-calculate_last_projection_year <- function(SOM, MOM, MMSE) {
-
-  # Run this to get last escapement
-  SMSE_prelim <- MMSE2SMSE(MMSE, SOM,
-                           N = salmonMSE_env$N, stateN = salmonMSE_env$stateN, Ford = salmonMSE_env$Ford,
-                           H = salmonMSE_env$H, stateH = salmonMSE_env$stateH)
-
-  # Run additional calculations for spawners, brood, and egg production in last projection year
-  pindex <- make_stock_index(SOM)
-
-  Rel <- MOM@Rel
+define_hatchery_args <- function(SOM) {
   ns <- length(SOM)
 
-  for (i in 1:length(Rel)) {
-    terms_i <- grepl("Nage_", Rel[[i]]$terms)
-    if (any(terms_i)) {
+  output_s <- lapply(1:ns, function(s) {
 
-      p <- Rel[[i]]$terms[grepl("Nage_", Rel[[i]]$terms)] %>%
-        strsplit("_") %>%
-        sapply(getElement, 2) %>%
-        as.numeric()
+    Hatchery <- SOM@Hatchery[[s]]
 
-      p_natural <- p[Rel[[i]]$natural_origin]
-      s_natural <- unique(pindex$s[pindex$p %in% p_natural])
-      if (length(p_natural) > 1) {
-        p_NOR <- pindex$p[pindex$s %in% s_natural & pindex$stage == "recruitment" & pindex$origin == "natural"]
-      }
+    egg_yearling <- ifelse(sum(Hatchery@n_yearling) > 0, sum(Hatchery@n_yearling)/Hatchery@s_egg_smolt, 0)
+    egg_subyearling <- ifelse(sum(Hatchery@n_subyearling) > 0, sum(Hatchery@n_subyearling)/Hatchery@s_egg_subyearling, 0)
+    egg_target <- egg_yearling + egg_subyearling
 
-      p_hatchery <- p[!Rel[[i]]$natural_origin]
-      if (length(p_hatchery)) {
-        s_hatchery <- unique(pindex$s[pindex$p %in% p_hatchery])
-        if (length(p_hatchery) > 1) {
-          p_HOR <- pindex$p[pindex$s %in% s_hatchery & pindex$stage == "recruitment" & pindex$origin == "hatchery"]
-        }
-      }
-
-      p_stray <- p[Rel[[i]]$stray]
-      if (length(p_stray)) {
-        s_stray <- sapply(p_stray, function(p) pindex$s[pindex$p == p])
-        p_stray_return <- sapply(p_stray, function(p) {
-          s <- pindex$s[pindex$p == p]
-          r <- pindex$r[pindex$p == p]
-          pindex$p[pindex$s == s & pindex$r == r & pindex$stage == "recruitment" & pindex$origin == "hatchery"]
-        })
-      }
-
-      maxage <- SOM@Bio[[1]]@maxage
-      proyears <- MMSE@proyears
-
-      run_func <- sapply(1:SOM@nsim, function(x) {
-        if (length(p_natural) == 1) {
-          Nage_NOS <- matrix(
-            SMSE_prelim@Escapement_NOS[x, s_natural, , SOM@proyears],
-            length(s_natural), maxage
-          ) %>% t()
-        } else {
-          a <- seq(2, 2 * maxage, 2)
-          Return_NOS <- apply(MMSE@N[x, p_NOR, a, 1, proyears, ], 1:2, sum)
-          FT <- outer(MMSE@FM[x, p_NOR, 1, 1, proyears], SOM@Harvest[[s_natural]]@vulT[x, ])
-          Nage_NOS <- matrix(Return_NOS * exp(-FT), length(p_natural), maxage) %>% t()
-        }
-
-        if (length(p_hatchery)) {
-          if (length(p_hatchery) == 1) {
-            Nage_HOS <- matrix(
-              SMSE_prelim@Escapement_HOS[x, s_hatchery, , SOM@proyears],
-              length(p_hatchery), maxage
-            ) %>% t()
-          } else {
-            a <- seq(2, 2 * maxage, 2)
-            Return_HOS <- apply(MMSE@N[x, p_HOR, a, 1, proyears, ], 1:2, sum)
-            FT <- outer(MMSE@FM[x, p_HOR, 1, 1, proyears], SOM@Harvest[[s_hatchery]]@vulT[x, ])
-            Nage_HOS <- matrix(Return_HOS * exp(-FT), length(p_hatchery), maxage) %>% t()
-          }
-        } else {
-          Nage_HOS <- matrix(0, maxage, 1)
-        }
-
-        if (length(p_stray)) {
-          a <- seq(2, 2 * maxage, 2)
-          Return_stray <- apply(MMSE@N[x, p_stray_return, a, 1, proyears, , drop = FALSE], 2:3, sum)
-          vulT <- sapply(SOM@Harvest[s_stray], function(i) i@vulT[x, ])
-          FM <- MMSE@FM[x, p_stray_return, 1, 1, proyears]
-          FT <- FM * t(vulT)
-          Nage_stray <- matrix(Return_stray * exp(-FT), length(s_stray), maxage) %>% t()
-        } else {
-          Nage_stray <- array(0, dim(Nage_HOS))
-        }
-
-        Rel[[i]]$func(
-          Nage_NOS = Nage_NOS, Nage_HOS = Nage_HOS, Nage_stray = Nage_stray,
-          x = x, y = MMSE@nyears + MMSE@proyears
-        )
-      })
+    if (egg_target > 0) {
+      p_yearling <- Hatchery@n_yearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
+      p_subyearling <- Hatchery@n_subyearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
+    } else {
+      p_yearling <- p_subyearling <- 0
     }
-  }
-  invisible()
+
+    output <- list(
+      egg_target = egg_target,
+      premove_NOS = Hatchery@premove_NOS
+    )
+
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(Hatchery@stray_external)
+
+    if (egg_target > 0) {
+      output_with_hatchery <- list(
+        f_brood = Hatchery@f_brood,
+        pmax_esc = Hatchery@pmax_esc,
+        ptarget_NOB = Hatchery@ptarget_NOB,
+        pmax_NOB = Hatchery@pmax_NOB,
+        brood_import = Hatchery@brood_import,
+
+        phatchery = Hatchery@phatchery,
+
+        fec_brood = Hatchery@fec_brood,
+        s_prespawn = Hatchery@s_prespawn,
+        p_female = SOM@Bio[[s]]@p_female,
+
+        p_yearling = p_yearling,
+        p_subyearling = p_subyearling,
+
+        s_yearling = Hatchery@s_egg_smolt,
+        s_subyearling = Hatchery@s_egg_subyearling,
+
+        yearling_DD = Hatchery@yearling_DD,
+        subyearling_DD = Hatchery@subyearling_DD,
+
+        premove_HOS = Hatchery@premove_HOS,
+        gamma = Hatchery@gamma
+      )
+
+      output <- c(output, output_with_hatchery)
+
+    } else if (has_strays) {
+
+      output_with_strays <- list(
+        premove_HOS = Hatchery@premove_HOS,
+        gamma = Hatchery@gamma
+      )
+      output <- c(output, output_with_strays)
+
+    }
+    return(output)
+  })
+
+  return(output_s)
 }
 
+define_habitat_args <- function(SOM) slot(SOM, "Habitat")
+
+define_fitness_args <- function(SOM) {
+  ns <- length(SOM)
+
+  output_s <- lapply(1:ns, function(s) {
+    Hatchery <- SOM@Hatchery[[s]]
+
+    do_hatchery <- sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(Hatchery@stray_external)
+    has_HOS <- do_hatchery || has_strays
+    do_fitness <- any(Hatchery@fitness_type == "Ford")
+
+    output <- list(fitness_type = Hatchery@fitness_type)
+
+    if (has_HOS && do_fitness) {
+      output <- list(
+        fitness_type = Hatchery@fitness_type,
+        rel_loss = Hatchery@rel_loss,
+        phenotype_variance = Hatchery@phenotype_variance,
+        fitness_variance = Hatchery@fitness_variance,
+        fitness_floor = Hatchery@fitness_floor,
+        heritability = Hatchery@heritability,
+        theta = Hatchery@theta
+      )
+    }
+    return(output)
+  })
+
+  return(output_s)
+}
+
+define_SRRpars <- function(SOM) {
+  ns <- length(SOM)
+
+  output_s <- lapply(1:ns, function(s) {
+    Bio <- SOM@Bio[[s]]
+    SRrel <- Bio@SRrel
+    df <- data.frame(
+      kappa = Bio@kappa,
+      phi = Bio@phi,
+      tau = Bio@tau,
+      SRrel = SRrel
+    )
+    if (SRrel == "Ricker") {
+      df$Smax <- Bio@Smax
+    } else {
+      df$capacity <- Bio@capacity
+    }
+    return(df)
+
+  })
+
+  return(output_s)
+}
+
+
+sapply2 <- base::sapply
+formals(sapply2)$simplify <- "array"
+
+#' @name salmonMSE
+#' @description `ProjectSOM()` is the internal projection function.
+#' @param check Logical, whether to check the structure of the input object with [check_SOM()]
+#' @export
+ProjectSOM <- function(SOM, check = FALSE) {
+
+  if (check) SOM <- check_SOM(SOM)
+
+  # Variables
+  ns <- length(SOM@Bio) # Number of stocks
+  nage <- sapply(SOM@Bio, slot, "maxage") %>% unique()
+
+  n_r <- sapply(SOM@Hatchery, slot, "n_r") %>% unique()
+  n_g <- sapply(SOM@Bio, slot, "n_g") %>% unique()
+  nsim <- SOM@nsim
+  proyears <- SOM@proyears
+
+  # Hatchery arguments
+  hatchery_args <- define_hatchery_args(SOM)
+  m <- sapply(SOM@Hatchery, slot, "m") # Mark rate, need to make sure check_SOM default is length 1
+
+  # Stock recruit parameters
+  SRRpars <- define_SRRpars(SOM)
+
+  # Fitness arguments
+  fitness_args <- define_fitness_args(SOM)
+
+  # Freshwater functions and arguments
+  habitat_args <- define_habitat_args(SOM)
+
+  #### Arrays of state variables ----
+  # Marine life stages, brood, egg production by age
+  Njuv_NOS <- Return_NOS <- Escapement_NOS <- NOB <- NOS <- Egg_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  Njuv_HOS <- Return_HOS <- Escapement_HOS <- HOB <- HOB_stray <-
+    HOS <- HOS_stray <- HOS_effective <- Egg_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+  HOB_import <- array(NA_real_, c(nsim, ns, nage, proyears))
+
+  # Early freshwater life stages
+  Fry_NOS <- Smolt_NOS <- array(NA_real_, c(nsim, ns, proyears, n_g))
+  Fry_HOS <- Smolt_HOS <- Rel <- Smolt_Rel <- array(NA_real_, c(nsim, ns, proyears, n_r))
+
+  # In-river removals
+  IRR_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  IRR_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+
+  # Marine catch and exploitation rate
+  KPT_NOS <- KT_NOS <- DPT_NOS <- DDPT_NOS <- DT_NOS <- DDT_NOS <-
+    UPT_NOS <- UT_NOS <- ExPT_NOS <- ExT_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  KPT_HOS <- KT_HOS <- DPT_HOS <- DDPT_HOS <- DT_HOS <- DDT_HOS <-
+    UPT_HOS <- UT_HOS <- ExPT_HOS <- ExT_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+
+  pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(nsim, ns, proyears))
+
+  zbar <- fitness <- array(NA_real_, c(nsim, ns, 2, proyears)) # proyears indexes brood year
+  zbar_brood <- array(NA_real_, c(nsim, ns, nage, 2, proyears)) # proyears indexes return year
+  fitness_loss <- array(NA_real_, c(nsim, ns, proyears, 2, 3)) # By brood year
+
+  Mjuv_loss_NOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_g))
+  Mjuv_loss_HOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_r))
+
+  #### Data objects from SOM ----
+  do_hatchery <- sapply(1:ns, function(s) hatchery_args[[s]]$egg_target > 0)
+  has_strays <- sapply(1:ns, function(s) {
+    any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
+  })
+
+  # Maturity
+  p_mature_NOS <- sapply2(SOM@Bio, slot, "p_mature") %>%
+    array(c(nsim, nage, proyears, n_g, ns)) %>%
+    aperm(c(1, 5, 2, 3, 4))
+  p_mature_HOS <- sapply2(1:ns, function(s) {
+    if (do_hatchery[s]) {
+      slot(SOM@Hatchery[[s]], "p_mature_HOS")
+    } else {
+      array(0, c(nsim, nage, proyears, n_r))
+    }
+  }) %>%
+    aperm(c(1, 5, 2, 3, 4))
+
+  # Juvenile natural mortality
+  Mjuv_NOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_g))
+  Mjuv_HOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_r))
+  Mjuv_NOS[] <- sapply2(SOM@Bio, slot, "Mjuv_NOS") %>%
+    aperm(c(1, 5, 2, 3, 4))
+  Mjuv_HOS[] <- sapply2(1:ns, function(s) {
+    if (do_hatchery[s]) {
+      slot(SOM@Hatchery[[s]], "Mjuv_HOS")
+    } else {
+      array(0, c(nsim, nage-1, proyears, n_r))
+    }
+  }) %>%
+    aperm(c(1, 5, 2, 3, 4))
+
+  # Harvest/fishery settings - all from the first harvest object
+  type_PT <- SOM@Harvest[[1]]@type_PT
+  type_T <- SOM@Harvest[[1]]@type_T
+
+  u_preterminal <- SOM@Harvest[[1]]@u_preterminal
+  u_terminal <- SOM@Harvest[[1]]@u_terminal
+
+  K_PT <- SOM@Harvest[[1]]@K_PT
+  K_T <- SOM@Harvest[[1]]@K_T
+
+  MSF_PT <- SOM@Harvest[[1]]@MSF_PT
+  MSF_T <- SOM@Harvest[[1]]@MSF_T
+
+  # Fishery vulnerability
+  vulPT <- vulT <- array(NA_real_, c(nsim, ns, nage))
+  vulPT[] <- sapply2(SOM@Harvest, slot, "vulPT") %>% aperm(c(1, 3, 2))
+  vulT[] <- sapply2(SOM@Harvest, slot, "vulT") %>% aperm(c(1, 3, 2))
+
+  # Release mortality
+  release_mort <- array(NA_real_, c(2, ns))
+  release_mort[] <- sapply(SOM@Harvest, slot, "release_mort") # Need to make sure check_SOM default is length 2
+
+  # En-route survival
+  s_enroute <- sapply(SOM@Bio, slot, "s_enroute")
+
+  # External strays
+  stray_external <- array(NA_real_, c(ns, nage, n_r))
+  stray_external[] <- sapply2(SOM@Hatchery, slot, "stray_external") %>%
+    aperm(c(3, 1, 2))
+
+  #### Initialize population ----
+  Njuv_NOS[, , , 1, ] <- sapply2(SOM@Historical, slot, "InitNjuv_NOS") %>% aperm(c(1, 4, 2, 3))
+  Njuv_HOS[, , , 1, ] <- sapply2(1:ns, function(s) {
+    if (do_hatchery[s]) {
+      slot(SOM@Historical[[s]], "InitNjuv_HOS")
+    } else {
+      array(0, c(nsim, nage, n_r))
+    }
+  }) %>%
+    aperm(c(1, 4, 2, 3))
+
+  #### Projection ----
+  for (y in 1:proyears) {
+
+    # Preterminal catch - harvest management acts upon on all stocks simultaneously
+    PT_Calcs <- lapply(1:nsim, function(x) {
+      catch_func(
+        NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
+        HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
+        type = type_PT,
+        U = u_preterminal,
+        K = K_PT,
+        V = matrix(vulPT[x, , ], ns, nage),
+        m = m,
+        MSF = MSF_PT, # Need to make sure check_SOM default is length 1
+        release_mort = release_mort[1, ]
+      )
+    })
+    vars <- names(PT_Calcs[[1]])
+    PT_Calcs_y <- lapply(vars, function(i) {
+      sapply2(PT_Calcs, getElement, i)
+    }) %>%
+      structure(names = vars)
+
+    KPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_NO, c(4, 1:3))
+    DPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$D_NO, c(4, 1:3))
+    DDPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$DD_NO, c(4, 1:3))
+
+    KPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$K_HO, c(4, 1:3))
+    DPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_HO, c(4, 1:3))
+    DDPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$DD_HO, c(4, 1:3))
+
+    UPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$U_NO, c(4, 1:3))
+    ExPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$Ex_NO, c(4, 1:3))
+
+    UPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$U_HO, c(4, 1:3))
+    ExPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$Ex_HO, c(4, 1:3))
+
+    # Maturity (begin second half)
+    Return_NOS[, , , y, ] <- Njuv_NOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
+    Return_HOS[, , , y, ] <- Njuv_HOS[, , , y, ] * (1 - ExPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
+
+    # Terminal marine catch - harvest management acts upon on all stocks simultaneously
+    T_Calcs <- lapply(1:nsim, function(x) {
+      catch_func(
+        NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
+        HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
+        type = type_T,
+        U = u_terminal,
+        K = K_T,
+        V = matrix(vulT[x, , ], ns, nage),
+        m = m,
+        MSF = MSF_T,
+        release_mort = release_mort[2, ]
+      )
+    })
+    vars <- names(T_Calcs[[1]])
+    T_Calcs_y <- lapply(vars, function(i) {
+      sapply2(T_Calcs, getElement, i)
+    }) %>%
+      structure(names = vars)
+
+    KT_NOS[, , , y, ] <- aperm(T_Calcs_y$K_NO, c(4, 1:3))
+    DT_NOS[, , , y, ] <- aperm(T_Calcs_y$D_NO, c(4, 1:3))
+    DDT_NOS[, , , y, ] <- aperm(T_Calcs_y$DD_NO, c(4, 1:3))
+
+    KT_HOS[, , , y, ] <- aperm(T_Calcs_y$K_HO, c(4, 1:3))
+    DT_HOS[, , , y, ] <- aperm(T_Calcs_y$D_HO, c(4, 1:3))
+    DDT_HOS[, , , y, ] <- aperm(T_Calcs_y$DD_HO, c(4, 1:3))
+
+    UT_NOS[, , , y, ] <- aperm(T_Calcs_y$U_NO, c(4, 1:3))
+    ExT_NOS[, , , y, ] <- aperm(T_Calcs_y$Ex_NO, c(4, 1:3))
+
+    UT_HOS[, , , y, ] <- aperm(T_Calcs_y$U_HO, c(4, 1:3))
+    ExT_HOS[, , , y, ] <- aperm(T_Calcs_y$Ex_HO, c(4, 1:3))
+
+    # Escapement from marine fisheries
+    Escapement_NOS[, , , y, ] <- Return_NOS[, , , y, ] * (1 - ExT_NOS[, , , y, ])
+    Escapement_HOS[, , , y, ] <- Return_HOS[, , , y, ] * (1 - ExT_HOS[, , , y, ])
+
+    # Move strays (internally)
+    Stray_Calcs <- lapply(1:nsim, function(x) {
+      stray_func(
+        N = array(Escapement_HOS[x, , , y, ], c(ns, nage, n_r)),
+        stray_matrix = SOM@stray
+      )
+    })
+
+    # Straying, in-river return, brood, egg production, outmigrating in next year
+    for (s in 1:ns) {
+
+      # Mean phenotype by brood year of parents
+      if (do_hatchery[s] || has_strays[s]) {
+        for (a in 1:nage) {
+          t <- y - a
+          if (t <= 0) {
+            zbar_brood[, s, a, , y] <- SOM@Hatchery[[s]]@zbar_start[, abs(t) + 1, ]
+          } else {
+            zbar_brood[, s, a, , y] <- zbar[, s, , t]
+          }
+        }
+      }
+
+      FW_Calcs <- lapply(1:nsim, function(x) {
+
+        # Calculate recipient strays (internal and external) and their mark rate
+        Nage_stray <- matrix(stray_external[s, , ] + Stray_Calcs[[x]]$N_stray[s, , ], nage, n_r)
+        m_stray <- sum(Stray_Calcs[[x]]$m_stray * Stray_Calcs[[x]]$N_stray, stray_external[s, , ])/sum(Nage_stray)
+        m_stray[is.na(m_stray)] <- 0
+
+        # Calculate broodtake, in-river removals, and spawners arriving at spawning grounds
+        .hatchery_args <- hatchery_args[[s]]
+        if (.hatchery_args$egg_target > 0) .hatchery_args$fec_brood <- hatchery_args[[s]]$fec_brood[x, , y]
+
+        .fitness_args <- fitness_args[[s]]
+        if (!is.null(.fitness_args$heritability)) {
+          .fitness_args$heritability <- fitness_args[[s]]$heritability[x]
+        }
+
+        if (SOM@Habitat[[s]]@use_habitat) {
+          .habitat_args <- habitat_args[[s]]
+          .habitat_args@fry_sdev <- habitat_args[[s]]@fry_sdev[x, y, drop = FALSE]
+          .habitat_args@smolt_sdev <- habitat_args[[s]]@smolt_sdev[x, y, drop = FALSE]
+          SRRpars_x <- data.frame()
+        } else {
+          .habitat_args <- list()
+          SRRpars_x <- SRRpars[[s]][x, ]
+        }
+
+        FW_func(
+          Nage_NOS = matrix(Escapement_NOS[x, s, , y, ], nage, n_g),
+          Nage_HOS = matrix(Stray_Calcs[[x]]$N_remain[s, , ], nage, n_r),
+          Nage_stray = Nage_stray,
+          m = m[s],
+          m_stray = m_stray,
+          s_enroute = s_enroute[s],
+          hatchery_args = .hatchery_args,
+          zbar_brood = zbar_brood[x, s, , , y],
+          fitness_args = .fitness_args,
+          fec = SOM@Bio[[s]]@fec[x, , y],
+          p_female = SOM@Bio[[s]]@p_female,
+          habitat_args = .habitat_args,
+          SRRpars = SRRpars_x,
+          p_LHG = SOM@Bio[[s]]@p_LHG
+        )
+      })
+
+      # Assign FW_Calcs output to global variables
+      vars <- names(FW_Calcs[[1]])
+      FW_Calcs_y <- lapply(vars, function(i) {
+        sapply2(FW_Calcs, getElement, i)
+      }) %>%
+        structure(names = vars)
+
+      NOB[, s, , y, ] <- aperm(FW_Calcs_y$NOB, c(3, 1, 2))
+      HOB[, s, , y, ] <- aperm(FW_Calcs_y$HOB_unmarked + FW_Calcs_y$HOB_unmarked, c(3, 1, 2))
+      HOB_stray[, s, , y, ] <- aperm(FW_Calcs_y$HOB_stray, c(3, 1, 2))
+      HOB_import[, s, , y] <- t(FW_Calcs_y$HOB_import)
+
+      pNOB[, s, y] <- FW_Calcs_y$pNOB
+
+      IRR_NOS[, s, , y, ] <- aperm(FW_Calcs_y$NO_remove, c(3, 1, 2))
+      IRR_HOS[, s, , y, ] <- aperm(FW_Calcs_y$HO_remove, c(3, 1, 2))
+
+      NOS[, s, , y, ] <- aperm(FW_Calcs_y$NOS, c(3, 1, 2))
+      HOS[, s, , y, ] <- aperm(FW_Calcs_y$HOS, c(3, 1, 2))
+      HOS_effective[, s, , y, ] <- aperm(FW_Calcs_y$HOS_effective, c(3, 1, 2))
+      HOS_stray[, s, , y, ] <- aperm(FW_Calcs_y$HOS_stray, c(3, 1, 2))
+
+      Egg_NOS[, s, , y, ] <- aperm(FW_Calcs_y$Egg_NOS, c(3, 1, 2))
+      Egg_HOS[, s, , y, ] <- aperm(FW_Calcs_y$Egg_HOS, c(3, 1, 2))
+
+      pHOS_census[, s, y] <- FW_Calcs_y$pHOScensus
+      pHOS_effective[, s, y] <- FW_Calcs_y$pHOSeff
+
+      fitness[, s, , y] <- t(FW_Calcs_y$fitness)
+      zbar[, s, , y] <- t(FW_Calcs_y$zbar)
+      fitness_loss[, s, y, , ] <- aperm(FW_Calcs_y$fitness_loss, c(3, 1, 2))
+
+      if (y < proyears) {
+        Fry_NOS[, s, y+1, ] <- if (n_g == 1) FW_Calcs_y$Fry_NOS else t(FW_Calcs_y$Fry_NOS)
+        Fry_HOS[, s, y+1, ] <- if (n_g == 1) FW_Calcs_y$Fry_HOS else t(FW_Calcs_y$Fry_HOS)
+
+        Smolt_NOS[, s, y+1, ] <- if (n_g == 1) FW_Calcs_y$Smolt_NOS else t(FW_Calcs_y$Smolt_NOS)
+        Smolt_HOS[, s, y+1, ] <- if (n_g == 1) FW_Calcs_y$Smolt_HOS else t(FW_Calcs_y$Smolt_HOS)
+
+        Rel[, s, y+1, ] <- if (n_r == 1) FW_Calcs_y$yearling + FW_Calcs_y$subyearling else t(FW_Calcs_y$yearling + FW_Calcs_y$subyearling)
+        Smolt_Rel[, s, y+1, ] <- if (n_r == 1) FW_Calcs_y$Smolt_RelOut else t(FW_Calcs_y$Smolt_RelOut)
+
+        Njuv_NOS[, s, 1, y+1, ] <- Smolt_NOS[, s, y+1, ] + Smolt_HOS[, s, y+1, ]
+        Njuv_HOS[, s, 1, y+1, ] <- Smolt_Rel[, s, y+1, ]
+      }
+    }
+
+    # Advance juvenile age classes to next year with maturity and natural mortality, penalized by fitness loss
+    if (y < proyears) {
+      Njuv_NOS_midpoint <- array(NA, c(nsim, ns, nage, n_g))
+      Njuv_HOS_midpoint <- array(NA, c(nsim, ns, nage, n_r))
+      Njuv_NOS_midpoint[] <- Njuv_NOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * (1 - p_mature_NOS[, , , y, ])
+      Njuv_HOS_midpoint[] <- Njuv_HOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * (1 - p_mature_HOS[, , , y, ])
+
+      for (a in seq(1, nage-1)) {
+        t <- y - a
+        if (t <= 0) {
+          Mjuv_loss_NOS[, , a, y, ] <- Mjuv_NOS[, , a, y, ]
+          Mjuv_loss_HOS[, , a, y, ] <- Mjuv_HOS[, , a, y, ]
+        } else {
+          Mjuv_loss_NOS[, , a, y, ] <- local({
+            .M <- Mjuv_NOS[, , a, y, ]
+            surv_fitness <- exp(-.M) * array(fitness_loss[, , t, 1, 3], c(nsim, ns, n_g))
+            ifelse(.M <= .Machine$double.eps, 0, -log(surv_fitness))
+          })
+          Mjuv_loss_HOS[, , a, y, ] <- local({
+            .M <- Mjuv_HOS[, , a, y, ]
+            surv_fitness <- exp(-.M) * array(fitness_loss[, , t, 1, 3], c(nsim, ns, n_r))
+            ifelse(.M <= .Machine$double.eps, 0, -log(surv_fitness))
+          })
+        }
+      }
+
+      Njuv_NOS[, , -1, y+1, ] <- Njuv_NOS_midpoint[, , seq(1, nage-1), ] * exp(-Mjuv_loss_NOS[, , , y, ])
+      Njuv_HOS[, , -1, y+1, ] <- Njuv_HOS_midpoint[, , seq(1, nage-1), ] * exp(-Mjuv_loss_HOS[, , , y, ])
+    }
+  }
+
+  # State variables after the projection
+  if (!sum(HOS) && !sum(NOB, HOB, HOB_stray, HOB_import)) { # No hatchery-origin spawners, no broodstock
+    PNI[apply(NOS, c(1:2, 4), sum) > 0] <- 1
+  } else if (!sum(NOB) && any(pHOS_effective > 0, na.rm = TRUE)) { # One-way gene flow
+    PNI[] <- sapply2(1:ns, function(s) {
+      h2 <- fitness_args[[s]]$heritability
+      fitness_variance <- fitness_args[[s]]$fitness_variance
+      if (is.null(h2) || is.null(fitness_variance)) {
+        matrix(NA_real_, nsim, proyears)
+      } else {
+        h2/(h2 + (1 - h2 + fitness_variance) * pHOS_effective[, s, ])
+      }
+    }) %>%
+      aperm(c(1, 3, 2))
+  } else {
+    PNI[] <- pNOB/(pNOB + pHOS_effective) # What to do? if: !is.na(pHOS_effective) & is.na(pNOB) is TRUE
+  }
+
+  for (s in 1:ns) {
+    p_wild[, s, ] <- calc_pwild_age(
+      NOS_a = apply(NOS[, s, , , , drop = FALSE], c(1, 3, 4), sum),
+      HOS_a = apply(HOS[, s, , , , drop = FALSE], c(1, 3, 4), sum),
+      fec = SOM@Bio[[s]]@fec[, , seq(1, proyears)],
+      gamma = SOM@Hatchery[[s]]@gamma
+    )
+  }
+
+  # Harvest rate and exploitation rate aggregated across life history groups and release strategies
+  UPT_NOS_ <- apply(KPT_NOS, 1:4, sum)/apply(Njuv_NOS, 1:4, sum)
+  UPT_NOS_[is.na(UPT_NOS_)] <- 0
+
+  UT_NOS_ <- apply(KT_NOS, 1:4, sum)/apply(Return_NOS, 1:4, sum)
+  UT_NOS_[is.na(UT_NOS_)] <- 0
+
+  UPT_HOS_ <- apply(KPT_HOS, 1:4, sum)/apply(Njuv_HOS, 1:4, sum)
+  UPT_HOS_[is.na(UPT_HOS_)] <- 0
+
+  UT_HOS_ <- apply(KT_HOS, 1:4, sum)/apply(Return_HOS, 1:4, sum)
+  UT_HOS_[is.na(UT_HOS_)] <- 0
+
+  ExPT_NOS_ <- apply(KPT_NOS + DDPT_NOS, 1:4, sum)/apply(Njuv_NOS, 1:4, sum)
+  ExPT_NOS_[is.na(ExPT_NOS_)] <- 0
+
+  ExT_NOS_ <- apply(KT_NOS + DDT_NOS, 1:4, sum)/apply(Return_NOS, 1:4, sum)
+  ExT_NOS_[is.na(ExT_NOS_)] <- 0
+
+  ExPT_HOS_ <- apply(KPT_HOS + DDPT_HOS, 1:4, sum)/apply(Njuv_HOS, 1:4, sum)
+  ExPT_HOS_[is.na(ExPT_HOS_)] <- 0
+
+  ExT_HOS_ <- apply(KT_HOS + DDT_HOS, 1:4, sum)/apply(Return_HOS, 1:4, sum)
+  ExT_HOS_[is.na(ExT_HOS_)] <- 0
+
+  # Output
+  SMSE <- new(
+    "SMSE",
+    Name = SOM@Name,
+    proyears = proyears,
+    nsim = nsim,
+    nstocks = ns,
+    Snames = sapply(1:ns, function(s) if (length(SOM@Bio[[s]]@Name)) SOM@Bio[[s]]@Name else paste("Population", s)),
+    Egg_NOS = apply(Egg_NOS, c(1, 2, 4), sum),
+    Egg_HOS = apply(Egg_NOS, c(1, 2, 4), sum),
+    Fry_NOS = apply(Fry_NOS, 1:3, sum),
+    Fry_HOS = apply(Fry_HOS, 1:3, sum),
+    Smolt_NOS = apply(Smolt_NOS, 1:3, sum),
+    Smolt_HOS = apply(Smolt_HOS, 1:3, sum),
+    Smolt_Rel = apply(Smolt_Rel, 1:3, sum),
+    Njuv_NOS = apply(Njuv_NOS, 1:4, sum),
+    Njuv_HOS = apply(Njuv_HOS, 1:4, sum),
+    Return_NOS = apply(Return_NOS, 1:4, sum),
+    Return_HOS = apply(Return_HOS, 1:4, sum),
+    Escapement_NOS = apply(Escapement_NOS, 1:4, sum),
+    Escapement_HOS = apply(Escapement_HOS, 1:4, sum),
+    NOB = apply(NOB, c(1:2, 4), sum),
+    HOB = apply(HOB, c(1:2, 4), sum),
+    HOB_stray = apply(HOB_stray, c(1:2, 4), sum),
+    HOB_import = apply(HOB_import, c(1:2, 4), sum),
+    NOS = apply(NOS, 1:4, sum),
+    HOS = apply(HOS, 1:4, sum),
+    HOS_stray = apply(HOS_stray, 1:4, sum),
+    HOS_effective = apply(HOS_effective, 1:4, sum),
+    KPT_NOS = apply(KPT_NOS, c(1:2, 4), sum),
+    KT_NOS = apply(KT_NOS, c(1:2, 4), sum),
+    KPT_HOS = apply(KPT_HOS, c(1:2, 4), sum),
+    KT_HOS = apply(KT_HOS, c(1:2, 4), sum),
+    DPT_NOS = apply(DPT_NOS, c(1:2, 4), sum),
+    DT_NOS = apply(DT_NOS, c(1:2, 4), sum),
+    DPT_HOS = apply(DPT_HOS, c(1:2, 4), sum),
+    DT_HOS = apply(DT_HOS, c(1:2, 4), sum),
+    UPT_NOS = UPT_NOS_,
+    UT_NOS = UT_NOS_,
+    UPT_HOS = UPT_HOS_,
+    UT_HOS = UT_HOS_,
+    ExPT_NOS = ExPT_NOS_,
+    ExT_NOS = ExT_NOS_,
+    ExPT_HOS = ExPT_HOS_,
+    ExT_HOS = ExT_HOS_,
+    fitness = fitness,
+    pNOB = pNOB,
+    pHOS_census = pHOS_census,
+    pHOS_effective = pHOS_effective,
+    PNI = PNI,
+    p_wild = p_wild,
+    Mjuv_loss = apply(Mjuv_loss_NOS[, , , , 1, drop = FALSE], 1:4, identity)
+  )
+
+  if (n_r > 1) {
+    SMSE@Misc$RS <- list(
+      Smolt = Smolt_Rel, Esc = Escapement_HOS, HOS = HOS
+    )
+  }
+
+  if (n_g > 1) {
+    SMSE@Misc$LHG <- list(
+      Egg = Egg_NOS + Egg_HOS,
+      Fry = Fry_NOS + Fry_HOS,
+      Smolt = Smolt_NOS + Smolt_HOS,
+      Esc = Escapement_NOS,
+      NOS = NOS
+    )
+  }
+
+  return(SMSE)
+}

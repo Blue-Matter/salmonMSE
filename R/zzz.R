@@ -1,12 +1,4 @@
 
-.onLoad <- function(libname, pkgname) {
-  salmonMSE_env$Ford <- data.frame()
-  salmonMSE_env$N <- data.frame()
-  salmonMSE_env$stateN <- data.frame()
-  salmonMSE_env$H <- data.frame()
-  salmonMSE_env$stateH <- data.frame()
-}
-
 if(getRversion() >= "2.15.1") {
   utils::globalVariables(
     c(".", "2.5%", "50%", "97.5%", "Age", "Design1", "Design2", "Release Strategy",
@@ -95,10 +87,3 @@ hist.numeric <- function(x, ...) {
   invisible(r)
 }
 
-#' @name glossary
-#' @title salmonMSE glossary
-#' @description Glossary of terms and parameters used in salmonMSE
-#' @examples
-#' data(glossary)
-#' glossary[1:2, ]
-NULL

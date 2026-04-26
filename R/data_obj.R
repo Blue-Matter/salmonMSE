@@ -16,3 +16,11 @@
 
 #' @rdname simple_SOM
 "multi_SOM"
+
+#' @name glossary
+#' @title salmonMSE glossary
+#' @description Glossary of terms and parameters used in salmonMSE
+#' @examples
+#' data(glossary)
+#' glossary[1:2, ]
+NULL

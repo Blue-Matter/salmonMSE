@@ -2,35 +2,27 @@
 % Please edit documentation in R/salmonMSE.R
 \name{salmonMSE}
 \alias{salmonMSE}
+\alias{ProjectSOM}
 \title{Run salmonMSE}
 \usage{
-salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
+salmonMSE(SOM, silent = FALSE)
+
+ProjectSOM(SOM, check = FALSE)
 }
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
 
-\item{Hist}{Logical, whether to stop the function stop after historical simulations?}
-
 \item{silent}{Logical, whether to report progress in console}
 
-\item{trace}{Logical, whether to report additional messages from openMSE}
-
-\item{convert}{Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on \code{Hist}) object}
+\item{check}{Logical, whether to check the structure of the input object with \code{\link[=check_SOM]{check_SOM()}}}
 }
 \value{
-If \code{Hist = TRUE}: if \code{convert = TRUE}, a \linkS4class{SHist} object or if \code{convert = FALSE}, a multiHist object (list).
-
-If \code{Hist = FALSE}: if \code{convert = TRUE}, a \linkS4class{SMSE} object or if \code{convert = FALSE}, a \link[MSEtool:MMSE-class]{MSEtool::MMSE} object.
+\linkS4class{SMSE} object
 }
 \description{
-\code{salmonMSE()} runs a salmon management strategy evaluation through the following steps:
-\itemize{
-\item Converts a salmon operating model (\linkS4class{SOM}) to a multi-stock operating model (\link[MSEtool:MOM-class]{MSEtool::MOM}) via \code{\link[=SOM2MOM]{SOM2MOM()}}
-\item Creates a harvest management procedure specifying the harvest control rule
-\item Generates the historical reconstruction of the state variables
-\item Runs projection (if \code{Hist = FALSE})
-\item Converts the openMSE output, along with additional state variables recorded in \link{salmonMSE_env}, into a salmon MSE object (SMSE) via \code{\link[=MMSE2SMSE]{MMSE2SMSE()}}
-}
+\code{salmonMSE()} runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}).
+
+\code{ProjectSOM()} is the internal projection function.
 }
 \examples{
 \dontrun{
