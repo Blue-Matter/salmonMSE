@@ -66,6 +66,7 @@ and project forward 50 years to obtain the system dynamics in the
 long-term equilibrium (the generation time is 3 years).
 
 ``` r
+
 library(salmonMSE)
 library(tidyverse)
 
@@ -182,6 +183,7 @@ scenarios. This may be useful to ensure that the models are behaving as
 intended:
 
 ``` r
+
 # Showing a subset of 4 scenarios where productivity is 3 but release target varies
 names <- paste("Hatchery =", seq(0, 15000, 5000))
 compare(SMSE_list[c(1, 4, 7, 10)], names = names)
@@ -198,6 +200,7 @@ the average catch and the probability that the catches exceeds 60, at
 the end of the projection.
 
 ``` r
+
 pm_fn <- function(x, SMSE_list, Design) {
   out <- Design[x, ]
   out$PNI <- mean(SMSE_list[[x]]@PNI[, 1, 49])
@@ -220,6 +223,7 @@ Decision tables can be created with
 Here is the table for PNI_80:
 
 ``` r
+
 g <- plot_decision_table(
   pm$hatch, pm$kappa, pm$PNI_80, 
   title = "Probability PNI > 0.80",
@@ -239,6 +243,7 @@ Here is the decision table for the probability the terminal catch
 exceeds 60 (Catch60):
 
 ``` r
+
 g <- plot_decision_table(
   pm$hatch, pm$kappa, pm$Catch60, 
   title = "Probability Catch > 60",
@@ -288,6 +293,7 @@ properties and tradeoffs of the remaining management options are
 characterized.
 
 ``` r
+
 g <- plot_tradeoff(
   pm$PNI, pm$Catch,
   x1 = factor(pm$kappa), x2 = factor(pm$hatch), 
@@ -312,6 +318,7 @@ upper bound of values from the simulations.
 For example:
 
 ``` r
+
 # Make tradeoff figure with median and confidence intervals
 
 # First calculate the median and bounds for PNI for each scenario
@@ -363,6 +370,7 @@ conditions to the point that we can make conclusions about the behavior
 of the system dynamics.
 
 ``` r
+
 library(reshape2)
 
 PNI_ts <- lapply(1:nrow(Design), function(x) {
@@ -392,6 +400,7 @@ Several comparison figures are available to plot the natural production
 production:
 
 ``` r
+
 Design_txt <- Design
 Design_txt[, 1] <- factor(paste("Productivity =", Design[, 1]),
                           levels = paste("Productivity =", c(9, 6, 3)))

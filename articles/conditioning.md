@@ -331,6 +331,7 @@ space, the prior density is relatively uniform between 0-1 with low
 density at the bounds:
 
 ``` r
+
 x <- seq(-5, 5, 0.1)
 f_x <- dnorm(x, 0, 1.6)
 
@@ -357,6 +358,7 @@ with hyperprior \\\sigma^m_a \sim \textrm{Gamma}(2, 5)\\ (mode of 0.2,
 mean of 0.4, and standard deviation of 0.28).
 
 ``` r
+
 x <- seq(0, 1.5, 0.01)
 f_x <- dgamma(x, 2, scale = 1/5)
 

@@ -17,6 +17,7 @@ salmonMSE can be downloaded from [CRAN](https://CRAN.R-project.org)
 with:
 
 ``` r
+
 install.packages("salmonMSE")
 ```
 
@@ -24,6 +25,7 @@ And the development version is available on
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("Blue-Matter/salmonMSE")
 ```

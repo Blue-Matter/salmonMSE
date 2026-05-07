@@ -47,6 +47,7 @@ object of class `SOM` can be created from constituent objects of class
 `Bio`, `Habitat`, `Hatchery`, and `Harvest` as follows:
 
 ``` r
+
 library(salmonMSE)
 
 Bio <- new("Bio", ...)
@@ -83,6 +84,7 @@ The simulation can then run with the
 function:
 
 ``` r
+
 MSE <- salmonMSE(SOM)
 ```
 
@@ -95,6 +97,7 @@ For convenience and comparison purposes, salmonMSE distributes an
 implementation of AHA in R as well:
 
 ``` r
+
 SAHA <- AHA(SOM)
 ```
 

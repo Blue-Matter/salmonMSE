@@ -24,6 +24,7 @@ rate `Mjuv_NOS` where all mortality occurs in the age class prior to
 maturation, i.e., age 2.
 
 ``` r
+
 library(salmonMSE)
 
 class?SOM # Definition of inputs
@@ -62,6 +63,7 @@ productivity parameters in the previous section control the egg-juvenile
 survival.
 
 ``` r
+
 Habitat <- new(
   "Habitat",
   use_habitat = FALSE
@@ -114,6 +116,7 @@ Finally, we also need to specify the relative spawning success of HOS
 hatchery-origin fish, in the natural environment.
 
 ``` r
+
 Hatchery <- new(
   "Hatchery",
   n_yearling = 10000,             # Management lever. No hatchery if both this line and next line are zero
@@ -148,6 +151,7 @@ Hatchery-origin fish are marked but mark-selective fishing is not
 evaluated here.
 
 ``` r
+
 Harvest <- new(
   "Harvest",
   u_preterminal = 0,             # No pre-terminal fishery
@@ -169,6 +173,7 @@ generation for all simulations (corresponding to an escapement of
 approximately 800 after the 20.3 percent terminal harvest rate):
 
 ``` r
+
 Historical <- new(
   "Historical",
   InitNjuv_NOS = 1000,
@@ -180,6 +185,7 @@ Now let’s stitch together the operating model and run the simulation for
 50 projection years (`proyears`).
 
 ``` r
+
 SOM <- new(
   "SOM",
   Bio, Habitat, Hatchery, Harvest, Historical,
@@ -193,6 +199,7 @@ the population. As we can see, the number of NOS in both models is
 slowly equilibriating to approximately 70.
 
 ``` r
+
 SAHA <- AHA(SOM, ngen = 20)
 
 # Compare NOS
@@ -220,6 +227,7 @@ the evaluation of the management strategy.
 operating model.*
 
 ``` r
+
 SAR <- 0.01
 
 nsim_stochastic <- 100
@@ -263,6 +271,7 @@ Let’s take a look at PNI, where we can plot the median and 95 percent
 range in values annually from the projection:
 
 ``` r
+
 plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
 ```
 
@@ -273,6 +282,7 @@ model single brood year returns so PNI is only defined once every 3
 years):
 
 ``` r
+
 plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
 ```
 
@@ -284,6 +294,7 @@ management actions. For example, we calculate the long-term probability
 that PNI is at least 0.80:
 
 ``` r
+
 PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
 mean(PNI_LT >= 0.8)
 ```
@@ -294,6 +305,7 @@ The quantiles can also be calculated for our performance metric from the
 stochastic replicates:
 
 ``` r
+
 quantile(PNI_LT, c(0.025, 0.5, 0.975))
 ```
 
@@ -309,5 +321,6 @@ A summary Markdown report can be generated with the
 [`report()`](https://docs.salmonmse.com/reference/report.md) function:
 
 ``` r
+
 report(SMSE_stochastic)
 ```

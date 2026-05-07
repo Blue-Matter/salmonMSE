@@ -115,6 +115,7 @@ ggplot object
 ## Examples
 
 ``` r
+
 # Single tradeoff panel
 results <- data.frame(
   PNI = c(0.7, 0.23, 0.05, 0.9, 0.85, 0.74, 0.95, 0.92, 0.9),

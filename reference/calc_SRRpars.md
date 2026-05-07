@@ -54,6 +54,7 @@ For the Ricker stock recruit relationship: \$\$\beta =
 ## Examples
 
 ``` r
+
 N1 <- 100
 N2 <- 200
 p <- 10

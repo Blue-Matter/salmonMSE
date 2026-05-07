@@ -43,6 +43,7 @@ The projection will run three simulations but they are identical among
 each other.
 
 ``` r
+
 library(salmonMSE)
 
 ns <- 2        # Two population model
@@ -81,6 +82,7 @@ hatchery production in the first population and straying to the second
 population.
 
 ``` r
+
 Hatchery <- lapply(1:ns, function(s) {
   new(
     "Hatchery",
@@ -116,6 +118,7 @@ No freshwater specific habitat-based survival is modeled here. We
 specified density-dependent egg-smolt survival in the `Bio` objects.
 
 ``` r
+
 Habitat <- lapply(1:ns, function(s) {
   new(
     "Habitat",
@@ -141,6 +144,7 @@ Currently, salmonMSE assumes equal catchability of all populations by
 the fishery:
 
 ``` r
+
 Harvest <- lapply(1:ns, function(s) {
   new(
     "Harvest",
@@ -162,6 +166,7 @@ and hatchery-origin fish each in the first population, and a return of
 100 natural-origin fish (no hatchery return) in the second population.
 
 ``` r
+
 Historical <- lapply(1:ns, function(s) {
   new(
     "Historical",
@@ -177,6 +182,7 @@ Once these objects are set up, they can be combined to create the
 operating model. The projection will run for 50 years:
 
 ``` r
+
 SOM <- new(
   "SOM",
   Bio, Habitat, Hatchery, Harvest, Historical,
@@ -199,6 +205,7 @@ Here, 25 percent of the hatchery fish escapement from the first
 population will stray to the second population:
 
 ``` r
+
 SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
 ```
 
@@ -207,6 +214,7 @@ SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
     #> [2,] 0.00 1.00
 
 ``` r
+
 salmonMSE:::plot_stray(SOM@stray)
 ```
 
@@ -220,6 +228,7 @@ Once the operating model is set up, we can run the projection and
 generate the Markdown report:
 
 ``` r
+
 out <- salmonMSE(SOM)
 report(out)
 ```
@@ -229,6 +238,7 @@ population to a hatchery-dominated system due to strays from the first
 population. The population equilibriates after 4 generations:
 
 ``` r
+
 plot_spawners(out, s = 2, prop = FALSE)
 ```
 
@@ -238,6 +248,7 @@ The reduction in wild spawners are exclusively from strays as no
 hatchery-origin juveniles are present in the second population:
 
 ``` r
+
 max(out@Njuv_HOS[, 2, , ])
 ```
 

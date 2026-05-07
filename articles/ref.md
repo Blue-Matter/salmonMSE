@@ -156,6 +156,7 @@ with values from the Ricker model unless both fecundity and
 vulnerability vary with age.
 
 ``` r
+
 compare_ref <- function(a = 3, # Units of recruits/spawner
                         b = 1/1000, # Units of reciprocal spawners
                         maxage = 5,
@@ -248,6 +249,7 @@ simple assumptions identified in the introduction. The salmonMSE and
 Ricker (stock-recruit only) reference points are identical.
 
 ``` r
+
 compare_ref(
   a = 3,
   b = 1/1000,
@@ -281,6 +283,7 @@ with fecundity = 1 and fully vulnerable to the fishery.
 The salmonMSE and Ricker-only reference points are identical.
 
 ``` r
+
 compare_ref(
   a = 3,
   b = 1/1000,
@@ -317,6 +320,7 @@ maximum value experienced by an age class (typically the oldest), but
 the ratio of total catch to total return may be more appropriate metric.
 
 ``` r
+
 compare_ref(
   a = 3,
   b = 1/1000,
@@ -351,6 +355,7 @@ identical in fecundity are additional complexities not implemented in
 Ricker-only reference points.
 
 ``` r
+
 compare_ref(
   a = 3,
   b = 1/1000,
@@ -387,6 +392,7 @@ points.
 Thus, salmonMSE and Ricker-only reference points are **not** identical.
 
 ``` r
+
 compare_ref(
   a = 3,
   b = 1/1000,
