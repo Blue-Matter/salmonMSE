@@ -1,5 +1,9 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
+# 2.1.1
+
+- Check for NAs in start values for `fit_CM`.
+
 # 2.1.0
 
 - Update terminal year escapement, brood, and egg production calculations for multiple release strategies and life cycle groups

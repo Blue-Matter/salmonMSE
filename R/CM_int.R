@@ -417,8 +417,14 @@ CM_int <- function(p, d) {
 
 # Make list of starting values
 make_CMpars <- function(p, d) {
+
+  na_check <- sapply(p, function(x) any(is.na(x)))
+  if (any(na_check)) {
+    stop("Some initial parameters are NA: ", paste(names(na_check)[na_check], collapse = ", "))
+  }
+
   if (is.null(p$log_cr)) p$log_cr <- 3
-  if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape))
+  if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape, na.rm = TRUE))
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p[["wt"]])) p[["wt"]] <- rep(0, d$Ldyr)
   if (is.null(p[["wto"]])) p[["wto"]] <- rep(0, d$Ldyr)
