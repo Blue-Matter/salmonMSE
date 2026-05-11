@@ -88,7 +88,7 @@
 <span></span>
 <span><span class="fu">CM_prod</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">CM_Srep</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spawner"</span>, <span class="st">"egg"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">CM_Srep</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spawner"</span>, <span class="st">"egg"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">CM_M</span><span class="op">(</span><span class="va">report</span>, year1 <span class="op">=</span> <span class="fl">1</span>, ci <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -194,6 +194,10 @@
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>Character, indicates type of variable to plot</p></dd>
+
+
+<dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
+<dd><p>Logical, whether to exclude replacement values (and other reference points) that are less than zero from median calculations and resulting figures</p></dd>
 
 
 <dt id="arg-ci">ci<a class="anchor" aria-label="anchor" href="#arg-ci"></a></dt>

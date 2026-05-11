@@ -38,7 +38,7 @@ CM_SRR(report, year1 = 1)
 
 CM_prod(report, d, year1 = 1)
 
-CM_Srep(report, d, year1 = 1, type = c("spawner", "egg"))
+CM_Srep(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FALSE)
 
 CM_M(report, year1 = 1, ci = TRUE)
 
@@ -151,6 +151,12 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 - type:
 
   Character, indicates type of variable to plot
+
+- na.rm:
+
+  Logical, whether to exclude replacement values (and other reference
+  points) that are less than zero from median calculations and resulting
+  figures
 
 - ci:
 
