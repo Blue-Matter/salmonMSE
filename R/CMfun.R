@@ -476,27 +476,28 @@ CM_SRR <- function(report, year1 = 1) {
 }
 
 .CM_prod <- function(report, d) {
-  sapply(1:length(report), function(x) {
-    sapply(1:d$Ldyr, function(y) {
 
+  # egg per smolt in year y
+  epro <- sapply(1:d$Ldyr, function(y) {
+    sapply(1:length(report), function(x) {
       mo <- report[[x]]$mo[y, ]
       matt <- report[[x]]$matt[y, , d$r_matt]
-
-      lo <- numeric(d$Nages)
-      lo[1] <- 1
-      for (a in 2:d$Nages) {
-        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
-      }
+      lo <- calc_survival(mo, matt) # smolt survival at replacement
       epro <- sum(lo * d$ssum * d$fec * matt)
-
-      return(report[[x]]$alpha * epro)
+      return(epro)
     })
   })
+
+  alpha <- sapply(report, getElement, "alpha") # sim
+  output <- t(alpha * epro) # productivity: y, simulation
+  return(output)
 }
 
 #' @rdname CMfigures
 #' @returns
-#' - `CM_prod()` returns ggplot of realized productivity in the absence of fishery harvest, annual values are based on natural mortality and maturity at age
+#' - `CM_prod()` returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
+#' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
+#' vary with annual changes in natural mortality or maturity.
 #' @export
 CM_prod <- function(report, d, year1 = 1) {
 
@@ -519,38 +520,39 @@ CM_prod <- function(report, d, year1 = 1) {
 .CM_Srep <- function(report, d, type = c("spawner", "egg")) {
   type <- match.arg(type)
 
-  sapply(1:length(report), function(x) {
-    sapply(1:d$Ldyr, function(y) {
+  alpha <- sapply(report, getElement, "alpha") # sim
+  beta <- sapply(report, getElement, "beta") # per egg
 
+  alpha_s <- .CM_prod(report, d) # productivity: y, s
+  epro <- t(alpha_s)/alpha # s, y
+
+  # spawner per smolt in year y
+  spro <- sapply(1:d$Ldyr, function(y) {
+    sapply(1:length(report), function(x) {
       mo <- report[[x]]$mo[y, ]
       matt <- report[[x]]$matt[y, , d$r_matt]
-
-      lo <- numeric(d$Nages)
-      lo[1] <- 1
-      for (a in 2:d$Nages) {
-        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
-      }
-      epro <- sum(lo * d$ssum * d$fec * matt)
+      lo <- calc_survival(mo, matt) # smolt survival at replacement
       spro <- sum(lo * d$ssum * matt)
-
-      beta_s <- report[[x]]$beta * epro / spro
-      alpha_s <- report[[x]]$alpha * epro
-
-      Srep <- log(alpha_s)/beta_s
-
-      if (type == "spawner") {
-        return(Srep)
-      } else {
-        Erep <- Srep * epro / spro
-        return(Erep)
-      }
+      return(spro)
     })
   })
+
+  beta_s <- beta * epro/spro # Ricker beta, per spawner
+  Srep <- log(alpha_s)/beta_s
+
+  if (type == "spawner") {
+    output <- Srep
+  } else {
+    output <- Srep * epro / spro # Erep, egg production at replacement
+  }
+  return(t(output)) # year, simulation
 }
 
 #' @rdname CMfigures
 #' @returns
-#' - `CM_Srep()` returns ggplot of realized spawner or egg production at replacement, annual values are based on natural mortality and maturity at age
+#' - `CM_Srep()` returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
+#' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
+#' vary with annual changes in natural mortality or maturity.
 #' @export
 CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
   type <- match.arg(type)
@@ -571,116 +573,130 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
   g
 }
 
-
-.CM_SMSY <- function(report, d, type = c("spawner", "egg")) {
+#' @importFrom parallel detectCores makeCluster stopCluster parSapplyLB
+.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), ncores = 1) {
   type <- match.arg(type)
 
-  sapply(1:length(report), function(x) {
-    sapply(1:d$Ldyr, function(y) {
+  mo <- sapply(report, getElement, "mo", simplify = "array") # y, a, s
+  matt <- sapply(report, getElement, "matt", simplify = "array") # y, a, r, s
 
+  alpha <- sapply(report, getElement, "alpha") # s, smolt per egg
+  beta <- sapply(report, getElement, "beta") # per egg
+
+  alpha_s <- .CM_prod(report, d) # productivity, adult/spawner
+  epro <- t(alpha_s)/alpha # egg per smolt: s, y
+
+  # spawner per smolt in year y
+  spro <- sapply(1:d$Ldyr, function(y) {
+    sapply(1:length(report), function(x) {
       mo <- report[[x]]$mo[y, ]
       matt <- report[[x]]$matt[y, , d$r_matt]
-      vulT <- report[[x]]$vulT
-      FT <- report[[x]]$FT
-
-      lo <- numeric(d$Nages)
-      lo[1] <- 1
-      for (a in 2:d$Nages) {
-        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
-      }
-      epro <- sum(lo * d$ssum * d$fec * matt)
-      alpha_s <- report[[x]]$alpha * epro
-
-      if (!sum(FT) && type == "spawner") {
-        spro <- sum(lo * d$ssum * matt)
-        beta_s <- report[[x]]$beta * epro / spro
-        if (alpha_s > 1) {
-          val <- calc_Smsy_Ricker(log(alpha_s), beta_s)
-        } else {
-          val <- 0
-        }
-      } else {
-        vulPT <- report[[x]]$vulPT
-        if (!sum(FT)) vulT[] <- 1
-        SRRpars <- data.frame("kappa" = alpha_s, "Emax" = 1/report[[x]]$beta, "phi" = epro, "SRrel" = "Ricker")
-        ref <- calc_MSY(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
-                        s_enroute = 1, SRRpars = SRRpars)
-
-        if (type == "spawner") {
-          val <- ref["Spawners_MSY"]
-        } else {
-          val <- ref["Egg_MSY"]
-        }
-      }
-      as.numeric(val)
+      lo <- calc_survival(mo, matt) # smolt survival at replacement
+      spro <- sum(lo * d$ssum * matt)
+      return(spro)
     })
   })
+  beta_s <- beta * epro/spro # Ricker beta, per spawner
 
+  vulPT <- sapply(report, getElement, "vulPT")
+  vulT <- sapply(report, getElement, "vulT")
+  FPT <- sapply(report, getElement, "FPT")
+  FT <- sapply(report, getElement, "FT")
+
+  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type) {
+
+    if (sum(FT[, x])) {
+      rel_F <- c(0, 1)
+    } else if (sum(FPT[, x])) {
+      rel_F <- c(1, 0)
+    } else {
+      stop("No fishing mortality in model was detected")
+    }
+
+    sapply(1:ny, function(y) {
+      SRRpars <- data.frame(
+        "kappa" = alpha_s[y, x], "Emax" = 1/beta[x], "Smax" = 1/beta_s[x, y],
+        "phi" = epro[x, y], "tau" = spro[x, y], "SRrel" = "Ricker"
+      )
+      m <- mo[y, , x]
+      mat <- matt[y, , 1, x]
+
+      ref <- calc_MSY(
+        Mjuv = m,
+        fec = d$fec, p_female = d$ssum, rel_F = rel_F, vulPT = vulPT[, x], vulT = vulT[, x],
+        p_mature = mat, s_enroute = 1, SRRpars = SRRpars
+      )
+
+      if (type == "Sgen") {
+        SMSY <- ref["Spawners_MSY"]
+        val <-  calc_Sgen(
+          Mjuv = m,
+          fec = d$fec, p_female = d$ssum, rel_F = rel_F, vulPT = vulPT[, x], vulT = vulT[, x],
+          p_mature = mat, s_enroute = 1, SRRpars = SRRpars, SMSY = SMSY
+        )
+      } else {
+        val <- switch(
+          type,
+          "spawner" = ref["Spawners_MSY"],
+          "egg" = ref["Egg_MSY"],
+          "u" = rel_F[1] * ref["UPT_MSY"] + rel_F[2] * ref["UT_MSY"] # Only works because it's either-or
+        )
+      }
+
+      as.numeric(val)
+    })
+  }
+
+  if (ncores > 1) {
+    cl <- parallel::makeCluster(min(ncores, parallel::detectCores() - 2))
+    on.exit(parallel::stopCluster(cl))
+
+    output <- parallel::parSapplyLB(
+      cl, X = 1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type
+    )
+  } else {
+    output <- sapply(
+      1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type
+    )
+  }
+
+  return(output)
 }
 
-CM_SMSY <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+.CM_SMSY <- .CM_MSY
+
+CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"), ncores = 1) {
   type <- match.arg(type)
 
-  SMSY <- .CM_SMSY(report, d, type)
+  SMSY <- .CM_MSY(report, d, type, ncores = ncores)
 
   SMSY_q <- apply(SMSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"))
+  ylab <- switch(
+    type,
+    "spawner" = expression(S[MSY]),
+    "egg" = expression(E[MSY]),
+    "u" = expression(U[MSY])
+  )
 
   g <- SMSY_q %>%
     ggplot(aes(Year, .data$`50%`)) +
     geom_line() +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Calendar Year", y = ifelse(type == "spawner", expression(S[MSY]), expression(E[MSY])))
+    labs(x = "Calendar Year", y = ylab)
 
   g
 }
+CM_SMSY <- CM_MSY
 
-.CM_Sgen <- function(report, d) {
+.CM_Sgen <- function(report, d, ncores = 1) .CM_MSY(report, d, type = "Sgen", ncores = ncores)
 
-  sapply(1:length(report), function(x) {
-    sapply(1:d$Ldyr, function(y) {
-
-      mo <- report[[x]]$mo[y, ]
-      matt <- report[[x]]$matt[y, , d$r_matt]
-      vulT <- report[[x]]$vulT
-      FT <- report[[x]]$FT
-
-      lo <- numeric(d$Nages)
-      lo[1] <- 1
-      for (a in 2:d$Nages) {
-        lo[a] <- lo[a-1] * exp(-mo[a-1]) * (1 - matt[a-1]) # unfished juvenile survival
-      }
-      epro <- sum(lo * d$ssum * d$fec * matt)
-      spro <- sum(lo * d$ssum * matt)
-      alpha_s <- report[[x]]$alpha * epro
-      beta_s <- report[[x]]$beta * epro / spro
-
-      if (!sum(FT)) {
-        if (alpha_s > 1) {
-          val <- calc_Sgen_Ricker(log(alpha_s), beta_s)
-        } else {
-          val <- 0
-        }
-      } else {
-        vulPT <- report[[x]]$vulPT
-        SRRpars <- data.frame("kappa" = alpha_s, "Smax" = 1/beta_s, "Emax" = 1/report[[x]]$beta, "phi" = epro, "tau" = spro, "SRrel" = "Ricker")
-        ref <- calc_MSY(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
-                        s_enroute = 1, SRRpars = SRRpars)
-        SMSY <- ref["Spawners_MSY"]
-
-        val <- calc_Sgen(Mjuv = c(mo, length(mo)), fec = d$fec, p_female = d$ssum, rel_F = c(0, 1), vulPT = vulPT, vulT = vulT, p_mature = matt,
-                         s_enroute = 1, SRRpars = SRRpars, SMSY = SMSY)
-      }
-      as.numeric(val)
-    })
-  })
-
-}
-
-CM_Sgen <- function(report, d, year1 = 1) {
-  Sgen <- .CM_Sgen(report, d)
+CM_Sgen <- function(report, d, year1 = 1, ncores = 1) {
+  Sgen <- .CM_Sgen(report, d, ncores = ncores)
 
   Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%

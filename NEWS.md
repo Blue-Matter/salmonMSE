@@ -3,6 +3,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 # 2.1.1
 
 - Check for NAs in start values for `fit_CM`.
+- Update `.CM_MSY()` and `.CM_Sgen()` functions for parallel computation.
 
 # 2.1.0
 
