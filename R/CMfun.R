@@ -538,7 +538,7 @@ CM_prod <- function(report, d, year1 = 1) {
   })
 
   beta_s <- beta * epro/spro # Ricker beta, per spawner
-  Srep <- log(alpha_s)/beta_s
+  Srep <- log(t(alpha_s))/beta_s
 
   if (type == "spawner") {
     output <- Srep
