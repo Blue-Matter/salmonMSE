@@ -240,8 +240,12 @@ otherwise, the dot product <code>sum(x * b)</code> is calculated by individual s
 </ul><ul><li><p><code>CM_vul()</code> returns ggplot of estimated fishery vulnerability at age</p></li>
 </ul><ul><li><p><code>CM_SRR()</code> returns ggplot of estimated stock-recruit relationship (density-dependent juvenile production from egg production) with average
 relationship and realized annual values. Years correspond to return years of egg production (predicts juvenile production of the following calendar year).</p></li>
-</ul><ul><li><p><code>CM_prod()</code> returns ggplot of realized productivity in the absence of fishery harvest, annual values are based on natural mortality and maturity at age</p></li>
-</ul><ul><li><p><code>CM_Srep()</code> returns ggplot of realized spawner or egg production at replacement, annual values are based on natural mortality and maturity at age</p></li>
+</ul><ul><li><p><code>CM_prod()</code> returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
+juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
+vary with annual changes in natural mortality or maturity.</p></li>
+</ul><ul><li><p><code>CM_Srep()</code> returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
+juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
+vary with annual changes in natural mortality or maturity.</p></li>
 </ul><ul><li><p><code>CM_M()</code> returns ggplot of estimated natural mortality time series by age (marine stage)</p></li>
 </ul><ul><li><p><code>CM_Megg()</code> returns ggplot of egg-juvenile mortality time series</p></li>
 </ul><ul><li><p><code>CM_Njuv()</code> returns ggplot of juvenile abundance</p></li>

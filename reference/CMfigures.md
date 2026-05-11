@@ -242,15 +242,19 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 &nbsp;
 
-- `CM_prod()` returns ggplot of realized productivity in the absence of
-  fishery harvest, annual values are based on natural mortality and
-  maturity at age
+- `CM_prod()` returns ggplot of productivity (adults/spawner),
+  calculated from density-dependent egg-smolt Ricker parameters,
+  juvenile natural mortality, fecundity, and maturity. Even if egg-smolt
+  survival function is constant, the realized productivity can vary with
+  annual changes in natural mortality or maturity.
 
 &nbsp;
 
-- `CM_Srep()` returns ggplot of realized spawner or egg production at
-  replacement, annual values are based on natural mortality and maturity
-  at age
+- `CM_Srep()` returns ggplot of spawners or egg production at
+  replacement, calculated from density-dependent egg-smolt Ricker
+  parameters, juvenile natural mortality, fecundity, and maturity. Even
+  if egg-smolt survival function is constant, the realized replacement
+  can vary with annual changes in natural mortality or maturity.
 
 &nbsp;
 
