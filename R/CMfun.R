@@ -549,17 +549,19 @@ CM_prod <- function(report, d, year1 = 1) {
 }
 
 #' @rdname CMfigures
+#' @param na.rm Logical, whether to exclude replacement values (and other reference points) that are less than zero from median calculations and resulting figures
 #' @returns
 #' - `CM_Srep()` returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
 #' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
 #' vary with annual changes in natural mortality or maturity.
 #' @export
-CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
+CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FALSE) {
   type <- match.arg(type)
 
   Srep <- .CM_Srep(report, d, type)
+  if (na.rm) Srep[Srep <= 0] <- NA_real_
 
-  Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+  Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"))
@@ -667,12 +669,13 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg")) {
 
 .CM_SMSY <- .CM_MSY
 
-CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"), ncores = 1) {
+CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"), ncores = 1, na.rm = FALSE) {
   type <- match.arg(type)
 
-  SMSY <- .CM_MSY(report, d, type, ncores = ncores)
+  MSY <- .CM_MSY(report, d, type, ncores = ncores)
+  if (na.rm) MSY[MSY <= 0] <- NA_real_
 
-  SMSY_q <- apply(SMSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+  MSY_q <- apply(MSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"))
@@ -683,7 +686,7 @@ CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"), ncores
     "u" = expression(U[MSY])
   )
 
-  g <- SMSY_q %>%
+  g <- MSY_q %>%
     ggplot(aes(Year, .data$`50%`)) +
     geom_line() +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
@@ -695,10 +698,11 @@ CM_SMSY <- CM_MSY
 
 .CM_Sgen <- function(report, d, ncores = 1) .CM_MSY(report, d, type = "Sgen", ncores = ncores)
 
-CM_Sgen <- function(report, d, year1 = 1, ncores = 1) {
+CM_Sgen <- function(report, d, year1 = 1, ncores = 1, na.rm = FALSE) {
   Sgen <- .CM_Sgen(report, d, ncores = ncores)
+  if (na.rm) Sgen[Sgen <= 0] <- NA_real_
 
-  Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+  Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
     reshape2::melt() %>%
     mutate(Year = Var2 + year1 - 1) %>%
     reshape2::dcast(list("Year", "Var1"))
