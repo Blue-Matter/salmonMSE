@@ -5,14 +5,18 @@
 \alias{ProjectSOM}
 \title{Run salmonMSE}
 \usage{
-salmonMSE(SOM, silent = FALSE)
+salmonMSE(SOM, ncores = 1, silent = FALSE)
 
-ProjectSOM(SOM, check = FALSE)
+ProjectSOM(SOM, sims, check = FALSE)
 }
 \arguments{
 \item{SOM}{An object of class \linkS4class{SOM}}
 
+\item{ncores}{Integer, maximum number of processors to run projection with parallel processing}
+
 \item{silent}{Logical, whether to report progress in console}
+
+\item{sims}{Optional integer vector to run projection for a subset of simulations. Intended for parallel processing.}
 
 \item{check}{Logical, whether to check the structure of the input object with \code{\link[=check_SOM]{check_SOM()}}}
 }
@@ -20,7 +24,9 @@ ProjectSOM(SOM, check = FALSE)
 \linkS4class{SMSE} object
 }
 \description{
-\code{salmonMSE()} runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}).
+\code{salmonMSE()} runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}), by checking
+the operating model object with \code{check_SOM()}, running the projection in \code{ProjectSOM()} (parallel if called upon, then stitches
+together the output in a single object), and calculates reference points with \code{calc_ref()}.
 
 \code{ProjectSOM()} is the internal projection function.
 }

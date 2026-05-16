@@ -169,10 +169,27 @@ SOM_stochastic <- new("SOM",
                       nsim = nsim_stochastic, proyears = 50)
 
 # With MSEtool, clocks in at 11.11 minutes
-# Without MSEtool, clocks in at 11.22 seconds
+# Without MSEtool, clocks in at 11 seconds
 tictoc::tic()
 SMSE_stochastic <- salmonMSE(SOM_stochastic, silent = TRUE)
 tictoc::toc()
+
+# Compare parallel processing
+if (FALSE) {
+
+  SMSE_stochastic2 <- salmonMSE(SOM_stochastic, ncores = 10, silent = FALSE)
+  tictoc::toc()
+
+  vars <- slotNames(SMSE_stochastic)
+  check <- lapply(vars, function(i) {
+    if (is.numeric(slot(SMSE_stochastic, i))) {
+      range(slot(SMSE_stochastic, i) - slot(SMSE_stochastic2, i), na.rm = TRUE)
+    } else {
+      c(NA, NA)
+    }
+  }) %>% structure(names = vars)
+}
+tictoc::tic()
 
 # Save simulation object
 saveRDS(SMSE_stochastic, "examples/SMSE/SMSE_stochastic.rds")

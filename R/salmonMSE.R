@@ -3,8 +3,11 @@
 #' Run salmonMSE
 #'
 #' @description
-#' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}).
+#' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}), by checking
+#' the operating model object with `check_SOM()`, running the projection in `ProjectSOM()` (parallel if called upon, then stitches
+#' together the output in a single object), and calculates reference points with `calc_ref()`.
 #' @param SOM An object of class \linkS4class{SOM}
+#' @param ncores Integer, maximum number of processors to run projection with parallel processing
 #' @param silent Logical, whether to report progress in console
 #' @return
 #' \linkS4class{SMSE} object
@@ -14,11 +17,75 @@
 #' }
 #'
 #' @export
-salmonMSE <- function(SOM, silent = FALSE) {
+#' @importFrom parallel detectCores makeCluster stopCluster parLapplyLB
+#' @importFrom abind abind
+salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
 
-  #if (!silent) message("Converting salmon operating model to MOM..")
   SOM <- check_SOM(SOM, silent = silent)
-  SMSE <- ProjectSOM(SOM, check = FALSE)
+
+  if (ncores == 1) {
+    SMSE <- ProjectSOM(SOM, check = FALSE)
+  } else {
+    ncores <- min(ncores, parallel::detectCores())
+
+    nsim <- SOM@nsim
+    nits_min <- 2
+    nits_prelim <- rep(ceiling(nsim/ncores), ncores)
+    nits_prelim[nits_prelim < 2] <- nits_min
+
+    nits <- lapply(1:ncores, function(i) {
+      prev <- ifelse(i == 1, 0, sum(nits_prelim[seq(1, i - 1)]))
+      sims <- prev + seq(1, nits_prelim[i])
+      sims[sims <= nsim]
+    })
+    nits_use <- sapply(nits, length) > 0
+    nits <- nits[nits_use]
+
+    if (length(nits[[length(nits)]]) == 1) {
+      nits[[length(nits) - 1]] <- c(nits[[length(nits) - 1]], nits[[length(nits)]])
+      nits <- nits[-length(nits)]
+    }
+
+    cores <- length(nits)
+
+    if (cores == 1) {
+      if (!silent) message("Running projection on one core (parallel processing not needed)")
+      SMSE <- ProjectSOM(SOM, check = FALSE)
+    } else {
+      if (!silent) message("Running ", nsim, " simulations in parallel on ", cores, " cores")
+      cl <- parallel::makeCluster(cores)
+      on.exit(parallel::stopCluster(cl))
+
+      SMSE_list <- parallel::parLapplyLB(cl, X = nits, ProjectSOM_parallel, SOM = SOM)
+
+      # Stitch objects together
+      SMSE <- new("SMSE")
+      vars <- slotNames("SMSE")
+      for (j in vars) {
+        if (j %in% c("Name", "proyears", "nstocks", "Snames")) {
+          slot(SMSE, j) <- slot(SMSE_list[[1]], j)
+        } else if (j == "nsim") {
+          slot(SMSE, j) <- sapply(SMSE_list, slot, name = j) %>% sum()
+        } else if (j != "Misc") {
+          slot(SMSE, j) <- lapply(SMSE_list, slot, name = j) %>% abind::abind(along = 1) %>% `dimnames<-`(NULL)
+        }
+      }
+      if (length(SMSE_list[[1]]@Misc$RS)) {
+        vars_RS <- names(SMSE_list[[1]]@Misc$RS)
+        SMSE@Misc$RS <- lapply(vars_RS, function(i) {
+          lapply(SMSE_list, function(j) j@Misc$RS[[i]]) %>% abind::abind(along = 1) %>% `dimnames<-`(NULL)
+        }) %>%
+          structure(names = vars_RS)
+      }
+      if (length(SMSE_list[[1]]@Misc$LHG)) {
+        vars_LHG <- names(SMSE_list[[1]]@Misc$LHG)
+        SMSE@Misc$LHG <- lapply(vars_LHG, function(i) {
+          lapply(SMSE_list, function(j) j@Misc$LHG[[i]]) %>% abind::abind(along = 1) %>% `dimnames<-`(NULL)
+        }) %>%
+          structure(names = vars_LHG)
+      }
+    }
+  }
 
   SMSE@Misc$SOM <- SOM
   SMSE@Misc$Ref <- calc_ref(SOM, check = FALSE)
@@ -155,13 +222,18 @@ define_SRRpars <- function(SOM) {
 sapply2 <- base::sapply
 formals(sapply2)$simplify <- "array"
 
+ProjectSOM_parallel <- function(X, SOM, check = FALSE) ProjectSOM(SOM, sims = X, check = check)
+
 #' @name salmonMSE
 #' @description `ProjectSOM()` is the internal projection function.
 #' @param check Logical, whether to check the structure of the input object with [check_SOM()]
+#' @param sims Optional integer vector to run projection for a subset of simulations. Intended for parallel processing.
 #' @export
-ProjectSOM <- function(SOM, check = FALSE) {
-
+ProjectSOM <- function(SOM, sims, check = FALSE) {
   if (check) SOM <- check_SOM(SOM)
+  if (missing(sims)) sims <- seq(1, SOM@nsim)
+  if (any(sims) > SOM@nsim) stop("There are `sims` > SOM@nsim")
+  if (length(sims) < 2) stop("Need at least two simulations in `sims`")
 
   # Variables
   ns <- length(SOM@Bio) # Number of stocks
@@ -169,7 +241,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
 
   n_r <- sapply(SOM@Hatchery, slot, "n_r") %>% unique()
   n_g <- sapply(SOM@Bio, slot, "n_g") %>% unique()
-  nsim <- SOM@nsim
+  nsim <- length(sims)
   proyears <- SOM@proyears
 
   # Hatchery arguments
@@ -222,12 +294,12 @@ ProjectSOM <- function(SOM, check = FALSE) {
   })
 
   # Maturity
-  p_mature_NOS <- sapply2(SOM@Bio, slot, "p_mature") %>%
+  p_mature_NOS <- sapply2(1:ns, function(s) SOM@Bio[[s]]@p_mature[sims, , , drop = FALSE]) %>%
     array(c(nsim, nage, proyears, n_g, ns)) %>%
     aperm(c(1, 5, 2, 3, 4))
   p_mature_HOS <- sapply2(1:ns, function(s) {
     if (do_hatchery[s]) {
-      slot(SOM@Hatchery[[s]], "p_mature_HOS")
+      SOM@Hatchery[[s]]@p_mature_HOS[sims, , , , drop = FALSE]
     } else {
       array(0, c(nsim, nage, proyears, n_r))
     }
@@ -237,11 +309,11 @@ ProjectSOM <- function(SOM, check = FALSE) {
   # Juvenile natural mortality
   Mjuv_NOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_g))
   Mjuv_HOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_r))
-  Mjuv_NOS[] <- sapply2(SOM@Bio, slot, "Mjuv_NOS") %>%
+  Mjuv_NOS[] <- sapply2(1:ns, function(s) SOM@Bio[[s]]@Mjuv_NOS[sims, , , , drop = FALSE]) %>%
     aperm(c(1, 5, 2, 3, 4))
   Mjuv_HOS[] <- sapply2(1:ns, function(s) {
     if (do_hatchery[s]) {
-      slot(SOM@Hatchery[[s]], "Mjuv_HOS")
+      SOM@Hatchery[[s]]@Mjuv_HOS[sims, , , , drop = FALSE]
     } else {
       array(0, c(nsim, nage-1, proyears, n_r))
     }
@@ -263,8 +335,8 @@ ProjectSOM <- function(SOM, check = FALSE) {
 
   # Fishery vulnerability
   vulPT <- vulT <- array(NA_real_, c(nsim, ns, nage))
-  vulPT[] <- sapply2(SOM@Harvest, slot, "vulPT") %>% aperm(c(1, 3, 2))
-  vulT[] <- sapply2(SOM@Harvest, slot, "vulT") %>% aperm(c(1, 3, 2))
+  vulPT[] <- sapply2(1:ns, function(s) SOM@Harvest[[s]]@vulPT[sims, ]) %>% aperm(c(1, 3, 2))
+  vulT[] <- sapply2(1:ns, function(s) SOM@Harvest[[s]]@vulT[sims, ]) %>% aperm(c(1, 3, 2))
 
   # Release mortality
   release_mort <- array(NA_real_, c(2, ns))
@@ -279,10 +351,11 @@ ProjectSOM <- function(SOM, check = FALSE) {
     aperm(c(3, 1, 2))
 
   #### Initialize population ----
-  Njuv_NOS[, , , 1, ] <- sapply2(SOM@Historical, slot, "InitNjuv_NOS") %>% aperm(c(1, 4, 2, 3))
+  Njuv_NOS[, , , 1, ] <- sapply2(1:ns, function(s) SOM@Historical[[s]]@InitNjuv_NOS[sims, , , drop = FALSE]) %>%
+    aperm(c(1, 4, 2, 3))
   Njuv_HOS[, , , 1, ] <- sapply2(1:ns, function(s) {
     if (do_hatchery[s]) {
-      slot(SOM@Historical[[s]], "InitNjuv_HOS")
+      SOM@Historical[[s]]@InitNjuv_HOS[sims, , , drop = FALSE]
     } else {
       array(0, c(nsim, nage, n_r))
     }
@@ -384,7 +457,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
         for (a in 1:nage) {
           t <- y - a
           if (t <= 0) {
-            zbar_brood[, s, a, , y] <- SOM@Hatchery[[s]]@zbar_start[, abs(t) + 1, ]
+            zbar_brood[, s, a, , y] <- SOM@Hatchery[[s]]@zbar_start[sims, abs(t) + 1, ]
           } else {
             zbar_brood[, s, a, , y] <- zbar[, s, , t]
           }
@@ -392,6 +465,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
       }
 
       FW_Calcs <- lapply(1:nsim, function(x) {
+        xx <- sims[x]
 
         # Calculate recipient strays (internal and external) and their mark rate
         Nage_stray <- matrix(stray_external[s, , ] + Stray_Calcs[[x]]$N_stray[s, , ], nage, n_r)
@@ -400,21 +474,21 @@ ProjectSOM <- function(SOM, check = FALSE) {
 
         # Calculate broodtake, in-river removals, and spawners arriving at spawning grounds
         .hatchery_args <- hatchery_args[[s]]
-        if (.hatchery_args$egg_target > 0) .hatchery_args$fec_brood <- hatchery_args[[s]]$fec_brood[x, , y]
+        if (.hatchery_args$egg_target > 0) .hatchery_args$fec_brood <- hatchery_args[[s]]$fec_brood[xx, , y]
 
         .fitness_args <- fitness_args[[s]]
         if (!is.null(.fitness_args$heritability)) {
-          .fitness_args$heritability <- fitness_args[[s]]$heritability[x]
+          .fitness_args$heritability <- fitness_args[[s]]$heritability[xx]
         }
 
         if (SOM@Habitat[[s]]@use_habitat) {
           .habitat_args <- habitat_args[[s]]
-          .habitat_args@fry_sdev <- habitat_args[[s]]@fry_sdev[x, y, drop = FALSE]
-          .habitat_args@smolt_sdev <- habitat_args[[s]]@smolt_sdev[x, y, drop = FALSE]
+          .habitat_args@fry_sdev <- habitat_args[[s]]@fry_sdev[xx, y, drop = FALSE]
+          .habitat_args@smolt_sdev <- habitat_args[[s]]@smolt_sdev[xx, y, drop = FALSE]
           SRRpars_x <- data.frame()
         } else {
           .habitat_args <- list()
-          SRRpars_x <- SRRpars[[s]][x, ]
+          SRRpars_x <- SRRpars[[s]][xx, ]
         }
 
         FW_func(
@@ -427,7 +501,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
           hatchery_args = .hatchery_args,
           zbar_brood = zbar_brood[x, s, , , y],
           fitness_args = .fitness_args,
-          fec = SOM@Bio[[s]]@fec[x, , y],
+          fec = SOM@Bio[[s]]@fec[xx, , y],
           p_female = SOM@Bio[[s]]@p_female,
           habitat_args = .habitat_args,
           SRRpars = SRRpars_x,
@@ -535,7 +609,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
     p_wild[, s, ] <- calc_pwild_age(
       NOS_a = apply(NOS[, s, , , , drop = FALSE], c(1, 3, 4), sum),
       HOS_a = apply(HOS[, s, , , , drop = FALSE], c(1, 3, 4), sum),
-      fec = SOM@Bio[[s]]@fec[, , seq(1, proyears)],
+      fec = SOM@Bio[[s]]@fec[sims, , seq(1, proyears)],
       gamma = SOM@Hatchery[[s]]@gamma
     )
   }
@@ -627,7 +701,7 @@ ProjectSOM <- function(SOM, check = FALSE) {
 
   if (n_g > 1) {
     SMSE@Misc$LHG <- list(
-      Egg = Egg_NOS + Egg_HOS,
+      Egg = apply(Egg_NOS + Egg_HOS, c(1, 2, 4, 5), sum), # sum over ages
       Fry = Fry_NOS + Fry_HOS,
       Smolt = Smolt_NOS + Smolt_HOS,
       Esc = Escapement_NOS,
