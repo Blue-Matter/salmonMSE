@@ -21,12 +21,21 @@
 plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = median, figure = TRUE, xlab = "Projection Year",
                      ylab, name, ylim) {
 
-  LHG <- SMSE@Misc$LHG[[s]]
+  LHG <- SMSE@Misc$LHG
   if (length(LHG)) {
     var <- match.arg(var, choices = names(LHG))
-    x <- LHG[[var]]
+    dim_x <- dim(LHG[[var]])
 
-    if (missing(name)) name <- paste("LHG", 1:dim(x)[2])
+    idx <- vector("list", length(dim_x))
+    idx[[2]] <- s
+    idx[-2] <- TRUE
+    x <- do.call(`[`, c(list(LHG[[var]]), idx))
+
+    if (missing(name)) {
+      n_g <- dim_x[length(dim_x)]
+      name <- paste("LHG", seq(1, n_g))
+    }
+
     .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Dark 2", ylim)
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))
@@ -40,12 +49,21 @@ plot_LHG <- function(SMSE, var = "NOS", type = c("prop", "abs"), s = 1, FUN = me
 plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = median, figure = TRUE, xlab = "Projection Year",
                     ylab, name, ylim) {
 
-  RS <- SMSE@Misc$RS[[s]]
+  RS <- SMSE@Misc$RS
   if (length(RS)) {
     var <- match.arg(var, choices = names(RS))
-    x <- RS[[var]]
+    dim_x <- dim(RS[[var]])
 
-    if (missing(name)) name <- paste("RS", 1:dim(x)[2])
+    idx <- vector("list", length(dim_x))
+    idx[[2]] <- s
+    idx[-2] <- TRUE
+    x <- do.call(`[`, c(list(RS[[var]]), idx))
+
+    if (missing(name)) {
+      n_r <- dim_x[length(dim_x)]
+      name <- paste("RS", seq(1, n_r))
+    }
+
     .plot_LHG(x, var, type, FUN, figure, xlab, ylab, name, palette = "Cold", ylim)
   } else {
     x <- array(1, c(1, 1, SMSE@proyears))

@@ -722,7 +722,7 @@ get_report <- function(stanfit, sims, inc_warmup = FALSE) {
 }
 
 #' @rdname CMfigures
-#' @param fit Output from `[fit_CM()]`
+#' @param fit Output from [fit_CM()]
 #' @returns
 #' - `get_CMdata()` returns the list of data variables used in the conditioning model
 #' @export
