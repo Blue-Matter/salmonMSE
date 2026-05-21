@@ -576,7 +576,8 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
 }
 
 #' @importFrom parallel detectCores makeCluster stopCluster parSapplyLB
-.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), AEQ = TRUE, ncores = 1) {
+.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), AEQ = TRUE,
+                    maximize = c("MSY", "MER"), ncores = 1) {
   type <- match.arg(type)
 
   mo <- sapply(report, getElement, "mo", simplify = "array") # y, a, s
@@ -605,7 +606,8 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
   FPT <- sapply(report, getElement, "FPT")
   FT <- sapply(report, getElement, "FT")
 
-  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ) {
+  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type,
+                     maximize, AEQ) {
 
     if (sum(FT[, x])) {
       rel_F <- c(0, 1)
@@ -626,7 +628,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
       ref <- calc_MSY(
         Mjuv = m,
         fec = d$fec, p_female = d$ssum, rel_F = rel_F, vulPT = vulPT[, x], vulT = vulT[, x],
-        p_mature = mat, s_enroute = 1, SRRpars = SRRpars, AEQ = AEQ
+        p_mature = mat, s_enroute = 1, SRRpars = SRRpars, maximize = maximize, AEQ = AEQ
       )
 
       if (type == "Sgen") {
@@ -655,12 +657,12 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
 
     output <- parallel::parSapplyLB(
       cl, X = 1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
-      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, maximize, AEQ
     )
   } else {
     output <- sapply(
       1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
-      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, maximize, AEQ
     )
   }
 
@@ -669,10 +671,11 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
 
 .CM_SMSY <- .CM_MSY
 
-CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"), ncores = 1, na.rm = FALSE) {
+CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"),
+                   maximize = c("MSY", "MER"), AEQ = TRUE, ncores = 1, na.rm = FALSE) {
   type <- match.arg(type)
 
-  MSY <- .CM_MSY(report, d, type, ncores = ncores)
+  MSY <- .CM_MSY(report, d, type, maximize = maximize, AEQ = AEQ, ncores = ncores)
   if (na.rm) MSY[MSY <= 0] <- NA_real_
 
   MSY_q <- apply(MSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%

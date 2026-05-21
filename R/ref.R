@@ -187,7 +187,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
     SRRpars, opt = FALSE, aggregate_age = FALSE
   )
 
-  if (Sgen_ref$Egg <= 0) {
+  if (sum(Sgen_ref$Egg) <= 0) {
     Sgen_plusone <- 0
   } else {
     maxage <- length(fec)
@@ -230,8 +230,6 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
                      SRRpars, maximize = c("MSY", "MER"), AEQ = TRUE, opt = TRUE, aggregate_age = TRUE) {
 
   maximize <- match.arg(maximize)
-
-  if (maximize == "MER") rel_F <- c(0, 1)
 
   FPT <- vulPT * .F * rel_F[1]
   FT <- vulT * .F * rel_F[2]
@@ -276,8 +274,14 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
         return(sum(KPT, KT))
       }
 
-    } else {
-      return(sum(Return) - sum(Spawners))
+    } else if (maximize == "MER") {
+
+      if (AEQ) {
+        return(sum(Return, KPT_AEQ) - sum(Spawners))
+      } else {
+        return(sum(Return, KPT) - sum(Spawners))
+      }
+
     }
 
   } else {
