@@ -576,7 +576,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
 }
 
 #' @importFrom parallel detectCores makeCluster stopCluster parSapplyLB
-.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), ncores = 1) {
+.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), AEQ = TRUE, ncores = 1) {
   type <- match.arg(type)
 
   mo <- sapply(report, getElement, "mo", simplify = "array") # y, a, s
@@ -605,7 +605,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
   FPT <- sapply(report, getElement, "FPT")
   FT <- sapply(report, getElement, "FT")
 
-  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type) {
+  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ) {
 
     if (sum(FT[, x])) {
       rel_F <- c(0, 1)
@@ -626,7 +626,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
       ref <- calc_MSY(
         Mjuv = m,
         fec = d$fec, p_female = d$ssum, rel_F = rel_F, vulPT = vulPT[, x], vulT = vulT[, x],
-        p_mature = mat, s_enroute = 1, SRRpars = SRRpars
+        p_mature = mat, s_enroute = 1, SRRpars = SRRpars, AEQ = AEQ
       )
 
       if (type == "Sgen") {
@@ -641,7 +641,7 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
           type,
           "spawner" = ref["Spawners_MSY"],
           "egg" = ref["Egg_MSY"],
-          "u" = rel_F[1] * ref["UPT_MSY"] + rel_F[2] * ref["UT_MSY"] # Only works because it's either-or
+          "u" = rel_F[1] * ref["UPT_EQ_MSY"] + rel_F[2] * ref["UT_MSY"] # Only works because it's either-or
         )
       }
 
@@ -655,12 +655,12 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
 
     output <- parallel::parSapplyLB(
       cl, X = 1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
-      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ
     )
   } else {
     output <- sapply(
       1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
-      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type
+      alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, AEQ
     )
   }
 

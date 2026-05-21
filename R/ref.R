@@ -14,6 +14,7 @@
 #' @param check Logical, whether to check the SOM object using [check_SOM()]
 #' @param maximize Character, whether the MSY calculation is the optimum that maximizes catch (`"MSY"`) or excess recruitment (`"MER"`). The two
 #' methods should be equivalent when `rel_F = c(0, 1)`.
+#' @param AEQ Logical, whether to maximize preterminal catch in terms of adult equivalents
 #' @returns
 #' - `calc_MSY` returns a vector of various state variables (catch, exploitation rate, egg production, spawners) at MSY
 #' - `calc_Sgen` returns a numeric
@@ -25,7 +26,7 @@
 #' ref_multi <- calc_ref(multi_SOM)
 #'
 #' @export
-calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
+calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"), AEQ = TRUE) {
   maximize <- match.arg(maximize)
 
   if (check) SOM <- check_SOM(SOM)
@@ -52,14 +53,13 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
     n_g <- SOM@Bio[[s]]@n_g
     p_LHG <- SOM@Bio[[s]]@p_LHG
 
-
     val <- sapply(1:SOM@nsim, function(x) {
       fec <- matrix(SOM@Bio[[s]]@fec[x, , y], maxage, n_g)
       Mjuv <- matrix(Mjuv_NOS[x, , y, ], maxage-1, n_g)
       p_mature <- matrix(SOM@Bio[[s]]@p_mature[x, , y], maxage, n_g)
 
       ref <- calc_MSY(Mjuv, fec, p_female, rel_F_s[[s]], vulPT[x, ], vulT[x, ], p_mature, s_enroute, n_g, p_LHG,
-                      SRR$SRRpars[x, ], maximize)
+                      SRR$SRRpars[x, ], maximize, AEQ = AEQ)
 
       if (any(ref < 0, na.rm = TRUE)) {
 
@@ -94,7 +94,7 @@ calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER")) {
 #' @param F_search Numeric, length 2 for the range of F values to search for the instantaneous fishing mortality that produces MSY
 #' @export
 calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enroute, n_g = 1, p_LHG = 1,
-                     SRRpars, maximize = c("MSY", "MER"), F_search = c(1e-8, 5)) {
+                     SRRpars, maximize = c("MSY", "MER"), AEQ = TRUE, F_search = c(1e-8, 5)) {
   maximize <- match.arg(maximize)
 
   if (!is.matrix(Mjuv)) Mjuv <- matrix(Mjuv, length(Mjuv), n_g)
@@ -115,6 +115,7 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
     p_LHG = p_LHG,
     SRRpars = SRRpars,
     maximize = maximize,
+    AEQ = AEQ,
     maximum = TRUE
   )
 
@@ -123,11 +124,11 @@ calc_MSY <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrout
     Mjuv = Mjuv, fec = fec, p_female = p_female, rel_F = rel_F,
     vulPT = vulPT, vulT = vulT, p_mature = p_mature, s_enroute = s_enroute,
     n_g = n_g, p_LHG = p_LHG,
-    SRRpars = SRRpars, maximize = maximize, opt = FALSE
+    SRRpars = SRRpars, maximize = maximize, AEQ = AEQ, opt = FALSE
   ) %>% unlist()
 
   names(ref) <- paste0(names(ref), "_MSY")
-  if (ref["KPT_MSY"] == 0) ref["UPT_MSY"] <- 0
+  if (ref["KPT_AEQ_MSY"] == 0) ref["UPT_AEQ_MSY"] <- 0
   if (ref["KT_MSY"] == 0) ref["UT_MSY"] <- 0
 
   return(ref)
@@ -226,7 +227,7 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
 
 
 .calc_eq <- function(.F, Mjuv, fec, p_female, gamma = 1, rel_F, vulPT, vulT, p_mature, s_enroute = 1, n_g, p_LHG,
-                     SRRpars, maximize = c("MSY", "MER"), opt = TRUE, aggregate_age = TRUE) {
+                     SRRpars, maximize = c("MSY", "MER"), AEQ = TRUE, opt = TRUE, aggregate_age = TRUE) {
 
   maximize <- match.arg(maximize)
 
@@ -235,15 +236,15 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
   FPT <- vulPT * .F * rel_F[1]
   FT <- vulT * .F * rel_F[2]
 
-  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g] + FPT[-length(FPT)], p_mature[, g])) # First semester due to exploitation
+  surv_juv <- sapply(1:n_g, function(g) p_LHG[g] * calc_survival(Mjuv[, g] + FPT[-length(FPT)], p_mature[, g]))
   surv_return <- surv_juv * p_mature
   surv_esc <- surv_return * exp(-FT)
   surv_spawn <- surv_esc * s_enroute
 
-  EPR <- sum(surv_spawn * gamma * p_female * fec) # Egg per smolt at F
+  EPR <- surv_spawn * gamma * p_female * fec # Egg per smolt at F
 
   Smolt <- calc_smolt(
-    EPR,
+    sum(EPR),
     kappa = SRRpars["kappa"], capacity = SRRpars["capacity"], Smax = SRRpars["Smax"], phi = SRRpars["phi"],
     tau = SRRpars["tau"], fitness_loss = 1, SRrel = as.character(SRRpars["SRrel"]), per_recruit = TRUE
   ) %>%
@@ -251,34 +252,48 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
 
   Njuv <- Smolt * surv_juv
   Return <- Smolt * surv_return
-
   KPT <- Njuv * (1 - exp(-FPT))
   KT <- Return * (1 - exp(-FT))
 
+  AEQ_PT <- array(NA_real_, dim(KPT))
+  AEQ_PT[nrow(AEQ_PT), ] <- 1
+  for (a in seq(nrow(AEQ_PT) - 1, 1)) {
+    AEQ_PT[a, ] <- AEQ_PT[a+1, ] * (1 - p_mature[a, ]) * exp(-Mjuv[a, ] - FPT[a]) + p_mature[a, ]
+  }
+
+  KPT_AEQ <- KPT * AEQ_PT
+
+  Escapement <- Smolt * surv_esc
   Spawners <- Smolt * surv_spawn
 
   if (opt) {
 
     if (maximize == "MSY") {
-      return(sum(KPT, KT))
+
+      if (AEQ) {
+        return(sum(KPT_AEQ, KT))
+      } else {
+        return(sum(KPT, KT))
+      }
+
     } else {
       return(sum(Return) - sum(Spawners))
     }
-
 
   } else {
 
     output <- list(
       KPT = KPT,
+      KPT_AEQ = KPT_AEQ,
       KT = KT,
       FPT = max(FPT),
       FT = max(FT),
-      UPT = max(1 - exp(-FPT)),
-      UT = max(1 - exp(-FT)),
+      UPT_EQ = sum(KPT_AEQ)/sum(KPT_AEQ, Return),
+      UT = sum(KT)/sum(Return),
       Smolt = Smolt,
       Njuv = Njuv,
       Return = Return,
-      Escapement = Smolt * surv_esc,
+      Escapement = Escapement,
       Spawners = Spawners,
       Egg = Smolt * EPR
     )

@@ -6,7 +6,7 @@
 \alias{calc_Sgen}
 \title{Reference points}
 \usage{
-calc_ref(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"))
+calc_ref(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"), AEQ = TRUE)
 
 calc_MSY(
   Mjuv,
@@ -21,6 +21,7 @@ calc_MSY(
   p_LHG = 1,
   SRRpars,
   maximize = c("MSY", "MER"),
+  AEQ = TRUE,
   F_search = c(1e-08, 5)
 )
 
@@ -51,6 +52,8 @@ The default is \code{c(0, 1)} which indicates a yield calculation with only the 
 
 \item{maximize}{Character, whether the MSY calculation is the optimum that maximizes catch (\code{"MSY"}) or excess recruitment (\code{"MER"}). The two
 methods should be equivalent when \code{rel_F = c(0, 1)}.}
+
+\item{AEQ}{Logical, whether to maximize preterminal catch in terms of adult equivalents}
 
 \item{Mjuv}{Numeric \code{maxage} for juvenile natural mortality. Can be a matrix \verb{[maxage, n_g]}.}
 
