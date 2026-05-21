@@ -47,11 +47,11 @@ There are several implicit assumptions frequently associated with these
 reference points:
 
 1.  The stock-recruit relationship predicts the number of returns, not
-    juveniles, from the number of spawners
-2.  All returns are the same age
-3.  All exploitation occurs on mature individuals
-4.  All returns are equally vulnerable to the terminal fishery
-5.  All spawners are equally fecund
+    juveniles, from the number of spawners. The density-dependent and
+    density-independent components of survival are modeled together.
+2.  All exploitation occurs on mature individuals
+3.  All returns are equally vulnerable to the terminal fishery
+4.  All spawners are equally fecund
 
 ## Reference points in salmonMSE
 
@@ -60,17 +60,17 @@ the typical spawner-return model:
 
 1.  The stock-recruit relationship predicts the number of outmigrating
     juveniles, not the return, from the egg production (not the number
-    of spawners)
-2.  The calendar-year return can comprise of multiple brood years
-3.  Exploitation can occur on both immature and mature individuals
-4.  Fish vulnerability can vary by age
-5.  Older, larger spawners have larger contributions to the egg
+    of spawners). The density-dependent and density-independent
+    components of survival are modeled separately.
+2.  Exploitation can occur on both immature and mature individuals
+3.  Fish vulnerability can vary by age
+4.  Older, larger spawners have larger contributions to the egg
     production because they are more fecund than younger fish
 
 Accordingly, reference points are calculated with more structural
-complexity compared to the simple approach. However, comparisons below
-indicate the many situations where the salmonMSE reference points
-overlap with the typical salmon approach.
+complexity compared to the simple approach. Comparisons below indicate
+the many situations where the salmonMSE reference points do and don’t
+overlap with the simpler reference points.
 
 ### Calculations for MSY
 
@@ -103,27 +103,56 @@ as:
 where \\a'\\ is in units of juvenile per egg and \\b'\\ is in units of
 per egg.
 
-The total return is \\\sum_a J \times r_a\\ and total spawners is
-\\\sum_a J \times s_a\\.
+The total return is \\R = \sum_a J \times r_a\\ and total spawners is
+\\S = \sum_a J \times s_a\\.
 
-The maximum sustainable yield state variables are values obtained from
-maximizing the total catch:
+The equilibrium preterminal catch is:
 
-\\ C = \sum_a J\times\ell_a\times(1 -
-\exp(v^\textrm{PT}\_aF^\textrm{PT})) + \sum_a J\times r_a\times(1 -
+\\ C^\textrm{PT} = \sum_a J\times\ell_a\times(1 -
+\exp(v^\textrm{PT}\_aF^\textrm{PT})) \\
+
+Frequently, the preterminal catch is adjusted in terms of adult
+equivalent units (the number of adults that the catch would have
+produced if it hadn’t been caught):
+
+\\ C^\textrm{PT,AEQ} = \sum_a \textrm{AEQ}\_a \times
+J\times\ell_a\times(1 - \exp(v^\textrm{PT}\_aF^\textrm{PT})) \\
+
+where
+
+\\ \textrm{AEQ}\_a = \begin{cases} \begin{array}{l l} 1 & a = A\\
+\textrm{AEQ}\_{a+1} \times \exp(-M_a) (1 - p_a) + p_a \quad & a = 1,
+\dots, A-1 \end{array} \end{cases} \\
+
+The equilibrium terminal catch (of adults) is:
+
+\\ C^\textrm{T} = \sum_a J\times r_a\times(1 -
 \exp(v^\textrm{T}\_aF^\textrm{T})) \\
 
-The optimization calculates the corresponding fishery effort
-\\E\_\textrm{MSY}\\. The user needs to specify the relative effort to
-the preterminal and terminal fisheries (\\e_1\\ and \\e_2\\), with
-\\F^\textrm{PT,MSY} = e_1 \times E\_\textrm{MSY}\\ and
-\\F^\textrm{T,MSY} = e_2 \times E\_\textrm{MSY}\\.
+The maximum sustainable yield state variables can be obtained from
+maximizing the objective function \\f\\.
 
-An alternative optimization scheme maximizes excess recruitment (\\R -
-S\\) but should be equivalent to maximizing terminal fishery catch (no
-preterminal fishery catch):
+If the objective function maximizes total catch:
 
-\\ R - S = \sum_a J \times r_a - \sum_a J \times s_a \\
+\\ f = C^\textrm{PT,AEQ} + C^\textrm{T} \\ The optimization calculates
+the corresponding fishery effort \\E\_\textrm{MSY}\\. The user needs to
+specify the relative effort to the preterminal and terminal fisheries
+(\\e_1\\ and \\e_2\\), with \\F^\textrm{PT,MSY} = e_1 \times
+E\_\textrm{MSY}\\ and \\F^\textrm{T,MSY} = e_2 \times E\_\textrm{MSY}\\.
+
+For example, if there is only a preterminal fishery, then \\e_1 = 1\\
+and \\e_2 = 0\\, therefore \\C^\textrm{T} = 0\\.
+
+Alternatively, the objective function maximizes excess recruitment:
+
+\\ f = (C^\textrm{PT,AEQ} + R) - S \\
+
+but the two methods are functionally equivalent.
+
+The preterminal exploitation rate using adult equivalents is \\U^{PT} =
+C^\textrm{PT,AEQ}/(C^\textrm{PT,AEQ} + R)\\.
+
+The terminal exploitation rate is \\U^T = C^T/R\\.
 
 ### Calculations for Sgen
 
@@ -157,8 +186,8 @@ vulnerability vary with age.
 
 ``` r
 
-compare_ref <- function(a = 3, # Units of recruits/spawner
-                        b = 1/1000, # Units of reciprocal spawners
+compare_ref <- function(a = 3, # Units of adults/spawner
+                        Smax = 1000, # Units of spawners
                         maxage = 5,
                         rel_F = c(0, 1), # e_1 and e_2
                         p_female = 1,
@@ -166,9 +195,12 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
                         vulT = c(0, 0, 0.2, 0.5, 1),
                         M = c(1, 0.8, 0.6, 0.4),
                         fec = c(0, 1500, 3000, 3200, 3500),
-                        p_mature = c(0, 0.1, 0.2, 0.3, 1)) {
+                        p_mature = c(0, 0.1, 0.2, 0.3, 1),
+                        maximize = c("MSY", "MER")) {
   
   require(salmonMSE)
+  
+  maximize <- match.arg(maximize)
 
   # Calculate eggs per smolt
   phi <- salmonMSE:::calc_phi(
@@ -180,12 +212,12 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
   )
 
   # To convert Smax from units of spawners to eggs:
-  # 1. Calculate unfished spawners from Ricker SRR, set R = S --> S0 = log(a)/b
-  # 2. Calculate spawners per juvenile (spro)
+  # 1. Calculate Srep from Ricker SRR, set R = S --> S0 = log(a)/b
+  # 2. Calculate spawners per juvenile (tau)
   # 3. Calculate smolt per egg (phi)
-  # 4. unfished eggs (eo) = unfished spawners * juvenile per spawner * egg per smolt
+  # 4. Egg production at replacement (Erep) = unfished spawners * juvenile per spawner * egg per smolt
   # 5. Emax = log(a) / unfished eggs
-  spro <- salmonMSE:::calc_phi(
+  tau <- salmonMSE:::calc_phi(
     Mjuv = M,
     p_mature = p_mature,
     p_female = p_female,
@@ -194,17 +226,16 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
     output = "spawner"
   )
   
-  Smax <- 1/b
-  so <- Smax * log(a)
-  eo <- so / spro * phi
-  beta_eggs <- log(a)/eo
-  Emax_eggs <- 1/beta_eggs
+  Srep <- Smax * log(a)
+  Erep <- Srep / tau * phi
+  beta <- log(a)/Erep
+  Emax <- 1/beta
 
   SRRpars <- data.frame(
     kappa = a,
     Smax = Smax,
-    Emax = Emax_eggs,
-    tau = spro,
+    Emax = Emax,
+    tau = tau,
     phi = phi,
     SRrel = "Ricker"
   )
@@ -212,27 +243,29 @@ compare_ref <- function(a = 3, # Units of recruits/spawner
   # salmonMSE ref
   ref <- calc_MSY(
     M, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute = 1, SRRpars = SRRpars
+    s_enroute = 1, SRRpars = SRRpars, maximize = maximize
   )
 
   ref["Sgen"] <- calc_Sgen(
     M, fec, p_female, rel_F, vulPT, vulT, p_mature,
     s_enroute = 1, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
   )
-  ref["Catch/Return"] <- ref["KT_MSY"]/ref["Return_MSY"]
+  ref["Catch/Return"] <- sum(ref["KPT_AEQ_MSY"], ref["KT_MSY"])/(sum(ref["KPT_AEQ_MSY"], ref["Return_MSY"]))
 
   ref_salmonMSE <- structure(
-    ref[c("UPT_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")], 
-    names = c("UMSY (preterminal)", "UMSY (terminal)", "Terminal Catch/Return", "SMSY", "Sgen")
-  )
+    ref[c("UPT_EQ_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")], 
+    names = c("UMSY (preterminal)", "UMSY (terminal)", "Catch/Return", "SMSY", "Sgen")
+  ) |>
+    round(4)
   
   # Ricker SRR calcs
   ref_Ricker <- local({
     umsy <- calc_Umsy_Ricker(log(a))
-    smsy <- calc_Smsy_Ricker(log(a), b)
-    sgen <- calc_Sgen_Ricker(log(a), b)
+    smsy <- calc_Smsy_Ricker(log(a), 1/Smax)
+    sgen <- calc_Sgen_Ricker(log(a), 1/Smax)
     structure(c(umsy, smsy, sgen), names = c("UMSY", "SMSY", "Sgen"))
-  })
+  }) |>
+    round(4)
   
   output <- list(
     salmonMSE = ref_salmonMSE,
@@ -252,7 +285,7 @@ Ricker (stock-recruit only) reference points are identical.
 
 compare_ref(
   a = 3,
-  b = 1/1000,
+  Smax = 1000,
   maxage = 5,
   rel_F = c(0, 1),
   p_female = 1,
@@ -264,14 +297,14 @@ compare_ref(
 )
 #> Loading required package: salmonMSE
 #> $salmonMSE
-#>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>                    NA             0.4678228             0.4678228 
-#>                  SMSY                  Sgen 
-#>           467.8334508                    NA 
+#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
+#>             0.0000             0.4678             0.4678           467.8335 
+#>               Sgen 
+#>           188.2447 
 #> 
 #> $Ricker
-#>        UMSY        SMSY        Sgen 
-#>   0.4678265 467.8265256 188.2417444
+#>     UMSY     SMSY     Sgen 
+#>   0.4678 467.8265 188.2417
 ```
 
 ### Situation 2 - partial age maturity, equal vulnerability
@@ -286,7 +319,7 @@ The salmonMSE and Ricker-only reference points are identical.
 
 compare_ref(
   a = 3,
-  b = 1/1000,
+  Smax = 1000,
   maxage = 5,
   rel_F = c(0, 1),
   p_female = 1,
@@ -294,17 +327,17 @@ compare_ref(
   vulT = rep(1, 5),
   M = c(1, 0.3, 0.2, 0.1),
   fec = rep(1, 5),
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
 )
 #> $salmonMSE
-#>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>                    NA             0.4678228             0.4678228 
-#>                  SMSY                  Sgen 
-#>           467.8334508                    NA 
+#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
+#>             0.0000             0.4678             0.4678           467.8335 
+#>               Sgen 
+#>           188.2447 
 #> 
 #> $Ricker
-#>        UMSY        SMSY        Sgen 
-#>   0.4678265 467.8265256 188.2417444
+#>     UMSY     SMSY     Sgen 
+#>   0.4678 467.8265 188.2417
 ```
 
 ### Situation 3 - partial age maturity, varying vulnerability by age
@@ -314,16 +347,11 @@ vulnerability.
 
 The salmonMSE and Ricker-only reference points are identical.
 
-One nuance is how to report the exploitation rate, since it varies by
-age due to differential vulnerability. UMSY reported in salmonMSE is the
-maximum value experienced by an age class (typically the oldest), but
-the ratio of total catch to total return may be more appropriate metric.
-
 ``` r
 
 compare_ref(
   a = 3,
-  b = 1/1000,
+  Smax = 1000,
   maxage = 5,
   rel_F = c(0, 1),
   p_female = 1,
@@ -331,17 +359,18 @@ compare_ref(
   vulT = c(0, 0.1, 0.2, 0.4, 1),
   M = c(1, 0.3, 0.2, 0.1),
   fec = rep(1, 5),
-  p_mature = c(0, 0.1, 0.2, 0.3, 1)
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  maximize = "MER"
 )
 #> $salmonMSE
-#>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>                    NA             0.4678273             0.4678273 
-#>                  SMSY                  Sgen 
-#>           467.8250871                    NA 
+#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
+#>             0.0000             0.4678             0.4678           467.8251 
+#>               Sgen 
+#>           188.2410 
 #> 
 #> $Ricker
-#>        UMSY        SMSY        Sgen 
-#>   0.4678265 467.8265256 188.2417444
+#>     UMSY     SMSY     Sgen 
+#>   0.4678 467.8265 188.2417
 ```
 
 ### Situation 4 - partial age maturity, varying fecundity and vulnerability by age
@@ -358,7 +387,7 @@ Ricker-only reference points.
 
 compare_ref(
   a = 3,
-  b = 1/1000,
+  Smax = 1000,
   maxage = 5,
   rel_F = c(0, 1),
   p_female = 1,
@@ -369,49 +398,45 @@ compare_ref(
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>                    NA             0.4000761             0.4000761 
-#>                  SMSY                  Sgen 
-#>           523.7657546                    NA 
+#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
+#>             0.0000             0.4001             0.4001           523.7658 
+#>               Sgen 
+#>           260.2642 
 #> 
 #> $Ricker
-#>        UMSY        SMSY        Sgen 
-#>   0.4678265 467.8265256 188.2417444
+#>     UMSY     SMSY     Sgen 
+#>   0.4678 467.8265 188.2417
 ```
 
 ### Situation 5 - partial age maturity, with immature exploitation
 
 Reference points can also be calculated by considering preterminal
-exploitation, e.g., [Hankin and Healey
-1986](https://doi.org/10.1139/f86-219), although this is not common
-practice.
+exploitation and converting juvenile catch to their adult equivalents.
 
-Preterminal mortality is not explicitly modeled in Ricker-only reference
-points.
-
-Thus, salmonMSE and Ricker-only reference points are **not** identical.
+Nonetheless, salmonMSE and Ricker reference points are **not**
+identical.
 
 ``` r
 
 compare_ref(
   a = 3,
-  b = 1/1000,
+  Smax = 1000,
   maxage = 5,
-  rel_F = c(1, 1),
+  rel_F = c(1, 0),
   p_female = 1,
-  vulPT = c(0, 0.1, 0.2, 0.3, 1),
-  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  vulPT = c(0, 0.1, 0.2, 0.4, 1),
+  vulT = c(0, 0, 0, 0, 0),
   M = c(1, 0.3, 0.2, 0.1),
   fec = c(0, 1000, 2000, 3000, 3500),
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>                    NA             0.2467615             0.2467615 
-#>                  SMSY                  Sgen 
-#>           562.9896356                    NA 
+#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
+#>             0.3806             0.0000             0.3806           706.9302 
+#>               Sgen 
+#>           532.8182 
 #> 
 #> $Ricker
-#>        UMSY        SMSY        Sgen 
-#>   0.4678265 467.8265256 188.2417444
+#>     UMSY     SMSY     Sgen 
+#>   0.4678 467.8265 188.2417
 ```
