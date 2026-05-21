@@ -259,6 +259,7 @@ calc_broodtake_custom <- function(f_brood, NO, HO, stray, p_female, fec, s_presp
     egg_NOB = egg_NOB,
     egg_HOB_unmarked = egg_HOB_unmarked,
     egg_HOB_marked = egg_HOB_marked,
+    egg_HOB_import = rep(0, nrow(HO)),
     ptake_unmarked = sum(NOB, HOB_unmarked, HOB_stray)/sum(NO, HO, stray),
     ptake_marked = sum(HOB_marked)/sum(NO, HO, stray),
     pNOB = pNOB,

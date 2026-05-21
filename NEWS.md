@@ -1,9 +1,12 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
-# 2.1.1
+# 3.0.0
 
+- salmonMSE no longer uses openMSE as a dependency. `ProjectSOM()` is now the primary internal function that organizes the projection. Various internal functions have been replaced and updated.
+- Parallel processing by individual operating model is now supported with the `ncores` argument to `salmonMSE()`.
 - Check for NAs in start values for `fit_CM`.
 - Update `.CM_MSY()` and `.CM_Sgen()` functions for parallel computation.
+- MSY calculations use adult equivalents (AEQs) for preterminal fisheries.
 
 # 2.1.0
 

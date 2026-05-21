@@ -62,6 +62,7 @@ FW_func <- function(Nage_NOS, Nage_HOS, Nage_stray, m, m_stray, s_enroute,
       Habitat = habitat_args,
       fec = fec,
       p_female = p_female,
+      hatchery_args = hatchery_args,
       fitness_args = fitness_args,
       zbar_brood = zbar_brood,
       p_LHG = p_LHG
@@ -231,7 +232,8 @@ nextgen_SRR_func <- function(Brood_Calcs, fec, p_female,
 
   #### Calculate fitness ----
   Egg_NOB <- Brood_Calcs$broodtake$egg_NOB
-  Egg_HOB <- Reduce("+", Brood_Calcs$broodtake[c("egg_NOB", "egg_HOB_unmarked", "egg_HOB_unmarked")])
+  Egg_HOB <- Brood_Calcs$broodtake$egg_HOB_unmarked + Brood_Calcs$broodtake$egg_HOB_marked
+  Egg_HOB[, 1] <- Egg_HOB[, 1] + Brood_Calcs$broodtake$egg_HOB_import
   fitness_calcs <- fitness_func(
     Egg_NOS = rowSums(Egg_NOS),
     Egg_HOS = rowSums(Egg_HOS),
@@ -346,7 +348,7 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
     type = Habitat@prespawn_rel
   )
   HOS_stray <- calc_SRR(
-    HOS_init, sum(NOS_init, HOS_init, HOS_stray_init),
+    HOS_stray_init, sum(NOS_init, HOS_init, HOS_stray_init),
     p = Habitat@prespawn_prod, capacity = Habitat@prespawn_capacity,
     type = Habitat@prespawn_rel
   )
@@ -371,7 +373,8 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
 
   #### Calculate fitness ----
   Egg_NOB <- Brood_Calcs$broodtake$egg_NOB
-  Egg_HOB <- Reduce("+", Brood_Calcs$broodtake[c("egg_NOB", "egg_HOB_unmarked", "egg_HOB_unmarked")])
+  Egg_HOB <- Brood_Calcs$broodtake$egg_HOB_unmarked + Brood_Calcs$broodtake$egg_HOB_marked
+  Egg_HOB[, 1] <- Egg_HOB[, 1] + Brood_Calcs$broodtake$egg_HOB_import
   fitness_calcs <- fitness_func(
     Egg_NOS = rowSums(Egg_NOS),
     Egg_HOS = rowSums(Egg_HOS),
@@ -455,16 +458,16 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
 
   # Natural smolt production for life history group g (next generation)
   smolt_NO_prod <- Habitat@smolt_prod * fitness_loss[1, 2]
-  smolt_NO_prod <- Habitat@smolt_capacity * fitness_loss[1, 2]
+  smolt_NO_cap <- Habitat@smolt_capacity * fitness_loss[1, 2]
   Smolt_NOS <- calc_SRR(
     Fry_NOS_g, total_fry_DD,
-    p = smolt_NO_prod, capacity = smolt_NO_prod,
+    p = smolt_NO_prod, capacity = smolt_NO_cap,
     type = Habitat@smolt_rel
   ) * Habitat@smolt_sdev[1, 1]
 
   Smolt_HOS <- calc_SRR(
     Fry_HOS_g, total_fry_DD,
-    p = smolt_NO_prod, capacity = smolt_NO_prod,
+    p = smolt_NO_prod, capacity = smolt_NO_cap,
     type = Habitat@smolt_rel
   ) * Habitat@smolt_sdev[1, 1]
 

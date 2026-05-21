@@ -198,21 +198,24 @@ define_SRRpars <- function(SOM) {
   ns <- length(SOM)
 
   output_s <- lapply(1:ns, function(s) {
-    Bio <- SOM@Bio[[s]]
-    SRrel <- Bio@SRrel
-    df <- data.frame(
-      kappa = Bio@kappa,
-      phi = Bio@phi,
-      tau = Bio@tau,
-      SRrel = SRrel
-    )
-    if (SRrel == "Ricker") {
-      df$Smax <- Bio@Smax
-    } else {
-      df$capacity <- Bio@capacity
+    df <- data.frame()
+
+    if (!SOM@Habitat[[s]]@use_habitat) {
+      Bio <- SOM@Bio[[s]]
+      SRrel <- Bio@SRrel
+      df <- data.frame(
+        kappa = Bio@kappa,
+        phi = Bio@phi,
+        tau = Bio@tau,
+        SRrel = SRrel
+      )
+      if (SRrel == "Ricker") {
+        df$Smax <- Bio@Smax
+      } else {
+        df$capacity <- Bio@capacity
+      }
     }
     return(df)
-
   })
 
   return(output_s)
@@ -265,8 +268,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   HOB_import <- array(NA_real_, c(nsim, ns, nage, proyears))
 
   # Early freshwater life stages
-  Fry_NOS <- Smolt_NOS <- array(NA_real_, c(nsim, ns, proyears, n_g))
-  Fry_HOS <- Smolt_HOS <- Rel <- Smolt_Rel <- array(NA_real_, c(nsim, ns, proyears, n_r))
+  Fry_NOS <- Smolt_NOS <- Fry_HOS <- Smolt_HOS <- array(NA_real_, c(nsim, ns, proyears, n_g))
+  Rel <- Smolt_Rel <- array(NA_real_, c(nsim, ns, proyears, n_r))
 
   # In-river removals
   IRR_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
@@ -453,7 +456,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     for (s in 1:ns) {
 
       # Mean phenotype by brood year of parents
-      if (do_hatchery[s] || has_strays[s]) {
+      if (any(SOM@Hatchery[[s]]@fitness_type == "Ford") && (do_hatchery[s] || has_strays[s])) {
         for (a in 1:nage) {
           t <- y - a
           if (t <= 0) {
@@ -511,13 +514,11 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
       # Assign FW_Calcs output to global variables
       vars <- names(FW_Calcs[[1]])
-      FW_Calcs_y <- lapply(vars, function(i) {
-        sapply2(FW_Calcs, getElement, i)
-      }) %>%
+      FW_Calcs_y <- lapply(vars, function(i) sapply2(FW_Calcs, getElement, i)) %>%
         structure(names = vars)
 
       NOB[, s, , y, ] <- aperm(FW_Calcs_y$NOB, c(3, 1, 2))
-      HOB[, s, , y, ] <- aperm(FW_Calcs_y$HOB_unmarked + FW_Calcs_y$HOB_unmarked, c(3, 1, 2))
+      HOB[, s, , y, ] <- aperm(FW_Calcs_y$HOB_unmarked + FW_Calcs_y$HOB_marked, c(3, 1, 2))
       HOB_stray[, s, , y, ] <- aperm(FW_Calcs_y$HOB_stray, c(3, 1, 2))
       HOB_import[, s, , y] <- t(FW_Calcs_y$HOB_import)
 
@@ -561,7 +562,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
       Njuv_NOS_midpoint <- array(NA, c(nsim, ns, nage, n_g))
       Njuv_HOS_midpoint <- array(NA, c(nsim, ns, nage, n_r))
       Njuv_NOS_midpoint[] <- Njuv_NOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * (1 - p_mature_NOS[, , , y, ])
-      Njuv_HOS_midpoint[] <- Njuv_HOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * (1 - p_mature_HOS[, , , y, ])
+      Njuv_HOS_midpoint[] <- Njuv_HOS[, , , y, ] * (1 - ExPT_HOS[, , , y, ]) * (1 - p_mature_HOS[, , , y, ])
 
       for (a in seq(1, nage-1)) {
         t <- y - a
@@ -570,14 +571,16 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
           Mjuv_loss_HOS[, , a, y, ] <- Mjuv_HOS[, , a, y, ]
         } else {
           Mjuv_loss_NOS[, , a, y, ] <- local({
-            .M <- Mjuv_NOS[, , a, y, ]
+            .M <- array(Mjuv_NOS[, , a, y, ], c(nsim, ns, n_g))
             surv_fitness <- exp(-.M) * array(fitness_loss[, , t, 1, 3], c(nsim, ns, n_g))
-            ifelse(.M <= .Machine$double.eps, 0, -log(surv_fitness))
+            .M[.M > .Machine$double.eps] <- -log(surv_fitness[.M > .Machine$double.eps])
+            .M
           })
           Mjuv_loss_HOS[, , a, y, ] <- local({
-            .M <- Mjuv_HOS[, , a, y, ]
+            .M <- array(Mjuv_HOS[, , a, y, ], c(nsim, ns, n_r))
             surv_fitness <- exp(-.M) * array(fitness_loss[, , t, 1, 3], c(nsim, ns, n_r))
-            ifelse(.M <= .Machine$double.eps, 0, -log(surv_fitness))
+            .M[.M > .Machine$double.eps] <- -log(surv_fitness[.M > .Machine$double.eps])
+            .M
           })
         }
       }
