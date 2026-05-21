@@ -265,9 +265,9 @@ compare_ref(
 #> Loading required package: salmonMSE
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>             0.0000000             0.4678228             0.4678228 
+#>                    NA             0.4678228             0.4678228 
 #>                  SMSY                  Sgen 
-#>           467.8334508           188.2447444 
+#>           467.8334508                    NA 
 #> 
 #> $Ricker
 #>        UMSY        SMSY        Sgen 
@@ -298,9 +298,9 @@ compare_ref(
 )
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>             0.0000000             0.4678228             0.4678228 
+#>                    NA             0.4678228             0.4678228 
 #>                  SMSY                  Sgen 
-#>           467.8334508           188.2447444 
+#>           467.8334508                    NA 
 #> 
 #> $Ricker
 #>        UMSY        SMSY        Sgen 
@@ -335,9 +335,9 @@ compare_ref(
 )
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>             0.0000000             0.7330604             0.4678273 
+#>                    NA             0.4678273             0.4678273 
 #>                  SMSY                  Sgen 
-#>           467.8250871           188.2409734 
+#>           467.8250871                    NA 
 #> 
 #> $Ricker
 #>        UMSY        SMSY        Sgen 
@@ -370,9 +370,9 @@ compare_ref(
 )
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>             0.0000000             0.6424027             0.4000761 
+#>                    NA             0.4000761             0.4000761 
 #>                  SMSY                  Sgen 
-#>           523.7657546           260.2641560 
+#>           523.7657546                    NA 
 #> 
 #> $Ricker
 #>        UMSY        SMSY        Sgen 
@@ -407,9 +407,9 @@ compare_ref(
 )
 #> $salmonMSE
 #>    UMSY (preterminal)       UMSY (terminal) Terminal Catch/Return 
-#>             0.4670406             0.4670406             0.2553111 
+#>                    NA             0.2467615             0.2467615 
 #>                  SMSY                  Sgen 
-#>           535.7260998           315.6413128 
+#>           562.9896356                    NA 
 #> 
 #> $Ricker
 #>        UMSY        SMSY        Sgen 

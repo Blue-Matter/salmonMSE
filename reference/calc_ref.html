@@ -5,7 +5,7 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reference points — calc_ref"><meta name="description" content="Calculate MSY and Sgen reference points for the operating model. Uses the biological parameters (maturity, natural mortality)
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reference points — calc_ref"><meta name="description" content="Calculate MSY and Sgen reference points for the operating model. Uses the biological parameters (maturity, natural mortality)
 in the last year of the projection.
 calc_MSY() calculates the MSY reference points from a set of biological and fishery parameters
 calc_Sgen() calculates the Sgen, the spawner abundance that would reach the spawner abundance at MSY after one generation without fishing
@@ -71,7 +71,7 @@ in the last year of the projection.</p><ul><li><p><code>calc_MSY()</code> calcul
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_ref</span><span class="op">(</span><span class="va">SOM</span>, <span class="va">rel_F</span>, check <span class="op">=</span> <span class="cn">TRUE</span>, maximize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSY"</span>, <span class="st">"MER"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_ref</span><span class="op">(</span><span class="va">SOM</span>, <span class="va">rel_F</span>, check <span class="op">=</span> <span class="cn">TRUE</span>, maximize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSY"</span>, <span class="st">"MER"</span><span class="op">)</span>, AEQ <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">calc_MSY</span><span class="op">(</span></span>
 <span>  <span class="va">Mjuv</span>,</span>
@@ -86,6 +86,7 @@ in the last year of the projection.</p><ul><li><p><code>calc_MSY()</code> calcul
 <span>  p_LHG <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">SRRpars</span>,</span>
 <span>  maximize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSY"</span>, <span class="st">"MER"</span><span class="op">)</span>,</span>
+<span>  AEQ <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  F_search <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e-08</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -127,6 +128,10 @@ The default is <code>c(0, 1)</code> which indicates a yield calculation with onl
 <dt id="arg-maximize">maximize<a class="anchor" aria-label="anchor" href="#arg-maximize"></a></dt>
 <dd><p>Character, whether the MSY calculation is the optimum that maximizes catch (<code>"MSY"</code>) or excess recruitment (<code>"MER"</code>). The two
 methods should be equivalent when <code>rel_F = c(0, 1)</code>.</p></dd>
+
+
+<dt id="arg-aeq">AEQ<a class="anchor" aria-label="anchor" href="#arg-aeq"></a></dt>
+<dd><p>Logical, whether to maximize preterminal catch in terms of adult equivalents</p></dd>
 
 
 <dt id="arg-mjuv">Mjuv<a class="anchor" aria-label="anchor" href="#arg-mjuv"></a></dt>

@@ -17,7 +17,7 @@ of the projection.
 ## Usage
 
 ``` r
-calc_ref(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"))
+calc_ref(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"), AEQ = TRUE)
 
 calc_MSY(
   Mjuv,
@@ -32,6 +32,7 @@ calc_MSY(
   p_LHG = 1,
   SRRpars,
   maximize = c("MSY", "MER"),
+  AEQ = TRUE,
   F_search = c(1e-08, 5)
 )
 
@@ -77,6 +78,11 @@ calc_Sgen(
   Character, whether the MSY calculation is the optimum that maximizes
   catch (`"MSY"`) or excess recruitment (`"MER"`). The two methods
   should be equivalent when `rel_F = c(0, 1)`.
+
+- AEQ:
+
+  Logical, whether to maximize preterminal catch in terms of adult
+  equivalents
 
 - Mjuv:
 
