@@ -77,13 +77,13 @@ plot_RS <- function(SMSE, var = "HOS", type = c("prop", "abs"), s = 1, FUN = med
   type <- match.arg(type)
 
   if (length(dim(x)) == 4) { # Sum across age
-    x <- apply(x, c(1, 2, 4), sum)
+    x <- apply(x, c(1, 3, 4), sum)
   }
 
   if (type == "abs") {
-    xplot <- apply(x, 2:3, FUN)
+    xplot <- apply(x, 3:2, FUN)
   } else {
-    xplot <- apply(x, c(1, 3), function(i) i/sum(i)) %>% apply(c(1, 3), FUN)
+    xplot <- apply(x, 1:2, function(i) i/sum(i)) %>% apply(c(1, 3), FUN)
   }
 
   if (figure && any(xplot > 0, na.rm = TRUE)) {

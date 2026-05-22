@@ -94,7 +94,7 @@ salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
 }
 
 define_hatchery_args <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
 
@@ -165,7 +165,7 @@ define_hatchery_args <- function(SOM) {
 define_habitat_args <- function(SOM) slot(SOM, "Habitat")
 
 define_fitness_args <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
     Hatchery <- SOM@Hatchery[[s]]
@@ -195,7 +195,7 @@ define_fitness_args <- function(SOM) {
 }
 
 define_SRRpars <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
     df <- data.frame()
@@ -448,7 +448,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     Stray_Calcs <- lapply(1:nsim, function(x) {
       stray_func(
         N = array(Escapement_HOS[x, , , y, ], c(ns, nage, n_r)),
-        stray_matrix = SOM@stray
+        stray_matrix = SOM@stray,
+        m = m
       )
     })
 
@@ -591,23 +592,6 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   }
 
   # State variables after the projection
-  if (!sum(HOS) && !sum(NOB, HOB, HOB_stray, HOB_import)) { # No hatchery-origin spawners, no broodstock
-    PNI[apply(NOS, c(1:2, 4), sum) > 0] <- 1
-  } else if (!sum(NOB) && any(pHOS_effective > 0, na.rm = TRUE)) { # One-way gene flow
-    PNI[] <- sapply2(1:ns, function(s) {
-      h2 <- fitness_args[[s]]$heritability
-      fitness_variance <- fitness_args[[s]]$fitness_variance
-      if (is.null(h2) || is.null(fitness_variance)) {
-        matrix(NA_real_, nsim, proyears)
-      } else {
-        h2/(h2 + (1 - h2 + fitness_variance) * pHOS_effective[, s, ])
-      }
-    }) %>%
-      aperm(c(1, 3, 2))
-  } else {
-    PNI[] <- pNOB/(pNOB + pHOS_effective) # What to do? if: !is.na(pHOS_effective) & is.na(pNOB) is TRUE
-  }
-
   for (s in 1:ns) {
     p_wild[, s, ] <- calc_pwild_age(
       NOS_a = apply(NOS[, s, , , , drop = FALSE], c(1, 3, 4), sum),
@@ -615,6 +599,38 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
       fec = SOM@Bio[[s]]@fec[sims, , seq(1, proyears)],
       gamma = SOM@Hatchery[[s]]@gamma
     )
+
+    # PNI
+    PNI[, s, ] <- local({
+
+      has_NOS <- apply(NOS[, s, , , , drop = FALSE], c(1, 4), sum) > 0
+
+      any_HOS <- sum(HOS[, s, , , ]) > 0
+      any_NOB <- sum(NOB[, s, , , ]) > 0
+      any_HOB <- sum(HOB[, s, , , ], HOB_stray[, s, , , ], HOB_import[, s, , ]) > 0
+
+      .PNI <- matrix(NA_real_, nsim, proyears)
+
+      if (!any_HOS && !any_HOB) {  # No HOS, no HOB (natural system)
+
+        .PNI[has_NOS] <- 1
+
+      } else if (!any_NOB && any_HOS) { # One-way gene flow: no NOB but has HOS
+
+        h2 <- fitness_args[[s]]$heritability
+        fitness_variance <- fitness_args[[s]]$fitness_variance
+        if (!is.null(h2) && !is.null(fitness_variance)) {
+          .PNI[] <- h2/(h2 + (1 - h2 + fitness_variance) * pHOS_effective[, s, ])
+        }
+
+      } else {
+
+        .PNI[] <- pNOB[, s, ]/(pNOB[, s, ] + pHOS_effective[, s, ])
+
+      }
+      return(.PNI)
+    })
+
   }
 
   # Harvest rate and exploitation rate aggregated across life history groups and release strategies
@@ -698,17 +714,17 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
   if (n_r > 1) {
     SMSE@Misc$RS <- list(
-      Smolt = Smolt_Rel, Esc = Escapement_HOS, HOS = HOS
+      Smolt = Smolt_Rel, Esc = Escapement_HOS, HOS = HOS, Egg = apply(Egg_HOS, c(1, 2, 4, 5), sum)
     )
   }
 
   if (n_g > 1) {
     SMSE@Misc$LHG <- list(
-      Egg = apply(Egg_NOS + Egg_HOS, c(1, 2, 4, 5), sum), # sum over ages
       Fry = Fry_NOS + Fry_HOS,
       Smolt = Smolt_NOS + Smolt_HOS,
       Esc = Escapement_NOS,
-      NOS = NOS
+      NOS = NOS,
+      Egg = apply(Egg_NOS, c(1, 2, 4, 5), sum) # sum over ages
     )
   }
 

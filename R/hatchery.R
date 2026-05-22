@@ -40,7 +40,7 @@ calc_broodtake <- function(NO, HO, stray, brood_import, ptarget_NOB, pmax_NOB,
     )
   }
 
-  if (sum(HO_avail)) {
+  if (sum(HO_avail) && egg_target > 0) {
 
     # Optimization for pNOB target, but can fail for two reasons:
     # (1) not enough unmarked fish
