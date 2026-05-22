@@ -34,7 +34,9 @@ nextgen_habitat_func(
 
 \item{p_female}{Vector \verb{[nage]}, proportion female by age class}
 
-\item{fitness_args}{List}
+\item{hatchery_args}{List of arguments created by \code{\link[=define_hatchery_args]{define_hatchery_args()}}}
+
+\item{fitness_args}{List of arguments created by \code{\link[=define_fitness_args]{define_fitness_args()}}}
 
 \item{Habitat}{\linkS4class{Habitat} object, modified by \code{\link[=ProjectSOM]{ProjectSOM()}}}
 }

@@ -104,11 +104,7 @@ FW_func <- function(Nage_NOS, Nage_HOS, Nage_stray, m, m_stray, s_enroute,
 #' @param m Numeric, mark rate of `Nage_HOS`
 #' @param m_stray Numeric, mark rate of `stray_external`
 #' @param s_enroute Numeric, en-route survival
-#' @param hatchery_args List of various hatchery arguments. See details.
-#' @details
-#' `hatchery_args` is a named list containing:
-#' -
-#' -
+#' @param hatchery_args List of various hatchery arguments created by [define_hatchery_args()] and adjusted by [ProjectSOM()].
 #' @returns Named list:
 #' - `broodtake` list returned by [calc_broodtake()]
 #' - `hatchery_production` list returned by [calc_yearling()]
@@ -192,7 +188,8 @@ brood_func <- function(Nage_NOS, Nage_HOS, stray_external, m, m_stray, s_enroute
 #' @param Brood_Calcs List, returned by [brood_func()]
 #' @param fec Vector `[nage]`, fecundity at age of female fish
 #' @param p_female Vector `[nage]`, proportion female by age class
-#' @param fitness_args List
+#' @param hatchery_args List of arguments created by [define_hatchery_args()]
+#' @param fitness_args List of arguments created by [define_fitness_args()]
 #' @returns Named list:
 #' - `NOS` Matrix `[nage, n_g]`
 #' - `HOS` Matrix `[nage, n_r]`

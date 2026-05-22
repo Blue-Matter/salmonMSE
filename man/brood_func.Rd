@@ -27,7 +27,7 @@ brood_func(
 
 \item{s_enroute}{Numeric, en-route survival}
 
-\item{hatchery_args}{List of various hatchery arguments. See details.}
+\item{hatchery_args}{List of various hatchery arguments created by \code{\link[=define_hatchery_args]{define_hatchery_args()}} and adjusted by \code{\link[=ProjectSOM]{ProjectSOM()}}.}
 }
 \value{
 Named list:
@@ -39,13 +39,6 @@ Named list:
 }
 \description{
 Calculates broodtake and in-river removals from escapement of marine fisheries. This function also applies en-route mortality.
-}
-\details{
-\subsection{\code{hatchery_args} is a named list containing:}{
-\itemize{
-\item 
-}
-}
 }
 \seealso{
 \code{\link[=calc_broodtake]{calc_broodtake()}}

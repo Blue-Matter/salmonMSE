@@ -487,3 +487,149 @@ calc_phi <- function(Mjuv, p_mature, p_female, fec, s_enroute = 1, n_g = 1, p_LH
   return(sum(x))
 }
 
+
+
+#' Create list of parameters
+#'
+#' Internal functions that convert the operating model inputs into a list or data frame of parameters to pass on to other
+#' internal functions.
+#'
+#' @param SOM \linkS4class{SOM} operating model object
+#'
+#' @returns
+#' `define_hatchery_args()` returns a length `nstocks` of hatchery parameters, in-river removals, and behavior of hatchery-origin
+#' fish in the freshwater environment (fecundity, reproductive success, etc.)
+#' @keywords internal
+define_hatchery_args <- function(SOM) {
+  ns <- length(SOM@Bio)
+
+  output_s <- lapply(1:ns, function(s) {
+
+    Hatchery <- SOM@Hatchery[[s]]
+
+    egg_yearling <- ifelse(sum(Hatchery@n_yearling) > 0, sum(Hatchery@n_yearling)/Hatchery@s_egg_smolt, 0)
+    egg_subyearling <- ifelse(sum(Hatchery@n_subyearling) > 0, sum(Hatchery@n_subyearling)/Hatchery@s_egg_subyearling, 0)
+    egg_target <- egg_yearling + egg_subyearling
+
+    if (egg_target > 0) {
+      p_yearling <- Hatchery@n_yearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
+      p_subyearling <- Hatchery@n_subyearling/sum(Hatchery@n_yearling, Hatchery@n_subyearling) # Vector by release strategy
+    } else {
+      p_yearling <- p_subyearling <- 0
+    }
+
+    output <- list(
+      egg_target = egg_target,
+      premove_NOS = Hatchery@premove_NOS
+    )
+
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(Hatchery@stray_external)
+
+    if (egg_target > 0) {
+      output_with_hatchery <- list(
+        f_brood = Hatchery@f_brood,
+        pmax_esc = Hatchery@pmax_esc,
+        ptarget_NOB = Hatchery@ptarget_NOB,
+        pmax_NOB = Hatchery@pmax_NOB,
+        brood_import = Hatchery@brood_import,
+
+        phatchery = Hatchery@phatchery,
+
+        fec_brood = Hatchery@fec_brood,
+        s_prespawn = Hatchery@s_prespawn,
+        p_female = SOM@Bio[[s]]@p_female,
+
+        p_yearling = p_yearling,
+        p_subyearling = p_subyearling,
+
+        s_yearling = Hatchery@s_egg_smolt,
+        s_subyearling = Hatchery@s_egg_subyearling,
+
+        yearling_DD = Hatchery@yearling_DD,
+        subyearling_DD = Hatchery@subyearling_DD,
+
+        premove_HOS = Hatchery@premove_HOS,
+        gamma = Hatchery@gamma
+      )
+
+      output <- c(output, output_with_hatchery)
+
+    } else if (has_strays) {
+
+      output_with_strays <- list(
+        premove_HOS = Hatchery@premove_HOS,
+        gamma = Hatchery@gamma
+      )
+      output <- c(output, output_with_strays)
+
+    }
+    return(output)
+  })
+
+  return(output_s)
+}
+
+#' @name define_hatchery_args
+#' @returns `define_habitat_args()` returns a list of \linkS4class{Habitat} objects.
+define_habitat_args <- function(SOM) slot(SOM, "Habitat")
+
+#' @name define_hatchery_args
+#' @returns `define_fitness_args()` returns a length `nstocks` of fitness parameters.
+define_fitness_args <- function(SOM) {
+  ns <- length(SOM@Bio)
+
+  output_s <- lapply(1:ns, function(s) {
+    Hatchery <- SOM@Hatchery[[s]]
+
+    do_hatchery <- sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0
+    has_strays <- any(SOM@stray[-s, s] > 0) || sum(Hatchery@stray_external)
+    has_HOS <- do_hatchery || has_strays
+    do_fitness <- any(Hatchery@fitness_type == "Ford")
+
+    output <- list(fitness_type = Hatchery@fitness_type)
+
+    if (has_HOS && do_fitness) {
+      output <- list(
+        fitness_type = Hatchery@fitness_type,
+        rel_loss = Hatchery@rel_loss,
+        phenotype_variance = Hatchery@phenotype_variance,
+        fitness_variance = Hatchery@fitness_variance,
+        fitness_floor = Hatchery@fitness_floor,
+        heritability = Hatchery@heritability,
+        theta = Hatchery@theta
+      )
+    }
+    return(output)
+  })
+
+  return(output_s)
+}
+
+#' @name define_hatchery_args
+#' @returns `define_SRRpars_args()` returns a length `nstocks`, each of which is a data frame of stock-recruit parameters.
+define_SRRpars <- function(SOM) {
+  ns <- length(SOM@Bio)
+
+  output_s <- lapply(1:ns, function(s) {
+    df <- data.frame()
+
+    if (!SOM@Habitat[[s]]@use_habitat) {
+      Bio <- SOM@Bio[[s]]
+      SRrel <- Bio@SRrel
+      df <- data.frame(
+        kappa = Bio@kappa,
+        phi = Bio@phi,
+        tau = Bio@tau,
+        SRrel = SRrel
+      )
+      if (SRrel == "Ricker") {
+        df$Smax <- Bio@Smax
+      } else {
+        df$capacity <- Bio@capacity
+      }
+    }
+    return(df)
+  })
+
+  return(output_s)
+}
