@@ -117,6 +117,10 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
   n_r <- sapply(SOM@Hatchery, slot, "n_r") %>% unique()
   n_g <- sapply(SOM@Bio, slot, "n_g") %>% unique()
+
+  if (length(n_r) > 1) stop("Number of release strategies vary by population.")
+  if (length(n_g) > 1) stop("Number of life history groups vary by population.")
+
   nsim <- length(sims)
   proyears <- SOM@proyears
 
