@@ -147,16 +147,8 @@
 - [`report_CM()`](https://docs.salmonmse.com/reference/report_CM.md) :
   Conditioning model markdown report
 
-- [`make_Harvest_MMP()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  [`MMSE2SMSE()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  [`SOM2MOM()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  [`make_Stock()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  [`make_Fleet()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  [`multiHist2SHist()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-  : Internal salmonMSE functions for converting operating model inputs
-  and outputs
-
-- [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md) :
+- [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md) :
   Run salmonMSE
 
 - [`salmonMSE_env`](https://docs.salmonmse.com/reference/salmonMSE_env.md)

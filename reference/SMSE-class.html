@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -265,12 +265,11 @@ non-assortative mating, defined under Canada's Wild Salmon Policy.</p></dd>
 
 
 <dt><code>Mjuv_loss</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage-1, proyears]</code>. Realized juvenile natural mortality, which may differ from inputs due to fitness loss.</p></dd>
 
 
 <dt><code>Misc</code></dt>
 <dd><p>List. Miscellaneous output:</p><ul><li><p><code>Ref</code> for reference points</p></li>
-<li><p><code>SHist</code> for the <a href="SHist-class.html">SHist</a> object (primarily for developer use)</p></li>
 <li><p><code>SOM</code> for the <a href="SOM-class.html">SOM</a> object (updated by <code><a href="check_SOM.html">check_SOM()</a></code>).</p></li>
 <li><p><code>LHG</code> list <code>nstocks</code> long containing state variables by natural-origin life history group</p></li>
 <li><p><code>RS</code> list <code>nstocks</code> long containing state variables by hatchery-origin release strategy</p></li>

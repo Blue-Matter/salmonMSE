@@ -1,32 +1,23 @@
 # Run salmonMSE
 
-`salmonMSE()` runs a salmon management strategy evaluation through the
-following steps:
+`salmonMSE()` runs a salmon management strategy evaluation from an
+operating model object
+([SOM](https://docs.salmonmse.com/reference/SOM-class.md)), by checking
+the operating model object with
+[`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md),
+running the projection in `ProjectSOM()` (parallel if called upon, then
+stitches together the output in a single object), and calculates
+reference points with
+[`calc_ref()`](https://docs.salmonmse.com/reference/calc_ref.md).
 
-- Converts a salmon operating model
-  ([SOM](https://docs.salmonmse.com/reference/SOM-class.md)) to a
-  multi-stock operating model
-  ([MSEtool::MOM](https://msetool.openmse.com/reference/MOM-class.html))
-  via
-  [`SOM2MOM()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
-
-- Creates a harvest management procedure specifying the harvest control
-  rule
-
-- Generates the historical reconstruction of the state variables
-
-- Runs projection (if `Hist = FALSE`)
-
-- Converts the openMSE output, along with additional state variables
-  recorded in
-  [salmonMSE_env](https://docs.salmonmse.com/reference/salmonMSE_env.md),
-  into a salmon MSE object (SMSE) via
-  [`MMSE2SMSE()`](https://docs.salmonmse.com/reference/salmonMSE-int.md)
+`ProjectSOM()` is the internal projection function.
 
 ## Usage
 
 ``` r
-salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
+salmonMSE(SOM, ncores = 1, silent = FALSE)
+
+ProjectSOM(SOM, sims, check = FALSE)
 ```
 
 ## Arguments
@@ -36,35 +27,28 @@ salmonMSE(SOM, Hist = FALSE, silent = FALSE, trace = FALSE, convert = TRUE)
   An object of class
   [SOM](https://docs.salmonmse.com/reference/SOM-class.md)
 
-- Hist:
+- ncores:
 
-  Logical, whether to stop the function stop after historical
-  simulations?
+  Integer, maximum number of processors to run projection with parallel
+  processing
 
 - silent:
 
   Logical, whether to report progress in console
 
-- trace:
+- sims:
 
-  Logical, whether to report additional messages from openMSE
+  Optional integer vector to run projection for a subset of simulations.
+  Intended for parallel processing.
 
-- convert:
+- check:
 
-  Logical, whether to convert the output into a salmon MSE (SHist or
-  SMSE, depending on `Hist`) object
+  Logical, whether to check the structure of the input object with
+  [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md)
 
 ## Value
 
-If `Hist = TRUE`: if `convert = TRUE`, a
-[SHist](https://docs.salmonmse.com/reference/SHist-class.md) object or
-if `convert = FALSE`, a multiHist object (list).
-
-If `Hist = FALSE`: if `convert = TRUE`, a
-[SMSE](https://docs.salmonmse.com/reference/SMSE-class.md) object or if
-`convert = FALSE`, a
-[MSEtool::MMSE](https://msetool.openmse.com/reference/MMSE-class.html)
-object.
+[SMSE](https://docs.salmonmse.com/reference/SMSE-class.md) object
 
 ## Examples
 

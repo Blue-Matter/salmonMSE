@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@
 
       <h1>Conditioning model from CWT and escapement</h1>
             
-            <h4 data-toc-skip class="date">2026-05-21</h4>
+            <h4 data-toc-skip class="date">2026-05-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/conditioning.Rmd" class="external-link"><code>vignettes/conditioning.Rmd</code></a></small>
       <div class="d-none name"><code>conditioning.Rmd</code></div>
@@ -364,7 +364,8 @@ replacement (corresponding to the one-to-one return per spawner line),
 with <span class="math inline">\(\phi = \sum_a \ell_a m^\textrm{base}_a
 f_a p^\textrm{female}\)</span>.</p>
 <p><span class="math inline">\(\ell_a\)</span> is the juvenile survival
-at age:</p>
+at age from base natural mortality and maturity schedules provided by
+the user:</p>
 <p><span class="math display">\[
 \ell_a =
 \begin{cases}
@@ -374,28 +375,27 @@ at age:</p>
 \end{cases}
 \]</span></p>
 <p>The <span class="math inline">\(\beta\)</span> parameter is <span class="math inline">\(\beta = \log(\kappa)/(\phi \times
-J^\textrm{rep})\)</span> is in units of reciprocal eggs, where <span class="math inline">\(J^\textrm{rep}\)</span> is the juvenile smolt
-production at replacement. The equilibrium spawners at replacement is
-<span class="math inline">\(S^\textrm{rep}\)</span> and <span class="math inline">\(J^\textrm{rep} = S^\textrm{rep}/\tau\)</span>,
-where <span class="math inline">\(\tau = \sum_a \ell_a m^\textrm{base}_a
-p^\textrm{female}\)</span> is the equilibrium female spawners per
-juvenile.</p>
+J^\textrm{rep})\)</span> is in units of reciprocal eggs.</p>
+<p><span class="math inline">\(J^\textrm{rep} = S^\textrm{rep,
+base}/\tau\)</span> is the juvenile smolt production at replacement,
+calculated from spawners at replacement <span class="math inline">\(S^\textrm{rep}\)</span> and equilibrium female
+spawners per juvenile <span class="math inline">\(\tau = \sum_a \ell_a
+m^\textrm{base}_a p^\textrm{female}\)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="realized-productivity">Realized productivity<a class="anchor" aria-label="anchor" href="#realized-productivity"></a>
 </h3>
-<p>Note that the replacement values described above correspond to
-initial maturity and natural mortality values. The realized replacement,
-along with the realized productivity and spawners at replacement, varies
-if either maturity and natural mortality are varying in the historical
-time series because these parameters change the egg production over the
-lifetime of a juvenile.</p>
-<p>To obtain the realized productivity in a particular year, we can
-calculate the egg-per-juvenile <span class="math inline">\(\phi_y =
-\sum_a \ell_{y,a} m_{y,a} f_a p^\textrm{female}\)</span> and
-spawner-per-juvenile <span class="math inline">\(\tau_y = \sum_a
-\ell_{y,a} m_{y,a} p^\textrm{female}\)</span> from the historical
-maturity and mortality, where</p>
+<p>Replacement values described above correspond to base maturity and
+natural mortality values.</p>
+<p>The realized replacement and productivity vary if either maturity and
+natural mortality change in the historical time series because these
+parameters change the egg production over the lifetime of a
+juvenile.</p>
+<p>To obtain the realized productivity from the corresponding parameters
+in year <span class="math inline">\(y\)</span>, we re-calculate the
+egg-per-juvenile <span class="math inline">\(\phi_y = \sum_a \ell_{y,a}
+m_{y,a} f_a p^\textrm{female}\)</span> and spawner-per-juvenile <span class="math inline">\(\tau_y = \sum_a \ell_{y,a} m_{y,a}
+p^\textrm{female}\)</span>:</p>
 <p><span class="math display">\[
 \ell_{y,a} =
 \begin{cases}
@@ -403,11 +403,11 @@ maturity and mortality, where</p>
 \ell_{y,a-1} \exp(-M_{y,a-1}) (1 - m_{y,a-1}) &amp;, a = 2, \ldots, A
 \end{cases}
 \]</span></p>
-<p>The realized productivity is <span class="math inline">\(\kappa_y =
-\alpha \phi_y\)</span> with corresponding <span class="math inline">\(S^\textrm{rep}_y =
+<p>Assuming constant <span class="math inline">\(\alpha\)</span> and
+<span class="math inline">\(\beta\)</span>, the realized productivity is
+<span class="math inline">\(\kappa_y = \alpha \phi_y\)</span> with <span class="math inline">\(S^\textrm{rep}_y =
 \log(\kappa_y)\times\tau_y/(\beta\phi_y)\)</span> and <span class="math inline">\(E^\textrm{rep}_y = S^\textrm{rep}_y \phi_y /
-\tau_y\)</span> (<span class="math inline">\(E^\textrm{rep}_y\)</span>
-is the egg production at replacement).</p>
+\tau_y\)</span> (egg production at replacement).</p>
 <p>The realized productivity can be less than one (and <span class="math inline">\(S^\textrm{rep}_y &lt; 0\)</span>) in an individual
 year. If juvenile marine mortality is high or maturity is late, then
 there are too few returns to replace the population.</p>
@@ -566,8 +566,13 @@ the base parameter.</p>
 <div class="section level3">
 <h3 id="natural-production">Natural production<a class="anchor" aria-label="anchor" href="#natural-production"></a>
 </h3>
-<p>A uniform prior is used for <span class="math inline">\(\log(\kappa)\)</span>, and a lognormal prior is
-used to estimate <span class="math inline">\(S_0\)</span>.</p>
+<p>A uniform prior is used for base productivity: <span class="math inline">\(\log(\kappa) \sim U(0, \infty)\)</span>.</p>
+<p>A lognormal prior is used to estimate the base spawners at
+replacement <span class="math inline">\(S_\textrm{rep} \sim
+\textrm{Lognormal}(\log(\mu^\textrm{Srep}),
+\sigma^\textrm{Srep})\)</span>. By default, <span class="math inline">\(\mu^\textrm{Srep}\)</span> is 300% of maximum
+observed escapement and <span class="math inline">\(\sigma^\textrm{Srep}
+= 0.5\)</span>.</p>
 <p>The annual deviations in smolt production are estimated with prior
 <span class="math inline">\(\delta_y \sim N(0, \sigma_\delta^2)\)</span>
 and hyperprior <span class="math inline">\(\sigma_\delta \sim

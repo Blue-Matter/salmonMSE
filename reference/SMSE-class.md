@@ -263,7 +263,7 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 
 - `Mjuv_loss`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Realized juvenile natural
+  Array `[nsim, nstocks, nage-1, proyears]`. Realized juvenile natural
   mortality, which may differ from inputs due to fitness loss.
 
 - `Misc`:
@@ -271,10 +271,6 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
   List. Miscellaneous output:
 
   - `Ref` for reference points
-
-  - `SHist` for the
-    [SHist](https://docs.salmonmse.com/reference/SHist-class.md) object
-    (primarily for developer use)
 
   - `SOM` for the
     [SOM](https://docs.salmonmse.com/reference/SOM-class.md) object

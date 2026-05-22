@@ -29,6 +29,7 @@ fit_CM(
   lower = list(),
   upper = list(),
   do_fit = TRUE,
+  verbose = TRUE,
   silent = TRUE,
   control = list(eval.max = 1e+05, iter.max = 1e+05),
   ...
@@ -63,6 +64,10 @@ sample_CM(fit, ...)
 - do_fit:
 
   Logical, whether to do the fit and estimate the Hessian.
+
+- verbose:
+
+  Logical, whether to report messages to console.
 
 - silent:
 

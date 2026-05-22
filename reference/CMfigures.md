@@ -99,7 +99,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 - fit:
 
-  Output from `[fit_CM()]`
+  Output from
+  [`fit_CM()`](https://docs.salmonmse.com/reference/fit_CM.md)
 
 - vars:
 

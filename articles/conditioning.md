@@ -216,43 +216,42 @@ juvenile-per-egg, where \\\kappa\\ is productivity (return/spawner) and
 one-to-one return per spawner line), with \\\phi = \sum_a \ell_a
 m^\textrm{base}\_a f_a p^\textrm{female}\\.
 
-\\\ell_a\\ is the juvenile survival at age:
+\\\ell_a\\ is the juvenile survival at age from base natural mortality
+and maturity schedules provided by the user:
 
 \\ \ell_a = \begin{cases} 1 &, a = 1\\ \ell\_{a-1}
 \exp(-M^\textrm{base}\_{a-1}) (1 - m^\textrm{base}\_{a-1}) &, a = 2,
 \ldots, A \end{cases} \\
 
 The \\\beta\\ parameter is \\\beta = \log(\kappa)/(\phi \times
-J^\textrm{rep})\\ is in units of reciprocal eggs, where
-\\J^\textrm{rep}\\ is the juvenile smolt production at replacement. The
-equilibrium spawners at replacement is \\S^\textrm{rep}\\ and
-\\J^\textrm{rep} = S^\textrm{rep}/\tau\\, where \\\tau = \sum_a \ell_a
-m^\textrm{base}\_a p^\textrm{female}\\ is the equilibrium female
-spawners per juvenile.
+J^\textrm{rep})\\ is in units of reciprocal eggs.
+
+\\J^\textrm{rep} = S^\textrm{rep, base}/\tau\\ is the juvenile smolt
+production at replacement, calculated from spawners at replacement
+\\S^\textrm{rep}\\ and equilibrium female spawners per juvenile \\\tau =
+\sum_a \ell_a m^\textrm{base}\_a p^\textrm{female}\\.
 
 ### Realized productivity
 
-Note that the replacement values described above correspond to initial
-maturity and natural mortality values. The realized replacement, along
-with the realized productivity and spawners at replacement, varies if
-either maturity and natural mortality are varying in the historical time
-series because these parameters change the egg production over the
-lifetime of a juvenile.
+Replacement values described above correspond to base maturity and
+natural mortality values.
 
-To obtain the realized productivity in a particular year, we can
-calculate the egg-per-juvenile \\\phi_y = \sum_a \ell\_{y,a} m\_{y,a}
-f_a p^\textrm{female}\\ and spawner-per-juvenile \\\tau_y = \sum_a
-\ell\_{y,a} m\_{y,a} p^\textrm{female}\\ from the historical maturity
-and mortality, where
+The realized replacement and productivity vary if either maturity and
+natural mortality change in the historical time series because these
+parameters change the egg production over the lifetime of a juvenile.
+
+To obtain the realized productivity from the corresponding parameters in
+year \\y\\, we re-calculate the egg-per-juvenile \\\phi_y = \sum_a
+\ell\_{y,a} m\_{y,a} f_a p^\textrm{female}\\ and spawner-per-juvenile
+\\\tau_y = \sum_a \ell\_{y,a} m\_{y,a} p^\textrm{female}\\:
 
 \\ \ell\_{y,a} = \begin{cases} 1 &, a = 1\\ \ell\_{y,a-1}
 \exp(-M\_{y,a-1}) (1 - m\_{y,a-1}) &, a = 2, \ldots, A \end{cases} \\
 
-The realized productivity is \\\kappa_y = \alpha \phi_y\\ with
-corresponding \\S^\textrm{rep}\_y =
+Assuming constant \\\alpha\\ and \\\beta\\, the realized productivity is
+\\\kappa_y = \alpha \phi_y\\ with \\S^\textrm{rep}\_y =
 \log(\kappa_y)\times\tau_y/(\beta\phi_y)\\ and \\E^\textrm{rep}\_y =
-S^\textrm{rep}\_y \phi_y / \tau_y\\ (\\E^\textrm{rep}\_y\\ is the egg
-production at replacement).
+S^\textrm{rep}\_y \phi_y / \tau_y\\ (egg production at replacement).
 
 The realized productivity can be less than one (and \\S^\textrm{rep}\_y
 \< 0\\) in an individual year. If juvenile marine mortality is high or
@@ -397,8 +396,13 @@ with hyperprior \\\sigma^M \sim \textrm{Gamma}(2, 5)\\.
 
 ### Natural production
 
-A uniform prior is used for \\\log(\kappa)\\, and a lognormal prior is
-used to estimate \\S_0\\.
+A uniform prior is used for base productivity: \\\log(\kappa) \sim U(0,
+\infty)\\.
+
+A lognormal prior is used to estimate the base spawners at replacement
+\\S\_\textrm{rep} \sim \textrm{Lognormal}(\log(\mu^\textrm{Srep}),
+\sigma^\textrm{Srep})\\. By default, \\\mu^\textrm{Srep}\\ is 300% of
+maximum observed escapement and \\\sigma^\textrm{Srep} = 0.5\\.
 
 The annual deviations in smolt production are estimated with prior
 \\\delta_y \sim N(0, \sigma\_\delta^2)\\ and hyperprior \\\sigma\_\delta

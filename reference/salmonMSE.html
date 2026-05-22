@@ -5,21 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run salmonMSE — salmonMSE"><meta name="description" content="salmonMSE() runs a salmon management strategy evaluation through the following steps:
-Converts a salmon operating model (SOM) to a multi-stock operating model (MSEtool::MOM) via SOM2MOM()
-Creates a harvest management procedure specifying the harvest control rule
-Generates the historical reconstruction of the state variables
-Runs projection (if Hist = FALSE)
-Converts the openMSE output, along with additional state variables recorded in salmonMSE_env, into a salmon MSE object (SMSE) via MMSE2SMSE()
-
-"><meta property="og:description" content="salmonMSE() runs a salmon management strategy evaluation through the following steps:
-Converts a salmon operating model (SOM) to a multi-stock operating model (MSEtool::MOM) via SOM2MOM()
-Creates a harvest management procedure specifying the harvest control rule
-Generates the historical reconstruction of the state variables
-Runs projection (if Hist = FALSE)
-Converts the openMSE output, along with additional state variables recorded in salmonMSE_env, into a salmon MSE object (SMSE) via MMSE2SMSE()
-
-"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run salmonMSE — salmonMSE"><meta name="description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM), by checking
+the operating model object with check_SOM(), running the projection in ProjectSOM() (parallel if called upon, then stitches
+together the output in a single object), and calculates reference points with calc_ref().
+ProjectSOM() is the internal projection function."><meta property="og:description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM), by checking
+the operating model object with check_SOM(), running the projection in ProjectSOM() (parallel if called upon, then stitches
+together the output in a single object), and calculates reference points with calc_ref().
+ProjectSOM() is the internal projection function."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -27,7 +19,7 @@ Converts the openMSE output, along with additional state variables recorded in s
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,16 +57,17 @@ Converts the openMSE output, along with additional state variables recorded in s
     </div>
 
     <div class="ref-description section level2">
-    <p><code>salmonMSE()</code> runs a salmon management strategy evaluation through the following steps:</p><ul><li><p>Converts a salmon operating model (<a href="SOM-class.html">SOM</a>) to a multi-stock operating model (<a href="https://msetool.openmse.com/reference/MOM-class.html" class="external-link">MSEtool::MOM</a>) via <code><a href="salmonMSE-int.html">SOM2MOM()</a></code></p></li>
-<li><p>Creates a harvest management procedure specifying the harvest control rule</p></li>
-<li><p>Generates the historical reconstruction of the state variables</p></li>
-<li><p>Runs projection (if <code>Hist = FALSE</code>)</p></li>
-<li><p>Converts the openMSE output, along with additional state variables recorded in <a href="salmonMSE_env.html">salmonMSE_env</a>, into a salmon MSE object (SMSE) via <code><a href="salmonMSE-int.html">MMSE2SMSE()</a></code></p></li>
-</ul></div>
+    <p><code>salmonMSE()</code> runs a salmon management strategy evaluation from an operating model object (<a href="SOM-class.html">SOM</a>), by checking
+the operating model object with <code><a href="check_SOM.html">check_SOM()</a></code>, running the projection in <code>ProjectSOM()</code> (parallel if called upon, then stitches
+together the output in a single object), and calculates reference points with <code><a href="calc_ref.html">calc_ref()</a></code>.</p>
+<p><code>ProjectSOM()</code> is the internal projection function.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">salmonMSE</span><span class="op">(</span><span class="va">SOM</span>, Hist <span class="op">=</span> <span class="cn">FALSE</span>, silent <span class="op">=</span> <span class="cn">FALSE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">salmonMSE</span><span class="op">(</span><span class="va">SOM</span>, ncores <span class="op">=</span> <span class="fl">1</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ProjectSOM</span><span class="op">(</span><span class="va">SOM</span>, <span class="va">sims</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,26 +78,25 @@ Converts the openMSE output, along with additional state variables recorded in s
 <dd><p>An object of class <a href="SOM-class.html">SOM</a></p></dd>
 
 
-<dt id="arg-hist">Hist<a class="anchor" aria-label="anchor" href="#arg-hist"></a></dt>
-<dd><p>Logical, whether to stop the function stop after historical simulations?</p></dd>
+<dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
+<dd><p>Integer, maximum number of processors to run projection with parallel processing</p></dd>
 
 
 <dt id="arg-silent">silent<a class="anchor" aria-label="anchor" href="#arg-silent"></a></dt>
 <dd><p>Logical, whether to report progress in console</p></dd>
 
 
-<dt id="arg-trace">trace<a class="anchor" aria-label="anchor" href="#arg-trace"></a></dt>
-<dd><p>Logical, whether to report additional messages from openMSE</p></dd>
+<dt id="arg-sims">sims<a class="anchor" aria-label="anchor" href="#arg-sims"></a></dt>
+<dd><p>Optional integer vector to run projection for a subset of simulations. Intended for parallel processing.</p></dd>
 
 
-<dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
-<dd><p>Logical, whether to convert the output into a salmon MSE (SHist or SMSE, depending on <code>Hist</code>) object</p></dd>
+<dt id="arg-check">check<a class="anchor" aria-label="anchor" href="#arg-check"></a></dt>
+<dd><p>Logical, whether to check the structure of the input object with <code><a href="check_SOM.html">check_SOM()</a></code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If <code>Hist = TRUE</code>: if <code>convert = TRUE</code>, a <a href="SHist-class.html">SHist</a> object or if <code>convert = FALSE</code>, a multiHist object (list).</p>
-<p>If <code>Hist = FALSE</code>: if <code>convert = TRUE</code>, a <a href="SMSE-class.html">SMSE</a> object or if <code>convert = FALSE</code>, a <a href="https://msetool.openmse.com/reference/MMSE-class.html" class="external-link">MSEtool::MMSE</a> object.</p>
+    <p><a href="SMSE-class.html">SMSE</a> object</p>
     </div>
 
     <div class="section level2">
