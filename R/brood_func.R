@@ -22,9 +22,10 @@ stray_func <- function(N, stray_matrix, m) {
       if (s_recipient == s_donor) {
         N_remain[s_donor, , ] <- stray_matrix[s_donor, s_recipient] * N[s_donor, , ]
       } else {
-        N_stray_marked[s_recipient, , ] <- N_stray[s_recipient, , ] +
+        N_stray_marked[s_recipient, , ] <- N_stray_marked[s_recipient, , ] +
           stray_matrix[s_donor, s_recipient] * N[s_donor, , ] * m[s_donor]
-        N_stray_unmarked[s_recipient, , ] <- N_stray[s_recipient, , ] +
+
+        N_stray_unmarked[s_recipient, , ] <- N_stray_unmarked[s_recipient, , ] +
           stray_matrix[s_donor, s_recipient] * N[s_donor, , ] * (1 - m[s_donor])
       }
     }
