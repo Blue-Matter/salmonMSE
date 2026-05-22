@@ -472,7 +472,7 @@ make_CMpars <- function(p, d) {
 }
 
 #' @importFrom stats na.omit
-check_data <- function(data) {
+check_data <- function(data, verbose = TRUE) {
 
   if (is.null(data$Nages)) stop("data$Nages not found")
   if (is.null(data$Ldyr)) stop("data$Ldyr not found")
@@ -549,8 +549,11 @@ check_data <- function(data) {
     if (!is.matrix(data[["covariate"]])) stop("data$covariate should be a matrix. See help('fit-CM') for dimensions")
   }
 
-  if (is.null(data$hatchsurv)) data$hatchsurv <- 1
-  if (is.null(data$gamma)) data$gamma <- 1
+  if (is.null(data$hatchsurv)) {
+    data$hatchsurv <- 1
+    if (verbose) message("Hatchery survival: hatchsurv = ", data$hatchsurv)
+  }
+
   if (is.null(data$ssum)) stop("data$ssum (proportion female spawners) should be between 0-1")
 
   if (is.null(data$fec) || length(data$fec) != data$Nages) {
@@ -571,6 +574,10 @@ check_data <- function(data) {
     #stop("data$hatchrelease should be a vector length Ldyr+1")
     data$hatchrelease <- rep(0, data$Ldyr + 1)
   }
+  if (is.null(data$gamma)) {
+    data$gamma <- 1
+    if (verbose && sum(data$hatchrelease)) message("Relative reproductive success: gamma = ", data$gamma)
+  }
 
   if (!is.null(data$obs_pHOS) && length(data$obs_pHOS) != data$Ldyr) {
     stop("data$obs_pHOS should be a vector length Ldyr")
@@ -579,11 +586,24 @@ check_data <- function(data) {
 
   if (is.null(data$cwtExp)) data$cwtExp <- 1
   if (data$cwtExp < 1) warning("CWT expansion factor in data object (cwtExp) < 1. Are you sure?")
+  if (verbose && data$cwtExp != 1) {
+    message("CWT expansion factor in data object (cwtExp) = ", data$cwtExp,
+            ". CWT catches in data object will be expanded by this value.")
+  }
 
-  if (is.null(data$s_enroute)) data$s_enroute <- 1
+  if (is.null(data$s_enroute)) {
+    data$s_enroute <- 1
+    if (verbose) message("En-route survival to spawning grounds is ", data$s_enroute)
+  }
 
-  if (is.null(data$so_mu)) data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
-  if (is.null(data$so_sd)) data$so_sd <- 0.5
+  if (is.null(data$so_mu)) {
+    data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
+    if (verbose) message("Lognormal prior for Srep (replacement spawners): mean = log(", exp(data$so_mu), ")")
+  }
+  if (is.null(data$so_sd)) {
+    data$so_sd <- 0.5
+    if (verbose) message("Lognormal prior for Srep (replacement spawners): SD = ", data$so_sd)
+  }
 
   if (is.null(data$finitPT)) data$finitPT <- 0
   if (is.null(data$finitT)) data$finitT <- 0

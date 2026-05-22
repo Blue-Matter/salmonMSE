@@ -12,6 +12,7 @@ fit_CM(
   lower = list(),
   upper = list(),
   do_fit = TRUE,
+  verbose = TRUE,
   silent = TRUE,
   control = list(eval.max = 1e+05, iter.max = 1e+05),
   ...
@@ -31,6 +32,8 @@ sample_CM(fit, ...)
 \item{upper}{Named list containing upper bounds for parameters. See details.}
 
 \item{do_fit}{Logical, whether to do the fit and estimate the Hessian.}
+
+\item{verbose}{Logical, whether to report messages to console.}
 
 \item{silent}{Logical, whether to silence output from RTMB to the console.}
 

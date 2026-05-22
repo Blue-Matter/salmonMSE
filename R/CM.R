@@ -23,6 +23,7 @@
 #' @param lower Named list containing lower bounds for parameters. See details.
 #' @param upper Named list containing upper bounds for parameters. See details.
 #' @param do_fit Logical, whether to do the fit and estimate the Hessian.
+#' @param verbose Logical, whether to report messages to console.
 #' @param silent Logical, whether to silence output from RTMB to the console.
 #' @param control List, `control` argument to pass to [`stats::nlminb()`].
 #' @param ... For `fit_CM`, arguments to [`RTMB::MakeADFun()`]. For `sample_CM`, arguments to `rstan::sampling()`
@@ -166,10 +167,11 @@
 #' Sciences 62: vi + 60 p.
 #' @seealso [CM2SOM()]
 #' @export
-fit_CM <- function(data, start = list(), map = list(), lower = list(), upper = list(), do_fit = TRUE, silent = TRUE,
+fit_CM <- function(data, start = list(), map = list(), lower = list(), upper = list(), do_fit = TRUE,
+                   verbose = TRUE, silent = TRUE,
                    control = list(eval.max = 1e5, iter.max = 1e5), ...) {
 
-  data <- check_data(data)
+  data <- check_data(data, verbose)
   p <- make_CMpars(start, data)
   map <- make_map(map, p, data)
 
