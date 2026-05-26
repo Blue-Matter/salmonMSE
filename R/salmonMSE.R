@@ -26,26 +26,7 @@ salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
   if (ncores == 1) {
     SMSE <- ProjectSOM(SOM, check = FALSE)
   } else {
-    ncores <- min(ncores, parallel::detectCores())
-
-    nsim <- SOM@nsim
-    nits_min <- 2
-    nits_prelim <- rep(ceiling(nsim/ncores), ncores)
-    nits_prelim[nits_prelim < 2] <- nits_min
-
-    nits <- lapply(1:ncores, function(i) {
-      prev <- ifelse(i == 1, 0, sum(nits_prelim[seq(1, i - 1)]))
-      sims <- prev + seq(1, nits_prelim[i])
-      sims[sims <= nsim]
-    })
-    nits_use <- sapply(nits, length) > 0
-    nits <- nits[nits_use]
-
-    if (length(nits[[length(nits)]]) == 1) {
-      nits[[length(nits) - 1]] <- c(nits[[length(nits) - 1]], nits[[length(nits)]])
-      nits <- nits[-length(nits)]
-    }
-
+    nits <- split_sims(SOM@nsim, ncores = min(ncores, parallel::detectCores()))
     cores <- length(nits)
 
     if (cores == 1) {
@@ -99,6 +80,28 @@ sapply2 <- base::sapply
 formals(sapply2)$simplify <- "array"
 
 ProjectSOM_parallel <- function(X, SOM, check = FALSE) ProjectSOM(SOM, sims = X, check = check)
+
+split_sims <- function(nsim, ncores) {
+  nits_min <- 2
+
+  nits_prelim <- rep(ceiling(nsim/ncores), ncores)
+  nits_prelim[nits_prelim < nits_min] <- nits_min
+
+  nits <- lapply(1:ncores, function(i) {
+    prev <- ifelse(i == 1, 0, sum(nits_prelim[seq(1, i - 1)]))
+    sims <- prev + seq(1, nits_prelim[i])
+    sims[sims <= nsim]
+  })
+  nits_use <- sapply(nits, length) > 0
+  nits <- nits[nits_use]
+
+  if (length(nits[[length(nits)]]) < nits_min) {
+    nits[[length(nits) - 1]] <- c(nits[[length(nits) - 1]], nits[[length(nits)]])
+    nits <- nits[-length(nits)]
+  }
+
+  return(nits)
+}
 
 #' @name salmonMSE
 #' @description `ProjectSOM()` is the internal projection function.
