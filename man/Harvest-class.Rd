@@ -16,13 +16,12 @@ The component of the operating model that controls marine harvest.
 
 \item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
 
-\item{\code{u_preterminal}}{Numeric. If \code{type_PT = "u"}, the exploitation rate of the immature stock in the pre-terminal fishery. This will be converted
-to an instantaneous fishing mortality rate, i.e., \code{F_preterminal = -log(1 - u_preterminal)}.}
+\item{\code{u_preterminal}}{Numeric. Can also be a matrix \verb{[nsim, proyears]}. If \code{type_PT = "u"}, the harvest rate of the immature component of the population in the pre-terminal fishery.
+The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents.}
 
-\item{\code{u_terminal}}{Numeric. If \code{type_T = "u"}, The exploitation rate of the return in the terminal fishery. This will be converted
-to an instantaneous fishing mortality rate, i.e., \code{F_terminal = -log(1 - u_terminal)}.}
+\item{\code{u_terminal}}{Numeric. Can also be a matrix \verb{[nsim, proyears]}. If \code{type_T = "u"}, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.}
 
-\item{\code{K_PT}}{Numeric. If \code{type_PT = "catch"}, the catch target of the immature stock in the pre-terminal fishery.}
+\item{\code{K_PT}}{Numeric. If \code{type_PT = "catch"}, the catch target of the immature component of the population in the pre-terminal fishery.}
 
 \item{\code{K_T}}{Numeric. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.}
 

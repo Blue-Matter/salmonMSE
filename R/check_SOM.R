@@ -1,5 +1,5 @@
 
-NAor0 <- function(x) !length(x) || is.na(x) || !x
+NAor0 <- function(x) !length(x) || all(is.na(x)) || all(!x)
 
 #' Check inputs to SOM object
 #'
@@ -248,7 +248,11 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest@type_T <- match.arg(Harvest@type_T, choices = c("u", "catch"))
 
     if (Harvest@type_PT == "u") {
-      Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+      if (length(Harvest@u_preterminal) == 1) {
+        Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+      } else if (is.matrix(Harvest@u_preterminal)) {
+        Harvest <- check_maxage2matrix(Harvest, "u_preterminal", nsim, proyears)
+      }
       Harvest <- check_numeric(Harvest, "K_PT", default = NA_real_)
     } else {
       Harvest <- check_numeric(Harvest, "u_preterminal", default = NA_real_)
@@ -256,7 +260,11 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     if (Harvest@type_T == "u") {
-      Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+      if (length(Harvest@u_terminal) == 1) {
+        Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+      } else if (is.matrix(Harvest@u_terminal)) {
+        Harvest <- check_maxage2matrix(Harvest, "u_terminal", nsim, proyears)
+      }
       Harvest <- check_numeric(Harvest, "K_T", default = NA_real_)
     } else {
       Harvest <- check_numeric(Harvest, "u_terminal", default = NA_real_)
