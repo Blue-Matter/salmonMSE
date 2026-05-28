@@ -62,13 +62,13 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{Escapement_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. The escapement of mature fish that will be hatchery origin spawners.}
 
-\item{\code{NOB}}{Array \verb{[nsim, nstocks, proyears]}. Natural origin broodtake.}
+\item{\code{NOB}}{Array \verb{[nsim, nstocks, nage, proyears]}. Natural origin broodtake.}
 
-\item{\code{HOB}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin broodtake (local + strays).}
+\item{\code{HOB}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin broodtake (local + strays).}
 
-\item{\code{HOB_stray}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery origin broodtake (strays only).}
+\item{\code{HOB_stray}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin broodtake (strays only).}
 
-\item{\code{HOB_import}}{Array \verb{[nsim, nstocks, proyears]}. Imported hatchery origin broodtake used for hatchery production.}
+\item{\code{HOB_import}}{Array \verb{[nsim, nstocks, nage, proyears]}. Imported hatchery origin broodtake used for hatchery production.}
 
 \item{\code{NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Natural origin spawners.}
 
