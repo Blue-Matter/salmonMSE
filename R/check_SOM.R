@@ -40,7 +40,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     if (!silent && ns > 1) message("Checking parameters for population ", s)
 
     ### Check Bio ----
-    Bio <- SOM@Bio[[s]]
+    Bio <- update_S4(SOM@Bio[[s]])
 
     Bio <- check_numeric(Bio, "maxage")
     maxage <- Bio@maxage
@@ -55,7 +55,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     Bio <- check_maxage2array(Bio, "fec", maxage, nsim, proyears)
 
     ### Check Habitat (initial) ----
-    Habitat <- SOM@Habitat[[s]]
+    Habitat <- update_S4(SOM@Habitat[[s]])
     Habitat <- check_numeric(Habitat, "use_habitat", default = FALSE)
 
     if (length(dim(Bio@Mjuv_NOS)) == 3 && Bio@n_g == 1) {
@@ -138,7 +138,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     ### Check Hatchery ----
-    Hatchery <- SOM@Hatchery[[s]]
+    Hatchery <- update_S4(SOM@Hatchery[[s]])
 
     Hatchery <- check_numeric(Hatchery, "n_r", default = 1)
     Hatchery <- check_numeric(Hatchery, "n_yearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
@@ -239,7 +239,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     ### Check Harvest ----
-    Harvest <- SOM@Harvest[[s]]
+    Harvest <- update_S4(SOM@Harvest[[s]])
 
     Harvest <- check_numeric(Harvest, "type_PT", default = "u")
     Harvest <- check_numeric(Harvest, "type_T", default = "u")
@@ -283,7 +283,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)
 
     ### Check Historical (initial) ----
-    Historical <- SOM@Historical[[s]]
+    Historical <- update_S4(SOM@Historical[[s]])
 
     Njuv_NOS <- Njuv_HOS <- NA_real_
 
@@ -323,6 +323,24 @@ check_SOM <- function(SOM, silent = FALSE) {
 
   return(SOM)
 }
+
+
+#' @importFrom methods .slotNames .hasSlot slot
+update_S4 <- function(x) {
+  snames <- .slotNames(class(x))
+  slot_check <- sapply(snames, function(i) .hasSlot(x, i))
+
+  if (any(!slot_check)) {
+    xnew <- new(class(x))
+    for (i in snames) {
+      if (slot_check[i]) slot(xnew, i) <- slot(x, i)
+    }
+    return(xnew)
+  } else {
+    return(x)
+  }
+}
+
 
 check_numeric <- function(object, name, size = 1, default) {
   object_name <- as.character(substitute(object))
