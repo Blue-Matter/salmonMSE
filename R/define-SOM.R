@@ -331,10 +331,10 @@ setMethod("initialize", "SOM",
 #' @slot Return_HOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be hatchery origin spawners.
 #' @slot Escapement_NOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be natural origin spawners.
 #' @slot Escapement_HOS Array `[nsim, nstocks, nage, proyears]`. The escapement of mature fish that will be hatchery origin spawners.
-#' @slot NOB Array `[nsim, nstocks, proyears]`. Natural origin broodtake.
-#' @slot HOB Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (local + strays).
-#' @slot HOB_stray Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (strays only).
-#' @slot HOB_import Array `[nsim, nstocks, proyears]`. Imported hatchery origin broodtake used for hatchery production.
+#' @slot NOB Array `[nsim, nstocks, nage, proyears]`. Natural origin broodtake.
+#' @slot HOB Array `[nsim, nstocks, nage, proyears]`. Hatchery origin broodtake (local + strays).
+#' @slot HOB_stray Array `[nsim, nstocks, nage, proyears]`. Hatchery origin broodtake (strays only).
+#' @slot HOB_import Array `[nsim, nstocks, nage, proyears]`. Imported hatchery origin broodtake used for hatchery production.
 #' @slot NOS Array `[nsim, nstocks, nage, proyears]`. Natural origin spawners.
 #' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (local + strays).
 #' @slot HOS_stray Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (strays only).
@@ -454,111 +454,6 @@ setClass(
 
 
 setMethod("initialize", "SMSE",
-          function(.Object, ...) {
-
-            dots <- list(...)
-            if (length(dots)) {
-              for (i in names(dots)) slot(.Object, i) <- dots[[i]]
-            }
-
-            attr(.Object, "version") <- packageVersion("salmonMSE")
-            attr(.Object, "date") <- date()
-            attr(.Object, "R.version") <- getRversion()
-
-            return(.Object)
-          })
-
-
-
-# ---- SHist Class -----
-#' Class \code{"SHist"}
-#'
-#' Stores the outputs from the historical reconstruction of salmon operating models. Primarily used for development and debugging.
-#'
-#' @name SHist-class
-#' @docType class
-#' @slot Name Character. Identifying name
-#' @slot nyears Integer, number of historica years
-#' @slot nsim Integer. The number of simulations
-#' @slot nstocks Integer. The number of stocks
-#' @slot Snames Character. Stock names
-#' @slot Egg_NOS Array `[nsim, nstocks, nyears]`. Spawning output, i.e., egg production, of natural origin spawners.
-#' @slot Egg_HOS Array `[nsim, nstocks, nyears]`. Spawning output of hatchery origin spawners.
-#' @slot Smolt Array `[nsim, nstocks, nyears]`. Natural smolt production (sum of offspring of natural and hatchery spawners).
-#' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
-#' @slot Njuv_NOS Array `[nsim, nstocks, nage, nyears]`. Abundance of juvenile natural origin fish at the beginning of the year.
-#' @slot Njuv_HOS Array `[nsim, nstocks, nage, nyears]`. Abundance of juvenile hatchery origin fish at the beginning of the year.
-#' @slot Return_NOS Array `[nsim, nstocks, nage, nyears]`. Mature fish that will be natural origin spawners.
-#' @slot Return_HOS Array `[nsim, nstocks, nage, nyears]`. Mature fish that will be hatchery origin spawners.
-#' @slot Escapement_NOS Array `[nsim, nstocks, nage, nyears]`. The escapement of mature fish that will be natural origin spawners.
-#' @slot Escapement_HOS Array `[nsim, nstocks, nage, nyears]`. The escapement of mature fish that will be hatchery origin spawners.
-#' @slot NOS Array `[nsim, nstocks, proyears]`. Natural origin spawners.
-#' @slot HOS Array `[nsim, nstocks, proyears]`. Hatchery origin spawners.
-#' @slot HOS_effective Array `[nsim, nstocks, proyears]`. Hatchery origin spawners discounted by `gamma`.
-#' @slot KPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of natural origin spawners.
-#' @slot KT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of natural origin spawners.
-#' @slot KPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of hatchery origin spawners.
-#' @slot KT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of hatchery origin spawners.
-#' @slot DPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery released catch (live and dead) of natural origin spawners.
-#' @slot DT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) of natural origin spawners.
-#' @slot DPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery released catch (live and dead) of hatchery origin spawners.
-#' @slot DT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) hatchery origin spawners.
-#' @slot UPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate (from kept catch) of natural origin spawners.
-#' @slot UT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of natural origin spawners.
-#' @slot UPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
-#' @slot UT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of hatchery origin spawners.
-#' @slot ExPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation rate (from kept catch and dead releases) of natural origin spawners.
-#' @slot ExT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate of natural origin spawners.
-#' @slot ExPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation rate of hatchery origin spawners.
-#' @slot ExT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate of hatchery origin spawners.
-#' @slot Misc List. Miscellaneous output
-#' @export
-#' @keywords classes
-#' @examples
-#' showClass("SHist")
-setClass(
-  "SHist",
-  slots = c(
-    Name = "character",
-    nyears = "numeric",
-    nsim = "numeric",
-    nstocks = "numeric",
-    Snames = "character",
-    Egg_NOS = "array",
-    Egg_HOS = "array",
-    Smolt = "array",
-    Smolt_Rel = "array",
-    Njuv_NOS = "array",
-    Njuv_HOS = "array",
-    Return_NOS = "array",
-    Return_HOS = "array",
-    Escapement_NOS = "array",
-    Escapement_HOS = "array",
-    NOS = "array",
-    HOS = "array",
-    HOS_effective = "array",
-    KPT_NOS = "array",
-    KT_NOS = "array",
-    KPT_HOS = "array",
-    KT_HOS = "array",
-    DPT_NOS = "array",
-    DT_NOS = "array",
-    DPT_HOS = "array",
-    DT_HOS = "array",
-    UPT_NOS = "array",
-    UT_NOS = "array",
-    UPT_HOS = "array",
-    UT_HOS = "array",
-    ExPT_NOS = "array",
-    ExT_NOS = "array",
-    ExPT_HOS = "array",
-    ExT_HOS = "array",
-    Misc = "list"
-  )
-)
-
-
-setMethod("initialize", "SHist",
           function(.Object, ...) {
 
             dots <- list(...)
