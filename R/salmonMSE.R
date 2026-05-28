@@ -247,9 +247,15 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   nsim <- length(sims)
   proyears <- SOM@proyears
 
+  #### Data objects from SOM ----
   # Hatchery arguments
   hatchery_args <- define_hatchery_args(SOM)
   m <- sapply(SOM@Hatchery, slot, "m") # Mark rate, need to make sure check_SOM default is length 1
+
+  do_hatchery <- sapply(1:ns, function(s) hatchery_args[[s]]$egg_target > 0)
+  has_strays <- sapply(1:ns, function(s) {
+    any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
+  })
 
   # Stock recruit parameters
   SRRpars <- define_SRRpars(SOM)
@@ -259,42 +265,6 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
   # Freshwater functions and arguments
   habitat_args <- define_habitat_args(SOM)
-
-  #### Arrays of state variables ----
-  # Marine life stages, brood, egg production by age
-  Njuv_NOS <- Return_NOS <- Escapement_NOS <- NOB <- NOS <- Egg_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
-  Njuv_HOS <- Return_HOS <- Escapement_HOS <- HOB <- HOB_stray <-
-    HOS <- HOS_stray <- HOS_effective <- Egg_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
-  HOB_import <- array(NA_real_, c(nsim, ns, nage, proyears))
-
-  # Early freshwater life stages
-  Fry_NOS <- Smolt_NOS <- Fry_HOS <- Smolt_HOS <- array(NA_real_, c(nsim, ns, proyears, n_g))
-  Rel <- Smolt_Rel <- array(NA_real_, c(nsim, ns, proyears, n_r))
-
-  # In-river removals
-  IRR_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
-  IRR_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
-
-  # Marine catch and exploitation rate
-  KPT_NOS <- KT_NOS <- DPT_NOS <- DDPT_NOS <- DT_NOS <- DDT_NOS <-
-    UPT_NOS <- UT_NOS <- ExPT_NOS <- ExT_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
-  KPT_HOS <- KT_HOS <- DPT_HOS <- DDPT_HOS <- DT_HOS <- DDT_HOS <-
-    UPT_HOS <- UT_HOS <- ExPT_HOS <- ExT_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
-
-  pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(nsim, ns, proyears))
-
-  zbar <- fitness <- array(NA_real_, c(nsim, ns, 2, proyears)) # proyears indexes brood year
-  zbar_brood <- array(NA_real_, c(nsim, ns, nage, 2, proyears)) # proyears indexes return year
-  fitness_loss <- array(NA_real_, c(nsim, ns, proyears, 2, 3)) # By brood year
-
-  Mjuv_loss_NOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_g))
-  Mjuv_loss_HOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_r))
-
-  #### Data objects from SOM ----
-  do_hatchery <- sapply(1:ns, function(s) hatchery_args[[s]]$egg_target > 0)
-  has_strays <- sapply(1:ns, function(s) {
-    any(SOM@stray[-s, s] > 0) || sum(SOM@Hatchery[[s]]@stray_external)
-  })
 
   # Maturity
   p_mature_NOS <- sapply2(1:ns, function(s) SOM@Bio[[s]]@p_mature[sims, , , drop = FALSE]) %>%
@@ -341,6 +311,11 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   vulPT[] <- sapply2(1:ns, function(s) SOM@Harvest[[s]]@vulPT[sims, ]) %>% aperm(c(1, 3, 2))
   vulT[] <- sapply2(1:ns, function(s) SOM@Harvest[[s]]@vulT[sims, ]) %>% aperm(c(1, 3, 2))
 
+  # Adult equivalents for preterminal fisheries
+  AEQ_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  AEQ_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+  AEQ_NOS[, , nage, , ] <- AEQ_HOS[, , nage, , ] <- 1
+
   # Release mortality
   release_mort <- array(NA_real_, c(2, ns))
   release_mort[] <- sapply(SOM@Harvest, slot, "release_mort") # Need to make sure check_SOM default is length 2
@@ -352,6 +327,38 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   stray_external <- array(NA_real_, c(ns, nage, n_r))
   stray_external[] <- sapply2(SOM@Hatchery, slot, "stray_external") %>%
     aperm(c(3, 1, 2))
+
+  #### Arrays of state variables ----
+  # Marine life stages, brood, egg production by age
+  Njuv_NOS <- Return_NOS <- Escapement_NOS <- NOB <- NOS <- Egg_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  Njuv_HOS <- Return_HOS <- Escapement_HOS <- HOB <- HOB_stray <-
+    HOS <- HOS_stray <- HOS_effective <- Egg_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+  HOB_import <- array(NA_real_, c(nsim, ns, nage, proyears))
+
+  # Early freshwater life stages
+  Fry_NOS <- Smolt_NOS <- Fry_HOS <- Smolt_HOS <- array(NA_real_, c(nsim, ns, proyears, n_g))
+  Rel <- Smolt_Rel <- array(NA_real_, c(nsim, ns, proyears, n_r))
+
+  # In-river removals
+  IRR_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  IRR_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+
+  # Marine catch and exploitation rate
+  KPT_NOS <- KT_NOS <- DPT_NOS <- DDPT_NOS <- DT_NOS <- DDT_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  KPT_HOS <- KT_HOS <- DPT_HOS <- DDPT_HOS <- DT_HOS <- DDT_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+
+  UPT_NOS <- UT_NOS <- ExPT_NOS <- ExT_NOS <-
+    UPT_HOS <- UT_HOS <- ExPT_HOS <- ExT_HOS <-
+    pNOB <- pHOS_census <- pHOS_effective <- PNI <- p_wild <- array(NA_real_, c(nsim, ns, proyears))
+
+  zbar <- fitness <- array(NA_real_, c(nsim, ns, 2, proyears)) # proyears indexes brood year
+  zbar_brood <- array(NA_real_, c(nsim, ns, nage, 2, proyears)) # proyears indexes return year
+  fitness_loss <- array(NA_real_, c(nsim, ns, proyears, 2, 3)) # By brood year
+
+  Mjuv_loss_NOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_g))
+  Mjuv_loss_HOS <- array(NA_real_, c(nsim, ns, nage-1, proyears, n_r))
+  Mjuv_loss_NOS[, , , 1, ] <- Mjuv_NOS[, , , 1, ] # For first year AEQs
+  Mjuv_loss_HOS[, , , 1, ] <- Mjuv_HOS[, , , 1, ]
 
   #### Initialize population ----
   Njuv_NOS[, , , 1, ] <- sapply2(1:ns, function(s) SOM@Historical[[s]]@InitNjuv_NOS[sims, , , drop = FALSE]) %>%
@@ -368,24 +375,36 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   #### Projection ----
   for (y in 1:proyears) {
 
+    # Calculate AEQ
+    if (sum(u_preterminal, K_PT, na.rm = TRUE)) {
+      for (a in seq(nage-1, 1)) {
+        AEQ_NOS[, , a, y, ] <- p_mature_NOS[, , a, y, ] + (1 - p_mature_NOS[, , a, y, ]) *
+          exp(-Mjuv_loss_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
+        AEQ_HOS[, , a, y, ] <- p_mature_HOS[, , a, y, ] + (1 - p_mature_HOS[, , a, y, ]) *
+          exp(-Mjuv_loss_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
+      }
+    }
+
     # Preterminal catch - harvest management acts upon on all stocks simultaneously
     PT_Calcs <- lapply(1:nsim, function(x) {
       catch_func(
         NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
         HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
         type = type_PT,
-        U = u_preterminal,
+        U = if (is.matrix(u_preterminal)) u_preterminal[x, y] else u_preterminal,
         K = K_PT,
         V = matrix(vulPT[x, , ], ns, nage),
         m = m,
         MSF = MSF_PT, # Need to make sure check_SOM default is length 1
-        release_mort = release_mort[1, ]
+        release_mort = release_mort[1, ],
+        p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
+        p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
+        AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
+        AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
       )
     })
     vars <- names(PT_Calcs[[1]])
-    PT_Calcs_y <- lapply(vars, function(i) {
-      sapply2(PT_Calcs, getElement, i)
-    }) %>%
+    PT_Calcs_y <- lapply(vars, function(i) sapply2(PT_Calcs, getElement, i)) %>%
       structure(names = vars)
 
     KPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_NO, c(4, 1:3))
@@ -396,15 +415,15 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     DPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_HO, c(4, 1:3))
     DDPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$DD_HO, c(4, 1:3))
 
-    UPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$U_NO, c(4, 1:3))
-    ExPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$Ex_NO, c(4, 1:3))
+    UPT_NOS[, , y] <- t(PT_Calcs_y$U_NO)
+    ExPT_NOS[, , y] <- t(PT_Calcs_y$Ex_NO)
 
-    UPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$U_HO, c(4, 1:3))
-    ExPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$Ex_HO, c(4, 1:3))
+    UPT_HOS[, , y] <- t(PT_Calcs_y$U_HO)
+    ExPT_HOS[, , y] <- t(PT_Calcs_y$Ex_HO)
 
     # Maturity (begin second half)
-    Return_NOS[, , , y, ] <- Njuv_NOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
-    Return_HOS[, , , y, ] <- Njuv_HOS[, , , y, ] * (1 - ExPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
+    Return_NOS[, , , y, ] <- (Njuv_NOS[, , , y, ] - KPT_NOS[, , , y, ] - DDPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
+    Return_HOS[, , , y, ] <- (Njuv_HOS[, , , y, ] - KPT_HOS[, , , y, ] - DDPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
 
     # Terminal marine catch - harvest management acts upon on all stocks simultaneously
     T_Calcs <- lapply(1:nsim, function(x) {
@@ -412,7 +431,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
         HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
         type = type_T,
-        U = u_terminal,
+        U = if (is.matrix(u_terminal)) u_terminal[x, y] else u_terminal,
         K = K_T,
         V = matrix(vulT[x, , ], ns, nage),
         m = m,
@@ -421,9 +440,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
       )
     })
     vars <- names(T_Calcs[[1]])
-    T_Calcs_y <- lapply(vars, function(i) {
-      sapply2(T_Calcs, getElement, i)
-    }) %>%
+    T_Calcs_y <- lapply(vars, function(i) sapply2(T_Calcs, getElement, i)) %>%
       structure(names = vars)
 
     KT_NOS[, , , y, ] <- aperm(T_Calcs_y$K_NO, c(4, 1:3))
@@ -434,15 +451,15 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     DT_HOS[, , , y, ] <- aperm(T_Calcs_y$D_HO, c(4, 1:3))
     DDT_HOS[, , , y, ] <- aperm(T_Calcs_y$DD_HO, c(4, 1:3))
 
-    UT_NOS[, , , y, ] <- aperm(T_Calcs_y$U_NO, c(4, 1:3))
-    ExT_NOS[, , , y, ] <- aperm(T_Calcs_y$Ex_NO, c(4, 1:3))
+    UT_NOS[, , y] <- t(T_Calcs_y$U_NO)
+    ExT_NOS[, , y] <- t(T_Calcs_y$Ex_NO)
 
-    UT_HOS[, , , y, ] <- aperm(T_Calcs_y$U_HO, c(4, 1:3))
-    ExT_HOS[, , , y, ] <- aperm(T_Calcs_y$Ex_HO, c(4, 1:3))
+    UT_HOS[, , y] <- t(T_Calcs_y$U_HO)
+    ExT_HOS[, , y] <- t(T_Calcs_y$Ex_HO)
 
-    # Escapement from marine fisheries
-    Escapement_NOS[, , , y, ] <- Return_NOS[, , , y, ] * (1 - ExT_NOS[, , , y, ])
-    Escapement_HOS[, , , y, ] <- Return_HOS[, , , y, ] * (1 - ExT_HOS[, , , y, ])
+    # Escapement from marine fisheries are survivors of terminal fishery
+    Escapement_NOS[, , , y, ] <- Return_NOS[, , , y, ] - KT_NOS[, , , y, ] - DDT_NOS[, , , y, ]
+    Escapement_HOS[, , , y, ] <- Return_HOS[, , , y, ] - KT_HOS[, , , y, ] - DDT_HOS[, , , y, ]
 
     # Move strays (internally)
     Stray_Calcs <- lapply(1:nsim, function(x) {
@@ -561,8 +578,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     if (y < proyears) {
       Njuv_NOS_midpoint <- array(NA, c(nsim, ns, nage, n_g))
       Njuv_HOS_midpoint <- array(NA, c(nsim, ns, nage, n_r))
-      Njuv_NOS_midpoint[] <- Njuv_NOS[, , , y, ] * (1 - ExPT_NOS[, , , y, ]) * (1 - p_mature_NOS[, , , y, ])
-      Njuv_HOS_midpoint[] <- Njuv_HOS[, , , y, ] * (1 - ExPT_HOS[, , , y, ]) * (1 - p_mature_HOS[, , , y, ])
+      Njuv_NOS_midpoint[] <- (Njuv_NOS[, , , y, ] - KPT_NOS[, , , y, ] - DDPT_NOS[, , , y, ]) * (1 - p_mature_NOS[, , , y, ])
+      Njuv_HOS_midpoint[] <- (Njuv_HOS[, , , y, ] - KPT_HOS[, , , y, ] - DDPT_HOS[, , , y, ]) * (1 - p_mature_HOS[, , , y, ])
 
       for (a in seq(1, nage-1)) {
         t <- y - a
@@ -617,31 +634,6 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     )
   }
 
-  # Harvest rate and exploitation rate aggregated across life history groups and release strategies
-  UPT_NOS_ <- apply(KPT_NOS, 1:4, sum)/apply(Njuv_NOS, 1:4, sum)
-  UPT_NOS_[is.na(UPT_NOS_)] <- 0
-
-  UT_NOS_ <- apply(KT_NOS, 1:4, sum)/apply(Return_NOS, 1:4, sum)
-  UT_NOS_[is.na(UT_NOS_)] <- 0
-
-  UPT_HOS_ <- apply(KPT_HOS, 1:4, sum)/apply(Njuv_HOS, 1:4, sum)
-  UPT_HOS_[is.na(UPT_HOS_)] <- 0
-
-  UT_HOS_ <- apply(KT_HOS, 1:4, sum)/apply(Return_HOS, 1:4, sum)
-  UT_HOS_[is.na(UT_HOS_)] <- 0
-
-  ExPT_NOS_ <- apply(KPT_NOS + DDPT_NOS, 1:4, sum)/apply(Njuv_NOS, 1:4, sum)
-  ExPT_NOS_[is.na(ExPT_NOS_)] <- 0
-
-  ExT_NOS_ <- apply(KT_NOS + DDT_NOS, 1:4, sum)/apply(Return_NOS, 1:4, sum)
-  ExT_NOS_[is.na(ExT_NOS_)] <- 0
-
-  ExPT_HOS_ <- apply(KPT_HOS + DDPT_HOS, 1:4, sum)/apply(Njuv_HOS, 1:4, sum)
-  ExPT_HOS_[is.na(ExPT_HOS_)] <- 0
-
-  ExT_HOS_ <- apply(KT_HOS + DDT_HOS, 1:4, sum)/apply(Return_HOS, 1:4, sum)
-  ExT_HOS_[is.na(ExT_HOS_)] <- 0
-
   # Output
   SMSE <- new(
     "SMSE",
@@ -671,22 +663,22 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     HOS = apply(HOS, 1:4, sum),
     HOS_stray = apply(HOS_stray, 1:4, sum),
     HOS_effective = apply(HOS_effective, 1:4, sum),
-    KPT_NOS = apply(KPT_NOS, c(1:2, 4), sum),
-    KT_NOS = apply(KT_NOS, c(1:2, 4), sum),
-    KPT_HOS = apply(KPT_HOS, c(1:2, 4), sum),
-    KT_HOS = apply(KT_HOS, c(1:2, 4), sum),
-    DPT_NOS = apply(DPT_NOS, c(1:2, 4), sum),
-    DT_NOS = apply(DT_NOS, c(1:2, 4), sum),
-    DPT_HOS = apply(DPT_HOS, c(1:2, 4), sum),
-    DT_HOS = apply(DT_HOS, c(1:2, 4), sum),
-    UPT_NOS = UPT_NOS_,
-    UT_NOS = UT_NOS_,
-    UPT_HOS = UPT_HOS_,
-    UT_HOS = UT_HOS_,
-    ExPT_NOS = ExPT_NOS_,
-    ExT_NOS = ExT_NOS_,
-    ExPT_HOS = ExPT_HOS_,
-    ExT_HOS = ExT_HOS_,
+    KPT_NOS = apply(KPT_NOS, 1:4, sum),
+    KT_NOS = apply(KT_NOS, 1:4, sum),
+    KPT_HOS = apply(KPT_HOS, 1:4, sum),
+    KT_HOS = apply(KT_HOS, 1:4, sum),
+    DPT_NOS = apply(DPT_NOS, 1:4, sum),
+    DT_NOS = apply(DT_NOS, 1:4, sum),
+    DPT_HOS = apply(DPT_HOS, 1:4, sum),
+    DT_HOS = apply(DT_HOS, 1:4, sum),
+    UPT_NOS = UPT_NOS,
+    UT_NOS = UT_NOS,
+    UPT_HOS = UPT_HOS,
+    UT_HOS = UT_HOS,
+    ExPT_NOS = ExPT_NOS,
+    ExT_NOS = ExT_NOS,
+    ExPT_HOS = ExPT_HOS,
+    ExT_HOS = ExT_HOS,
     fitness = fitness,
     pNOB = pNOB,
     pHOS_census = pHOS_census,

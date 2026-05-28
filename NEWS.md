@@ -6,9 +6,9 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Parallel processing by individual operating model is now supported with the `ncores` argument to `salmonMSE()`.
 - Check for NAs in start values for `fit_CM`.
 - Update `.CM_MSY()` and `.CM_Sgen()` functions for parallel computation.
-- MSY calculations use adult equivalents (AEQs) for preterminal fisheries.
+- MSY calculations and catch calculations use adult equivalents (AEQs) for preterminal fisheries.
 - Add new slot `Hatchery@p_female_brood` for sex-selective brood.
-- `SMSE` output object reports brood numbers with age dimension.
+- `SMSE` output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.
 
 # 2.1.0
 

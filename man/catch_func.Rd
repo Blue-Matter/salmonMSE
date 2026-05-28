@@ -13,7 +13,11 @@ catch_func(
   V,
   MSF = FALSE,
   m = 1,
-  release_mort = 0
+  release_mort = 0,
+  p_mature_NO = array(1, dim(NO)),
+  p_mature_HO = array(1, dim(HO)),
+  AEQ_NO = array(1, dim(NO)),
+  AEQ_HO = array(1, dim(HO))
 )
 }
 \arguments{
@@ -34,6 +38,14 @@ catch_func(
 \item{m}{Numeric vector length \verb{[ns]}, mark rate of hatchery-origin fish. Only used if \code{MSF = TRUE}.}
 
 \item{release_mort}{Numeric vector length \verb{[ns]}, proportion of released unmarked fish that die. Only used if \code{MSF = TRUE}.}
+
+\item{p_mature_NO}{Optional, array \verb{[ns, nage, n_g]} of maturity for natural-origin fish. Only use to calculate adult equivalents escapement.}
+
+\item{p_mature_HO}{Optional, array \verb{[ns, nage, n_r]} of maturity for hatchery-origin fish. Only use to calculate adult equivalents escapement.}
+
+\item{AEQ_NO}{Optional, array \verb{[ns, nage, n_g]} of adult equivalents for natural-origin fish.}
+
+\item{AEQ_HO}{Optional, array \verb{[ns, nage, n_r]} of adult equivalents for hatchery-origin fish.}
 }
 \value{
 Named list:
@@ -44,10 +56,12 @@ Named list:
 \item \code{D_HO} discarded (live + dead) hatchery-origin catch, same dimension as \code{HO}
 \item \code{DD_NO} dead discarded natural-origin catch, same dimension as \code{NO}
 \item \code{DD_HO} dead discarded hatchery-origin catch, same dimension as \code{HO}
-\item \code{U_NO} natural-origin harvest rate (ratio of kept catch and abundance), same dimension as \code{NO}
-\item \code{U_HO} hatchery-origin harvest rate (ratio of dead catch and abundance), same dimension as \code{HO}
-\item \code{Ex_NO} natural-origin exploitation rate (ratio of dead catch and abundance), same dimension as \code{NO}
-\item \code{Ex_HO} hatchery-origin exploitation rate (ratio of dead catch and abundance), same dimension as \code{HO}
+\item \code{Nsurv_NO} natural-origin survivors, same dimension as \code{NO}
+\item \code{Nsurv_HO} hatchery-origin survivors, same dimension as \code{HO}
+\item \code{U_NO} natural-origin harvest rate (ratio of kept catch and abundance), vector \code{ns}
+\item \code{U_HO} hatchery-origin harvest rate (ratio of dead catch and abundance), vector \code{ns}
+\item \code{Ex_NO} natural-origin exploitation rate (ratio of dead catch and abundance), vector \code{ns}
+\item \code{Ex_HO} hatchery-origin exploitation rate (ratio of dead catch and abundance), vector \code{ns}
 }
 }
 \description{
