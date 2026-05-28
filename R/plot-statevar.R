@@ -133,7 +133,9 @@ get_statevar <- function(SMSE, var, s, agg.fun = sum) {
     x[] <- local({
       Esc_NOS <- apply(SMSE@Escapement_NOS[, s, , ], c(1, 3), sum)
       Esc_HOS <- apply(SMSE@Escapement_HOS[, s, , ], c(1, 3), sum)
-      (SMSE@NOB[, s, ] + SMSE@HOB[, s, ])/(Esc_NOS + Esc_HOS)
+      NOB <- apply(SMSE@NOB[, s, , ], c(1, 3), sum)
+      HOB <- apply(SMSE@HOB[, s, , ], c(1, 3), sum)
+      (NOB + HOB)/(Esc_NOS + Esc_HOS)
     })
   }
 
