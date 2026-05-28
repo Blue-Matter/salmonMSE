@@ -130,7 +130,7 @@ define_hatchery_args <- function(SOM) {
 
         fec_brood = Hatchery@fec_brood,
         s_prespawn = Hatchery@s_prespawn,
-        p_female = SOM@Bio[[s]]@p_female,
+        p_female = Hatchery@p_female_brood,
 
         p_yearling = p_yearling,
         p_subyearling = p_subyearling,

@@ -7,6 +7,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Check for NAs in start values for `fit_CM`.
 - Update `.CM_MSY()` and `.CM_Sgen()` functions for parallel computation.
 - MSY calculations use adult equivalents (AEQs) for preterminal fisheries.
+- Add new slot `Hatchery@p_female_brood` for sex-selective brood.
 
 # 2.1.0
 

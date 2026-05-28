@@ -209,6 +209,7 @@ setClass(
     premove_HOS = "num.function",
     premove_NOS = "num.function",
     fec_brood = "num.array",
+    p_female_brood = "numeric",
     fitness_type = "character",
     theta = "numeric",
     rel_loss = "numeric",
