@@ -374,7 +374,7 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
     Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
   } else {
     Ex <- apply(SMSE@ExPT_NOS[, s, , ], c(1, 3), max)
-    Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UPT_MSY", ], 2, FUN)
+    Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UPT_AEQ_MSY", ], 2, FUN)
   }
 
   if (figure) {
