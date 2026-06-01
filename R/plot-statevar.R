@@ -318,13 +318,14 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
 
   var_vec <- outer(paste0(c("PT", "T"), "_"), c("NOS", "HOS"), FUN = "paste0") %>%
     as.character()
+  var_name <- paste0(var, var_vec)
 
-  x <- sapply(var_vec, function(i) {
-    plot_statevar_ts(SMSE, var = paste0(var, i), s = s, figure = FALSE, quant = FALSE, agg.fun = max)
-  }, simplify = "array") %>%
+  x <- sapply(var_name, function(i) {
+    plot_statevar_ts(SMSE, var = i, s = s, figure = FALSE, quant = FALSE)
+  }, simplify = "array") |>
     apply(2:3, FUN)
 
-  if (figure) {
+  if (figure && sum(x)) {
     Year <- 1:SMSE@proyears
 
     if (missing(ylim)) ylim <- c(0, 1.1) * range(x, na.rm = TRUE)
@@ -340,9 +341,9 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
 
     plot(Year, NULL, type = 'n', col = "grey40", ylim = ylim, xlab = "Projection Year",
          ylab = ylab, ...)
-    col <- 1:length(var_vec)
+    col <- 1:length(var_name)
 
-    for (i in 1:length(var_vec)) {
+    for (i in 1:length(var_name)) {
       x_i <- x[, i]
       ind <- x_i > 0
       lines(Year[ind], x_i[ind], type = 'o', pch = 1, col = col[i], lty = 1)
@@ -370,17 +371,18 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 
   S_SMSY <- apply(NOS/SMSE@Misc$Ref[[s]]["Spawners_MSY", ], 2, FUN)
   if (type == "T") {
-    Ex <- apply(SMSE@ExT_NOS[, s, , ], c(1, 3), max)
+    Ex <- SMSE@ExT_NOS[, s, ]
     Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UT_MSY", ], 2, FUN)
   } else {
-    Ex <- apply(SMSE@ExPT_NOS[, s, , ], c(1, 3), max)
+    Ex <- SMSE@ExPT_NOS[, s, ]
     Ex_ExMSY <- apply(Ex/SMSE@Misc$Ref[[s]]["UPT_AEQ_MSY", ], 2, FUN)
   }
 
   if (figure) {
+    NOSind <- colSums(NOS) > 0
     Sind <- !is.na(S_SMSY) & is.finite(S_SMSY)
     Eind <- !is.na(Ex_ExMSY) & is.finite(Ex_ExMSY)
-    ind <- Sind & Eind
+    ind <- NOSind & Sind & Eind
     npoints <- sum(ind)
 
     if (npoints > 0) {
@@ -390,12 +392,8 @@ plot_Kobe <- function(SMSE, s = 1, FUN = median, figure = TRUE, xlim, ylim,
 
       cols <- grDevices::hcl.colors(length(Year), palette = "viridis", rev = FALSE)
 
-      if (missing(xlim)) {
-        xlim <- c(0, 1.1) * range(S_SMSY, na.rm = TRUE)
-      }
-      if (missing(ylim)) {
-        ylim <- c(0, 1.1) * range(Ex_ExMSY, na.rm = TRUE)
-      }
+      if (missing(xlim)) xlim <- c(0, 1.1) * range(S_SMSY, na.rm = TRUE)
+      if (missing(ylim)) ylim <- c(0, 1.1) * range(Ex_ExMSY, na.rm = TRUE)
 
       plot(S_SMSY[ind], Ex_ExMSY[ind], type = "p", pch = 21, bg = cols[ind],
            xlab = xlab, ylab = ylab,
