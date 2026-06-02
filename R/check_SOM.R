@@ -184,6 +184,9 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (!length(Hatchery@fec_brood)) Hatchery@fec_brood <- Bio@fec
       Hatchery <- check_maxage2array(Hatchery, "fec_brood", maxage, nsim, proyears)
 
+      if (!length(Hatchery@p_female_brood)) Hatchery@p_female_brood <- Bio@p_female
+      Hatchery <- check_numeric(Hatchery, "p_female_brood", size = maxage, default = Bio@p_female)
+
       Hatchery <- check_numeric(Hatchery, "phatchery", default = NA)
 
       if (!is.function(Hatchery@premove_HOS) && is.numeric(Hatchery@premove_HOS)) {

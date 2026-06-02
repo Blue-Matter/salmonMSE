@@ -47,7 +47,8 @@
 #'  The proportion of natural fish removed is adjusted by the mark rate, i.e., `p = premove_NOS * (1-m)`.
 #'  Default is zero. This slot can take a function that returns the proportion (p) based on hatchery-origin and natural-origin abundance (after brood removal), thus
 #'  allowing for bespoke rules for in-river harvest. The function should be of the form: `function(NO, HO, m) {return(p)}`.
-#' @slot fec_brood Vector of length `maxage` or an array with dimension `[nsim, maxage, proyears]`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
+#' @slot fec_brood Vector length `maxage` or an array with dimension `[nsim, maxage, proyears]`. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses `Bio@fec`.
+#' @slot p_female_brood Numeric or vector `maxage`. Proportion of females of brood used to calculate hatchery egg production, for situations with sex-selective brood. If missing, uses `Bio@p_female`.
 #' @slot fitness_type Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".
 #' @slot theta Vector length 2. The optimum phenotype value for the natural and hatchery environments.
 #' @slot rel_loss Vector length 3. The loss in fitness apportioned among the egg, fry, and smolt life stages which reduces survival. Theoretically, the three values should sum to 1. Alternatively,

@@ -85,7 +85,9 @@ The proportion of natural fish removed is adjusted by the mark rate, i.e., \code
 Default is zero. This slot can take a function that returns the proportion (p) based on hatchery-origin and natural-origin abundance (after brood removal), thus
 allowing for bespoke rules for in-river harvest. The function should be of the form: \code{function(NO, HO, m) {return(p)}}.}
 
-\item{\code{fec_brood}}{Vector of length \code{maxage} or an array with dimension \verb{[nsim, maxage, proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
+\item{\code{fec_brood}}{Vector length \code{maxage} or an array with dimension \verb{[nsim, maxage, proyears]}. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses \code{Bio@fec}.}
+
+\item{\code{p_female_brood}}{Numeric or vector \code{maxage}. Proportion of females of brood used to calculate hatchery egg production, for situations with sex-selective brood. If missing, uses \code{Bio@p_female}.}
 
 \item{\code{fitness_type}}{Character vector length 2. The fitness function to apply in the natural and hatchery environment, respectively. For each, either "Ford" or "none".}
 
