@@ -72,17 +72,16 @@
 
 
 <dt><code>u_preterminal</code></dt>
-<dd><p>Numeric. If <code>type_PT = "u"</code>, the exploitation rate of the immature stock in the pre-terminal fishery. This will be converted
-to an instantaneous fishing mortality rate, i.e., <code>F_preterminal = -log(1 - u_preterminal)</code>.</p></dd>
+<dd><p>Numeric. Can also be a matrix <code>[nsim, proyears]</code>. If <code>type_PT = "u"</code>, the harvest rate of the immature component of the population in the pre-terminal fishery.
+The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents.</p></dd>
 
 
 <dt><code>u_terminal</code></dt>
-<dd><p>Numeric. If <code>type_T = "u"</code>, The exploitation rate of the return in the terminal fishery. This will be converted
-to an instantaneous fishing mortality rate, i.e., <code>F_terminal = -log(1 - u_terminal)</code>.</p></dd>
+<dd><p>Numeric. Can also be a matrix <code>[nsim, proyears]</code>. If <code>type_T = "u"</code>, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.</p></dd>
 
 
 <dt><code>K_PT</code></dt>
-<dd><p>Numeric. If <code>type_PT = "catch"</code>, the catch target of the immature stock in the pre-terminal fishery.</p></dd>
+<dd><p>Numeric. If <code>type_PT = "catch"</code>, the catch target of the immature component of the population in the pre-terminal fishery.</p></dd>
 
 
 <dt><code>K_T</code></dt>

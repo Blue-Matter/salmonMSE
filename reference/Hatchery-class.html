@@ -179,7 +179,11 @@ allowing for bespoke rules for in-river harvest. The function should be of the f
 
 
 <dt><code>fec_brood</code></dt>
-<dd><p>Vector of length <code>maxage</code> or an array with dimension <code>[nsim, maxage, proyears]</code>. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses <code>Bio@fec</code>.</p></dd>
+<dd><p>Vector length <code>maxage</code> or an array with dimension <code>[nsim, maxage, proyears]</code>. The fecundity schedule of broodtake to calculate the total egg production for the hatchery. If missing, uses <code>Bio@fec</code>.</p></dd>
+
+
+<dt><code>p_female_brood</code></dt>
+<dd><p>Numeric or vector <code>maxage</code>. Proportion of females of brood used to calculate hatchery egg production, for situations with sex-selective brood. If missing, uses <code>Bio@p_female</code>.</p></dd>
 
 
 <dt><code>fitness_type</code></dt>
@@ -252,17 +256,17 @@ an array by dimension <code>[nsim, maxage, 2]</code>, where the age slot corresp
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:         ptarget_NOB          phatchery        premove_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric        num.logical       num.function</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_NOS          fec_brood       fitness_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       num.function          num.array          character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         premove_NOS          fec_brood     p_female_brood</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       num.function          num.array            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:               theta           rel_loss         zbar_start</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric          num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        fitness_type              theta           rel_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          character            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  phenotype_variance   fitness_variance       heritability</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric            numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:       fitness_floor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          zbar_start phenotype_variance   fitness_variance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.array            numeric            numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        heritability      fitness_floor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:            numeric            numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Hatchery.list"</span>
 </code></pre></div>

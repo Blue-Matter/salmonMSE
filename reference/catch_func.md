@@ -15,7 +15,11 @@ catch_func(
   V,
   MSF = FALSE,
   m = 1,
-  release_mort = 0
+  release_mort = 0,
+  p_mature_NO = array(1, dim(NO)),
+  p_mature_HO = array(1, dim(HO)),
+  AEQ_NO = array(1, dim(NO)),
+  AEQ_HO = array(1, dim(HO))
 )
 ```
 
@@ -60,6 +64,26 @@ catch_func(
   Numeric vector length `[ns]`, proportion of released unmarked fish
   that die. Only used if `MSF = TRUE`.
 
+- p_mature_NO:
+
+  Optional, array `[ns, nage, n_g]` of maturity for natural-origin fish.
+  Only use to calculate adult equivalents escapement.
+
+- p_mature_HO:
+
+  Optional, array `[ns, nage, n_r]` of maturity for hatchery-origin
+  fish. Only use to calculate adult equivalents escapement.
+
+- AEQ_NO:
+
+  Optional, array `[ns, nage, n_g]` of adult equivalents for
+  natural-origin fish.
+
+- AEQ_HO:
+
+  Optional, array `[ns, nage, n_r]` of adult equivalents for
+  hatchery-origin fish.
+
 ## Value
 
 Named list:
@@ -78,14 +102,18 @@ Named list:
 
 - `DD_HO` dead discarded hatchery-origin catch, same dimension as `HO`
 
+- `Nsurv_NO` natural-origin survivors, same dimension as `NO`
+
+- `Nsurv_HO` hatchery-origin survivors, same dimension as `HO`
+
 - `U_NO` natural-origin harvest rate (ratio of kept catch and
-  abundance), same dimension as `NO`
+  abundance), vector `ns`
 
 - `U_HO` hatchery-origin harvest rate (ratio of dead catch and
-  abundance), same dimension as `HO`
+  abundance), vector `ns`
 
 - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and
-  abundance), same dimension as `NO`
+  abundance), vector `ns`
 
 - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and
-  abundance), same dimension as `HO`
+  abundance), vector `ns`

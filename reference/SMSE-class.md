@@ -112,22 +112,22 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 
 - `NOB`:
 
-  Array `[nsim, nstocks, proyears]`. Natural origin broodtake.
+  Array `[nsim, nstocks, nage, proyears]`. Natural origin broodtake.
 
 - `HOB`:
 
-  Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (local +
-  strays).
+  Array `[nsim, nstocks, nage, proyears]`. Hatchery origin broodtake
+  (local + strays).
 
 - `HOB_stray`:
 
-  Array `[nsim, nstocks, proyears]`. Hatchery origin broodtake (strays
-  only).
+  Array `[nsim, nstocks, nage, proyears]`. Hatchery origin broodtake
+  (strays only).
 
 - `HOB_import`:
 
-  Array `[nsim, nstocks, proyears]`. Imported hatchery origin broodtake
-  used for hatchery production.
+  Array `[nsim, nstocks, nage, proyears]`. Imported hatchery origin
+  broodtake used for hatchery production.
 
 - `NOS`:
 
@@ -190,44 +190,44 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 
 - `UPT_NOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery harvest
-  rate (from kept catch) of natural origin spawners.
+  Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate
+  (from adult equivalent kept catch) of natural origin spawners.
 
 - `UT_NOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Terminal fishery harvest rate
-  of natural origin spawners.
+  Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of
+  natural origin spawners.
 
 - `UPT_HOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery harvest
-  rate of hatchery origin spawners.
+  Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate
+  of hatchery origin spawners.
 
 - `UT_HOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Terminal fishery harvest rate
-  of hatchery origin spawners.
+  Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of
+  hatchery origin spawners.
 
 - `ExPT_NOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery
-  exploitation rate (from kept catch and dead releases) of natural
-  origin spawners.
+  Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation
+  rate (from kept catch and dead releases in adult equivalents) of
+  natural origin spawners.
 
 - `ExT_NOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Terminal fishery exploitation
-  rate of natural origin spawners.
+  Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate
+  of natural origin spawners.
 
 - `ExPT_HOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery
-  exploitation rate of hatchery origin spawners.
+  Array `[nsim, nstocks, proyears]`. Pre-terminal fishery exploitation
+  rate of hatchery origin spawners.
 
 - `ExT_HOS`:
 
-  Array `[nsim, nstocks, nage, proyears]`. Terminal fishery exploitation
-  rate of hatchery origin spawners.
+  Array `[nsim, nstocks, proyears]`. Terminal fishery exploitation rate
+  of hatchery origin spawners.
 
 - `fitness`:
 

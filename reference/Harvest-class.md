@@ -20,21 +20,21 @@ The component of the operating model that controls marine harvest.
 
 - `u_preterminal`:
 
-  Numeric. If `type_PT = "u"`, the exploitation rate of the immature
-  stock in the pre-terminal fishery. This will be converted to an
-  instantaneous fishing mortality rate, i.e.,
-  `F_preterminal = -log(1 - u_preterminal)`.
+  Numeric. Can also be a matrix `[nsim, proyears]`. If `type_PT = "u"`,
+  the harvest rate of the immature component of the population in the
+  pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch
+  to (kept AEQ catch + return), where AEQ are adult equivalents.
 
 - `u_terminal`:
 
-  Numeric. If `type_T = "u"`, The exploitation rate of the return in the
-  terminal fishery. This will be converted to an instantaneous fishing
-  mortality rate, i.e., `F_terminal = -log(1 - u_terminal)`.
+  Numeric. Can also be a matrix `[nsim, proyears]`. If `type_T = "u"`,
+  the harvest rate (ratio of kept catch to return) of the terminal
+  marine fishery.
 
 - `K_PT`:
 
   Numeric. If `type_PT = "catch"`, the catch target of the immature
-  stock in the pre-terminal fishery.
+  component of the population in the pre-terminal fishery.
 
 - `K_T`:
 

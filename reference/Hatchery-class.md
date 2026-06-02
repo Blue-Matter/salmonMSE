@@ -188,10 +188,16 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 
 - `fec_brood`:
 
-  Vector of length `maxage` or an array with dimension
+  Vector length `maxage` or an array with dimension
   `[nsim, maxage, proyears]`. The fecundity schedule of broodtake to
   calculate the total egg production for the hatchery. If missing, uses
   `Bio@fec`.
+
+- `p_female_brood`:
+
+  Numeric or vector `maxage`. Proportion of females of brood used to
+  calculate hatchery egg production, for situations with sex-selective
+  brood. If missing, uses `Bio@p_female`.
 
 - `fitness_type`:
 
@@ -274,17 +280,17 @@ showClass("Hatchery")
 #> Name:         ptarget_NOB          phatchery        premove_HOS
 #> Class:            numeric        num.logical       num.function
 #>                                                                
-#> Name:         premove_NOS          fec_brood       fitness_type
-#> Class:       num.function          num.array          character
+#> Name:         premove_NOS          fec_brood     p_female_brood
+#> Class:       num.function          num.array            numeric
 #>                                                                
-#> Name:               theta           rel_loss         zbar_start
-#> Class:            numeric            numeric          num.array
+#> Name:        fitness_type              theta           rel_loss
+#> Class:          character            numeric            numeric
 #>                                                                
-#> Name:  phenotype_variance   fitness_variance       heritability
-#> Class:            numeric            numeric            numeric
-#>                          
-#> Name:       fitness_floor
-#> Class:            numeric
+#> Name:          zbar_start phenotype_variance   fitness_variance
+#> Class:          num.array            numeric            numeric
+#>                                             
+#> Name:        heritability      fitness_floor
+#> Class:            numeric            numeric
 #> 
 #> Extends: "Hatchery.list"
 ```

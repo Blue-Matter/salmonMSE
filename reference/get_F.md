@@ -3,7 +3,8 @@
 Solves for apical instantaneous fishing mortality rate (F), proportional
 to fishing effort, from harvest rate (total retained catch over total
 abundance). The apical F can be greater than the realized F, if
-retention \< 1.
+retention \< 1. Used by
+[`AHA()`](https://docs.salmonmse.com/reference/AHA.md)
 
 ## Usage
 

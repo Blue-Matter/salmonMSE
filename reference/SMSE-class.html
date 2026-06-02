@@ -144,19 +144,19 @@
 
 
 <dt><code>NOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Natural origin broodtake.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Natural origin broodtake.</p></dd>
 
 
 <dt><code>HOB</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin broodtake (local + strays).</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin broodtake (local + strays).</p></dd>
 
 
 <dt><code>HOB_stray</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Hatchery origin broodtake (strays only).</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Hatchery origin broodtake (strays only).</p></dd>
 
 
 <dt><code>HOB_import</code></dt>
-<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Imported hatchery origin broodtake used for hatchery production.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Imported hatchery origin broodtake used for hatchery production.</p></dd>
 
 
 <dt><code>NOS</code></dt>
@@ -208,35 +208,35 @@
 
 
 <dt><code>UPT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery harvest rate (from kept catch) of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Pre-terminal fishery harvest rate (from adult equivalent kept catch) of natural origin spawners.</p></dd>
 
 
 <dt><code>UT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Terminal fishery harvest rate of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Terminal fishery harvest rate of natural origin spawners.</p></dd>
 
 
 <dt><code>UPT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery harvest rate of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Pre-terminal fishery harvest rate of hatchery origin spawners.</p></dd>
 
 
 <dt><code>UT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Terminal fishery harvest rate of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Terminal fishery harvest rate of hatchery origin spawners.</p></dd>
 
 
 <dt><code>ExPT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery exploitation rate (from kept catch and dead releases) of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Pre-terminal fishery exploitation rate (from kept catch and dead releases in adult equivalents) of natural origin spawners.</p></dd>
 
 
 <dt><code>ExT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Terminal fishery exploitation rate of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Terminal fishery exploitation rate of natural origin spawners.</p></dd>
 
 
 <dt><code>ExPT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery exploitation rate of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Pre-terminal fishery exploitation rate of hatchery origin spawners.</p></dd>
 
 
 <dt><code>ExT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Terminal fishery exploitation rate of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, proyears]</code>. Terminal fishery exploitation rate of hatchery origin spawners.</p></dd>
 
 
 <dt><code>fitness</code></dt>

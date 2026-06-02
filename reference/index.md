@@ -67,10 +67,6 @@
   [`Sgen100()`](https://docs.salmonmse.com/reference/PNI50.md) : Example
   performance metrics
 
-- [`SHist-class`](https://docs.salmonmse.com/reference/SHist-class.md) :
-
-  Class `"SHist"`
-
 - [`SMSE-class`](https://docs.salmonmse.com/reference/SMSE-class.md) :
 
   Class `"SMSE"`

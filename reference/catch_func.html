@@ -65,7 +65,11 @@
 <span>  <span class="va">V</span>,</span>
 <span>  MSF <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  m <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  release_mort <span class="op">=</span> <span class="fl">0</span></span>
+<span>  release_mort <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  p_mature_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">NO</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  p_mature_HO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">HO</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  AEQ_NO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">NO</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  AEQ_HO <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">HO</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -108,6 +112,22 @@
 <dt id="arg-release-mort">release_mort<a class="anchor" aria-label="anchor" href="#arg-release-mort"></a></dt>
 <dd><p>Numeric vector length <code>[ns]</code>, proportion of released unmarked fish that die. Only used if <code>MSF = TRUE</code>.</p></dd>
 
+
+<dt id="arg-p-mature-no">p_mature_NO<a class="anchor" aria-label="anchor" href="#arg-p-mature-no"></a></dt>
+<dd><p>Optional, array <code>[ns, nage, n_g]</code> of maturity for natural-origin fish. Only use to calculate adult equivalents escapement.</p></dd>
+
+
+<dt id="arg-p-mature-ho">p_mature_HO<a class="anchor" aria-label="anchor" href="#arg-p-mature-ho"></a></dt>
+<dd><p>Optional, array <code>[ns, nage, n_r]</code> of maturity for hatchery-origin fish. Only use to calculate adult equivalents escapement.</p></dd>
+
+
+<dt id="arg-aeq-no">AEQ_NO<a class="anchor" aria-label="anchor" href="#arg-aeq-no"></a></dt>
+<dd><p>Optional, array <code>[ns, nage, n_g]</code> of adult equivalents for natural-origin fish.</p></dd>
+
+
+<dt id="arg-aeq-ho">AEQ_HO<a class="anchor" aria-label="anchor" href="#arg-aeq-ho"></a></dt>
+<dd><p>Optional, array <code>[ns, nage, n_r]</code> of adult equivalents for hatchery-origin fish.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -117,10 +137,12 @@
 <li><p><code>D_HO</code> discarded (live + dead) hatchery-origin catch, same dimension as <code>HO</code></p></li>
 <li><p><code>DD_NO</code> dead discarded natural-origin catch, same dimension as <code>NO</code></p></li>
 <li><p><code>DD_HO</code> dead discarded hatchery-origin catch, same dimension as <code>HO</code></p></li>
-<li><p><code>U_NO</code> natural-origin harvest rate (ratio of kept catch and abundance), same dimension as <code>NO</code></p></li>
-<li><p><code>U_HO</code> hatchery-origin harvest rate (ratio of dead catch and abundance), same dimension as <code>HO</code></p></li>
-<li><p><code>Ex_NO</code> natural-origin exploitation rate (ratio of dead catch and abundance), same dimension as <code>NO</code></p></li>
-<li><p><code>Ex_HO</code> hatchery-origin exploitation rate (ratio of dead catch and abundance), same dimension as <code>HO</code></p></li>
+<li><p><code>Nsurv_NO</code> natural-origin survivors, same dimension as <code>NO</code></p></li>
+<li><p><code>Nsurv_HO</code> hatchery-origin survivors, same dimension as <code>HO</code></p></li>
+<li><p><code>U_NO</code> natural-origin harvest rate (ratio of kept catch and abundance), vector <code>ns</code></p></li>
+<li><p><code>U_HO</code> hatchery-origin harvest rate (ratio of dead catch and abundance), vector <code>ns</code></p></li>
+<li><p><code>Ex_NO</code> natural-origin exploitation rate (ratio of dead catch and abundance), vector <code>ns</code></p></li>
+<li><p><code>Ex_HO</code> hatchery-origin exploitation rate (ratio of dead catch and abundance), vector <code>ns</code></p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
