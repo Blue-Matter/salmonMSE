@@ -33,7 +33,7 @@ salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
       if (!silent) message("Running projection on one core (parallel processing not needed)")
       SMSE <- ProjectSOM(SOM, check = FALSE)
     } else {
-      if (!silent) message("Running ", nsim, " simulations in parallel on ", cores, " cores")
+      if (!silent) message("Running ", SOM@nsim, " simulations in parallel on ", cores, " cores")
       cl <- parallel::makeCluster(cores)
       on.exit(parallel::stopCluster(cl))
 

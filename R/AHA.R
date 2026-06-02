@@ -566,3 +566,64 @@ AHA <- function(SOM, ngen = 100, silent = FALSE) {
 
   return(out)
 }
+
+
+#' Calculate F from harvest rate
+#'
+#' Solves for apical instantaneous fishing mortality rate (F), proportional to fishing effort, from harvest rate (total retained catch over total abundance).
+#' The apical F can be greater than the realized F, if retention < 1. Used by [AHA()]
+#'
+#' @param u Harvest rate, between 0-1
+#' @param K Catch, between 0-Inf
+#' @param type Character, either `"catch"`, or `"u"`, whether to solve for catch or harvest rate, respectively
+#' @param M Instantaneous natural mortality rate
+#' @param N Abundance
+#' @param vul Vulnerability
+#' @param ret Retention rate
+#' @param release_mort Release mortality as a proportion, between 0-1. Only relevant if `ret < 1`.
+#' @param Fmax Maximum allowable value of F
+#' @return Numeric for the apical F
+#'
+#' @keywords internal
+get_F <- function(u = 0, K = 0, type = c("u", "catch"), M, N = 1, vul = 1, ret = 1, release_mort = 0,
+                  Fmax = 20) {
+  type <- unique(type)
+
+  type <- match.arg(type)
+  Fout <- 0
+
+  solve_u <- type == "u" && u > 0
+  solve_K <- type == "catch" && K > 0
+
+  if (solve_u || solve_K) {
+    .F <- try(
+      uniroot(F_solver, interval = c(0, Fmax), M = M, N = N, vul = vul, ret = ret, release_mort = release_mort, u = u, K = K, type),
+      silent = TRUE
+    )
+
+    if (is.character(.F)) {
+      Fout <- Fmax
+    } else {
+      Fout <- .F$root
+    }
+  }
+
+  return(Fout)
+}
+
+F_solver <- function(.F, M, N = 1, vul = 1, ret = 1, release_mort = 0, u = 0, K = 0, type = c("u", "catch")) {
+  type <- match.arg(type)
+
+  F_ret <- vul * ret * .F
+  F_rel <- vul * (1 - ret) * release_mort * .F
+  Z <- F_ret + F_rel + M
+  catch_ret <- F_ret/Z * (1 - exp(-Z)) * N
+  catch_ret[is.na(catch_ret)] <- 0
+
+  if (type == "u") {
+    fn <- (1 - exp(-max(F_ret))) - u
+  } else {
+    fn <- sum(catch_ret)/K - 1
+  }
+  return(fn)
+}
