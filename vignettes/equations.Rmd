@@ -16,12 +16,18 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  echo = FALSE,
   comment = "#>"
 )
 library(dplyr)
+library(salmonMSE)
 ```
 
 salmonMSE utilizes an age-structured model in the projections. The population is tracked by age and year but various dynamics correspond to the salmon life stages as described below.
+
+The model is also stochastic, for example, biological parameters representing uncertainty in the state of nature can be drawn from a probability distribution. 
+For simplicity, the equations here describe the dynamics in a single simulation run. 
+Potential stochastic parameters are noted in the package documentation.
 
 # Variable definitions
 
@@ -29,78 +35,113 @@ salmonMSE utilizes an age-structured model in the projections. The population is
 
 ## Natural production
 
-```{r param-bio, echo = FALSE}
+```{r param-bio}
 param <- read.csv("tables/glossary.csv") %>%
   mutate(Name = paste0("$", Name, "$"))
 knitr::kable(param[grepl("Natural production|Population dynamics", param$Type), ], row.names = FALSE)
 ```
 
-## Habitat
+## Harvest
 
-```{r param-habitat, echo = FALSE}
-knitr::kable(param[grepl("Habitat", param$Type), ], row.names = FALSE)
+```{r param-harvest}
+knitr::kable(param[grepl("Harvest", param$Type), ], row.names = FALSE)
 ```
 
 ## Hatchery
 
-```{r param-hatchery, echo = FALSE}
+```{r param-hatchery}
 knitr::kable(param[grepl("Hatchery|Fitness", param$Type), ], row.names = FALSE)
 ```
 
-## Harvest
+## Habitat
 
-```{r param-harvest, echo = FALSE}
-knitr::kable(param[grepl("Harvest", param$Type), ], row.names = FALSE)
+```{r param-habitat}
+knitr::kable(param[grepl("Habitat", param$Type), ], row.names = FALSE)
 ```
 
 # Juvenile natural production
 
 First, we consider natural production in the absence of fitness effects arising from hatchery production.
 
+The outmigrating juveniles of the next generation is predicted from the spawners from the previous year.
+Two parameterizations are possible:
+
+1. No habitat modeling: juvenile production is predicted from the egg production with a single density-dependent function 
+2. With habitat modeling: juvenile production is predicted from a series of density-dependent functions that represent survival at intermittent freshwater life stages 
+
 ## No habitat modeling
 
 From the spawners (NOS and HOS) of age $a$ in year $y$, the corresponding spawning output (units of eggs) of the subsequent generation is calculated as:
 
 \begin{align}
-\textrm{Egg}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
-\textrm{Egg}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\textrm{Egg}^\textrm{NOS}_y &= \sum_a\textrm{NOS}_{y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a\\
+\textrm{Egg}^\textrm{HOS}_y &= \sum_a\textrm{HOS}_{\textrm{eff}y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a
 \end{align}
 
 where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the superscript denotes the parentage of the progeny.
 
-If no habitat modeling is used, then fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y$.
+>In the output, fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y$.
 
-Survival from fry to smolt life stage, effectively over the entire freshwater life stage, is density-dependent. With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
+The smolt production is calculated from the Ricker stock-recruit relationship, effectively over the entire freshwater life stage:
 
 \begin{align}
-\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}\\
-\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
-\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + \textrm{Egg}^\textrm{HOS}_{y+1})}
+\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
+\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
+\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
+\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
 \end{align}
 
-where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$, the egg per smolt at replacement $\phi = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female} \times \textrm{Fec}_a$, with $r_a$ as the maturity at age.
+where:
 
->Smolt production can be predicted from total adult spawners by setting $\textrm{Fec}_a = 1$ and $\phi = 1$.
+\begin{align}
+\alpha &= \kappa/\phi\\
+\beta &= 1/{E_\textrm{max}}\\
+E_\textrm{max} &= S_\textrm{max} \times \phi/\tau\\
+\phi &= \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female}_a \times \textrm{Fec}_a\\
+\tau &= \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female}_a
+\end{align}
+
+$\kappa$ is the productivity, $\phi$ is the egg production per smolt at replacement, and $\tau$ is the female spawner per smolt at replacement.
+
+>With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is
+>
+>\begin{align}
+>\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
+>\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + >\textrm{Egg}^\textrm{HOS}_{y+1})}\\
+>\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
+>\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + >\textrm{Egg}^\textrm{HOS}_{y+1})}
+>\end{align}
+>
+>where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$ ($C$ is the capacity/asymptote).
 
 The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total number of fry in competition with subyearling hatchery releases (see [Hatchery](#hatchery-production) section).
 
-If there is knife-edge maturity, i.e., all fish mature at the terminal age, the equation simplifies to $\phi = \textrm{SAR} \times p^\textrm{female} \times \textrm{Fec}$, with $\textrm{SAR}$ as the marine survival (between 0-1).
-
->With the Ricker stock-recruit relationship, smolt production is
->
->\begin{align}
->\textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
->\textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
->\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
->\end{align}
->
->where $\alpha = \kappa/\phi$ and $\beta = 1/{E_\textrm{max}}$, $E_\textrm{max} = S_\textrm{max} \times \phi/\tau$ is the egg production that maximizes smolt production, $\tau = \sum_a\left(\prod_{i=1}^{a-1}\exp(-M^\textrm{NOS}_i)(1-r_i)\right)\times r_a \times p^\textrm{female}$ is the spawner per juvenile at replacement.
-
 ## With habitat modeling
 
-Freshwater life stages can also be modeled as a series of density-dependent functions by life stage, following the general approach of [Jorgensen et al. 2021](https://doi.org/10.1371/journal.pone.0256792). Four relationships are modeled.
+Freshwater life stages can also be modeled as a series of density-dependent functions by life stage, following the general approach of [Jorgensen et al. 2021](https://doi.org/10.1371/journal.pone.0256792). Four relationships are modeled:
+
+1. Pre-spawn mortality
+2. Egg incubation mortality
+3. Egg emergence to fry mortality
+4. Fry to smolt mortality
+
+Survival is modeled through either a Beverton-Holt or hockey-stick function that predicts survivors from the abundance at the beginning of the life stage.
+
+*Example life stage density-dependent relationships. Left panel: Beverton-Holt function. Right panel: Hockey-stick function. For both panels, the productivity is 0.8 and capacity is 600.*
+
+```{r}
+Abundance <- seq(0, 1000, 10)
+prod <- 0.8
+capacity <- 600
+Survivors_BH <- calc_SRR(Abundance, p = prod, capacity = capacity, type = "BH")
+Survivors_HS <- calc_SRR(Abundance, p = prod, capacity = capacity, type = "HS")
+
+par(mfrow = c(1, 2))
+plot(Abundance, Survivors_BH, ylab = "Survivors", type = "l", panel.first = graphics::grid(), ylim = c(0, 600))
+plot(Abundance, Survivors_HS, ylab = "Survivors", type = "l", panel.first = graphics::grid(), ylim = c(0, 600))
+```
+
+>Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
 
 First, pre-spawn (ps) mortality can occur, where the realized number of spawners $\widetilde{\textrm{NOS}}_y$ and $\widetilde{\textrm{HOS}}_y$ is:
 
@@ -113,13 +154,20 @@ First, pre-spawn (ps) mortality can occur, where the realized number of spawners
 
 where productivity $P$ is the maximum survival as spawner numbers approaches zero and $C$ is the asymptotic number of spawners, i.e., spawner capacity.
 
->Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
+>The hockey-stick equation is 
+>
+>\begin{align}
+>\widetilde{\textrm{NOS}}_y &= \textrm{min}(P^\textrm{ps} \times \textrm{NOS}_y, (\frac{\textrm{NOS}_y}{\textrm{NOS}_y + \textrm{HOS}_y}) C^\textrm{ps})\\
+>\widetilde{\textrm{HOS}}_y &= \textrm{min}(P^\textrm{ps} \times \textrm{HOS}_y, (\frac{\textrm{HOS}_y}{\textrm{NOS}_y + \textrm{HOS}_y}) C^\textrm{ps})
+>\end{align}
+>
+>with similar parameterizations for subsequent life stages (not further described below). 
 
 The initial egg production is calculated after pre-spawn mortality:
 
 \begin{align}
-\textrm{Egg}^\textrm{NOS}_y &= \sum_a\widetilde{\textrm{NOS}}_{y,a} \times p^\textrm{female} \times \textrm{Fec}_a\\
-\textrm{Egg}^\textrm{HOS}_y &= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female} \times \textrm{Fec}_a
+\textrm{Egg}^\textrm{NOS}_y &= \sum_a\widetilde{\textrm{NOS}}_{y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a\\
+\textrm{Egg}^\textrm{HOS}_y &= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a
 \end{align}
 
 Second, the realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from the spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
@@ -160,21 +208,9 @@ Year-specific deviations can be used to simulate stochasticity in survival.
 
 Approaches such as [HARP](https://www.fisheries.noaa.gov/resource/tool-app/habitat-assessment-and-restoration-planning-harp-model) and [CEMPRA](https://www.essa.com/explore-essa/projects/cumulative-effects-model-for-priority-of-recovery-actions-cempra/) can inform productivity and capacity parameters across these life stages as quantitative relationships between habitat variables.
 
->For all life stages, a hockey-stick formulation is also possible. For example, egg incubation mortality would be:
->
->$$
->\widetilde{\textrm{Egg}}^\textrm{NOS}_y = 
->\begin{cases}
->P^\textrm{inc} \times \textrm{Egg}^\textrm{NOS}_y &, \textrm{Egg}^\textrm{NOS}_y \le C^\textrm{inc*}_y/P^\textrm{inc}\\
->C^\textrm{inc*}_y &, \textrm{otherwise}\\
->\end{cases}
->$$
->
->where $C^\textrm{inc*}_y = C^\textrm{inc} \times \textrm{Egg}^\textrm{NOS}_y/(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)$ is the capacity apportioned to natural spawners based on relative abundance.
-
 ## Competition with hatchery releases
 
-Competition between natural-origin fry and hatchery releases can be incorporated into the density-dependent survival equation by adjusting the denominator of the Beverton-Holt equation:
+Competition between natural-origin fish and hatchery releases can be incorporated into the density-dependent survival equation by adjusting the denominator of the Beverton-Holt equation:
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_y &= \frac{P^\textrm{fry-smolt} \times 
@@ -185,35 +221,36 @@ Competition between natural-origin fry and hatchery releases can be incorporated
 
 where $n^\textrm{subyearling}_y$ and $n^\textrm{yearling}_y$ are subyearling and yearling releases from the hatchery, respectively.
 
->salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term.
-
-Such competition may be used when hatchery releases do not leave freshwater environment and interact with natural-origin fish.
+>salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term. This competition could be modeled in stream-type life histories.
 
 # Hatchery juvenile production
 
-Hatchery production is controlled by several sets of variables specified by the analyst, roughly following the [AHA](https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/) approach.
+Hatchery production is controlled by several parameters specified by the analyst, roughly following the [AHA](https://www.streamnet.org/home/data-maps/hatchery-reform/hsrg-tools/) approach.
+The three main parameters are to:
 
-The first consideration is to specify the target number of annual releases of sub-yearlings $n^\textrm{subyearling}_\textrm{target}$ and yearlings $n^\textrm{yearling}_\textrm{target}$. 
+1. Specify target releases
+2. Specify target proportion natural-origin fish in the brood
+3. Specify limit proportion of natural-origin return to use as brood
 
-Yearlings are intended to represent hatchery releases that immediately leave freshwater environment, while subyearlings are subject to density-dependent survival in competition with natural production of fry, e.g., they reside in freshwater environment for a period of time before leaving.
+The first parameter specifies the target number of annual releases of sub-yearlings $n^\textrm{subyearling}_\textrm{target}$ and yearlings $n^\textrm{yearling}_\textrm{target}$. 
+For the purposes of hatchery releases, yearlings and subyearlings are only differentiated by egg to release survival in the hatchery, for example, yearlings have lower egg-release survival if they are released later.
 
 Going backwards, the corresponding number of eggs needed to reach the target number depends on the egg survival to those life stages in the hatchery.
 The corresponding number of broodtake is calculated from target egg production based on the brood fecundity and hatchery survival of broodtake, which is non-selective with respect to age.
 
-An additional consideration is the composition (natural vs. hatchery origin) of in-river broodtake. 
-To minimize genetic drift of the population due to hatchery production, it is desirable to maintain a high proportion of natural origin broodtake.
-This is controlled by $p^\textrm{NOB}_\textrm{target}$, the desired proportion of natural broodtake relative to all broodtake (any specified amount of available imported brood is considered hatchery-origin for this purpose), but can be exceeded if there is insufficient escapement of natural origin fish.
+The second parameter is the target proportion of natural-origin fish in the broodstock $p^\textrm{NOB}_\textrm{target}$. 
+To minimize genetic drift of the population due to hatchery production, it may be desirable to maintain a high proportion of natural-origin broodtake.
 
-The ability to meet this target depends on the mark rate of hatchery origin fish. 
-Thus, $p^\textrm{NOB}_\textrm{target}$ represents ratio of unmarked fish in the projection (imported brood is considered marked for this calculation, strays are considered unmarked), and the realized $p^\textrm{NOB}$ is reduced by the mark rate.
+This target is possible if the mark rate is one (one can identify all hatchery-origin fish in the in-river return). 
+If the mark rate is not 1, then $p^\textrm{NOB}_\textrm{target}$ is the target proportion of unmarked fish in the broodtake. Consequently, the realized $p^\textrm{NOB}$ is reduced as some of the unmarked fish are hatchery-origin.
 
-Another consideration for broodtake dynamics is to maintain high spawning of natural origin fish. 
-This is controlled by $p^\textrm{NOB}_\textrm{max}$, the maximum allowable proportion of the natural origin escapement to be used as broodtake. 
-This value is never exceeded.
+The target also may not be met in cases with low returns and brood is continually taken to meet the release target.
 
->To set up a segregated hatchery program, set $p^\textrm{NOB}_\textrm{max} = 0$. Otherwise, these equations set up an integerated hatchery.
+The third parameter is $p^\textrm{NOB}_\textrm{max}$, the maximum allowable proportion of the natural-origin return to be used as broodtake. This value is never exceeded.
 
-The following equations then generate the annual broodtake and hatchery production from the state variables given these constraints.
+>To set up a segregated hatchery program, set $p^\textrm{NOB}_\textrm{max} = 0$. Otherwise, these equations set up an integrated hatchery.
+
+The following equations generate the annual broodtake and hatchery production from the state variables given constraints from these parameters.
 
 ## Broodtake
 
@@ -223,45 +260,51 @@ $$
 \textrm{Egg}_\textrm{target,broodtake} = \dfrac{n^\textrm{yearling}_\textrm{target}}{s^\textrm{yearling}} + \dfrac{n^\textrm{subyearling}_\textrm{target}}{s^\textrm{subyearling}}
 $$
 
-where $s$ is the corresponding survival term from the egg life stage.
+where $s$ is survival from the egg to the corresponding life stage in the hatchery.
 
-The broodtake is back-calculated from the target egg production. The composition of natural and hatchery origin broodtake (NOB and HOB, respectively) is dependent on the mark rate $m$ and the target proportion of NOB $p^\textrm{NOB}_\textrm{target}$.
-When the mark rate is 1, then the realized pNOB should be equal to $p^\textrm{NOB}_\textrm{target}$ provided there is sufficient escapement. If the mark rate is less than one, then $p^\textrm{NOB}_\textrm{target}$ reflects the proportion of unmarked fish in the broodtake, some which are hatchery origin. Thus, the realized pNOB is less than $p^\textrm{NOB}_\textrm{target}$. If the mark rate is zero, then broodtake is non-selective with pNOB equal to the proportion of natural origin escapement.
+The broodtake is back-calculated from the target egg production. 
+From annual escapement from marine fisheries ($\textrm{NOR}^\textrm{escapement}$ and $\textrm{HOR}^\textrm{escapement}$), some proportion $p^\textrm{broodtake}$ is used as brood.
 
-From the escapement in year $y$, some proportion $p^\textrm{broodtake}$ is used as broodtake:
+Natural-origin brood is taken from fish in passage to spawning grounds:
+
+$$
+\textrm{NOB}_{y,a} = p^\textrm{broodtake,unmarked}_y \times \textrm{NOR}^\textrm{avail,brood}_{y,a}
+$$
+
+where $\textrm{NOR}^\textrm{avail,brood}_{y,a} = \textrm{NOR}^\textrm{escapement} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}$ is the available fish for brood, reduced by en-route mortality (with survival $s_\textrm{enroute}$), and limited some proportion denoted by the $p^\textrm{esc}_\textrm{max}$ parameter.
+
+Hatchery-origin brood could be taken in two ways:
+
+1. From fish "returning to the hatchery", e.g., through swim-in facilities or removal from spawning grounds:
 
 \begin{align}
-\textrm{NOB}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
-
-\textrm{HOB}^\textrm{unmarked}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times (1-m) \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}\\
-
-\textrm{HOB}^\textrm{marked}_{y,a} &= p^\textrm{broodtake,marked}_y \times m \times p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}
-
+\textrm{HOB}^\textrm{unmarked}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times (1-m) \times \textrm{HOR}^\textrm{avail,brood}_{y,a}\\
+\textrm{HOB}^\textrm{marked}_{y,a} &= p^\textrm{broodtake,marked}_y \times m \times \textrm{HOR}^\textrm{avail,brood}_{y,a}
 \end{align}
 
-The proportion of the available hatchery fish for broodtake is also reduced by $p^\textrm{hatchery}$, which can include fish swimming back to the hatchery or removed from spawning grounds.
+where $\textrm{HOR}^\textrm{avail,brood}_{y,a} = p^\textrm{hatchery} \times \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}$ and $p^\textrm{hatchery}$ is the proportion returning to the hatchery.
 
-Additionally, some proportion of imported fish and strays may be used as brood:
+2. From fish in passage to spawning grounds, same as case #1 but with $\textrm{HOR}^\textrm{avail,brood}_{y,a} = \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}$
+
+Imported brood and strays may also be used:
 
 \begin{align}
 \textrm{Brood}^\textrm{import}_{y,a} &= p^\textrm{broodtake,marked}_y \sum_a \textrm{Brood}^\textrm{avail,import}_a\\
-\textrm{HOB}^\textrm{stray}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times \textrm{Stray}_{y,a} \times s_\textrm{enroute} \\
+\textrm{HOB}^\textrm{stray}_{y,a} &= p^\textrm{broodtake,unmarked}_y \times \textrm{Stray}_{y,a} \times s_\textrm{enroute} \times p^\textrm{esc}_\textrm{max}
 \end{align}
-
-The availability of both natural and hatchery origin fish depends on the escapement reduced by en-route mortality and can be capped by some proportion denoted by the $p^\textrm{esc}_\textrm{max}$ parameter.
 
 >To exclusively use imported brood, set $p^\textrm{esc}_\textrm{max} = 0$.
 
 The realized hatchery egg production is
 
 \begin{align}
-\textrm{Egg}_\textrm{y}^\textrm{NOB} &= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
-\textrm{Egg}_\textrm{y}^\textrm{HOB} &= \sum_a (\textrm{HOB}^\textrm{marked}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a}) \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
-\textrm{Egg}_\textrm{y}^\textrm{import} &= \sum_a \textrm{Brood}^\textrm{import}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
-\textrm{Egg}_\textrm{y}^\textrm{stray} &= \sum_a \textrm{HOB}^\textrm{stray}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female} \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{NOB} &= \sum_a \textrm{NOB}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female,brood}_a \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{HOB} &= \sum_a (\textrm{HOB}^\textrm{marked}_{y,a} + \textrm{HOB}^\textrm{unmarked}_{y,a}) \times s^\textrm{prespawn} \times p^\textrm{female,brood}_a \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{import} &= \sum_a \textrm{Brood}^\textrm{import}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female,brood}_a \times \textrm{Fec}^\textrm{brood}_a\\
+\textrm{Egg}_\textrm{y}^\textrm{stray} &= \sum_a \textrm{HOB}^\textrm{stray}_{y,a} \times s^\textrm{prespawn} \times p^\textrm{female,brood}_a \times \textrm{Fec}^\textrm{brood}_a
 \end{align}
 
-where hatchery egg production is subject to a survival term $s^\textrm{prespawn}$.
+where broodstock is subject to a survival term $s^\textrm{prespawn}$ prior to egg production.
 
 The proportion $p^\textrm{broodtake}_y$ is solved annually to satisfy the following conditions:
 
@@ -273,11 +316,30 @@ $0 < p^\textrm{broodtake,unmarked}_y \le p^\textrm{NOB}_\textrm{max}$
 
 $\textrm{Egg}_\textrm{y}^\textrm{NOB} + \textrm{Egg}_\textrm{y}^\textrm{HOB} + \textrm{Egg}_\textrm{y}^\textrm{import} + \textrm{Egg}^\textrm{stray}_y = \textrm{Egg}_\textrm{broodtake}$
 
-The target ratio $p^\textrm{NOB}_\textrm{target}$ reflects the objective to maintain a high proportion of natural origin fish in the broodtake, where its implementation is dependent on the mark rate. 
-The maximum removal rate of natural origin fish $p^\textrm{NOB}_\textrm{max}$ or escapement $p^\textrm{esc}_\textrm{max}$ ensures that there is high abundance of natural origin spawners. 
+Total egg production in a given year can fail to reach the target if there is insufficient unmarked escapement and $p^\textrm{broodtake,unmarked}_y = p^\textrm{NOB}_\textrm{max}$. 
+In this case, the remaining deficit in egg production is met by increasing HOB (the realized $p^\textrm{NOB}$ can be lower than the target).
 
-The total egg production in a given year can fail to reach the target if there is insufficient unmarked escapement. 
-In this case, the unmarked take is set to the maximum removal rate ($p^\textrm{broodtake,unmarked}_y = p^\textrm{NOB}_\textrm{max}$), and the remaining deficit in egg production is met using HOB (including strays and imports).
+### Custom brood rule
+
+A custom brood rule $f$ is possible where the user specifies the brood taken from the available in-river return:
+
+$$
+\begin{pmatrix}
+\textrm{NOB}_{y,a}\\
+\textrm{HOB}^\textrm{unmarked}_{y,a}\\
+\textrm{HOB}^\textrm{marked}_{y,a}\\
+\textrm{HOB}^\textrm{stray}_{y,a}
+\end{pmatrix} = 
+f
+
+\begin{pmatrix}
+\textrm{NOR}^\textrm{avail,brood}_{y,a}\\
+\textrm{HOR}^\textrm{avail,brood}_{y,a}\\
+ \textrm{Stray}_{y,a}\\
+m
+\end{pmatrix}
+
+$$
 
 ## Releases
 
@@ -300,32 +362,48 @@ $$
 With competition, the outmigrating abundance is:
 
 $$
-\textrm{Smolt}^\textrm{Rel}_{y+1} = \frac{\alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}
-$$
-
-or 
-
-$$
 \textrm{Smolt}^\textrm{Rel}_{y+1} = \alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}) \times \exp(-\beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1}))
 $$
 
+or
+
+$$
+\textrm{Smolt}^\textrm{Rel}_{y+1} = \frac{\alpha \times (n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}{1 + \beta(\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1} + n^\textrm{subyearling}_{y+1} + n^\textrm{yearling}_{y+1})}
+$$
+
+# Juvenile marine abundance
+
+Let $N^\textrm{juv}_{y,a}$ be the juvenile abundance in the population at the beginning of the year, with $N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y$ and $N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}$. 
+The superscript for the smolt variable corresponds to the parentage while the superscript for $N$ denotes the origin of the current cohort.
 
 # Pre-terminal fishery
 
-Let $N^\textrm{juv}_{y,a}$ be the juvenile abundance in the population and $N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y$ and $N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}$. The superscript for the smolt variable corresponds to the parentage while the superscript for $N$ denotes the origin of the current cohort.
+Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, ostensibly of juveniles, occurs in the first half of the year.
 
-Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, assuming no mark-selective fishing, is modeled as a seasonal process and occurs in the first half of the year.
-
-The kept catch $K$ is
+Assuming no mark-selective fishing, the kept catch $K$ is
 
 \begin{align}
 K^\textrm{NOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,NOS}_{y,a}\\
 K^\textrm{HOS,PT}_{y,a} &= \left(1 - \exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\right)N^\textrm{juv,HOS}_{y,a}\\
 \end{align}
 
-If management is by target harvest rate, then the specified harvest rate $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery is converted to the apical instantaneous fishing mortality rates as $F^\textrm{PT} = -\log(1 - u^\textrm{PT})$.
+If management is by target harvest rate, then the specified harvest rate $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery is used to calculate $F^\textrm{PT}_y$ such that:
 
-If management is by target catch $K^\textrm{PT,target}$, then the fishing mortality is solved such that $K^\textrm{PT,target} = \sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}$.
+$$
+u^\textrm{PT}_y = \frac{\sum_a(K^\textrm{NOS,PT}_{y,a} + K^\textrm{HOS,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a\left((K^\textrm{NOS,PT}_{y,a} + K^\textrm{HOS,PT}_{y,a}) \times \textrm{AEQ}_a + (N^\textrm{juv,NOS}_{y,a} + N^\textrm{juv,HOS}_{y,a})\exp(-v^\textrm{PT}_a F^\textrm{PT}_y)\times r_a)\right)}
+$$
+
+To facilitate comparison of juvenile catch to adult catch, adult equivalents (AEQ) discount the juvenile catch by how many would have survived to adulthood had it not been caught (through maturity and natural mortality):
+
+$$
+\textrm{AEQ}_a = 
+\begin{cases}
+1 &, a = A\\
+r_a + (1 - r_a)\exp(-M_a) \times \textrm{AEQ}_{a+1} &, a = 1, \ldots, A-1
+\end{cases}
+$$
+
+If management is by target catch $K^\textrm{PT,target}$, then $F^\textrm{PT}_y$ is solved such that $K^\textrm{PT,target} = \sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}$.
 
 Alternative equations are used if [mark-selective fishing](#mark-selective-fishing) is implemented.
 
@@ -349,14 +427,18 @@ Natural mortality is specified by age class. Accordingly, this mortality corresp
 
 ## Terminal fishery
 
-Assuming no mark-selective fishing, the retained catch of the terminal ($\textrm{T}$) fishery is calculated similarly as with the pre-terminal fishery:
+Assuming no mark-selective fishing, the kept catch of the terminal ($\textrm{T}$) fishery is calculated similarly as with the pre-terminal fishery:
 
 \begin{align}
 K^\textrm{NOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{NOR}_{y,a}\\
 K^\textrm{HOS,T}_{y,a} &= \left(1 - \exp(-v^\textrm{T}_a F^\textrm{T}_y)\right)\textrm{HOR}_{y,a}\\
 \end{align}
 
-If management is by target harvest rate, then the specified harvest rate $u^\textrm{T}$ in the terminal ($\textrm{PT}$) fishery is converted to the apical instantaneous fishing mortality rates as $F^\textrm{T} = -\log(1 - u^\textrm{T})$.
+If management is by target harvest rate, then the specified harvest rate $u^\textrm{T}$ is used to calculate $F^\textrm{T}$ such that
+
+$$
+u^\textrm{T}_y = \frac{\sum_a(K^\textrm{NOS,T}_{y,a} + K^\textrm{HOS,T}_{y,a})}{\sum_a(\textrm{NOR}_{y,a} + \textrm{HOR}_{y,a})}
+$$
 
 If management is by target catch $K^\textrm{T,target}$, then the fishing mortality is solved such that $K^\textrm{T,target} = \sum_a K^\textrm{NOS,T}_{y,a} + \sum_a K^\textrm{HOS,T}_{y,a}$.
 
@@ -371,19 +453,28 @@ The escapement consists of the survivors of the terminal fishery:
 \textrm{HOR}^\textrm{escapement}_{y,a} &= \textrm{HOR}_{y,a}\exp(-v_aF^\textrm{T}_y)
 \end{align}
 
-The abundance of natural origin spawners consists of the escapement that survive migration to the spawning ground ($s_\textrm{enroute}$) and are not removed for brood: 
+Natural-origin spawners is the escapement that survive return migration, are not used for brood, and are not removed from the spawning ground (e.g., as part of in-river fishery):
 
 $$
-\textrm{NOS}_{y,a} = \textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}
+\textrm{NOS}_{y,a} = (1 - p^\textrm{NOS}_\textrm{removal}\times(1-m))\left(\textrm{NOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{NOB}_{y,a}\right)
 $$
 
-The hatchery origin spawners is the escapement of local origin that survive migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$ and discounted by the mark rate, these animals are not available for brood).
-Strays not used for brood are also included as hatchery spawners.
+If HOB are collected from fish returning to the hatchery, then the hatchery-origin spawners is:
 
 \begin{align}
 \textrm{HOS}_{y,a} &= \textrm{HOS}^\textrm{local}_{y,a} + \textrm{HOS}^\textrm{stray}_{y,a}\\
-&= (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} + (\textrm{Stray}_{y,a} - \textrm{HOB}^\textrm{stray}_{y,a})
+&= (1 - p^\textrm{hatchery}) (1 - p^\textrm{HOS}_\textrm{removal} \times m) \textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} + (\textrm{Stray}_{y,a} \times s_\textrm{enroute} - \textrm{HOB}^\textrm{stray}_{y,a})
 \end{align}
+
+If HOB are collected from fish on the way to spawning grounds, then:
+
+\begin{align}
+\textrm{HOS}_{y,a} &= \textrm{HOS}^\textrm{local}_{y,a} + \textrm{HOS}^\textrm{stray}_{y,a}\\
+&= (1 - p^\textrm{HOS}_\textrm{removal} \times m) (\textrm{HOR}^\textrm{escapement}_{y,a} \times s_\textrm{enroute} - \textrm{HOB}_{y,a}) + (\textrm{Stray}_{y,a} \times s_\textrm{enroute} - \textrm{HOB}^\textrm{stray}_{y,a})
+\end{align}
+
+Hatchery-origin spawners is the escapement of local origin and strays that survive return migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion $p^\textrm{HOS}_\textrm{removal}$ and discounted by the mark rate, these animals are not available for brood).
+Strays not used for brood are also included as hatchery spawners.
 
 # Fitness effects on juvenile survival
 
@@ -572,10 +663,10 @@ Effective proportions, i.e., weighting by age-class fecundity, in the parental c
 
 # Mark-selective fishing
 
-If the mark rate $m$ of hatchery fish is greater than zero, then mark-selective fishing can be implemented for both the pre-terminal and terminal fisheries with no retention on natural-origin fish.
-The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$ corresponds to the apical fishing mortality of the kept catch.
-The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish. 
-Exploitation rates differ between hatchery and natural origin fish because there is no retention of the latter.
+If the mark rate $m$ of hatchery fish is greater than zero, then mark-selective fishing can be implemented for either the pre-terminal fishery, terminal fishery, or both with no retention on natural-origin fish.
+The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$ corresponds to the kept catch of hatchery-origin fish.
+The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish.
+Exploitation rates differ between hatchery-origin and natural-origin fish because there is no retention of the latter.
 
 Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and release catch:
 
@@ -594,7 +685,6 @@ $$
 F^\textrm{rel,NO} = \delta E
 $$
 
-
 Intuitively, fishing effort can increase in a mark-selective fishery compared to a non-selective fishery.
 For example, if the mark rate is 20 percent, then the fishing effort could be 500 percent higher than in a non-selective fishery in order to attain the kept quota or bag limit.
 Additional catch and release mortality then occurs for un-marked fish, according to $\delta$.
@@ -602,15 +692,15 @@ Additional catch and release mortality then occurs for un-marked fish, according
 The kept catch $K$ are
 
 \begin{align}
-K^\textrm{HOS,PT}_{y,a} &= \dfrac{F^\textrm{kept,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}])\right)N^\textrm{juv,HOS}_{y,a}\\
-K^\textrm{HOS,T}_{y,a} &= \dfrac{F^\textrm{kept,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,HO,T} + F^\textrm{rel,HO,T}])\right)\textrm{HOR}_{y,a}
+K^\textrm{HOS,PT}_{y,a} &= \dfrac{F^\textrm{kept,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}\left(1 - \exp(-v^\textrm{PT}_a[F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y])\right)N^\textrm{juv,HOS}_{y,a}\\
+K^\textrm{HOS,T}_{y,a} &= \dfrac{F^\textrm{kept,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}\left(1 - \exp(-v^\textrm{T}_a[F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y])\right)\textrm{HOR}_{y,a}
 \end{align}
 
-If management is by target harvest rate for the preterminal and terminal fisheries, the corresponding $E$ is solved to satisfy:
+If management is by target harvest rate for either fishery, the corresponding $E$ is solved to satisfy:
 
 \begin{align}
-u^\textrm{PT} &= 1 - \exp(-F^\textrm{kept,HO,PT})\\
-u^\textrm{T} &= 1 - \exp(-F^\textrm{kept,HO,T})
+u^\textrm{PT} &= \frac{\sum_aK^\textrm{HOS,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(K^\textrm{HOS,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,HOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y])\times r_a)}\\
+u^\textrm{T} &= \frac{\sum_aK^\textrm{HOS,T}_{y,a}}{\textrm{HOR}_{y,a}}
 \end{align}
 
 If management is by target catch, the corresponding $E$ is solved to satisfy:
@@ -620,11 +710,34 @@ K^\textrm{PT,target} &= \sum_a K^\textrm{HOS,PT}_{y,a}\\
 K^\textrm{T,target} &= \sum_a K^\textrm{HOS,T}_{y,a}
 \end{align}
 
-The exploitation rate for natural origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:
+The exploitation rate for natural-origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:
 
 \begin{align}
-u^\textrm{exploit,NOS,PT}_{y,a} &= 1 - \exp(-v_a F^\textrm{rel.,NO,PT}_y)\\
-u^\textrm{exploit,HOS,PT}_{y,a} &= 1 - \exp(-v_a[F^\textrm{kept,HO,PT}_y + F^\textrm{rel.,HO,PT}_y])
+u^\textrm{exploit,NOS,PT}_{y,a} &= \frac{\sum_aD^\textrm{NO,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(D^\textrm{NO,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a F^\textrm{rel,NO,PT}_y)\times r_a}\\
+u^\textrm{exploit,HOS,PT}_{y,a} &= \frac{\sum_a(D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a((D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a}) \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}]_y)\times r_a}\\
+u^\textrm{exploit,NOS,T}_{y,a} &= \frac{\sum_aD^\textrm{NO,T}_{y,a}}{\sum_a\textrm{NOR}_{y,a}}\\
+u^\textrm{exploit,HOS,T}_{y,a} &= \frac{\sum_a(D^\textrm{HO,T}_{y,a} + K^\textrm{HO,T}_{y,a})}{\sum_a\textrm{HOR}_{y,a}}
 \end{align}
 
+where $D$ is dead discards:
+
+\begin{align}
+D^\textrm{NO,PT}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))\times N^\textrm{juv,NOS}_{y,a}\\
+D^\textrm{HO,PT}_{y,a} &= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))\times N^\textrm{juv,HOS}_{y,a}\\
+D^\textrm{NO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}\\
+D^\textrm{HO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}
+\end{align}
+
+# R functions
+
+The R functions that perform the various calculations are provided below.
+
+```{r}
+table_func <- data.frame(
+  Description = c("Entire projection", "Juvenile natural production (no habitat modeling)", "Juvenile natural production (with habitat modeling)", "Hatchery production", "Preterminal fishery", "Terminal fishery", "Spawners", "Fitness"),
+  Function = c("`ProjectSOM()`", "`nextgen_SRR_func()`", "`nextgen_habitat_func()`", 
+               "`brood_func()`", "`catch_func()`", "`catch_func()`", "`calc_spawners()`", "`fitness_func()`")
+)
+knitr::kable(table_func)
+```
 
