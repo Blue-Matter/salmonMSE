@@ -22,6 +22,4 @@ navbar:
         href: articles/ref.html
       - text: Conditioning model
         href: articles/conditioning.html
-      - text: Implementation
-        href: articles/model.html
 
