@@ -116,9 +116,9 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 \item{vars}{Character vector for variable names (see \code{names(stanfit@sim$samples[[1]])}). Regex and partial matching supported because it is passed to the \code{pattern} argument of \code{\link[=grepl]{grepl()}}}
 
-\item{report}{List, output of state variables from individual MCMC samples, obtained with \code{get_report()}}
+\item{report}{List, output of state variables from individual MCMC samples, obtained with \code{\link[=get_report]{get_report()}}}
 
-\item{d}{List of data variables, obtained with \code{get_CMdata()}}
+\item{d}{List of data variables, obtained with \code{\link[=get_CMdata]{get_CMdata()}}}
 
 \item{year}{Vector of years}
 
@@ -202,7 +202,7 @@ relationship and realized annual values. Years correspond to return years of egg
 \itemize{
 \item \code{CM_prod()} returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-vary with annual changes in natural mortality or maturity.
+vary with annual changes in natural mortality or maturity. \code{\link[=.CM_prod]{.CM_prod()}} is the internal function that calculates productivity.
 }
 
 \itemize{
@@ -266,4 +266,7 @@ Hatchery fish experience additional mortality specified by release mortality.
 }
 \description{
 Functions used by the markdown report to generate summary figures from the age-structured conditoning model
+}
+\seealso{
+\code{\link[=CM_MSY]{CM_MSY()}}
 }

@@ -9,6 +9,7 @@
 #' @returns
 #' - `CM_trace()` returns a ggplot showing the MCMC trace plot (aka wormplot)
 #' @importFrom dplyr bind_rows bind_cols mutate
+#' @seealso [CM_MSY()]
 #' @export
 CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
   if (missing(vars)) vars <- names(stanfit@sim$samples[[1]])
@@ -120,8 +121,8 @@ CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) 
 
 
 #' @rdname CMfigures
-#' @param report List, output of state variables from individual MCMC samples, obtained with `get_report()`
-#' @param d List of data variables, obtained with `get_CMdata()`
+#' @param report List, output of state variables from individual MCMC samples, obtained with [get_report()]
+#' @param d List of data variables, obtained with [get_CMdata()]
 #' @param year Vector of years
 #' @returns
 #' - `CM_fit_esc()` returns base graphics with fit to total escapement time series
@@ -475,21 +476,49 @@ CM_SRR <- function(report, year1 = 1) {
   g
 }
 
-.CM_prod <- function(report, d) {
+#' Reference points for conditioning model
+#'
+#' Internal functions that calculate productivity (`.CM_prod()`) and reference points (`.CM_MSY()`)
+#' from the conditioning model.
+#' These functions can be used to calculate values for a subset of years (productivity can vary
+#' in time with natural mortality and maturity), or from average biological parameters in a subset of years.
+#'
+#' @inheritParams CMfigures
+#' @param index Integer vector to subset years with which to calculate reference points. Can be used
+#' to reduce computation or average biological parameters from a subset of years, see `mean_bio` argument.
+#' If `NULL`, uses all years of model.
+#' @param mean_bio Logical, whether to average the natural mortality and maturity parameters across
+#' years indicated in `index`
+#' @returns
+#' Matrix, dimension `[length(index), length(report)]`. If `mean_bio = TRUE`, matrix has 1 row.
+#' @keywords internal
+.CM_prod <- function(report, d, index = NULL, mean_bio = FALSE) {
+  if (is.null(index)) index <- seq(1, d$Ldyr)
 
-  # egg per smolt in year y
-  epro <- sapply(1:d$Ldyr, function(y) {
-    sapply(1:length(report), function(x) {
-      mo <- report[[x]]$mo[y, ]
-      matt <- report[[x]]$matt[y, , d$r_matt]
+  alpha <- sapply(report, getElement, "alpha") # sim
+  if (mean_bio) {
+    epro <- sapply(1:length(report), function(x) {
+      mo <- apply(report[[x]]$mo[index, , drop = FALSE], 2, mean)
+      matt <- apply(report[[x]]$matt[index, , d$r_matt, drop = FALSE], 2, mean)
       lo <- calc_survival(mo, matt) # smolt survival at replacement
       epro <- sum(lo * d$ssum * d$fec * matt)
       return(epro)
     })
-  })
+    output <- matrix(alpha * epro, nrow = 1)
+  } else {
+    # egg per smolt in year y: simulation x year
+    epro <- sapply(index, function(y) {
+      sapply(1:length(report), function(x) {
+        mo <- report[[x]]$mo[y, ]
+        matt <- report[[x]]$matt[y, , d$r_matt]
+        lo <- calc_survival(mo, matt) # smolt survival at replacement
+        epro <- sum(lo * d$ssum * d$fec * matt)
+        return(epro)
+      })
+    })
+    output <- t(alpha * epro) # productivity: y, simulation
+  }
 
-  alpha <- sapply(report, getElement, "alpha") # sim
-  output <- t(alpha * epro) # productivity: y, simulation
   return(output)
 }
 
@@ -497,11 +526,11 @@ CM_SRR <- function(report, year1 = 1) {
 #' @returns
 #' - `CM_prod()` returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 #' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-#' vary with annual changes in natural mortality or maturity.
+#' vary with annual changes in natural mortality or maturity. [.CM_prod()] is the internal function that calculates productivity.
 #' @export
 CM_prod <- function(report, d, year1 = 1) {
 
-  prod <- .CM_prod(report, d)
+  prod <- .CM_prod(report, d, index = NULL, mean_bio = FALSE)
 
   prod_q <- apply(prod, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
     reshape2::melt() %>%
@@ -575,38 +604,86 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
   g
 }
 
+#' @name .CM_prod
+#' @param simple Logical, whether to use Ricker lambert equations for MSY reference points (TRUE) or age-structured
+#' optimization (FALSE)
+#' @param type Character, the type of reference point to calculate
+#' @param AEQ Logical, whether to use adult equivalents when calculating MSY for preterminal fisheries#' Only used if `simple = FALSE`. Should always be `TRUE`
+#' @param maximize Character, whether the numerical optimization maximizes catch (MSY) or excess recruitment (MER). For testing only,
+#' should not impact results. Only used if `simple = FALSE`
+#' @param ncores Numeric, number of processors for parallel computation. Useful if calculating numerically for many MCMC samples
 #' @importFrom parallel detectCores makeCluster stopCluster parSapplyLB
-.CM_MSY <- function(report, d, type = c("spawner", "egg", "u", "Sgen"), AEQ = TRUE,
+#' @seealso [CM_MSY()]
+#' @keywords internal
+.CM_MSY <- function(report, d, simple = TRUE, index = NULL, mean_bio = FALSE,
+                    type = c("spawner", "egg", "u", "Sgen"), AEQ = TRUE,
                     maximize = c("MSY", "MER"), ncores = 1) {
   type <- match.arg(type)
+  if (is.null(index)) index <- seq(1, d$Ldyr)
 
-  mo <- sapply(report, getElement, "mo", simplify = "array") # y, a, s
-  matt <- sapply(report, getElement, "matt", simplify = "array") # y, a, r, s
+  alpha <- sapply(report, getElement, "alpha") # Vector by simulation, smolt per egg
+  beta <- sapply(report, getElement, "beta") # Vector by simulation, per egg
 
-  alpha <- sapply(report, getElement, "alpha") # s, smolt per egg
-  beta <- sapply(report, getElement, "beta") # per egg
-
-  alpha_s <- .CM_prod(report, d) # productivity, adult/spawner
+  # productivity, adult/spawner
+  # matrix by 1 row or length(index) rows and nsim columns
+  alpha_s <- .CM_prod(report, d, index = index, mean_bio = mean_bio)
   epro <- t(alpha_s)/alpha # egg per smolt: s, y
 
   # spawner per smolt in year y
-  spro <- sapply(1:d$Ldyr, function(y) {
-    sapply(1:length(report), function(x) {
-      mo <- report[[x]]$mo[y, ]
-      matt <- report[[x]]$matt[y, , d$r_matt]
+  if (mean_bio) {
+    spro <- sapply(1:length(report), function(x) {
+      mo <- apply(report[[x]]$mo[index, , drop = FALSE], 2, mean)
+      matt <- apply(report[[x]]$matt[index, , d$r_matt, drop = FALSE], 2, mean)
       lo <- calc_survival(mo, matt) # smolt survival at replacement
       spro <- sum(lo * d$ssum * matt)
       return(spro)
+    }) %>%
+      matrix(ncol = 1)
+
+  } else {
+    spro <- sapply(index, function(y) {
+      sapply(1:length(report), function(x) {
+        mo <- report[[x]]$mo[y, ]
+        matt <- report[[x]]$matt[y, , d$r_matt]
+        lo <- calc_survival(mo, matt) # smolt survival at replacement
+        spro <- sum(lo * d$ssum * matt)
+        return(spro)
+      })
     })
-  })
-  beta_s <- beta * epro/spro # Ricker beta, per spawner
+  }
+
+  beta_s <- beta * epro/spro # Ricker beta, per spawner: sim x year
+
+  if (simple) {
+    output <- switch(
+      type,
+      "spawner" = calc_Smsy_Ricker(log(alpha_s), t(beta_s)),
+      "u" = calc_Umsy_Ricker(log(alpha_s)),
+      "Sgen" = calc_Sgen_Ricker(log(alpha_s), t(beta_s)),
+      stop("Simple MSY reference point for egg production is not possible")
+    )
+    return(output)
+  }
+
+  if (mean_bio) {
+    .mo <- sapply(report, getElement, "mo", simplify = "array")[index, , , drop = FALSE] # y, a, s
+    mo <- apply(.mo, 2:3, mean) %>%
+      array(dim = c(1, dim(.mo)[2:3]))
+
+    .matt <- sapply(report, getElement, "matt", simplify = "array")[index, , , , drop = FALSE] # y, a, r, s
+    matt <- apply(.matt, 2:4, mean) %>%
+      array(dim = c(1, dim(.matt)[2:4]))
+  } else {
+    mo <- sapply(report, getElement, "mo", simplify = "array")[index, , , drop = FALSE] # y, a, s
+    matt <- sapply(report, getElement, "matt", simplify = "array")[index, , , , drop = FALSE] # y, a, r, s
+  }
 
   vulPT <- sapply(report, getElement, "vulPT")
   vulT <- sapply(report, getElement, "vulT")
   FPT <- sapply(report, getElement, "FPT")
   FT <- sapply(report, getElement, "FT")
 
-  MSY_fn <- function(x, ny, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type,
+  MSY_fn <- function(x, mo, matt, alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type,
                      maximize, AEQ) {
 
     if (sum(FT[, x])) {
@@ -616,6 +693,8 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
     } else {
       stop("No fishing mortality in model was detected")
     }
+
+    ny <- nrow(alpha_s)
 
     sapply(1:ny, function(y) {
       SRRpars <- data.frame(
@@ -656,65 +735,104 @@ CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FA
     on.exit(parallel::stopCluster(cl))
 
     output <- parallel::parSapplyLB(
-      cl, X = 1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
+      cl, X = 1:length(report), MSY_fn, mo, matt[, , 1, , drop = FALSE],
       alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, maximize, AEQ
     )
   } else {
     output <- sapply(
-      1:length(report), MSY_fn, ny = d$Ldyr, mo, matt[, , 1, , drop = FALSE],
+      1:length(report), MSY_fn, mo, matt[, , 1, , drop = FALSE],
       alpha_s, beta, beta_s, epro, spro, vulPT, vulT, FPT, FT, type, maximize, AEQ
     )
   }
+
+  if (!is.matrix(output)) output <- matrix(output, nrow = 1)
 
   return(output)
 }
 
 .CM_SMSY <- .CM_MSY
 
-CM_MSY <- function(report, d, year1 = 1, type = c("spawner", "egg", "u"),
+#' Plot reference points from conditioning model
+#'
+#' Plots time series of MSY reference points. Not used in automated reporting as they can be
+#' computationally expensive and individual case studies may require specific assumptions.
+#'
+#' @inheritParams .CM_prod
+#' @inheritParams CMfigures
+#' @param na.rm Logical, whether to exclude negative values from the median in figures
+#' @returns ggplot object
+#' @seealso [CM_prod()] [CM_Srep()] [.CM_MSY()]
+#' @export
+CM_MSY <- function(report, d, year1 = 1, simple = FALSE,
+                   index = NULL, mean_bio = FALSE, type = c("spawner", "egg", "u"),
                    maximize = c("MSY", "MER"), AEQ = TRUE, ncores = 1, na.rm = FALSE) {
   type <- match.arg(type)
 
-  MSY <- .CM_MSY(report, d, type, maximize = maximize, AEQ = AEQ, ncores = ncores)
+  MSY <- .CM_MSY(report, d, type, simple = simple, index = index, mean_bio = mean_bio,
+                 maximize = maximize, AEQ = AEQ, ncores = ncores)
   if (na.rm) MSY[MSY <= 0] <- NA_real_
 
-  MSY_q <- apply(MSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"))
-  ylab <- switch(
+  if (is.null(index)) index <- seq(1, d$Ldyr)
+
+  axis_lab <- switch(
     type,
     "spawner" = expression(S[MSY]),
     "egg" = expression(E[MSY]),
     "u" = expression(U[MSY])
   )
 
-  g <- MSY_q %>%
-    ggplot(aes(Year, .data$`50%`)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Calendar Year", y = ylab)
+  if (mean_bio || length(index) == 1) {
+    g <- data.frame(MSY = MSY[1, ]) %>%
+      ggplot(aes(.data$MSY)) +
+      geom_histogram(fill = "grey80", colour = "black") +
+      labs(x = axis_lab)
+  } else {
+    MSY_q <- apply(MSY, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
+      reshape2::melt() %>%
+      mutate(Year = index[Var2] + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"))
+
+    g <- MSY_q %>%
+      ggplot(aes(Year, .data$`50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      labs(x = "Calendar Year", y = axis_lab)
+  }
 
   g
 }
 CM_SMSY <- CM_MSY
 
-.CM_Sgen <- function(report, d, ncores = 1) .CM_MSY(report, d, type = "Sgen", ncores = ncores)
+.CM_Sgen <- function(report, d, simple = FALSE, index = NULL, mean_bio = FALSE, ncores = 1) {
+  .CM_MSY(report, d, index = index, mean_bio = mean_bio, type = "Sgen", ncores = ncores)
+}
 
-CM_Sgen <- function(report, d, year1 = 1, ncores = 1, na.rm = FALSE) {
-  Sgen <- .CM_Sgen(report, d, ncores = ncores)
+#' @name CM_MSY
+#' @export
+CM_Sgen <- function(report, d, year1 = 1, simple = FALSE,
+                    index = NULL, mean_bio = FALSE, ncores = 1, na.rm = FALSE) {
+  Sgen <- .CM_Sgen(report, d, simple = simple, index = index, mean_bio = mean_bio, ncores = ncores)
   if (na.rm) Sgen[Sgen <= 0] <- NA_real_
 
-  Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"))
+  if (is.null(index)) index <- seq(1, d$Ldyr)
 
-  g <- Sgen_q %>%
-    ggplot(aes(Year, .data$`50%`)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Year", y = expression(S[gen]))
+  if (mean_bio || length(index) == 1) {
+    g <- data.frame(Sgen = Sgen[1, ]) %>%
+      ggplot(aes(.data$Sgen)) +
+      geom_histogram(fill = "grey80", colour = "black") +
+      labs(x = expression(S[gen]))
+  } else {
+    Sgen_q <- apply(Sgen, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
+      reshape2::melt() %>%
+      mutate(Year = index[Var2] + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"))
+
+    g <- Sgen_q %>%
+      ggplot(aes(Year, .data$`50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      labs(x = "Year", y = expression(S[gen]))
+  }
 
   g
 }
