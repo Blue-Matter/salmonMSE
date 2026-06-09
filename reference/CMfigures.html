@@ -246,7 +246,7 @@ otherwise, the dot product <code>sum(x * b)</code> is calculated by individual s
 relationship and realized annual values. Years correspond to return years of egg production (predicts juvenile production of the following calendar year).</p></li>
 </ul><ul><li><p><code>CM_prod()</code> returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-vary with annual changes in natural mortality or maturity.</p></li>
+vary with annual changes in natural mortality or maturity. <code><a href="dot-CM_prod.html">.CM_prod()</a></code> is the internal function that calculates productivity.</p></li>
 </ul><ul><li><p><code>CM_Srep()</code> returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
 vary with annual changes in natural mortality or maturity.</p></li>
@@ -265,6 +265,10 @@ Hatchery fish experience additional mortality specified by release mortality.</p
 </ul><ul><li><p><code>CM_CWT_ER()</code> returns ggplot of CWT exploitation rate (by release strategy)</p></li>
 </ul><ul><li><p><code>CM_covariate()</code> returns ggplot of mortality covariates</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="CM_MSY.html">CM_MSY()</a></code></p></div>
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

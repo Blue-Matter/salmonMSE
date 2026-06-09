@@ -12,6 +12,10 @@
 - [`CM2SOM()`](https://docs.salmonmse.com/reference/CM2SOM.md) : Convert
   conditioning model to operating model
 
+- [`CM_MSY()`](https://docs.salmonmse.com/reference/CM_MSY.md)
+  [`CM_Sgen()`](https://docs.salmonmse.com/reference/CM_MSY.md) : Plot
+  reference points from conditioning model
+
 - [`get_report()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`get_CMdata()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_trace()`](https://docs.salmonmse.com/reference/CMfigures.md)

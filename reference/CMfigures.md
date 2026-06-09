@@ -254,6 +254,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
   juvenile natural mortality, fecundity, and maturity. Even if egg-smolt
   survival function is constant, the realized productivity can vary with
   annual changes in natural mortality or maturity.
+  [`.CM_prod()`](https://docs.salmonmse.com/reference/dot-CM_prod.md) is
+  the internal function that calculates productivity.
 
 &nbsp;
 
@@ -324,3 +326,7 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 &nbsp;
 
 - `CM_covariate()` returns ggplot of mortality covariates
+
+## See also
+
+[`CM_MSY()`](https://docs.salmonmse.com/reference/CM_MSY.md)
