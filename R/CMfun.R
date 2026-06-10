@@ -629,7 +629,7 @@ CM_Srep <- function(report, d, year1 = 1,
   } else {
     Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
       reshape2::melt() %>%
-      mutate(Year = Var2 + year1 - 1) %>%
+      mutate(Year = index[Var2] + year1 - 1) %>%
       reshape2::dcast(list("Year", "Var1"))
     g <- Srep_q %>%
       ggplot(aes(Year, .data$`50%`)) +
@@ -1185,7 +1185,7 @@ CY2BY <- function(x) {
 }
 
 # Calculate adult equivalent
-calc_AEQ <- function(report, brood = TRUE) {
+calc_AEQ <- function(report, index_AEQ = NULL) {
 
   nt <- dim(report$matt)[1]
   na <- dim(report$matt)[2]
@@ -1193,8 +1193,19 @@ calc_AEQ <- function(report, brood = TRUE) {
 
   # Always by brood year
   matt <- sapply(1:n_r, function(r) CY2BY(report$matt[, , r]), simplify = "array")
-  M_BY <- CY2BY(report$mo)
-  surv <- exp(-M_BY)
+  mo <- CY2BY(report$mo)
+  surv <- exp(-mo)
+
+  if (!is.null(index_AEQ)) {
+    matt_avg <- apply(matt[index_AEQ, , , drop = FALSE], 2:3, mean)
+    surv_avg <- apply(surv[index_AEQ, , drop = FALSE], 2, mean)
+
+    # Fill in incomplete brood years
+    t_missing <- seq(nt - na + 2, nt)
+    matt[t_missing, , ] <- array(matt_avg, c(na, n_r, length(t_missing))) %>% aperm(c(3, 1, 2))
+
+    surv[t_missing, ] <- matrix(surv_avg, length(t_missing), na-1, byrow = TRUE)
+  }
 
   AEQ <- array(NA_real_, dim(matt))
   AEQ[, na, ] <- 1
@@ -1204,31 +1215,94 @@ calc_AEQ <- function(report, brood = TRUE) {
     }
   }
 
+  if (!is.null(index_AEQ)) AEQ[nt, , ] <- AEQ[nt-1, , ]
+
   return(AEQ)
+}
+
+.CM_ERage <- function(report, type = c("PT", "T"), brood = FALSE, simplify = TRUE) {
+  type <- match.arg(type)
+  ER_list <- lapply(report, function(i) {
+    name <- ifelse(type == "PT", "survPT", "survT")
+    CYER <- 1 - i[[name]]
+    if (brood) {
+      ER <- CY2BY(CYER)
+    } else {
+      ER <- CYER
+    }
+    return(list(ER = ER))
+  })
+
+  if (simplify) {
+    sapply(ER_list, getElement, "ER", simplify = "array") # year age sim
+  } else {
+    return(ER_list)
+  }
+}
+
+.CM_ER <- function(report, type = c("PT", "T", "all"), r = 1, index_AEQ = NULL,
+                   brood = FALSE, simplify = TRUE) {
+  type <- match.arg(type)
+
+  ER_list <- lapply(report, function(i) {
+    esc <- apply(i$escyear, 1:2, sum)
+    morts_PT <- apply(i$cyearPT, 1:2, sum)
+    morts_T <- apply(i$cyearT, 1:2, sum)
+
+    AEQ_PT <- calc_AEQ(i, index_AEQ = index_AEQ)[, , r] # Always by brood year
+    AEQ_T <- array(1, dim(esc))
+
+    if (brood) {
+      esc <- CY2BY(esc)
+      morts_PT <- CY2BY(morts_PT)
+      morts_T <- CY2BY(morts_T)
+      AEQ_PT2 <- AEQ_PT
+    } else {
+      AEQ_PT2 <- array(NA_real_, dim(esc)) # Re-index to align with calendar year
+      nt <- nrow(AEQ_PT2)
+      na <- ncol(AEQ_PT2)
+      for (t in 1:nt) {
+        for (a in 1:na) if (t-a+1>0) AEQ_PT2[t, a] <- AEQ_PT[t-a+1, a]
+      }
+    }
+    denom <- rowSums(morts_PT * AEQ_PT2 + morts_T * AEQ_T + esc)
+
+    if (type == "PT") {
+      num <- rowSums(morts_PT * AEQ_PT2)
+    } else if (type == "T") {
+      num <- rowSums(morts_T * AEQ_T)
+    } else {
+      num <- rowSums(morts_PT * AEQ_PT2 + morts_T * AEQ_T)
+    }
+
+    list(ER = num/denom)
+  })
+
+  if (simplify) {
+    sapply(ER_list, getElement, "ER", simplify = "array") # year sim
+  } else {
+    return(ER_list)
+  }
 }
 
 
 #' @rdname CMfigures
 #' @param at_age Logical, whether to make figure by individual age
+#' @param index_AEQ Optional integer vector to identify years from which to borrow natural mortality and maturity
+#' to calculate adult equivalents for incomplete brood years. Only used if `at_age = FALSE`.
 #' @returns
-#' - `CM_ER()` returns ggplot of exploitation rate either by individual age or aggregate values using adult equivalents
+#' - `CM_ER()` returns ggplot of exploitation rate either by individual age or aggregate values.
+#' Aggregate values use adult equivalents for preterminal fisheries.
 #' @export
-CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE, r = 1) {
+CM_ER <- function(report, brood = TRUE,
+                  type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE, r = 1,
+                  index_AEQ = NULL) {
 
   type <- match.arg(type)
 
   if (at_age) {
 
-    ER_list <- lapply(report, function(i) {
-      name <- ifelse(type == "PT", "survPT", "survT")
-      CYER <- 1 - i[[name]]
-      if (brood) {
-        ER <- CY2BY(CYER)
-      } else {
-        ER <- CYER
-      }
-      return(list(ER = ER))
-    })
+    ER_list <- .CM_ERage(report, type, brood, simplify = FALSE)
 
     g <- .CM_statevarage(
       ER_list,
@@ -1246,42 +1320,7 @@ CM_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 1, c
 
   } else {
 
-    ER_list <- lapply(report, function(i) {
-
-      esc <- apply(i$escyear, 1:2, sum)
-      morts_PT <- apply(i$cyearPT, 1:2, sum)
-      morts_T <- apply(i$cyearT, 1:2, sum)
-
-      AEQ_PT <- calc_AEQ(i)[, , r] # Always by release year
-      AEQ_T <- array(1, dim(esc))
-
-      if (brood) {
-        esc <- CY2BY(esc)
-        morts_PT <- CY2BY(morts_PT)
-        morts_T <- CY2BY(morts_T)
-
-        denom <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T + esc)
-
-      } else {
-        AEQ_PT2 <- array(NA_real_, dim(esc)) # Re-index to align with calendar year
-        nt <- nrow(AEQ_PT2)
-        na <- ncol(AEQ_PT2)
-        for (t in 1:nt) {
-          for (a in 1:na) if (t-a+1>0) AEQ_PT2[t, a] <- AEQ_PT[t-a+1, a]
-        }
-        denom <- rowSums(morts_PT * AEQ_PT2 + morts_T * AEQ_T + esc)
-      }
-
-      if (type == "PT") {
-        num <- rowSums(morts_PT * AEQ_PT)
-      } else if (type == "T") {
-        num <- rowSums(morts_T * AEQ_T)
-      } else {
-        num <- rowSums(morts_PT * AEQ_PT + morts_T * AEQ_T)
-      }
-
-      list(ER = num/denom)
-    })
+    ER_list <- .CM_ER(report, type, index_AEQ = index_AEQ, brood = brood, r = r, simplify = FALSE)
 
     g <- .CM_ts(
       ER_list,
@@ -1322,17 +1361,28 @@ CM_CWT_ER <- function(report, brood = TRUE, type = c("PT", "T", "all"), year1 = 
       morts_T <- i$ccwtT
     }
 
-    AEQ_PT <- calc_AEQ(i, brood = brood)
+    AEQ_PT <- calc_AEQ(i)
     AEQ_T <- array(1, dim(esc))
 
-    denom <- apply(morts_PT * AEQ_PT + morts_T * AEQ_T + esc, c(1, 3), sum) # year x rs
+    if (brood) {
+      AEQ_PT2 <- AEQ_PT
+    } else {
+      AEQ_PT2 <- array(NA_real_, dim(esc)) # Re-index to align with calendar year
+      nt <- nrow(AEQ_PT2)
+      na <- ncol(AEQ_PT2)
+      for (t in 1:nt) {
+        for (a in 1:na) if (t-a+1>0) AEQ_PT2[t, a, ] <- AEQ_PT[t-a+1, a, ]
+      }
+    }
+
+    denom <- apply(morts_PT * AEQ_PT2 + morts_T * AEQ_T + esc, c(1, 3), sum) # year x rs
 
     if (type == "PT") {
-      num <- apply(morts_PT * AEQ_PT, c(1, 3), sum)
+      num <- apply(morts_PT * AEQ_PT2, c(1, 3), sum)
     } else if (type == "T") {
       num <- apply(morts_T * AEQ_T, c(1, 3), sum)
     } else {
-      num <- apply(morts_PT * AEQ_PT + morts_T * AEQ_T, c(1, 3), sum)
+      num <- apply(morts_PT * AEQ_PT2 + morts_T * AEQ_T, c(1, 3), sum)
     }
 
     return(num/denom)
