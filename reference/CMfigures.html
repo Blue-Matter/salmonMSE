@@ -125,7 +125,8 @@
 <span>  year1 <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  ci <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  at_age <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  r <span class="op">=</span> <span class="fl">1</span></span>
+<span>  r <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  index_AEQ <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">CM_CWT_ER</span><span class="op">(</span></span>
@@ -235,6 +236,11 @@ years indicated in <code>index</code></p></dd>
 <dd><p>Logical, whether to make figure by individual age</p></dd>
 
 
+<dt id="arg-index-aeq">index_AEQ<a class="anchor" aria-label="anchor" href="#arg-index-aeq"></a></dt>
+<dd><p>Optional integer vector to identify years from which to borrow natural mortality and maturity
+to calculate adult equivalents for incomplete brood years. Only used if <code>at_age = FALSE</code>.</p></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>Matrix of covariates by year x covariate</p></dd>
 
@@ -281,7 +287,8 @@ vary with annual changes in natural mortality or maturity. <code><a href="dot-CM
 </ul><ul><li><p><code>CM_surv2()</code> returns ggplot of annual survival to age 2, which includes age-1 mortality (marine life stage) for both natural and hatchery origin fish.
 Hatchery fish experience additional mortality specified by release mortality.</p></li>
 </ul><ul><li><p><code>CM_wt()</code> returns ggplot of annual deviations in age 1 natural mortality (first year in marine life stage, deviations from time series average)</p></li>
-</ul><ul><li><p><code>CM_ER()</code> returns ggplot of exploitation rate either by individual age or aggregate values using adult equivalents</p></li>
+</ul><ul><li><p><code>CM_ER()</code> returns ggplot of exploitation rate either by individual age or aggregate values.
+Aggregate values use adult equivalents for preterminal fisheries.</p></li>
 </ul><ul><li><p><code>CM_CWT_ER()</code> returns ggplot of CWT exploitation rate (by release strategy)</p></li>
 </ul><ul><li><p><code>CM_covariate()</code> returns ggplot of mortality covariates</p></li>
 </ul></div>

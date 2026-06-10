@@ -75,7 +75,8 @@ CM_ER(
   year1 = 1,
   ci = TRUE,
   at_age = TRUE,
-  r = 1
+  r = 1,
+  index_AEQ = NULL
 )
 
 CM_CWT_ER(
@@ -196,6 +197,12 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 - at_age:
 
   Logical, whether to make figure by individual age
+
+- index_AEQ:
+
+  Optional integer vector to identify years from which to borrow natural
+  mortality and maturity to calculate adult equivalents for incomplete
+  brood years. Only used if `at_age = FALSE`.
 
 - x:
 
@@ -339,7 +346,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 &nbsp;
 
 - `CM_ER()` returns ggplot of exploitation rate either by individual age
-  or aggregate values using adult equivalents
+  or aggregate values. Aggregate values use adult equivalents for
+  preterminal fisheries.
 
 &nbsp;
 
