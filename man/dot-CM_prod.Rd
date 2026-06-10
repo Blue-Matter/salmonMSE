@@ -2,10 +2,13 @@
 % Please edit documentation in R/CMfun.R
 \name{.CM_prod}
 \alias{.CM_prod}
+\alias{.CM_Srep}
 \alias{.CM_MSY}
 \title{Reference points for conditioning model}
 \usage{
 .CM_prod(report, d, index = NULL, mean_bio = FALSE)
+
+.CM_Srep(report, d, index = NULL, mean_bio = FALSE, type = c("spawner", "egg"))
 
 .CM_MSY(
   report,
@@ -31,10 +34,10 @@ If \code{NULL}, uses all years of model.}
 \item{mean_bio}{Logical, whether to average the natural mortality and maturity parameters across
 years indicated in \code{index}}
 
+\item{type}{Character, the type of reference point to calculate}
+
 \item{simple}{Logical, whether to use Ricker lambert equations for MSY reference points (TRUE) or age-structured
 optimization (FALSE)}
-
-\item{type}{Character, the type of reference point to calculate}
 
 \item{AEQ}{Logical, whether to use adult equivalents when calculating MSY for preterminal fisheries#' Only used if \code{simple = FALSE}. Should always be \code{TRUE}}
 

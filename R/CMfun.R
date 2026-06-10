@@ -484,11 +484,6 @@ CM_SRR <- function(report, year1 = 1) {
 #' in time with natural mortality and maturity), or from average biological parameters in a subset of years.
 #'
 #' @inheritParams CMfigures
-#' @param index Integer vector to subset years with which to calculate reference points. Can be used
-#' to reduce computation or average biological parameters from a subset of years, see `mean_bio` argument.
-#' If `NULL`, uses all years of model.
-#' @param mean_bio Logical, whether to average the natural mortality and maturity parameters across
-#' years indicated in `index`
 #' @returns
 #' Matrix, dimension `[length(index), length(report)]`. If `mean_bio = TRUE`, matrix has 1 row.
 #' @keywords internal
@@ -523,48 +518,77 @@ CM_SRR <- function(report, year1 = 1) {
 }
 
 #' @rdname CMfigures
+#' @param index Integer vector to subset years with which to calculate reference points. Can be used
+#' to reduce computation or average biological parameters from a subset of years, see `mean_bio` argument.
+#' If `NULL`, uses all years of model.
+#' @param mean_bio Logical, whether to average the natural mortality and maturity parameters across
+#' years indicated in `index`
 #' @returns
 #' - `CM_prod()` returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 #' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-#' vary with annual changes in natural mortality or maturity. [.CM_prod()] is the internal function that calculates productivity.
+#' vary with annual changes in natural mortality or maturity. [.CM_prod()] is the internal function that calculates productivity,
+#' with additional options for averaging time-varying biology.
 #' @export
-CM_prod <- function(report, d, year1 = 1) {
+CM_prod <- function(report, d, year1 = 1, index = NULL, mean_bio = FALSE) {
 
-  prod <- .CM_prod(report, d, index = NULL, mean_bio = FALSE)
+  prod <- .CM_prod(report, d, index, mean_bio)
 
-  prod_q <- apply(prod, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"))
+  if (is.null(index)) index <- seq(1, d$Ldyr)
 
-  g <- prod_q %>%
-    ggplot(aes(Year, .data$`50%`)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Calendar Year", y = "Productivity")
+  if (mean_bio || length(index) == 1) {
+    g <- data.frame(prod = prod[1, ]) %>%
+      ggplot(aes(.data$prod)) +
+      geom_histogram(fill = "grey80", colour = "black") +
+      labs(x = "Productivity")
+  } else {
+    prod_q <- apply(prod, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE) %>%
+      reshape2::melt() %>%
+      mutate(Year = index[Var2] + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"))
+
+    g <- prod_q %>%
+      ggplot(aes(Year, .data$`50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      labs(x = "Calendar Year", y = "Productivity")
+  }
+
   g
-
 }
 
-.CM_Srep <- function(report, d, type = c("spawner", "egg")) {
+#' @name .CM_prod
+#' @keywords internal
+.CM_Srep <- function(report, d, index = NULL, mean_bio = FALSE, type = c("spawner", "egg")) {
   type <- match.arg(type)
 
   alpha <- sapply(report, getElement, "alpha") # sim
   beta <- sapply(report, getElement, "beta") # per egg
 
-  alpha_s <- .CM_prod(report, d) # productivity: y, s
+  alpha_s <- .CM_prod(report, d, index, mean_bio) # productivity: y, s
   epro <- t(alpha_s)/alpha # s, y
 
+  if (is.null(index)) index <- seq(1, d$Ldyr)
+
   # spawner per smolt in year y
-  spro <- sapply(1:d$Ldyr, function(y) {
-    sapply(1:length(report), function(x) {
-      mo <- report[[x]]$mo[y, ]
-      matt <- report[[x]]$matt[y, , d$r_matt]
+  if (mean_bio) {
+    spro <- sapply(1:length(report), function(x) { # vector
+      mo <- apply(report[[x]]$mo[index, , drop = FALSE], 2, mean)
+      matt <- apply(report[[x]]$matt[index, , d$r_matt, drop = FALSE], 2:3, mean)
       lo <- calc_survival(mo, matt) # smolt survival at replacement
       spro <- sum(lo * d$ssum * matt)
       return(spro)
     })
-  })
+  } else {
+    spro <- sapply(index, function(y) { # matrix simulation x year
+      sapply(1:length(report), function(x) {
+        mo <- report[[x]]$mo[y, ]
+        matt <- report[[x]]$matt[y, , d$r_matt]
+        lo <- calc_survival(mo, matt) # smolt survival at replacement
+        spro <- sum(lo * d$ssum * matt)
+        return(spro)
+      })
+    })
+  }
 
   beta_s <- beta * epro/spro # Ricker beta, per spawner
   Srep <- log(t(alpha_s))/beta_s
@@ -574,6 +598,8 @@ CM_prod <- function(report, d, year1 = 1) {
   } else {
     output <- Srep * epro / spro # Erep, egg production at replacement
   }
+  if (!is.matrix(output)) output <- matrix(output, ncol = 1)
+
   return(t(output)) # year, simulation
 }
 
@@ -582,24 +608,35 @@ CM_prod <- function(report, d, year1 = 1) {
 #' @returns
 #' - `CM_Srep()` returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
 #' juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
-#' vary with annual changes in natural mortality or maturity.
+#' vary with annual changes in natural mortality or maturity. [.CM_Srep()] is the internal function with options for averaging time-varying biology.
 #' @export
-CM_Srep <- function(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FALSE) {
+CM_Srep <- function(report, d, year1 = 1,
+                    index = NULL, mean_bio = FALSE, type = c("spawner", "egg"), na.rm = FALSE) {
   type <- match.arg(type)
 
-  Srep <- .CM_Srep(report, d, type)
+  Srep <- .CM_Srep(report, d, index = index, mean_bio = mean_bio, type = type)
   if (na.rm) Srep[Srep <= 0] <- NA_real_
 
-  Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
-    reshape2::melt() %>%
-    mutate(Year = Var2 + year1 - 1) %>%
-    reshape2::dcast(list("Year", "Var1"))
+  if (is.null(index)) index <- seq(1, d$Ldyr)
 
-  g <- Srep_q %>%
-    ggplot(aes(Year, .data$`50%`)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
-    labs(x = "Calendar Year", y = ifelse(type == "spawner", expression(S[rep]), expression(E[rep])))
+  axis_lab <- ifelse(type == "spawner", expression(S[rep]), expression(E[rep]))
+
+  if (mean_bio || length(index) == 1) {
+    g <- data.frame(value = Srep[1, ]) %>%
+      ggplot(aes(.data$value)) +
+      geom_histogram(fill = "grey80", colour = "black") +
+      labs(x = axis_lab)
+  } else {
+    Srep_q <- apply(Srep, 1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = na.rm) %>%
+      reshape2::melt() %>%
+      mutate(Year = Var2 + year1 - 1) %>%
+      reshape2::dcast(list("Year", "Var1"))
+    g <- Srep_q %>%
+      ggplot(aes(Year, .data$`50%`)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2) +
+      labs(x = "Calendar Year", y = axis_lab)
+  }
 
   g
 }

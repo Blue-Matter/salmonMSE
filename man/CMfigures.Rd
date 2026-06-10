@@ -60,9 +60,17 @@ CM_vul(report, type = c("vulPT", "vulT"))
 
 CM_SRR(report, year1 = 1)
 
-CM_prod(report, d, year1 = 1)
+CM_prod(report, d, year1 = 1, index = NULL, mean_bio = FALSE)
 
-CM_Srep(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FALSE)
+CM_Srep(
+  report,
+  d,
+  year1 = 1,
+  index = NULL,
+  mean_bio = FALSE,
+  type = c("spawner", "egg"),
+  na.rm = FALSE
+)
 
 CM_M(report, year1 = 1, ci = TRUE)
 
@@ -136,6 +144,13 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
 \item{type}{Character, indicates type of variable to plot}
 
+\item{index}{Integer vector to subset years with which to calculate reference points. Can be used
+to reduce computation or average biological parameters from a subset of years, see \code{mean_bio} argument.
+If \code{NULL}, uses all years of model.}
+
+\item{mean_bio}{Logical, whether to average the natural mortality and maturity parameters across
+years indicated in \code{index}}
+
 \item{na.rm}{Logical, whether to exclude replacement values (and other reference points) that are less than zero from median calculations and resulting figures}
 
 \item{ci}{Logical whether to show posterior intervals in addition to posterior median}
@@ -202,13 +217,14 @@ relationship and realized annual values. Years correspond to return years of egg
 \itemize{
 \item \code{CM_prod()} returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-vary with annual changes in natural mortality or maturity. \code{\link[=.CM_prod]{.CM_prod()}} is the internal function that calculates productivity.
+vary with annual changes in natural mortality or maturity. \code{\link[=.CM_prod]{.CM_prod()}} is the internal function that calculates productivity,
+with additional options for averaging time-varying biology.
 }
 
 \itemize{
 \item \code{CM_Srep()} returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
-vary with annual changes in natural mortality or maturity.
+vary with annual changes in natural mortality or maturity. \code{\link[=.CM_Srep]{.CM_Srep()}} is the internal function with options for averaging time-varying biology.
 }
 
 \itemize{
