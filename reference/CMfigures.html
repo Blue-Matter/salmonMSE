@@ -86,9 +86,17 @@
 <span></span>
 <span><span class="fu">CM_SRR</span><span class="op">(</span><span class="va">report</span>, year1 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">CM_prod</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">CM_prod</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span>, index <span class="op">=</span> <span class="cn">NULL</span>, mean_bio <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">CM_Srep</span><span class="op">(</span><span class="va">report</span>, <span class="va">d</span>, year1 <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spawner"</span>, <span class="st">"egg"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">CM_Srep</span><span class="op">(</span></span>
+<span>  <span class="va">report</span>,</span>
+<span>  <span class="va">d</span>,</span>
+<span>  year1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  index <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mean_bio <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spawner"</span>, <span class="st">"egg"</span><span class="op">)</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">CM_M</span><span class="op">(</span><span class="va">report</span>, year1 <span class="op">=</span> <span class="fl">1</span>, ci <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -196,6 +204,17 @@
 <dd><p>Character, indicates type of variable to plot</p></dd>
 
 
+<dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
+<dd><p>Integer vector to subset years with which to calculate reference points. Can be used
+to reduce computation or average biological parameters from a subset of years, see <code>mean_bio</code> argument.
+If <code>NULL</code>, uses all years of model.</p></dd>
+
+
+<dt id="arg-mean-bio">mean_bio<a class="anchor" aria-label="anchor" href="#arg-mean-bio"></a></dt>
+<dd><p>Logical, whether to average the natural mortality and maturity parameters across
+years indicated in <code>index</code></p></dd>
+
+
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>Logical, whether to exclude replacement values (and other reference points) that are less than zero from median calculations and resulting figures</p></dd>
 
@@ -246,10 +265,11 @@ otherwise, the dot product <code>sum(x * b)</code> is calculated by individual s
 relationship and realized annual values. Years correspond to return years of egg production (predicts juvenile production of the following calendar year).</p></li>
 </ul><ul><li><p><code>CM_prod()</code> returns ggplot of productivity (adults/spawner), calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized productivity can
-vary with annual changes in natural mortality or maturity. <code><a href="dot-CM_prod.html">.CM_prod()</a></code> is the internal function that calculates productivity.</p></li>
+vary with annual changes in natural mortality or maturity. <code><a href="dot-CM_prod.html">.CM_prod()</a></code> is the internal function that calculates productivity,
+with additional options for averaging time-varying biology.</p></li>
 </ul><ul><li><p><code>CM_Srep()</code> returns ggplot of spawners or egg production at replacement, calculated from density-dependent egg-smolt Ricker parameters,
 juvenile natural mortality, fecundity, and maturity. Even if egg-smolt survival function is constant, the realized replacement can
-vary with annual changes in natural mortality or maturity.</p></li>
+vary with annual changes in natural mortality or maturity. <code><a href="dot-CM_prod.html">.CM_Srep()</a></code> is the internal function with options for averaging time-varying biology.</p></li>
 </ul><ul><li><p><code>CM_M()</code> returns ggplot of estimated natural mortality time series by age (marine stage)</p></li>
 </ul><ul><li><p><code>CM_Megg()</code> returns ggplot of egg-juvenile mortality time series</p></li>
 </ul><ul><li><p><code>CM_Njuv()</code> returns ggplot of juvenile abundance</p></li>

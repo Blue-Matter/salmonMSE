@@ -11,6 +11,8 @@ from average biological parameters in a subset of years.
 ``` r
 .CM_prod(report, d, index = NULL, mean_bio = FALSE)
 
+.CM_Srep(report, d, index = NULL, mean_bio = FALSE, type = c("spawner", "egg"))
+
 .CM_MSY(
   report,
   d,
@@ -49,14 +51,14 @@ from average biological parameters in a subset of years.
   Logical, whether to average the natural mortality and maturity
   parameters across years indicated in `index`
 
+- type:
+
+  Character, the type of reference point to calculate
+
 - simple:
 
   Logical, whether to use Ricker lambert equations for MSY reference
   points (TRUE) or age-structured optimization (FALSE)
-
-- type:
-
-  Character, the type of reference point to calculate
 
 - AEQ:
 

@@ -36,9 +36,17 @@ CM_vul(report, type = c("vulPT", "vulT"))
 
 CM_SRR(report, year1 = 1)
 
-CM_prod(report, d, year1 = 1)
+CM_prod(report, d, year1 = 1, index = NULL, mean_bio = FALSE)
 
-CM_Srep(report, d, year1 = 1, type = c("spawner", "egg"), na.rm = FALSE)
+CM_Srep(
+  report,
+  d,
+  year1 = 1,
+  index = NULL,
+  mean_bio = FALSE,
+  type = c("spawner", "egg"),
+  na.rm = FALSE
+)
 
 CM_M(report, year1 = 1, ci = TRUE)
 
@@ -153,6 +161,18 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 
   Character, indicates type of variable to plot
 
+- index:
+
+  Integer vector to subset years with which to calculate reference
+  points. Can be used to reduce computation or average biological
+  parameters from a subset of years, see `mean_bio` argument. If `NULL`,
+  uses all years of model.
+
+- mean_bio:
+
+  Logical, whether to average the natural mortality and maturity
+  parameters across years indicated in `index`
+
 - na.rm:
 
   Logical, whether to exclude replacement values (and other reference
@@ -255,7 +275,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
   survival function is constant, the realized productivity can vary with
   annual changes in natural mortality or maturity.
   [`.CM_prod()`](https://docs.salmonmse.com/reference/dot-CM_prod.md) is
-  the internal function that calculates productivity.
+  the internal function that calculates productivity, with additional
+  options for averaging time-varying biology.
 
 &nbsp;
 
@@ -264,6 +285,8 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
   parameters, juvenile natural mortality, fecundity, and maturity. Even
   if egg-smolt survival function is constant, the realized replacement
   can vary with annual changes in natural mortality or maturity.
+  [`.CM_Srep()`](https://docs.salmonmse.com/reference/dot-CM_prod.md) is
+  the internal function with options for averaging time-varying biology.
 
 &nbsp;
 
