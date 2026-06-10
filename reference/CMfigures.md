@@ -348,6 +348,10 @@ CM_covariate(x, names, year1 = 1, b, ylab = "Covariate")
 - `CM_ER()` returns ggplot of exploitation rate either by individual age
   or aggregate values. Aggregate values use adult equivalents for
   preterminal fisheries.
+  [`.CM_ER()`](https://docs.salmonmse.com/reference/dot-CM_ER.md) and
+  [`.CM_ERage()`](https://docs.salmonmse.com/reference/dot-CM_ER.md) are
+  the internal functions for reporting values for all simulations and
+  years if desired.
 
 &nbsp;
 
