@@ -274,7 +274,8 @@ Hatchery fish experience additional mortality specified by release mortality.
 
 \itemize{
 \item \code{CM_ER()} returns ggplot of exploitation rate either by individual age or aggregate values.
-Aggregate values use adult equivalents for preterminal fisheries.
+Aggregate values use adult equivalents for preterminal fisheries. \code{\link[=.CM_ER]{.CM_ER()}} and \code{\link[=.CM_ERage]{.CM_ERage()}}
+are the internal functions for reporting values for all simulations and years if desired.
 }
 
 \itemize{

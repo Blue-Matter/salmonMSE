@@ -1220,26 +1220,14 @@ calc_AEQ <- function(report, index_AEQ = NULL) {
   return(AEQ)
 }
 
-.CM_ERage <- function(report, type = c("PT", "T"), brood = FALSE, simplify = TRUE) {
-  type <- match.arg(type)
-  ER_list <- lapply(report, function(i) {
-    name <- ifelse(type == "PT", "survPT", "survT")
-    CYER <- 1 - i[[name]]
-    if (brood) {
-      ER <- CY2BY(CYER)
-    } else {
-      ER <- CYER
-    }
-    return(list(ER = ER))
-  })
-
-  if (simplify) {
-    sapply(ER_list, getElement, "ER", simplify = "array") # year age sim
-  } else {
-    return(ER_list)
-  }
-}
-
+#' Calculate exploitation rate in conditioning model
+#'
+#' Internal functions for calculating aggregate exploitation rate (`.CM_ER()`) or by age class (`.CM_ER()`).
+#'
+#' @inheritParams CMfigures
+#' @param simplify Logical, will return a matrix or array if TRUE, otherwise a list of output by MCMC simulation
+#' @returns An array if `simplify = TRUE`. Otherwise, a list.
+#' @keywords internal
 .CM_ER <- function(report, type = c("PT", "T", "all"), r = 1, index_AEQ = NULL,
                    brood = FALSE, simplify = TRUE) {
   type <- match.arg(type)
@@ -1285,6 +1273,27 @@ calc_AEQ <- function(report, index_AEQ = NULL) {
   }
 }
 
+#' @name .CM_ER
+#' @keywords internal
+.CM_ERage <- function(report, type = c("PT", "T"), brood = FALSE, simplify = TRUE) {
+  type <- match.arg(type)
+  ER_list <- lapply(report, function(i) {
+    name <- ifelse(type == "PT", "survPT", "survT")
+    CYER <- 1 - i[[name]]
+    if (brood) {
+      ER <- CY2BY(CYER)
+    } else {
+      ER <- CYER
+    }
+    return(list(ER = ER))
+  })
+
+  if (simplify) {
+    sapply(ER_list, getElement, "ER", simplify = "array") # year age sim
+  } else {
+    return(ER_list)
+  }
+}
 
 #' @rdname CMfigures
 #' @param at_age Logical, whether to make figure by individual age
@@ -1292,7 +1301,8 @@ calc_AEQ <- function(report, index_AEQ = NULL) {
 #' to calculate adult equivalents for incomplete brood years. Only used if `at_age = FALSE`.
 #' @returns
 #' - `CM_ER()` returns ggplot of exploitation rate either by individual age or aggregate values.
-#' Aggregate values use adult equivalents for preterminal fisheries.
+#' Aggregate values use adult equivalents for preterminal fisheries. [.CM_ER()] and [.CM_ERage()]
+#' are the internal functions for reporting values for all simulations and years if desired.
 #' @export
 CM_ER <- function(report, brood = TRUE,
                   type = c("PT", "T", "all"), year1 = 1, ci = TRUE, at_age = TRUE, r = 1,
