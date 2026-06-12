@@ -13,6 +13,4 @@
 - [Simple salmonMSE
   example](https://docs.salmonmse.com/articles/example.md):
 - [Introduction](https://docs.salmonmse.com/articles/introduction.md):
-- [Implementation of salmon
-  dynamics](https://docs.salmonmse.com/articles/model.md):
 - [Reference points](https://docs.salmonmse.com/articles/ref.md):
