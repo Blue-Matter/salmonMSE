@@ -82,13 +82,13 @@ where $\textrm{HOS}_{\textrm{eff}} = \gamma \times \textrm{HOS}$ and the supersc
 
 >In the output, fry production is assumed to be equal to spawning output, i.e., $\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y$ and $\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y$.
 
-The smolt production is calculated from the Ricker stock-recruit relationship, effectively over the entire freshwater life stage:
+If the smolt production is calculated from the Ricker stock-recruit relationship, effectively over the entire freshwater life stage:
 
 \begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &= \alpha \times 
-\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
+\textrm{Egg}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y])\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &= \alpha \times 
-\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
+\textrm{Egg}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y])
 \end{align}
 
 where:
@@ -107,14 +107,14 @@ $\kappa$ is the productivity, $\phi$ is the egg production per smolt at replacem
 >
 >\begin{align}
 >\textrm{Smolt}^\textrm{NOS}_{y+1} &= \frac{\alpha \times 
->\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + >\textrm{Egg}^\textrm{HOS}_{y+1})}\\
+>\textrm{Egg}^\textrm{NOS}_y}{1 + \beta(\textrm{Egg}^\textrm{NOS}_y + >\textrm{Egg}^\textrm{HOS}_y)}\\
 >\textrm{Smolt}^\textrm{HOS}_{y+1} &= \frac{\alpha \times 
->\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + >\textrm{Egg}^\textrm{HOS}_{y+1})}
+>\textrm{Egg}^\textrm{HOS}_y}{1 + \beta(\textrm{Egg}^\textrm{NOS}_y + >\textrm{Egg}^\textrm{HOS}_y)}
 >\end{align}
 >
 >where $\alpha = \kappa/\phi$, $\beta = \alpha/{C_\textrm{egg-smolt}}$ ($C$ is the capacity/asymptote).
 
-The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total number of fry in competition with subyearling hatchery releases (see [Hatchery](#hatchery-production) section).
+The density-independent component of the survival equation is controlled by $\alpha$ and the density-dependent component of survival is controlled by $\beta$ and scaled by the total egg production (see [Hatchery](#hatchery-production) section).
 
 ## With habitat modeling
 
@@ -221,7 +221,7 @@ Competition between natural-origin fish and hatchery releases can be incorporate
 
 where $n^\textrm{subyearling}_y$ and $n^\textrm{yearling}_y$ are subyearling and yearling releases from the hatchery, respectively.
 
->salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term. This competition could be modeled in stream-type life histories.
+>salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term. This competition could be modeled for stream-type life histories.
 
 # Hatchery juvenile production
 
@@ -330,15 +330,14 @@ $$
 \textrm{HOB}^\textrm{marked}_{y,a}\\
 \textrm{HOB}^\textrm{stray}_{y,a}
 \end{pmatrix} = 
-f
-
-\begin{pmatrix}
+f\!\left(
+\begin{matrix}
 \textrm{NOR}^\textrm{avail,brood}_{y,a}\\
 \textrm{HOR}^\textrm{avail,brood}_{y,a}\\
  \textrm{Stray}_{y,a}\\
 m
-\end{pmatrix}
-
+\end{matrix}
+\right)
 $$
 
 ## Releases
@@ -376,7 +375,7 @@ $$
 Let $N^\textrm{juv}_{y,a}$ be the juvenile abundance in the population at the beginning of the year, with $N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y$ and $N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}$. 
 The superscript for the smolt variable corresponds to the parentage while the superscript for $N$ denotes the origin of the current cohort.
 
-# Pre-terminal fishery
+## Pre-terminal fishery
 
 Harvest $u^\textrm{PT}$ in the pre-terminal ($\textrm{PT}$) fishery, ostensibly of juveniles, occurs in the first half of the year.
 
@@ -416,14 +415,14 @@ The recruitment is calculated from the survival of juvenile fish after pre-termi
 \textrm{HOR}_{y,a} &= N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
 \end{align}
 
+## Advance age classes
+
 The juvenile abundance in the following year consists of fish that did not mature and subsequently survived natural mortality $M$:
 
 \begin{align}
 N^\textrm{juv,NOS}_{y+1,a+1} &= N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
 N^\textrm{juv,HOS}_{y+1,a+1} &= N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
 \end{align}
-
-Natural mortality is specified by age class. Accordingly, this mortality corresponds to either the freshwater or marine survival depending on age class. 
 
 ## Terminal fishery
 
@@ -713,8 +712,8 @@ K^\textrm{T,target} &= \sum_a K^\textrm{HOS,T}_{y,a}
 The exploitation rate for natural-origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:
 
 \begin{align}
-u^\textrm{exploit,NOS,PT}_{y,a} &= \frac{\sum_aD^\textrm{NO,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(D^\textrm{NO,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a F^\textrm{rel,NO,PT}_y)\times r_a}\\
-u^\textrm{exploit,HOS,PT}_{y,a} &= \frac{\sum_a(D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a((D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a}) \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}]_y)\times r_a}\\
+u^\textrm{exploit,NOS,PT}_{y,a} &= \frac{\sum_aD^\textrm{NO,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(D^\textrm{NO,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a F^\textrm{rel,NO,PT}_y)\times r_a)}\\
+u^\textrm{exploit,HOS,PT}_{y,a} &= \frac{\sum_a(D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a((D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a}) \times \textrm{AEQ}_a + N^\textrm{juv,HOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}]_y)\times r_a)}\\
 u^\textrm{exploit,NOS,T}_{y,a} &= \frac{\sum_aD^\textrm{NO,T}_{y,a}}{\sum_a\textrm{NOR}_{y,a}}\\
 u^\textrm{exploit,HOS,T}_{y,a} &= \frac{\sum_a(D^\textrm{HO,T}_{y,a} + K^\textrm{HO,T}_{y,a})}{\sum_a\textrm{HOR}_{y,a}}
 \end{align}
@@ -722,10 +721,10 @@ u^\textrm{exploit,HOS,T}_{y,a} &= \frac{\sum_a(D^\textrm{HO,T}_{y,a} + K^\textrm
 where $D$ is dead discards:
 
 \begin{align}
-D^\textrm{NO,PT}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))\times N^\textrm{juv,NOS}_{y,a}\\
-D^\textrm{HO,PT}_{y,a} &= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))\times N^\textrm{juv,HOS}_{y,a}\\
-D^\textrm{NO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}\\
-D^\textrm{HO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}
+D^\textrm{NO,PT}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))N^\textrm{juv,NOS}_{y,a}\\
+D^\textrm{HO,PT}_{y,a} &= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))N^\textrm{juv,HOS}_{y,a}\\
+D^\textrm{NO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\textrm{NOR}_{y,a}\\
+D^\textrm{HO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,HO,T}_y))\textrm{HOR}_{y,a}
 \end{align}
 
 # R functions
