@@ -113,35 +113,44 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
   }
 
   # K = kept catch, D = discards, DD = dead discards, U = harvest rate, Ex = exploitation rate
-  K_NO <- D_NO <- DD_NO <- DK_NO <- Nsurv_NO <- array(0, dim(NO))
-  K_HO <- D_HO <- DD_HO <- DK_HO <- Nsurv_HO <- array(0, dim(HO))
+  Enc_NO <- Fret_NO <- Frel_NO <- Z_NO <- K_NO <- D_NO <- DD_NO <- DK_NO <- Nsurv_NO <- array(0, dim(NO))
+  Enc_HO <- Fret_HO <- Frel_HO <- Z_HO <- K_HO <- D_HO <- DD_HO <- DK_HO <- Nsurv_HO <- array(0, dim(HO))
 
-  # Fishing mortality
-  Fret_NO <- array(V * ret_NO * Effort, dim(NO))
-  Fret_HO <- array(V * ret_HO * Effort, dim(HO))
+  # Fishing mortality of retained catch
+  Fret_NO[] <- V * ret_NO * Effort
+  Fret_HO[] <- V * ret_HO * Effort
 
-  Frel_NO <- array(V * (1 - ret_NO) * Effort, dim(NO))
-  Frel_HO <- array(V * (1 - ret_HO) * Effort, dim(HO))
+  # Fishing mortality of dead discard
+  Frel_NO[] <- V * (1 - ret_NO) * release_mort * Effort
+  Frel_HO[] <- V * (1 - ret_HO) * release_mort * Effort
 
-  # Kept catch
-  K_NO[] <- (1 - exp(-Fret_NO)) * NO
-  K_HO[] <- (1 - exp(-Fret_HO)) * HO
+  # All sources of fishing mortality
+  Z_NO[] <- Fret_NO + Frel_NO
+  Z_HO[] <- Fret_HO + Frel_HO
 
-  # Discards
-  D_NO[] <- (1 - exp(-Frel_NO)) * NO
-  D_HO[] <- (1 - exp(-Frel_HO)) * HO
+  # Fishery encounters, kept catch, dead discards
+  if (sum(Z_NO)) {
+    Enc_NO[] <- array(V * Effort, dim(NO))/Z_NO * (1 - exp(-Z_NO)) * NO
+    K_NO[] <- Fret_NO/Z_NO * (1 - exp(-Z_NO)) * NO
+    DD_NO[] <- Frel_NO/Z_NO * (1 - exp(-Z_NO)) * NO
+  }
+  if (sum(Z_HO)) {
+    Enc_HO[] <- array(V * Effort, dim(HO))/Z_HO * (1 - exp(-Z_HO)) * HO
+    K_HO[] <- Fret_HO/Z_HO * (1 - exp(-Z_HO)) * HO
+    DD_HO[] <- Frel_HO/Z_HO * (1 - exp(-Z_HO)) * HO
+  }
 
-  # Dead discards
-  DD_NO[] <- D_NO * release_mort
-  DD_HO[] <- D_HO * release_mort
+  # Discards (live + dead) = Fishery encounters - kept catch
+  D_NO[] <- Enc_NO - K_NO
+  D_HO[] <- Enc_HO - K_HO
 
   # All dead catch
   DK_NO[] <- K_NO + DD_NO
   DK_HO[] <- K_HO + DD_HO
 
   # Survivors
-  Nsurv_NO <- NO - K_NO - DD_NO
-  Nsurv_HO <- HO - K_HO - DD_HO
+  Nsurv_NO[] <- NO - DK_NO
+  Nsurv_HO[] <- HO - DK_HO
 
   # Harvest rate and exploitation rates
   U_NO <- apply(K_NO * AEQ_NO, 1, sum)/apply(DK_NO * AEQ_NO + Nsurv_NO * p_mature_NO, 1, sum)

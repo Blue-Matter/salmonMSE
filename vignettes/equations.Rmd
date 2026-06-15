@@ -143,7 +143,7 @@ plot(Abundance, Survivors_HS, ylab = "Survivors", type = "l", panel.first = grap
 
 >Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.
 
-First, pre-spawn (ps) mortality can occur, where the realized number of spawners $\widetilde{\textrm{NOS}}_y$ and $\widetilde{\textrm{HOS}}_y$ is:
+First, pre-spawn (ps) mortality can occur, where the surviving spawners $\widetilde{\textrm{NOS}}_y$ and $\widetilde{\textrm{HOS}}_y$ are:
 
 \begin{align}
 \widetilde{\textrm{NOS}}_y &= \frac{P^\textrm{ps} \times 
@@ -170,7 +170,7 @@ The initial egg production is calculated after pre-spawn mortality:
 \textrm{Egg}^\textrm{HOS}_y &= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a
 \end{align}
 
-Second, the realized egg production ($\widetilde{\textrm{Egg}}_y$) can be modified from the spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
+Second, the surviving egg production ($\widetilde{\textrm{Egg}}_y$) can be reduced from the initial spawning output ($\textrm{Egg}_y$) due to incubation mortality. With a Beverton-Holt function:
 
 \begin{align}
 \widetilde{\textrm{Egg}}^\textrm{NOS}_y &= \frac{P^\textrm{inc} \times 
@@ -615,7 +615,7 @@ $$
 
 Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing the number hatchery origin spawners maintains high PNI, i.e., low rate of gene flow from the hatchery to natural environment.
 
->If there is no natural origin broodtake, i.e., all brood is imported, then PNI is calculated with equation 6 of [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html):
+>If there is no natural origin broodtake, e.g., brood is imported or there are only strays, then PNI is calculated with equation 6 of [Withler et al. 2018](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html):
 >
 >$$
 >\textrm{PNI}_{y+1} = \dfrac{h^2}{h^2 + (1 - h^2 + \omega^2) \sum_a p^{\textrm{HOSeff}}_{y,a}}
@@ -667,7 +667,7 @@ The mark rate is a proxy for retention and the harvest rate $u^\textrm{harvest}$
 The exploitation rate $u^\textrm{exploit}$ is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish.
 Exploitation rates differ between hatchery-origin and natural-origin fish because there is no retention of the latter.
 
-Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and release catch:
+Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and released catch:
 
 \begin{align}
 F^\textrm{kept,HO} &= mE\\
@@ -724,7 +724,7 @@ where $D$ is dead discards:
 D^\textrm{NO,PT}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))N^\textrm{juv,NOS}_{y,a}\\
 D^\textrm{HO,PT}_{y,a} &= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))N^\textrm{juv,HOS}_{y,a}\\
 D^\textrm{NO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\textrm{NOR}_{y,a}\\
-D^\textrm{HO,T}_{y,a} &= (1 - \exp(-v_a F^\textrm{rel,HO,T}_y))\textrm{HOR}_{y,a}
+D^\textrm{HO,T}_{y,a} &= \frac{F^\textrm{rel,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y]))\textrm{HOR}_{y,a}
 \end{align}
 
 # R functions
