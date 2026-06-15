@@ -68,7 +68,7 @@
 
       <h1>Dynamics equations</h1>
             
-            <h4 data-toc-skip class="date">2026-06-12</h4>
+            <h4 data-toc-skip class="date">2026-06-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/equations.Rmd" class="external-link"><code>vignettes/equations.Rmd</code></a></small>
       <div class="d-none name"><code>equations.Rmd</code></div>
@@ -349,7 +349,7 @@ Potential stochastic parameters are noted in the package documentation.</p>
 <td align="left">stray_external</td>
 </tr>
 <tr class="even">
-<td align="left"><span class="math inline">\(\textrm{HOB_stray}\)</span></td>
+<td align="left"><span class="math inline">\(\textrm{HOB}_\textrm{stray}\)</span></td>
 <td align="left">Broodtake from strays</td>
 <td align="left">Hatchery</td>
 <td align="left">SMSE</td>
@@ -679,12 +679,12 @@ Two parameterizations are possible:</p>
 <blockquote>
 <p>In the output, fry production is assumed to be equal to spawning output, i.e., <span class="math inline">\(\textrm{Fry}^\textrm{NOS}_{y+1} = \textrm{Egg}^\textrm{NOS}_y\)</span> and <span class="math inline">\(\textrm{Fry}^\textrm{HOS}_{y+1} = \textrm{Egg}^\textrm{HOS}_y\)</span>.</p>
 </blockquote>
-<p>The smolt production is calculated from the Ricker stock-recruit relationship, effectively over the entire freshwater life stage:</p>
+<p>If the smolt production is calculated from the Ricker stock-recruit relationship, effectively over the entire freshwater life stage:</p>
 <p><span class="math display">\[\begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \alpha \times
-\textrm{Fry}^\textrm{NOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])\\
+\textrm{Egg}^\textrm{NOS}_y\times\exp(-\beta[\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y])\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \alpha \times
-\textrm{Fry}^\textrm{HOS}_{y+1}\times\exp(-\beta[\textrm{Fry}^\textrm{NOS}_{y+1} + \textrm{Fry}^\textrm{HOS}_{y+1}])
+\textrm{Egg}^\textrm{HOS}_y\times\exp(-\beta[\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y])
 \end{align}\]</span></p>
 <p>where:</p>
 <p><span class="math display">\[\begin{align}
@@ -699,13 +699,13 @@ E_\textrm{max} &amp;= S_\textrm{max} \times \phi/\tau\\
 <p>With the Beverton-Holt stock-recruit relationship, the age-1 smolt production is</p>
 <p><span class="math display">\[\begin{align}
 \textrm{Smolt}^\textrm{NOS}_{y+1} &amp;= \frac{\alpha \times
-\textrm{Egg}^\textrm{NOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + &gt;\textrm{Egg}^\textrm{HOS}_{y+1})}\\
+\textrm{Egg}^\textrm{NOS}_y}{1 + \beta(\textrm{Egg}^\textrm{NOS}_y + &gt;\textrm{Egg}^\textrm{HOS}_y)}\\
 \textrm{Smolt}^\textrm{HOS}_{y+1} &amp;= \frac{\alpha \times
-\textrm{Egg}^\textrm{HOS}_{y+1}}{1 + \beta(\textrm{Egg}^\textrm{NOS}_{y+1} + &gt;\textrm{Egg}^\textrm{HOS}_{y+1})}
+\textrm{Egg}^\textrm{HOS}_y}{1 + \beta(\textrm{Egg}^\textrm{NOS}_y + &gt;\textrm{Egg}^\textrm{HOS}_y)}
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(\alpha = \kappa/\phi\)</span>, <span class="math inline">\(\beta = \alpha/{C_\textrm{egg-smolt}}\)</span> (<span class="math inline">\(C\)</span> is the capacity/asymptote).</p>
 </blockquote>
-<p>The density-independent component of the survival equation is controlled by <span class="math inline">\(\alpha\)</span> and the density-dependent component of survival is controlled by <span class="math inline">\(\beta\)</span> and scaled by the total number of fry in competition with subyearling hatchery releases (see <a href="#hatchery-production">Hatchery</a> section).</p>
+<p>The density-independent component of the survival equation is controlled by <span class="math inline">\(\alpha\)</span> and the density-dependent component of survival is controlled by <span class="math inline">\(\beta\)</span> and scaled by the total egg production (see <a href="#hatchery-production">Hatchery</a> section).</p>
 </div>
 <div class="section level3" number="2.2">
 <h3 id="with-habitat-modeling">
@@ -724,7 +724,7 @@ E_\textrm{max} &amp;= S_\textrm{max} \times \phi/\tau\\
 <blockquote>
 <p>Set the capacity to infinite to model density-independence. The productivity parameter is then the survival to the next life stage.</p>
 </blockquote>
-<p>First, pre-spawn (ps) mortality can occur, where the realized number of spawners <span class="math inline">\(\widetilde{\textrm{NOS}}_y\)</span> and <span class="math inline">\(\widetilde{\textrm{HOS}}_y\)</span> is:</p>
+<p>First, pre-spawn (ps) mortality can occur, where the surviving spawners <span class="math inline">\(\widetilde{\textrm{NOS}}_y\)</span> and <span class="math inline">\(\widetilde{\textrm{HOS}}_y\)</span> are:</p>
 <p><span class="math display">\[\begin{align}
 \widetilde{\textrm{NOS}}_y &amp;= \frac{P^\textrm{ps} \times
 \textrm{NOS}_y}{1 + \frac{P^\textrm{ps}}{C^\textrm{ps}}(\textrm{NOS}_y + \textrm{HOS}_y)}\\
@@ -745,7 +745,7 @@ E_\textrm{max} &amp;= S_\textrm{max} \times \phi/\tau\\
 \textrm{Egg}^\textrm{NOS}_y &amp;= \sum_a\widetilde{\textrm{NOS}}_{y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a\\
 \textrm{Egg}^\textrm{HOS}_y &amp;= \sum_a\widetilde{\textrm{HOS}}_{\textrm{eff}y,a} \times p^\textrm{female}_a \times \textrm{Fec}_a
 \end{align}\]</span></p>
-<p>Second, the realized egg production (<span class="math inline">\(\widetilde{\textrm{Egg}}_y\)</span>) can be modified from the spawning output (<span class="math inline">\(\textrm{Egg}_y\)</span>) due to incubation mortality. With a Beverton-Holt function:</p>
+<p>Second, the surviving egg production (<span class="math inline">\(\widetilde{\textrm{Egg}}_y\)</span>) can be reduced from the initial spawning output (<span class="math inline">\(\textrm{Egg}_y\)</span>) due to incubation mortality. With a Beverton-Holt function:</p>
 <p><span class="math display">\[\begin{align}
 \widetilde{\textrm{Egg}}^\textrm{NOS}_y &amp;= \frac{P^\textrm{inc} \times
 \textrm{Egg}^\textrm{NOS}_y}{1 + \frac{P^\textrm{inc}}{C^\textrm{inc}}(\textrm{Egg}^\textrm{NOS}_y + \textrm{Egg}^\textrm{HOS}_y)}\\
@@ -787,7 +787,7 @@ Year-specific deviations can be used to simulate stochasticity in survival.</p>
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(n^\textrm{subyearling}_y\)</span> and <span class="math inline">\(n^\textrm{yearling}_y\)</span> are subyearling and yearling releases from the hatchery, respectively.</p>
 <blockquote>
-<p>salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term. This competition could be modeled in stream-type life histories.</p>
+<p>salmonMSE can be modified so that either subyearling, yearling, or both types of releases are included in the density-dependence term. This competition could be modeled for stream-type life histories.</p>
 </blockquote>
 </div>
 </div>
@@ -873,22 +873,22 @@ In this case, the remaining deficit in egg production is met by increasing HOB (
 <span class="header-section-number">3.1.1</span> Custom brood rule<a class="anchor" aria-label="anchor" href="#custom-brood-rule"></a>
 </h4>
 <p>A custom brood rule <span class="math inline">\(f\)</span> is possible where the user specifies the brood taken from the available in-river return:</p>
-$$
-<span class="math display">\[\begin{pmatrix}
+<p><span class="math display">\[
+\begin{pmatrix}
 \textrm{NOB}_{y,a}\\
 \textrm{HOB}^\textrm{unmarked}_{y,a}\\
 \textrm{HOB}^\textrm{marked}_{y,a}\\
 \textrm{HOB}^\textrm{stray}_{y,a}
-\end{pmatrix}\]</span>
-<p>=
-f</p>
-<span class="math display">\[\begin{pmatrix}
+\end{pmatrix} =
+f\!\left(
+\begin{matrix}
 \textrm{NOR}^\textrm{avail,brood}_{y,a}\\
 \textrm{HOR}^\textrm{avail,brood}_{y,a}\\
 \textrm{Stray}_{y,a}\\
 m
-\end{pmatrix}\]</span>
-<p>$$</p>
+\end{matrix}
+\right)
+\]</span></p>
 </div>
 </div>
 <div class="section level3" number="3.2">
@@ -920,11 +920,10 @@ m
 </h2>
 <p>Let <span class="math inline">\(N^\textrm{juv}_{y,a}\)</span> be the juvenile abundance in the population at the beginning of the year, with <span class="math inline">\(N^\textrm{juv,NOS}_{y,a=1} = \textrm{Smolt}^\textrm{NOS}_y + \textrm{Smolt}^\textrm{HOS}_y\)</span> and <span class="math inline">\(N^\textrm{juv,HOS}_{y,a=1} = \textrm{Smolt}^\textrm{Rel}\)</span>.
 The superscript for the smolt variable corresponds to the parentage while the superscript for <span class="math inline">\(N\)</span> denotes the origin of the current cohort.</p>
-</div>
-<div class="section level2" number="5">
-<h2 id="pre-terminal-fishery">
-<span class="header-section-number">5</span> Pre-terminal fishery<a class="anchor" aria-label="anchor" href="#pre-terminal-fishery"></a>
-</h2>
+<div class="section level3" number="4.1">
+<h3 id="pre-terminal-fishery">
+<span class="header-section-number">4.1</span> Pre-terminal fishery<a class="anchor" aria-label="anchor" href="#pre-terminal-fishery"></a>
+</h3>
 <p>Harvest <span class="math inline">\(u^\textrm{PT}\)</span> in the pre-terminal (<span class="math inline">\(\textrm{PT}\)</span>) fishery, ostensibly of juveniles, occurs in the first half of the year.</p>
 <p>Assuming no mark-selective fishing, the kept catch <span class="math inline">\(K\)</span> is</p>
 <p><span class="math display">\[\begin{align}
@@ -946,24 +945,29 @@ r_a + (1 - r_a)\exp(-M_a) \times \textrm{AEQ}_{a+1} &amp;, a = 1, \ldots, A-1
 <p>If management is by target catch <span class="math inline">\(K^\textrm{PT,target}\)</span>, then <span class="math inline">\(F^\textrm{PT}_y\)</span> is solved such that <span class="math inline">\(K^\textrm{PT,target} = \sum_a K^\textrm{NOS,PT}_{y,a} + \sum_a K^\textrm{HOS,PT}_{y,a}\)</span>.</p>
 <p>Alternative equations are used if <a href="#mark-selective-fishing">mark-selective fishing</a> is implemented.</p>
 </div>
-<div class="section level2" number="6">
+</div>
+<div class="section level2" number="5">
 <h2 id="recruitment-and-maturity">
-<span class="header-section-number">6</span> Recruitment and maturity<a class="anchor" aria-label="anchor" href="#recruitment-and-maturity"></a>
+<span class="header-section-number">5</span> Recruitment and maturity<a class="anchor" aria-label="anchor" href="#recruitment-and-maturity"></a>
 </h2>
 <p>The recruitment is calculated from the survival of juvenile fish after pre-terminal harvest and maturation:</p>
 <p><span class="math display">\[\begin{align}
 \textrm{NOR}_{y,a} &amp;= N^\textrm{juv,NOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}\\
 \textrm{HOR}_{y,a} &amp;= N^\textrm{juv,HOS}_{y,a}\exp(-v_aF^\textrm{PT}_y)r_{y,a}
 \end{align}\]</span></p>
+<div class="section level3" number="5.1">
+<h3 id="advance-age-classes">
+<span class="header-section-number">5.1</span> Advance age classes<a class="anchor" aria-label="anchor" href="#advance-age-classes"></a>
+</h3>
 <p>The juvenile abundance in the following year consists of fish that did not mature and subsequently survived natural mortality <span class="math inline">\(M\)</span>:</p>
 <p><span class="math display">\[\begin{align}
 N^\textrm{juv,NOS}_{y+1,a+1} &amp;= N^\textrm{juv,NOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{NOS}_{y,a}]\right)(1 - r_{y,a})\\
 N^\textrm{juv,HOS}_{y+1,a+1} &amp;= N^\textrm{juv,HOS}_{y,a}\exp\left(-[v_aF^\textrm{PT}_y + M^\textrm{HOS}_{y,a}]\right)(1 - r_{y,a})
 \end{align}\]</span></p>
-<p>Natural mortality is specified by age class. Accordingly, this mortality corresponds to either the freshwater or marine survival depending on age class.</p>
-<div class="section level3" number="6.1">
+</div>
+<div class="section level3" number="5.2">
 <h3 id="terminal-fishery">
-<span class="header-section-number">6.1</span> Terminal fishery<a class="anchor" aria-label="anchor" href="#terminal-fishery"></a>
+<span class="header-section-number">5.2</span> Terminal fishery<a class="anchor" aria-label="anchor" href="#terminal-fishery"></a>
 </h3>
 <p>Assuming no mark-selective fishing, the kept catch of the terminal (<span class="math inline">\(\textrm{T}\)</span>) fishery is calculated similarly as with the pre-terminal fishery:</p>
 <p><span class="math display">\[\begin{align}
@@ -978,9 +982,9 @@ u^\textrm{T}_y = \frac{\sum_a(K^\textrm{NOS,T}_{y,a} + K^\textrm{HOS,T}_{y,a})}{
 <p>Alternative equations are used if <a href="#mark-selective-fishing">mark-selective fishing</a> is implemented.</p>
 </div>
 </div>
-<div class="section level2" number="7">
+<div class="section level2" number="6">
 <h2 id="escapement-and-spawners">
-<span class="header-section-number">7</span> Escapement and spawners<a class="anchor" aria-label="anchor" href="#escapement-and-spawners"></a>
+<span class="header-section-number">6</span> Escapement and spawners<a class="anchor" aria-label="anchor" href="#escapement-and-spawners"></a>
 </h2>
 <p>The escapement consists of the survivors of the terminal fishery:</p>
 <p><span class="math display">\[\begin{align}
@@ -1004,9 +1008,9 @@ u^\textrm{T}_y = \frac{\sum_a(K^\textrm{NOS,T}_{y,a} + K^\textrm{HOS,T}_{y,a})}{
 <p>Hatchery-origin spawners is the escapement of local origin and strays that survive return migration, do not return to the hatchery (either by swim-in facilities or in-river collection), and are not removed from the spawning ground (through proportion <span class="math inline">\(p^\textrm{HOS}_\textrm{removal}\)</span> and discounted by the mark rate, these animals are not available for brood).
 Strays not used for brood are also included as hatchery spawners.</p>
 </div>
-<div class="section level2" number="8">
+<div class="section level2" number="7">
 <h2 id="fitness-effects-on-juvenile-survival">
-<span class="header-section-number">8</span> Fitness effects on juvenile survival<a class="anchor" aria-label="anchor" href="#fitness-effects-on-juvenile-survival"></a>
+<span class="header-section-number">7</span> Fitness effects on juvenile survival<a class="anchor" aria-label="anchor" href="#fitness-effects-on-juvenile-survival"></a>
 </h2>
 <p>Reproductive success of first generation hatchery fish has been observed to be lower than their natural counterparts, and is accounted for in the <span class="math inline">\(\gamma\)</span> parameter (see review in <a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html" class="external-link">Withler et al. 2018</a>).</p>
 <p>Through genetic and epigenetic factors, survival of hatchery juveniles in the hatchery environment selects for fish with a phenotype best adapted for that environment, and likewise for juveniles spawned in the natural environment.
@@ -1048,9 +1052,9 @@ With a hatchery program, the mean trait value of the progeny in the natural envi
 <p><span class="math display">\[
 \bar{W}^\textrm{natural}_g = \exp\left(\dfrac{-(\bar{z}^\textrm{natural}_g-\theta^\textrm{natural})^2}{2(\omega^2+\sigma^2)}\right)
 \]</span></p>
-<div class="section level3" number="8.1">
+<div class="section level3" number="7.1">
 <h3 id="mixed-brood-year-return">
-<span class="header-section-number">8.1</span> Mixed brood-year return<a class="anchor" aria-label="anchor" href="#mixed-brood-year-return"></a>
+<span class="header-section-number">7.1</span> Mixed brood-year return<a class="anchor" aria-label="anchor" href="#mixed-brood-year-return"></a>
 </h3>
 <p>If a mixed-brood year return in year <span class="math inline">\(y\)</span> across several ages <span class="math inline">\(a\)</span> produces the smolt cohort in year <span class="math inline">\(y+1\)</span>, then the mean trait value in the progeny is calculated from a weighted average by brood year and age class fecundity:</p>
 <p><span class="math display">\[\begin{align}
@@ -1068,9 +1072,9 @@ With a hatchery program, the mean trait value of the progeny in the natural envi
 <p><span class="math inline">\(p^\textrm{HOB}_{y,a} = \dfrac{\textrm{Fec}^\textrm{brood}_a \times (\textrm{HOB}_{y,a} + \textrm{Brood}^\textrm{import}_{y,a})}{\sum_a\textrm{Fec}^\textrm{brood}_a(\textrm{NOB}_{y,a} + \textrm{HOB}_{y,a} + \textrm{Brood}^\textrm{import}_{y,a})}\)</span></p>
 <p>Effective proportions, i.e., weighting by age-class fecundity, accounts for older age classes that are more fecund and more likely to contribute to the production of next cohort.</p>
 </div>
-<div class="section level3" number="8.2">
+<div class="section level3" number="7.2">
 <h3 id="fitness-loss">
-<span class="header-section-number">8.2</span> Fitness loss<a class="anchor" aria-label="anchor" href="#fitness-loss"></a>
+<span class="header-section-number">7.2</span> Fitness loss<a class="anchor" aria-label="anchor" href="#fitness-loss"></a>
 </h3>
 <p>Fitness can reduce survival in the egg, fry, and immature life stages.</p>
 <p>If no habitat model is used, then the egg-fry survival is reduced by the fitness loss function:</p>
@@ -1102,9 +1106,9 @@ P^\textrm{egg-fry}_y &amp;= P^\textrm{egg-fry} \times (W^\textrm{nat.}_y)^{\ell_
 P^\textrm{fry-smolt}_y &amp;= P^\textrm{fry-smolt} \times (W^\textrm{nat.}_y)^{\ell_\textrm{fry}}
 \end{align}\]</span></p>
 </div>
-<div class="section level3" number="8.3">
+<div class="section level3" number="7.3">
 <h3 id="pni">
-<span class="header-section-number">8.3</span> PNI<a class="anchor" aria-label="anchor" href="#pni"></a>
+<span class="header-section-number">7.3</span> PNI<a class="anchor" aria-label="anchor" href="#pni"></a>
 </h3>
 <p>PNI (proportionate natural influence) is an approximation of the rate of gene flow from the hatchery to the natural environment, calculated for the progeny in year <span class="math inline">\(y+1\)</span> from the parental composition of year <span class="math inline">\(y\)</span>:</p>
 <p><span class="math display">\[
@@ -1112,15 +1116,15 @@ P^\textrm{fry-smolt}_y &amp;= P^\textrm{fry-smolt} \times (W^\textrm{nat.}_y)^{\
 \]</span></p>
 <p>Generally, a combination of minimizing hatchery releases, increasing natural broodtake, and reducing the number hatchery origin spawners maintains high PNI, i.e., low rate of gene flow from the hatchery to natural environment.</p>
 <blockquote>
-<p>If there is no natural origin broodtake, i.e., all brood is imported, then PNI is calculated with equation 6 of <a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html" class="external-link">Withler et al. 2018</a>:</p>
+<p>If there is no natural origin broodtake, e.g., brood is imported or there are only strays, then PNI is calculated with equation 6 of <a href="https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_019-eng.html" class="external-link">Withler et al. 2018</a>:</p>
 <p><span class="math display">\[
 \textrm{PNI}_{y+1} = \dfrac{h^2}{h^2 + (1 - h^2 + \omega^2) \sum_a p^{\textrm{HOSeff}}_{y,a}}
 \]</span></p>
 </blockquote>
 </div>
-<div class="section level3" number="8.4">
+<div class="section level3" number="7.4">
 <h3 id="wild-salmon">
-<span class="header-section-number">8.4</span> Wild salmon<a class="anchor" aria-label="anchor" href="#wild-salmon"></a>
+<span class="header-section-number">7.4</span> Wild salmon<a class="anchor" aria-label="anchor" href="#wild-salmon"></a>
 </h3>
 <p>With single brood-year returns, the proportion of wild salmon, natural origin spawners whose parents were also natural spawners, can be calculated as</p>
 <p><span class="math display">\[
@@ -1149,15 +1153,15 @@ The summation across dummy age variable <span class="math inline">\(a'\)</span> 
 <p>Effective proportions, i.e., weighting by age-class fecundity, in the parental composition accounts for older age classes that are more fecund and more likely to contribute to the production of offspring.</p>
 </div>
 </div>
-<div class="section level2" number="9">
+<div class="section level2" number="8">
 <h2 id="mark-selective-fishing">
-<span class="header-section-number">9</span> Mark-selective fishing<a class="anchor" aria-label="anchor" href="#mark-selective-fishing"></a>
+<span class="header-section-number">8</span> Mark-selective fishing<a class="anchor" aria-label="anchor" href="#mark-selective-fishing"></a>
 </h2>
 <p>If the mark rate <span class="math inline">\(m\)</span> of hatchery fish is greater than zero, then mark-selective fishing can be implemented for either the pre-terminal fishery, terminal fishery, or both with no retention on natural-origin fish.
 The mark rate is a proxy for retention and the harvest rate <span class="math inline">\(u^\textrm{harvest}\)</span> corresponds to the kept catch of hatchery-origin fish.
 The exploitation rate <span class="math inline">\(u^\textrm{exploit}\)</span> is calculated from kept catch of hatchery-origin fish and dead releases of natural-origin fish.
 Exploitation rates differ between hatchery-origin and natural-origin fish because there is no retention of the latter.</p>
-<p>Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and release catch:</p>
+<p>Fishing mortality on hatchery origin fish is partitioned into two parts, for kept and released catch:</p>
 <p><span class="math display">\[\begin{align}
 F^\textrm{kept,HO} &amp;= mE\\
 F^\textrm{rel,HO} &amp;= (1 - m)\delta E
@@ -1188,22 +1192,22 @@ K^\textrm{T,target} &amp;= \sum_a K^\textrm{HOS,T}_{y,a}
 \end{align}\]</span></p>
 <p>The exploitation rate for natural-origin fish is calculated from dead discards. The exploitation rate for hatchery origin fish is calculated from kept catch and dead discards:</p>
 <p><span class="math display">\[\begin{align}
-u^\textrm{exploit,NOS,PT}_{y,a} &amp;= \frac{\sum_aD^\textrm{NO,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(D^\textrm{NO,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a F^\textrm{rel,NO,PT}_y)\times r_a}\\
-u^\textrm{exploit,HOS,PT}_{y,a} &amp;= \frac{\sum_a(D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a((D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a}) \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}]_y)\times r_a}\\
+u^\textrm{exploit,NOS,PT}_{y,a} &amp;= \frac{\sum_aD^\textrm{NO,PT}_{y,a}\times \textrm{AEQ}_a}{\sum_a(D^\textrm{NO,PT}_{y,a} \times \textrm{AEQ}_a + N^\textrm{juv,NOS}_{y,a}\exp(-v^\textrm{PT}_a F^\textrm{rel,NO,PT}_y)\times r_a)}\\
+u^\textrm{exploit,HOS,PT}_{y,a} &amp;= \frac{\sum_a(D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a})\times \textrm{AEQ}_a}{\sum_a((D^\textrm{HO,PT}_{y,a} + K^\textrm{HO,PT}_{y,a}) \times \textrm{AEQ}_a + N^\textrm{juv,HOS}_{y,a}\exp(-v^\textrm{PT}_a [F^\textrm{kept,HO,PT} + F^\textrm{rel,HO,PT}]_y)\times r_a)}\\
 u^\textrm{exploit,NOS,T}_{y,a} &amp;= \frac{\sum_aD^\textrm{NO,T}_{y,a}}{\sum_a\textrm{NOR}_{y,a}}\\
 u^\textrm{exploit,HOS,T}_{y,a} &amp;= \frac{\sum_a(D^\textrm{HO,T}_{y,a} + K^\textrm{HO,T}_{y,a})}{\sum_a\textrm{HOR}_{y,a}}
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(D\)</span> is dead discards:</p>
 <p><span class="math display">\[\begin{align}
-D^\textrm{NO,PT}_{y,a} &amp;= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))\times N^\textrm{juv,NOS}_{y,a}\\
-D^\textrm{HO,PT}_{y,a} &amp;= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))\times N^\textrm{juv,HOS}_{y,a}\\
-D^\textrm{NO,T}_{y,a} &amp;= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}\\
-D^\textrm{HO,T}_{y,a} &amp;= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\times \textrm{NOR}_{y,a}
+D^\textrm{NO,PT}_{y,a} &amp;= (1 - \exp(-v_a F^\textrm{rel,NO,PT}_y))N^\textrm{juv,NOS}_{y,a}\\
+D^\textrm{HO,PT}_{y,a} &amp;= \frac{F^\textrm{rel,HO,PT}_y}{F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,PT}_y + F^\textrm{rel,HO,PT}_y]))N^\textrm{juv,HOS}_{y,a}\\
+D^\textrm{NO,T}_{y,a} &amp;= (1 - \exp(-v_a F^\textrm{rel,NO,T}_y))\textrm{NOR}_{y,a}\\
+D^\textrm{HO,T}_{y,a} &amp;= \frac{F^\textrm{rel,HO,T}_y}{F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y}(1 - \exp(-v_a [F^\textrm{kept,HO,T}_y + F^\textrm{rel,HO,T}_y]))\textrm{HOR}_{y,a}
 \end{align}\]</span></p>
 </div>
-<div class="section level2" number="10">
+<div class="section level2" number="9">
 <h2 id="r-functions">
-<span class="header-section-number">10</span> R functions<a class="anchor" aria-label="anchor" href="#r-functions"></a>
+<span class="header-section-number">9</span> R functions<a class="anchor" aria-label="anchor" href="#r-functions"></a>
 </h2>
 <p>The R functions that perform the various calculations are provided below.</p>
 <table class="table">
