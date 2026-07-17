@@ -322,7 +322,7 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
 
   x <- sapply(var_name, function(i) {
     plot_statevar_ts(SMSE, var = i, s = s, figure = FALSE, quant = FALSE)
-  }, simplify = "array") |>
+  }, simplify = "array") %>%
     apply(2:3, FUN)
 
   if (figure && sum(x)) {
