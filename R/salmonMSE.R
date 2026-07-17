@@ -386,9 +386,9 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     if (sum(u_preterminal, K_PT, na.rm = TRUE)) {
       for (a in seq(nage-1, 1)) {
         AEQ_NOS[, , a, y, ] <- p_mature_NOS[, , a, y, ] + (1 - p_mature_NOS[, , a, y, ]) *
-          exp(-Mjuv_loss_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
+          exp(-Mjuv_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
         AEQ_HOS[, , a, y, ] <- p_mature_HOS[, , a, y, ] + (1 - p_mature_HOS[, , a, y, ]) *
-          exp(-Mjuv_loss_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
+          exp(-Mjuv_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
       }
     }
 
