@@ -251,7 +251,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (length(Harvest@u_preterminal) == 1) {
         Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
       } else if (is.matrix(Harvest@u_preterminal)) {
-        Harvest <- check_maxage2matrix(Harvest, "u_preterminal", nsim, proyears)
+        Harvest <- check_array(Harvest, "u_preterminal", c(nsim, proyears))
       }
       Harvest <- check_numeric(Harvest, "K_PT", default = NA_real_)
     } else {
@@ -263,7 +263,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       if (length(Harvest@u_terminal) == 1) {
         Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
       } else if (is.matrix(Harvest@u_terminal)) {
-        Harvest <- check_maxage2matrix(Harvest, "u_terminal", nsim, proyears)
+        Harvest <- check_array(Harvest, "u_terminal", c(nsim, proyears))
       }
       Harvest <- check_numeric(Harvest, "K_T", default = NA_real_)
     } else {

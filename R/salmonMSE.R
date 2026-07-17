@@ -394,11 +394,12 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
     # Preterminal catch - harvest management acts upon on all stocks simultaneously
     PT_Calcs <- lapply(1:nsim, function(x) {
+      xx <- sims[x]
       catch_func(
         NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
         HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
         type = type_PT,
-        U = if (is.matrix(u_preterminal)) u_preterminal[x, y] else u_preterminal,
+        U = if (is.matrix(u_preterminal)) u_preterminal[xx, y] else u_preterminal,
         K = K_PT,
         V = matrix(vulPT[x, , ], ns, nage),
         m = m,
@@ -434,11 +435,12 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
     # Terminal marine catch - harvest management acts upon on all stocks simultaneously
     T_Calcs <- lapply(1:nsim, function(x) {
+      xx <- sims[x]
       catch_func(
         NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
         HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
         type = type_T,
-        U = if (is.matrix(u_terminal)) u_terminal[x, y] else u_terminal,
+        U = if (is.matrix(u_terminal)) u_terminal[xx, y] else u_terminal,
         K = K_T,
         V = matrix(vulT[x, , ], ns, nage),
         m = m,
