@@ -75,7 +75,7 @@ salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
 }
 
 define_hatchery_args <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
 
@@ -146,7 +146,7 @@ define_hatchery_args <- function(SOM) {
 define_habitat_args <- function(SOM) slot(SOM, "Habitat")
 
 define_fitness_args <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
     Hatchery <- SOM@Hatchery[[s]]
@@ -176,7 +176,7 @@ define_fitness_args <- function(SOM) {
 }
 
 define_SRRpars <- function(SOM) {
-  ns <- length(SOM)
+  ns <- length(SOM@Bio)
 
   output_s <- lapply(1:ns, function(s) {
     df <- data.frame()
