@@ -85,7 +85,7 @@ showClass("Harvest")
 #> Slots:
 #>                                                                             
 #> Name:           Name       type_PT        type_T u_preterminal    u_terminal
-#> Class:     character     character     character       numeric       numeric
+#> Class:     character     character     character    num.matrix    num.matrix
 #>                                                                             
 #> Name:           K_PT           K_T        MSF_PT         MSF_T  release_mort
 #> Class:       numeric       numeric       logical       logical       numeric
