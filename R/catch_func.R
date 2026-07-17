@@ -139,6 +139,8 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
     K_HO[] <- Fret_HO/Z_HO * (1 - exp(-Z_HO)) * HO
     DD_HO[] <- Frel_HO/Z_HO * (1 - exp(-Z_HO)) * HO
   }
+  Enc_NO[!Z_NO] <- K_NO[!Z_NO] <- DD_NO[!Z_NO] <- 0
+  Enc_HO[!Z_HO] <- K_HO[!Z_HO] <- DD_HO[!Z_HO] <- 0
 
   # Discards (live + dead) = Fishery encounters - kept catch
   D_NO[] <- Enc_NO - K_NO
