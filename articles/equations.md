@@ -68,9 +68,9 @@ input (SOM) or output (SMSE) objects in salmonMSE.*
 | \\n\_\textrm{subyearling}\\ | Target number of hatchery releases as subyearlings | Hatchery | SOM | n_subyearling |
 | \\m\\ | Mark rate of hatchery-origin fish | Hatchery | SOM | m |
 | \\p^\textrm{esc}\_\textrm{max}\\ | Maximum proportion of total escapement (after en-route mortality) to use as broodtake | Hatchery | SOM | pmax_esc |
-| \\p^\textrm{NOB}\_\textrm{target}\\ | Target proportion of the natural origin broodtake from the escapement (after en-route mortality), i.e., NOB/NOS ratio | Hatchery | SOM | ptarget_NOB |
+| \\p^\textrm{NOB}\_\textrm{target}\\ | Target proportion of broodtake that is natural origin, i.e., NOB/(NOB + HOB) ratio | Hatchery | SOM | ptarget_NOB |
 | \\p^\textrm{NOB}\_\textrm{max}\\ | Maximum proportion of the natural origin broodtake from the escapement (after en-route mortality), i.e., NOB/NOS ratio | Hatchery | SOM | pmax_NOB |
-| \\p\_\textrm{NOB}\\ | Realized proportion of the total broodtake of hatchery origin (vs. natural origin) | Hatchery | SMSE | pNOB |
+| \\p\_\textrm{NOB}\\ | Realized proportion of brood that is natural-origin | Hatchery | SMSE | pNOB |
 | \\\textrm{HOR}\\ | Hatchery origin return | Hatchery | SMSE | Return_HOS |
 | \\p^\textrm{hatchery}\\ | Proportion of hatchery origin escapement returning to hatchery, available for broodtake | Hatchery | SOM | phatchery |
 | \\p^\textrm{HOS}\_\textrm{removal}\\ | Proportion of hatchery origin fish removed from spawning grounds, not available for broodtake | Hatchery | SOM | premove_HOS |
