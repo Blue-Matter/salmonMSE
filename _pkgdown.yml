@@ -3,23 +3,26 @@ template:
   bootstrap: 5
   math-rendering: mathjax
 
-navbar:
-  components:
-    articles:
-      text: Articles
-      menu:
-      - text: Introduction
-        href: articles/introduction.html
-      - text: Simple example
-        href: articles/example.html
-      - text: Decision table
-        href: articles/decision-table.html
-      - text: Multi-population model
-        href: articles/example-multi.html
-      - text: Dynamics equations
-        href: articles/equations.html
-      - text: Reference points
-        href: articles/ref.html
-      - text: Conditioning model
-        href: articles/conditioning.html
+articles:
+- title: Getting started
+  contents:
+  - introduction
+  - example
+  - decision-table
+  - example-multi
+
+- title: Documentation
+  contents:
+  - equations
+  - ref
+  - conditioning
+
+- title: Tutorials
+  contents:
+  - tutorial-1
+  - tutorial-2
+  - tutorial-3
+  - tutorial-4
+
+
 

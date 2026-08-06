@@ -1,6 +1,6 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
-# 3.0.0
+# Version 3.0.0
 
 - salmonMSE no longer uses openMSE as a dependency. `ProjectSOM()` is now the primary internal function that organizes the projection. Various internal functions have been replaced and updated.
 - Parallel processing by individual operating model is now supported with the `ncores` argument to `salmonMSE()`.
@@ -10,14 +10,14 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Add new slot `Hatchery@p_female_brood` for sex-selective brood.
 - `SMSE` output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.
 
-# 2.1.0
+# Version 2.1.0
 
 - Update terminal year escapement, brood, and egg production calculations for multiple release strategies and life cycle groups
 - Fix typos in `smolt_func()` and `compare_statevar_ts()`
 - Broodtake optimization uses `uniroot()` with tolerance to machine precision (need this when population is very large and broodtake is small)
 - `plot_tradeoff` can plot `x1` as a continuous variable (numerics were previously coerced to factors)
 
-# 2.0.0
+# Version 2.0.0
 
 - Add example objects
 - New arguments in Hatchery object to determine if hatchery releases compete with natural-origin juveniles
@@ -26,7 +26,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Update units of Ricker Smax to be units of spawners, `tau` argument convert to Emax (corresponding egg production)
 - Projection now reports terminal year escapement, brood, and egg production (long-standing issue)
 
-# 1.0.0
+# Version 1.0.0
 
 ## salmonMSE projections
 
@@ -54,6 +54,6 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Decision tables and tradeoff figures can now be a grid
 - Remove `stats::uniroot` import for compatibility with RTMB 1.9
 
-# 0.1.0
+# Version 0.1.0
 
 - Initial CRAN release
