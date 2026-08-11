@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# salmonMSE
+# salmonMSE <img src="man/figures/salmonMSE_Logo_Hex_DigitalUse_Colour.png" align="right" height=175 width=175 />
 
 > Management Strategy Evaluation for Salmon Species
 
