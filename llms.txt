@@ -1,4 +1,4 @@
-# salmonMSE
+# salmonMSE ![](reference/figures/salmonMSE_Logo_Hex_DigitalUse_Colour.png)
 
 > Management Strategy Evaluation for Salmon Species
 
