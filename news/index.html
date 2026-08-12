@@ -22,16 +22,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
-    <li><a class="dropdown-item" href="../articles/example.html">Simple example</a></li>
-    <li><a class="dropdown-item" href="../articles/decision-table.html">Decision table</a></li>
-    <li><a class="dropdown-item" href="../articles/example-multi.html">Multi-population model</a></li>
-    <li><a class="dropdown-item" href="../articles/equations.html">Dynamics equations</a></li>
-    <li><a class="dropdown-item" href="../articles/ref.html">Reference points</a></li>
-    <li><a class="dropdown-item" href="../articles/conditioning.html">Conditioning model</a></li>
-  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -48,7 +39,74 @@
       <small>Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-  </main></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.0.0" id="version-300">Version 3.0.0<a class="anchor" aria-label="anchor" href="#version-300"></a></h2>
+<ul><li>salmonMSE no longer uses openMSE as a dependency. <code><a href="../reference/salmonMSE.html">ProjectSOM()</a></code> is now the primary internal function that organizes the projection. Various internal functions have been replaced and updated.</li>
+<li>Parallel processing by individual operating model is now supported with the <code>ncores</code> argument to <code><a href="../reference/salmonMSE.html">salmonMSE()</a></code>.</li>
+<li>Check for NAs in start values for <code>fit_CM</code>.</li>
+<li>Update <code><a href="../reference/dot-CM_prod.html">.CM_MSY()</a></code> and <code>.CM_Sgen()</code> functions for parallel computation.</li>
+<li>MSY calculations and catch calculations use adult equivalents (AEQs) for preterminal fisheries.</li>
+<li>Add new slot <code>Hatchery@p_female_brood</code> for sex-selective brood.</li>
+<li>
+<code>SMSE</code> output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.0" id="version-210">Version 2.1.0<a class="anchor" aria-label="anchor" href="#version-210"></a></h2><p class="text-muted">CRAN release: 2026-04-25</p>
+<ul><li>Update terminal year escapement, brood, and egg production calculations for multiple release strategies and life cycle groups</li>
+<li>Fix typos in <code>smolt_func()</code> and <code><a href="../reference/compare_statevar_ts.html">compare_statevar_ts()</a></code>
+</li>
+<li>Broodtake optimization uses <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">uniroot()</a></code> with tolerance to machine precision (need this when population is very large and broodtake is small)</li>
+<li>
+<code>plot_tradeoff</code> can plot <code>x1</code> as a continuous variable (numerics were previously coerced to factors)</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.0" id="version-200">Version 2.0.0<a class="anchor" aria-label="anchor" href="#version-200"></a></h2><p class="text-muted">CRAN release: 2026-04-16</p>
+<ul><li>Add example objects</li>
+<li>New arguments in Hatchery object to determine if hatchery releases compete with natural-origin juveniles</li>
+<li>
+<code><a href="../reference/plot_tradeoff.html">plot_tradeoff()</a></code> can create panels with scenario rows and columns</li>
+<li>
+<code><a href="../reference/plot_decision_table.html">plot_decision_table2()</a></code> allows more control of colour scheme. Add examples as well in documentation</li>
+<li>Update units of Ricker Smax to be units of spawners, <code>tau</code> argument convert to Emax (corresponding egg production)</li>
+<li>Projection now reports terminal year escapement, brood, and egg production (long-standing issue)</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.0" id="version-100">Version 1.0.0<a class="anchor" aria-label="anchor" href="#version-100"></a></h2><p class="text-muted">CRAN release: 2026-03-20</p>
+<div class="section level3">
+<h3 id="salmonmse-projections-1-0-0">salmonMSE projections<a class="anchor" aria-label="anchor" href="#salmonmse-projections-1-0-0"></a></h3>
+<ul><li>
+<code>SOM@Bio@p_female</code> parameter can now be age-specific. Intended for cases where older spawners are predominantly female.</li>
+<li>Fix markdown reporting for projections</li>
+<li>If release target is exceeded in custom brood rule, projection will proportionally reduce broodtake to return to target</li>
+<li>Fix calculation in freshwater survival when habitat features are used</li>
+<li>Hard code in openMSE historical period to 2 real years. Historical reconstruction no longer supported.</li>
+<li>M vector now reduce to length <code>maxage-1</code>
+</li>
+<li>Allow NO removals at the spawning grounds (facilitates in-river fishery operations)</li>
+<li>Add <code>compare</code> function to generate markdown report to compare several model runs</li>
+</ul></div>
+<div class="section level3">
+<h3 id="conditioning-model-1-0-0">Conditioning model<a class="anchor" aria-label="anchor" href="#conditioning-model-1-0-0"></a></h3>
+<ul><li>Allow NAs in target population escapement time series in likelihood</li>
+<li>Conditioning model reports realized productivity (adults/spawner) annually with time-varying maturity and M</li>
+<li>Add initial hatchery production assumption</li>
+<li>Add likelihood for observed pHOS (by calendar year or brood year)</li>
+<li>Export CM plotting functions</li>
+<li>Allow estimation of finitPT and finitT (initial fishing mortality), but likely slows down MCMC convergence</li>
+<li>Allow initial population to be specified by <code>spawn_init</code> (total spawners) and <code>pHOS_init</code> (fraction hatchery-origin)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-1-0-0">Other<a class="anchor" aria-label="anchor" href="#other-1-0-0"></a></h3>
+<ul><li>Decision tables and tradeoff figures can now be a grid</li>
+<li>Remove <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">stats::uniroot</a></code> import for compatibility with RTMB 1.9</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="version-010">Version 0.1.0<a class="anchor" aria-label="anchor" href="#version-010"></a></h2><p class="text-muted">CRAN release: 2025-09-23</p>
+<ul><li>Initial CRAN release</li>
+</ul></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

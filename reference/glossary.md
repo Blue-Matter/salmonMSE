@@ -7,7 +7,7 @@ Glossary of terms and parameters used in salmonMSE
 ``` r
 data(glossary)
 glossary[1:2, ]
-#>                 Definition               Type Class Slot
-#> 1  Natural origin spawners Natural production  SMSE  NOS
-#> 2 Hatchery origin spawners           Hatchery  SMSE  HOS
+#>            Name               Definition               Type Class Slot
+#> 1 \\textrm{NOS}  Natural origin spawners Natural production  SMSE  NOS
+#> 2 \\textrm{HOS} Hatchery origin spawners           Hatchery  SMSE  HOS
 ```
