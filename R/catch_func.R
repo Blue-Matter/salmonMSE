@@ -83,23 +83,26 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
     }
     V_solve <- array(V, dim(N_solve))
 
-    Emax <- 20
-    opt <- try(
-      uniroot(
-        Effort_solver, interval = c(.Machine$double.eps, Emax),
-        N = N_solve, vul = V_solve, ret = ret_solve, release_mort = release_mort,
-        type = type, u = u_solve, K = K_solve,
-        p_mature = p_mature_solve, AEQ = AEQ_solve
-      ),
-      silent = TRUE
-    )
-    if (is.character(opt)) {
-      stop("Cannot calculate fishery effort")
-      #Effort <- Emax
+    if (sum(N_solve)) {
+      Emax <- 20
+      opt <- try(
+        uniroot(
+          Effort_solver, interval = c(.Machine$double.eps, Emax),
+          N = N_solve, vul = V_solve, ret = ret_solve, release_mort = release_mort,
+          type = type, u = u_solve, K = K_solve,
+          p_mature = p_mature_solve, AEQ = AEQ_solve
+        ),
+        silent = TRUE
+      )
+      if (is.character(opt)) {
+        stop("Cannot calculate fishery effort")
+        #Effort <- Emax
+      } else {
+        Effort <- opt$root
+      }
     } else {
-      Effort <- opt$root
+      Effort <- 0
     }
-
   } else {
     Effort <- 0
   }
