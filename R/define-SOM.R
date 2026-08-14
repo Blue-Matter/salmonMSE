@@ -11,6 +11,7 @@ setClassUnion("num.array", c("numeric", "array"))
 setClassUnion("num.logical", c("numeric", "logical"))
 setClassUnion("num.matrix", c("numeric", "matrix"))
 setClassUnion("num.function", c("numeric", "function"))
+setClassUnion("num.matrix.function", c("numeric", "matrix", "function"))
 
 # ---- Bio Class -----
 #' Class \code{"Bio"}
@@ -118,10 +119,10 @@ setClass(
     Name = "character",
     type_PT = "character",
     type_T = "character",
-    u_preterminal = "num.matrix",
-    u_terminal = "num.matrix",
-    K_PT = "numeric",
-    K_T = "numeric",
+    u_preterminal = "num.matrix.function",
+    u_terminal = "num.matrix.function",
+    K_PT = "num.function",
+    K_T = "num.function",
     MSF_PT = "logical",
     MSF_T = "logical",
     release_mort = "numeric",

@@ -1,9 +1,9 @@
 ---
-title: "Writing a custom brood function"
+title: "Custom brood and catch functions"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Writing a custom brood function}
+  %\VignetteIndexEntry{Custom brood and catch functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 library(salmonMSE)
 ```
 
-# Default hatchery assumptions
+# Custom brood function
+
+## Default hatchery assumptions
 
 Integrated hatchery programs may balance taking sufficient brood to reach release targets while minimizing gene flow of traits that favor juvenile freshwater survival in the hatchery environment.
 To minimize this gene flow, some proportion of the brood should be natural-origin.
@@ -33,7 +35,7 @@ If there is sufficient return but few natural-origin fish, then brood is continu
 
 An additional assumption of the default settings is that broodtake is non-selective with respect to age.
 
-# Custom brood function
+## Writing the function
 
 Alterations of the brood mechanics can be achieved with custom brood rule functionality in salmonMSE.
 
@@ -43,8 +45,6 @@ Additional creativity in the brood rule is also possible, for example, turning o
 
 In the projection, once the brood is calculated from applying the custom function, the brood numbers is also reduced proportionally to ensure that the production target is not exceeded (in other words, the target is also the limit). 
 This allows the user to focus on rules that determine the appropriate brood composition based on inputs (the return) rather than the outputs.
-
-# Writing the function
 
 The custom function requires four input arguments, values of which are provided by salmonMSE to the function during the projection:
 
@@ -179,4 +179,82 @@ brood_function <- function(NO, HO, stray, m) {
   )
   return(output)
 }
+```
+
+# Catch functions and harvest control rules
+
+By default, salmonMSE simulates fixed harvest rates or stochastic harvest rates that are open-loop, i.e., independent of the abundance.
+
+Users can write a function to write closed-loop harvest control rules, where the harvest rate is a function of the incoming return.
+
+The custom function requires three input arguments, values of which are provided by salmonMSE to the function during the projection:
+
+- `NO` a vector by age for natural-origin fish (for terminal fisheries, this is the return. For preterminal fisheries, this is the juvenile abundance in the population)
+- `HO` a vector by age for hatchery-origin fish
+- `m` a numeric for the mark-rate of hatchery-origin return
+
+The output is simply the updated harvest rate (a numeric) calculated from `NO`, `HO` or `m`.
+
+The minimum acceptable function looks like this (this is a function where harvest rate is independent of abundance):
+
+```{r}
+catch_function <- function(NO, HO, m) {
+  u <- 0.1
+  return(u)
+}
+```
+
+The function can then be passed to the `u_terminal` or `u_preterminal` slot in the `Hatchery` object of the operating model:
+
+```{r, eval=FALSE}
+Harvest <- new("Hatchery")
+Harvest@u_terminal <- catch_function
+
+SOM <- new("SOM", Harvest = Harvest)
+SMSE <- salmonMSE(SOM)
+```
+
+## Example - harvest control rule
+
+We will demonstrate an example that implements the following control rule:
+
+- The terminal harvest rate (U) is zero if the return is less than 50
+- The harvest rate increases linearly to 0.6 when the return size is 150
+- At return sizes above 150, no further increase in harvest rate is allowed
+
+```{r}
+catch_function <- function(NO, HO, m) {
+  Return <- sum(NO, HO)
+  if (Return < 50) {
+    u <- 0
+  } else if (Return > 150) {
+    u <- 0.8
+  } else {
+    slope <- 0.8/(150 - 50)
+    u <- slope * (Return - 50)
+  }
+  return(u)
+}
+```
+
+We can verify that we coded the function as intended:
+
+```{r}
+Return <- seq(0, 200)
+U <- sapply(Return, catch_function, HO = 0)
+plot(Return, U, type = "l", ylim = c(0, 1), panel.first = grid())
+```
+
+To validate our code, let's simulate the control rule with the simple operating model in salmonMSE.
+We can plot the projected returns and harvest rates (coloured points) which should lay on top of the control rule:
+
+```{r}
+simple_SOM@Harvest@u_terminal <- catch_function
+SMSE <- salmonMSE(simple_SOM)
+
+Return_sim <- apply(SMSE@Return_NOS + SMSE@Return_HOS, c(1, 4), sum)
+U_sim <- SMSE@UT_NOS[, 1, ]
+
+plot(Return, U, type = "l", ylim = c(0, 1), panel.first = grid())
+matpoints(Return_sim, U_sim, pch = 1)
 ```
