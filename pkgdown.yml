@@ -2,8 +2,8 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
-  brood-function: brood-function.html
   conditioning: conditioning.html
+  custom-function: custom-function.html
   decision-table: decision-table.html
   equations: equations.html
   example-multi: example-multi.html
@@ -14,7 +14,7 @@ articles:
   tutorial-2: tutorial-2.html
   tutorial-3: tutorial-3.html
   tutorial-4: tutorial-4.html
-last_built: 2026-08-13T00:58Z
+last_built: 2026-08-15T00:24Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles

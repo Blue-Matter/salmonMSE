@@ -62,20 +62,20 @@
 
 
 <dt><code>u_preterminal</code></dt>
-<dd><p>Numeric. Can also be a matrix <code>[nsim, proyears]</code>. If <code>type_PT = "u"</code>, the harvest rate of the immature component of the population in the pre-terminal fishery.
-The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents.</p></dd>
+<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_PT = "u"</code>, the harvest rate of the immature component of the population in the pre-terminal fishery.
+The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
 
 
 <dt><code>u_terminal</code></dt>
-<dd><p>Numeric. Can also be a matrix <code>[nsim, proyears]</code>. If <code>type_T = "u"</code>, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.</p></dd>
+<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_T = "u"</code>, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.</p></dd>
 
 
 <dt><code>K_PT</code></dt>
-<dd><p>Numeric. If <code>type_PT = "catch"</code>, the catch target of the immature component of the population in the pre-terminal fishery.</p></dd>
+<dd><p>Numeric or function. If <code>type_PT = "catch"</code>, the catch target of the immature component of the population in the pre-terminal fishery. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
 
 
 <dt><code>K_T</code></dt>
-<dd><p>Numeric. If <code>type_T = "catch"</code>, the catch target of the return in the terminal fishery.</p></dd>
+<dd><p>Numeric or function. If <code>type_T = "catch"</code>, the catch target of the return in the terminal fishery.</p></dd>
 
 
 <dt><code>MSF_PT</code></dt>
@@ -115,15 +115,18 @@ the proportion of fishing mortality experienced by each age class, where <code>F
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Harvest" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           Name       type_PT        type_T u_preterminal    u_terminal</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     character     character     character    num.matrix    num.matrix</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           K_PT           K_T        MSF_PT         MSF_T  release_mort</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:       numeric       numeric       logical       logical       numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          vulPT          vulT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    num.matrix    num.matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:                 Name             type_PT              type_T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:           character           character           character</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        u_preterminal          u_terminal                K_PT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class: num.matrix.function num.matrix.function        num.function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:                  K_T              MSF_PT               MSF_T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        num.function             logical             logical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         release_mort               vulPT                vulT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:             numeric          num.matrix          num.matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Harvest.list"</span>
 </code></pre></div>

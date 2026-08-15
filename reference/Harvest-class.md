@@ -20,26 +20,28 @@ The component of the operating model that controls marine harvest.
 
 - `u_preterminal`:
 
-  Numeric. Can also be a matrix `[nsim, proyears]`. If `type_PT = "u"`,
+  Numeric, matrix `[nsim, proyears]`, or function. If `type_PT = "u"`,
   the harvest rate of the immature component of the population in the
   pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch
   to (kept AEQ catch + return), where AEQ are adult equivalents.
+  Function should be of the form `function(NO, HO, m) return(u)`.
 
 - `u_terminal`:
 
-  Numeric. Can also be a matrix `[nsim, proyears]`. If `type_T = "u"`,
+  Numeric, matrix `[nsim, proyears]`, or function. If `type_T = "u"`,
   the harvest rate (ratio of kept catch to return) of the terminal
   marine fishery.
 
 - `K_PT`:
 
-  Numeric. If `type_PT = "catch"`, the catch target of the immature
-  component of the population in the pre-terminal fishery.
+  Numeric or function. If `type_PT = "catch"`, the catch target of the
+  immature component of the population in the pre-terminal fishery.
+  Function should be of the form `function(NO, HO, m) return(u)`.
 
 - `K_T`:
 
-  Numeric. If `type_T = "catch"`, the catch target of the return in the
-  terminal fishery.
+  Numeric or function. If `type_T = "catch"`, the catch target of the
+  return in the terminal fishery.
 
 - `MSF_PT`:
 
@@ -83,15 +85,18 @@ showClass("Harvest")
 #> Class "Harvest" [package "salmonMSE"]
 #> 
 #> Slots:
-#>                                                                             
-#> Name:           Name       type_PT        type_T u_preterminal    u_terminal
-#> Class:     character     character     character    num.matrix    num.matrix
-#>                                                                             
-#> Name:           K_PT           K_T        MSF_PT         MSF_T  release_mort
-#> Class:       numeric       numeric       logical       logical       numeric
-#>                                   
-#> Name:          vulPT          vulT
-#> Class:    num.matrix    num.matrix
+#>                                                                   
+#> Name:                 Name             type_PT              type_T
+#> Class:           character           character           character
+#>                                                                   
+#> Name:        u_preterminal          u_terminal                K_PT
+#> Class: num.matrix.function num.matrix.function        num.function
+#>                                                                   
+#> Name:                  K_T              MSF_PT               MSF_T
+#> Class:        num.function             logical             logical
+#>                                                                   
+#> Name:         release_mort               vulPT                vulT
+#> Class:             numeric          num.matrix          num.matrix
 #> 
 #> Extends: "Harvest.list"
 ```
