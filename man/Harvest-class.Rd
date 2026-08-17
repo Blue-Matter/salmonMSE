@@ -12,18 +12,24 @@ The component of the operating model that controls marine harvest.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{type_PT}}{Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
+\item{\code{type_PT}}{Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch").
+Default is "u".}
 
-\item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",}
+\item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch").
+Default is "u".}
 
-\item{\code{u_preterminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_PT = "u"}, the harvest rate of the immature component of the population in the pre-terminal fishery.
-The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form \code{function(NO, HO, m) return(u)}.}
+\item{\code{u_preterminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_PT = "u"}, the harvest rate of the immature
+component of the population in the pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch to
+(kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form \code{function(NO, HO, m) return(u)}.}
 
-\item{\code{u_terminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_T = "u"}, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.}
+\item{\code{u_terminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_T = "u"}, the harvest rate (ratio of kept catch to
+of the terminal marine fishery. Function should be of the form \code{function(NO, HO, m) return(u)}.}
 
-\item{\code{K_PT}}{Numeric or function. If \code{type_PT = "catch"}, the catch target of the immature component of the population in the pre-terminal fishery. Function should be of the form \code{function(NO, HO, m) return(u)}.}
+\item{\code{K_PT}}{Numeric or function. If \code{type_PT = "catch"}, the catch target of the immature component of the population in the
+pre-terminal fishery. Function should be of the form \code{function(NO, HO, m) return(K)}.}
 
-\item{\code{K_T}}{Numeric or function. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.}
+\item{\code{K_T}}{Numeric or function. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.
+Function should be of the form \code{function(NO, HO, m) return(K)}.}
 
 \item{\code{MSF_PT}}{Logical. Whether to implement mark-selective fishing in the preterminal fishery, with no retention on unmarked fish.}
 
