@@ -87,9 +87,10 @@ plot_Mjuv_RS <- function(x, ylab = "Juvenile natural mortality rate", figure = T
 
 #' @importFrom grDevices rainbow
 #' @importFrom graphics axis
-plot_stray <- function(stray, xlab = "Destination", ylab = "Origin") {
+plot_stray <- function(stray, xlab = "Destination", ylab = "Origin", s_names) {
 
   ns <- nrow(stray)
+  if (missing(s_names) || length(s_names) != ns) s_names <- 1:ns
 
   vcol <- rainbow(100, end = 0.45)
 
@@ -106,8 +107,8 @@ plot_stray <- function(stray, xlab = "Destination", ylab = "Origin") {
     }
   }
 
-  axis(2, at = 1:ns + 0.5, labels = 1:ns)
-  axis(1, at = 1:ns + 0.5, labels = 1:ns)
+  axis(2, at = 1:ns + 0.5, labels = s_names)
+  axis(1, at = 1:ns + 0.5, labels = s_names)
 
   invisible(stray)
 }
