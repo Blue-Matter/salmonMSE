@@ -3,6 +3,59 @@ template:
   bootstrap: 5
   math-rendering: mathjax
 
+reference:
+- title: S4 classes
+  desc: Objects used to create stochastic operating models.
+  contents:
+  - Bio-class
+  - Habitat-class
+  - Harvest-class
+  - Hatchery-class
+  - Historical-class
+  - simpleSOM-class
+  - SOM-class
+  - SMSE-class
+
+- title: Projections and results
+  desc: Run simulation of salmon operating model and view/compare results.
+  contents:
+  - salmonMSE
+  - compare
+  - compare_spawners
+  - compare_statevar_ts
+  - P_PNI50
+  - plot_LHG
+  - plot_decision_table
+  - plot_statevar_ts
+  - plot_tradeoff
+  - report
+  - salmonMSE
+
+- title: CWT (coded wire tag) conditioning model
+  desc: Functions to estimate historical productivity and exploitation rates from coded wire tags and time series of hatchery releases and spawner abundance.
+  contents:
+  - fit_CM
+  - CMfigures
+  - CM_MSY
+  - CM2SOM
+  - report_CM
+
+- title: Internal functions and objects
+  contents:
+  - calc_SRR
+  - calc_SRRpars
+  - calc_Smsy_Ricker
+  - calc_ref
+  - calc_smolt
+  - check_SOM
+  - glossary
+  - salmonMSE_env
+  - simple_SOM
+
+- title: Miscellaneous
+  contents:
+  - AHA
+
 articles:
 - title: Getting started
   contents:
