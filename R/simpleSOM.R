@@ -10,8 +10,8 @@
 #' @name simpleSOM-class
 #' @docType class
 #' @slot Name Character. Identifying name
-#' @slot maxage Integer. The maximum age of the population age structure.
 #' @slot nsim Integer. Number of simulations.
+#' @slot maxage Integer. The maximum age of the population age structure.
 #' @slot ngen Integer. The number of generations (life cycles) to run the projection.
 #' @slot kappa Vector length `nsim`. The adult productivity ratio for the stock-recruit function. **Units of recruits per spawner.**
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component).
@@ -26,7 +26,7 @@
 #' of the terminal marine fishery. Function should be of the form `function(NO, HO, m) return(u)`.
 #' @slot K_T Numeric or function. If `type_T = "catch"`, the catch target of the return in the terminal fishery.
 #' Function should be of the form `function(NO, HO, m) return(K)`.
-#' #' @slot InitReturn Vector `[nsim]`. The return at the beginning of the projection. Default assumes 1000.
+#' @slot InitReturn Single numeric or vector `[nsim]`. The return at the beginning of the projection. Default assumes 1000.
 #' @section Creating Object:
 #' Objects can be created by calls of the form \code{new("simpleSOM")}
 #'
@@ -48,7 +48,7 @@ simpleSOM <- setClass(
     type_T = "character",
     u_terminal = "num.matrix.function",
     K_T = "num.function",
-    InitReturn = "num.array"
+    InitReturn = "numeric"
   )
 )
 
@@ -76,7 +76,7 @@ check_simpleSOM <- function(simpleSOM) {
     if (length(simpleSOM@u_terminal) == 1) {
       simpleSOM <- check_numeric(simpleSOM, "u_terminal", default = 0)
     } else if (is.matrix(simpleSOM@u_terminal)) {
-      simpleSOM <- check_array(simpleSOM, "u_terminal", c(nsim, proyears))
+      simpleSOM <- check_array(simpleSOM, "u_terminal", c(nsim, simpleSOM@ngen))
     }
     simpleSOM <- check_numeric(simpleSOM, "K_T", default = NA_real_)
   } else {
@@ -120,6 +120,13 @@ simple_salmonMSE <- function(simpleSOM, ...) {
   Mjuv <- array(0, c(nsim, maxage-1, proyears))
   Mjuv[, 1, seq(2, proyears, maxage)] <- -log(Recdev)
 
+  if (is.matrix(simpleSOM@u_terminal)) {
+    u_terminal <- matrix(0, nsim, proyears)
+    u_terminal[, seq(1, proyears, maxage)] <- simpleSOM@u_terminal
+  } else {
+    u_terminal <- simpleSOM@u_terminal
+  }
+
   p_mature <- c(rep(0, maxage - 1), 1)
   Bio <- new(
     "Bio",
@@ -151,7 +158,7 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     "Harvest",
     type_T = simpleSOM@type_T,
     u_preterminal = 0,
-    u_terminal = simpleSOM@u_terminal,
+    u_terminal = u_terminal,
     K_PT = 0,
     K_T = simpleSOM@K_T,
     MSF_PT = FALSE,

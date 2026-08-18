@@ -10,6 +10,7 @@ articles:
   - example
   - decision-table
   - example-multi
+  - simpleSOM
 
 - title: Documentation
   contents:

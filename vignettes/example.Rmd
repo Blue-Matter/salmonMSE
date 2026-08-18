@@ -181,15 +181,11 @@ As we can see, the number of natural-origin spawners (NOS) in both models is slo
 
 ```{r}
 matplot(t(AHA_run$NOS[, 1, ]), type = "o", ylim = c(0, 100), col = 1, pch = 1,
-        xlab = "Generation", ylab = "AHA: NOS", panel.first = grid())
+        xlab = "Generation", ylab = "NOS (AHA)", panel.first = grid())
 ```
 
 ```{r}
-plot_statevar_ts(SMSE, "NOS", quant = TRUE, ylim = c(0, 100), ylab = "salmonMSE: NOS")
-```
-
-```{r, eval = TRUE, echo = FALSE}
-knitr::include_graphics("../man/figures/example-NOS.png")
+plot_statevar_ts(SMSE, "NOS", quant = TRUE, ylim = c(0, 100), ylab = "NOS (salmonMSE)")
 ```
 
 *Comparison of the abundance of NOS between AHA (by generation) and salmonMSE (by year) given identical biological parameters, hatchery releases, and terminal fishery harvest rate in the simple example.*

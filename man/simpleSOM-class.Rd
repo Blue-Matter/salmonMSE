@@ -17,9 +17,9 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{maxage}}{Integer. The maximum age of the population age structure.}
-
 \item{\code{nsim}}{Integer. Number of simulations.}
+
+\item{\code{maxage}}{Integer. The maximum age of the population age structure.}
 
 \item{\code{ngen}}{Integer. The number of generations (life cycles) to run the projection.}
 
@@ -41,8 +41,9 @@ Default is "u".}
 of the terminal marine fishery. Function should be of the form \code{function(NO, HO, m) return(u)}.}
 
 \item{\code{K_T}}{Numeric or function. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.
-Function should be of the form \code{function(NO, HO, m) return(K)}.
-#' @slot InitReturn Vector \verb{[nsim]}. The return at the beginning of the projection. Default assumes 1000.}
+Function should be of the form \code{function(NO, HO, m) return(K)}.}
+
+\item{\code{InitReturn}}{Single numeric or vector \verb{[nsim]}. The return at the beginning of the projection. Default assumes 1000.}
 }}
 
 \section{Creating Object}{
