@@ -22,7 +22,7 @@ one wants to evaluate:
 The following code demonstrates the setup for a multi-population model
 and builds off the [first
 example](https://docs.salmonmse.com/articles/example.md) to evaluate the
-influence of a nearby hatchery (population \#1) on a small unenhanced
+influence of a nearby hatchery (population \#1) on a small un-enhanced
 system (population \#2).
 
 Just as in the simple example, we create an object of class `SOM`
@@ -58,7 +58,7 @@ Bio <- lapply(1:ns, function(s) {
     SRrel = "BH",
     capacity = ifelse(s == 1, 17250, 1000),     # Large population 1, small population 2
     kappa = ifelse(s == 1, 3, 2),               # Higher productivity in population 1, lower in population 2
-    Mjuv_NOS = c(0, -log(SAR), 0),
+    Mjuv_NOS = c(0, -log(SAR)),
     fec = c(0, 0, 5040),
     p_female = 0.49,
     s_enroute = 1
@@ -185,10 +185,8 @@ operating model. The projection will run for 50 years:
 
 SOM <- new(
   "SOM",
+  nsim = nsim, proyears = 50,
   Bio, Habitat, Hatchery, Harvest, Historical,
-  nsim = nsim,
-  nyears = 2,
-  proyears = 50
 )
 ```
 
@@ -215,7 +213,7 @@ SOM@stray <- matrix(c(0.75, 0.25, 0, 1), 2, 2, byrow = TRUE)
 
 ``` r
 
-salmonMSE:::plot_stray(SOM@stray)
+salmonMSE:::plot_stray(SOM@stray, s_names = paste("Pop.", 1:2))
 ```
 
 ![](example-multi_files/figure-html/unnamed-chunk-10-1.png)
@@ -229,20 +227,19 @@ generate the Markdown report:
 
 ``` r
 
-out <- salmonMSE(SOM)
-report(out)
+out <- salmonMSE(SOM, silent = TRUE)
+#report(out)
 ```
 
-We can see that the second population rapidly transitions from a natural
-population to a hatchery-dominated system due to strays from the first
-population. The population equilibriates after 4 generations:
+We can see that the second population (with no hatchery production)
+rapidly transitions from a natural system to a hatchery-dominated system
+due to strays from the first population. The population equilibriates
+after 4 generations:
 
 ``` r
 
-plot_spawners(out, s = 2, prop = FALSE)
+plot_spawners(out, s = 2, prop = TRUE)
 ```
-
-![](../reference/figures/multipop_spawners.png)
 
 The reduction in wild spawners are exclusively from strays as no
 hatchery-origin juveniles are present in the second population:
@@ -250,6 +247,5 @@ hatchery-origin juveniles are present in the second population:
 ``` r
 
 max(out@Njuv_HOS[, 2, , ])
+#> [1] 0
 ```
-
-    #> [1] 0

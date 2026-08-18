@@ -88,7 +88,7 @@ systems?</p></li>
 <p>The following code demonstrates the setup for a multi-population
 model and builds off the <a href="../articles/example.html">first
 example</a> to evaluate the influence of a nearby hatchery (population
-#1) on a small unenhanced system (population #2).</p>
+#1) on a small un-enhanced system (population #2).</p>
 <p>Just as in the simple example, we create an object of class
 <code>SOM</code> comprising of sub-components that specify the
 biological dynamics, as well as hatchery, habitat, and harvest. Here,
@@ -118,7 +118,7 @@ among each other.</p>
 <span>    SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>    capacity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">17250</span>, <span class="fl">1000</span><span class="op">)</span>,     <span class="co"># Large population 1, small population 2</span></span>
 <span>    kappa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>,               <span class="co"># Higher productivity in population 1, lower in population 2</span></span>
-<span>    Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>    Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>
 <span>    p_female <span class="op">=</span> <span class="fl">0.49</span>,</span>
 <span>    s_enroute <span class="op">=</span> <span class="fl">1</span></span>
@@ -237,10 +237,8 @@ operating model. The projection will run for 50 years:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"SOM"</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim</span>, proyears <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  <span class="va">Bio</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="va">nsim</span>,</span>
-<span>  nyears <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  proyears <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>An additional slot in the <code>SOM</code> object specifies the stray
 rate of hatchery-origin escapement among populations. Columns in the
@@ -259,7 +257,7 @@ population will stray to the second population:</p>
 <span><span class="co">#&gt; [1,] 0.75 0.25</span></span>
 <span><span class="co">#&gt; [2,] 0.00 1.00</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">salmonMSE</span><span class="fu">:::</span><span class="fu">plot_stray</span><span class="op">(</span><span class="va">SOM</span><span class="op">@</span><span class="va">stray</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">salmonMSE</span><span class="fu">:::</span><span class="fu">plot_stray</span><span class="op">(</span><span class="va">SOM</span><span class="op">@</span><span class="va">stray</span>, s_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Pop."</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="example-multi_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
 <p><em>Stray rates in the multi-population model.</em></p>
 </div>
@@ -269,19 +267,19 @@ population will stray to the second population:</p>
 <p>Once the operating model is set up, we can run the projection and
 generate the Markdown report:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></code></pre></div>
-<p>We can see that the second population rapidly transitions from a
-natural population to a hatchery-dominated system due to strays from the
-first population. The population equilibriates after 4 generations:</p>
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#report(out)</span></span></code></pre></div>
+<p>We can see that the second population (with no hatchery production)
+rapidly transitions from a natural system to a hatchery-dominated system
+due to strays from the first population. The population equilibriates
+after 4 generations:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">out</span>, s <span class="op">=</span> <span class="fl">2</span>, prop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/multipop_spawners.png"><!-- --></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">out</span>, s <span class="op">=</span> <span class="fl">2</span>, prop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The reduction in wild spawners are exclusively from strays as no
 hatchery-origin juveniles are present in the second population:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">out</span><span class="op">@</span><span class="va">Njuv_HOS</span><span class="op">[</span>, <span class="fl">2</span>, , <span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [1] 0</span></span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">out</span><span class="op">@</span><span class="va">Njuv_HOS</span><span class="op">[</span>, <span class="fl">2</span>, , <span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

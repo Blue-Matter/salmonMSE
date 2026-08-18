@@ -32,22 +32,101 @@ remotes::install_github("Blue-Matter/salmonMSE")
 
 # Package index
 
-## All functions
+## S4 classes
 
-- [`AHA()`](https://docs.salmonmse.com/reference/AHA.md) : All-H
-  Analyzer
+Objects used to create stochastic operating models.
 
 - [`Bio-class`](https://docs.salmonmse.com/reference/Bio-class.md) :
 
   Class `"Bio"`
 
-- [`CM2SOM()`](https://docs.salmonmse.com/reference/CM2SOM.md) : Convert
-  conditioning model to operating model
+- [`Habitat-class`](https://docs.salmonmse.com/reference/Habitat-class.md)
+  :
 
-- [`CM_MSY()`](https://docs.salmonmse.com/reference/CM_MSY.md)
-  [`CM_Sgen()`](https://docs.salmonmse.com/reference/CM_MSY.md) : Plot
-  reference points from conditioning model
+  Class `"Habitat"`
 
+- [`Harvest-class`](https://docs.salmonmse.com/reference/Harvest-class.md)
+  :
+
+  Class `"Harvest"`
+
+- [`Hatchery-class`](https://docs.salmonmse.com/reference/Hatchery-class.md)
+  :
+
+  Class `"Hatchery"`
+
+- [`Historical-class`](https://docs.salmonmse.com/reference/Historical-class.md)
+  :
+
+  Class `"Historical"`
+
+- [`simpleSOM-class`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
+  [`simpleSOM`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
+  :
+
+  Class `"simpleSOM"`
+
+- [`SOM-class`](https://docs.salmonmse.com/reference/SOM-class.md)
+  [`SOM`](https://docs.salmonmse.com/reference/SOM-class.md) :
+
+  Class `"SOM"`
+
+- [`SMSE-class`](https://docs.salmonmse.com/reference/SMSE-class.md) :
+
+  Class `"SMSE"`
+
+## Projections and results
+
+Run simulation of salmon operating model and view/compare results.
+
+- [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  : Run salmonMSE
+- [`compare()`](https://docs.salmonmse.com/reference/compare.md) :
+  Compare scenarios in markdown
+- [`compare_spawners()`](https://docs.salmonmse.com/reference/compare_spawners.md)
+  [`compare_fitness()`](https://docs.salmonmse.com/reference/compare_spawners.md)
+  [`compare_escapement()`](https://docs.salmonmse.com/reference/compare_spawners.md)
+  : Compare simulation runs
+- [`compare_statevar_ts()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
+  [`compare_statevar_hist()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
+  : Compare state variables from simulation runs
+- [`P_PNI50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_PNI80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_WILD50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_SMSY85()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_SMSY80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_Sgen100()`](https://docs.salmonmse.com/reference/P_PNI50.md) :
+  Example performance metrics
+- [`plot_LHG()`](https://docs.salmonmse.com/reference/plot_LHG.md)
+  [`plot_RS()`](https://docs.salmonmse.com/reference/plot_LHG.md) : Plot
+  life history groups and release strategies
+- [`plot_decision_table()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
+  [`plot_decision_table2()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
+  : Decision table of performance metrics
+- [`plot_statevar_ts()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_statevar_hist()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_spawners()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_fitness()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_escapement()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_fishery()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  [`plot_Kobe()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
+  : Plot core output from salmonMSE
+- [`plot_tradeoff()`](https://docs.salmonmse.com/reference/plot_tradeoff.md)
+  : Tradeoff figure
+- [`report(`*`<SMSE>`*`)`](https://docs.salmonmse.com/reference/report.md)
+  : Generate markdown reports
+
+## CWT (coded wire tag) conditioning model
+
+Functions to estimate historical productivity and exploitation rates
+from coded wire tags and time series of hatchery releases and spawner
+abundance.
+
+- [`fit_CM()`](https://docs.salmonmse.com/reference/fit_CM.md)
+  [`sample_CM()`](https://docs.salmonmse.com/reference/fit_CM.md) : Fit
+  conditioning model to historical data
 - [`get_report()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`get_CMdata()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_trace()`](https://docs.salmonmse.com/reference/CMfigures.md)
@@ -75,129 +154,45 @@ remotes::install_github("Blue-Matter/salmonMSE")
   [`CM_CWT_ER()`](https://docs.salmonmse.com/reference/CMfigures.md)
   [`CM_covariate()`](https://docs.salmonmse.com/reference/CMfigures.md)
   : Figures for conditioning model results
+- [`CM_MSY()`](https://docs.salmonmse.com/reference/CM_MSY.md)
+  [`CM_Sgen()`](https://docs.salmonmse.com/reference/CM_MSY.md) : Plot
+  reference points from conditioning model
+- [`CM2SOM()`](https://docs.salmonmse.com/reference/CM2SOM.md) : Convert
+  conditioning model to operating model
+- [`report_CM()`](https://docs.salmonmse.com/reference/report_CM.md) :
+  Conditioning model markdown report
 
-- [`Habitat-class`](https://docs.salmonmse.com/reference/Habitat-class.md)
-  :
-
-  Class `"Habitat"`
-
-- [`Harvest-class`](https://docs.salmonmse.com/reference/Harvest-class.md)
-  :
-
-  Class `"Harvest"`
-
-- [`Hatchery-class`](https://docs.salmonmse.com/reference/Hatchery-class.md)
-  :
-
-  Class `"Hatchery"`
-
-- [`Historical-class`](https://docs.salmonmse.com/reference/Historical-class.md)
-  :
-
-  Class `"Historical"`
-
-- [`P_PNI50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
-  [`P_PNI80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
-  [`P_WILD50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
-  [`P_SMSY85()`](https://docs.salmonmse.com/reference/P_PNI50.md)
-  [`P_SMSY80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
-  [`P_Sgen100()`](https://docs.salmonmse.com/reference/P_PNI50.md) :
-  Example performance metrics
-
-- [`SMSE-class`](https://docs.salmonmse.com/reference/SMSE-class.md) :
-
-  Class `"SMSE"`
-
-- [`SOM-class`](https://docs.salmonmse.com/reference/SOM-class.md)
-  [`SOM`](https://docs.salmonmse.com/reference/SOM-class.md) :
-
-  Class `"SOM"`
+## Internal functions and objects
 
 - [`calc_SRR()`](https://docs.salmonmse.com/reference/calc_SRR.md) :
   Calculate abundance from density-dependent mortality
-
 - [`calc_SRRpars()`](https://docs.salmonmse.com/reference/calc_SRRpars.md)
   : Convert density-dependent survival parameters
-
 - [`calc_Smsy_Ricker()`](https://docs.salmonmse.com/reference/calc_Smsy_Ricker.md)
   [`calc_Umsy_Ricker()`](https://docs.salmonmse.com/reference/calc_Smsy_Ricker.md)
   [`calc_Sgen_Ricker()`](https://docs.salmonmse.com/reference/calc_Smsy_Ricker.md)
   : Ricker reference points
-
 - [`calc_ref()`](https://docs.salmonmse.com/reference/calc_ref.md)
   [`calc_MSY()`](https://docs.salmonmse.com/reference/calc_ref.md)
   [`calc_Sgen()`](https://docs.salmonmse.com/reference/calc_ref.md) :
   Reference points
-
 - [`calc_smolt()`](https://docs.salmonmse.com/reference/calc_smolt.md) :
   Smolt production
-
 - [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md) :
   Check inputs to SOM object
-
-- [`compare()`](https://docs.salmonmse.com/reference/compare.md) :
-  Compare scenarios in markdown
-
-- [`compare_spawners()`](https://docs.salmonmse.com/reference/compare_spawners.md)
-  [`compare_fitness()`](https://docs.salmonmse.com/reference/compare_spawners.md)
-  [`compare_escapement()`](https://docs.salmonmse.com/reference/compare_spawners.md)
-  : Compare simulation runs
-
-- [`compare_statevar_ts()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
-  [`compare_statevar_hist()`](https://docs.salmonmse.com/reference/compare_statevar_ts.md)
-  : Compare state variables from simulation runs
-
-- [`fit_CM()`](https://docs.salmonmse.com/reference/fit_CM.md)
-  [`sample_CM()`](https://docs.salmonmse.com/reference/fit_CM.md) : Fit
-  conditioning model to historical data
-
 - [`glossary`](https://docs.salmonmse.com/reference/glossary.md) :
   salmonMSE glossary
-
-- [`plot_LHG()`](https://docs.salmonmse.com/reference/plot_LHG.md)
-  [`plot_RS()`](https://docs.salmonmse.com/reference/plot_LHG.md) : Plot
-  life history groups and release strategies
-
-- [`plot_decision_table()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
-  [`plot_decision_table2()`](https://docs.salmonmse.com/reference/plot_decision_table.md)
-  : Decision table of performance metrics
-
-- [`plot_statevar_ts()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_statevar_hist()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_spawners()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_fitness()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_escapement()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_fishery()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  [`plot_Kobe()`](https://docs.salmonmse.com/reference/plot_statevar_ts.md)
-  : Plot core output from salmonMSE
-
-- [`plot_tradeoff()`](https://docs.salmonmse.com/reference/plot_tradeoff.md)
-  : Tradeoff figure
-
-- [`report(`*`<SMSE>`*`)`](https://docs.salmonmse.com/reference/report.md)
-  : Generate markdown reports
-
-- [`report_CM()`](https://docs.salmonmse.com/reference/report_CM.md) :
-  Conditioning model markdown report
-
-- [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  : Run salmonMSE
-
 - [`salmonMSE_env`](https://docs.salmonmse.com/reference/salmonMSE_env.md)
   : Environment to store salmon specific variables, e.g, fitness, during
   the simulation
-
-- [`simpleSOM-class`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
-  [`simpleSOM`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
-  :
-
-  Class `"simpleSOM"`
-
 - [`simple_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md)
   [`multi_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md) :
   Example objects from salmonMSE
+
+## Miscellaneous
+
+- [`AHA()`](https://docs.salmonmse.com/reference/AHA.md) : All-H
+  Analyzer
 
 # Articles
 
