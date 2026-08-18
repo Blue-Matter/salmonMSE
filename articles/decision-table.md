@@ -27,7 +27,7 @@ executed:
 
 ## Example
 
-The example here extends the [simple
+The example here extends the [first
 example](https://docs.salmonmse.com/articles/example.md) of a salmon
 operating model that has a single brood year recruitment where all fish
 mature at age 3.

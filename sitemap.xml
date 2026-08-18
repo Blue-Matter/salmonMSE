@@ -10,6 +10,7 @@
 <url><loc>https://docs.salmonmse.com/articles/index.html</loc></url>
 <url><loc>https://docs.salmonmse.com/articles/introduction.html</loc></url>
 <url><loc>https://docs.salmonmse.com/articles/ref.html</loc></url>
+<url><loc>https://docs.salmonmse.com/articles/simpleSOM.html</loc></url>
 <url><loc>https://docs.salmonmse.com/articles/tutorial-1.html</loc></url>
 <url><loc>https://docs.salmonmse.com/articles/tutorial-2.html</loc></url>
 <url><loc>https://docs.salmonmse.com/articles/tutorial-3.html</loc></url>
@@ -23,12 +24,13 @@
 <url><loc>https://docs.salmonmse.com/reference/CM_MSY.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/CM_int.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/CMfigures.html</loc></url>
+<url><loc>https://docs.salmonmse.com/reference/Deprecated.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Effort_solver.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Habitat-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Harvest-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Hatchery-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/Historical-class.html</loc></url>
-<url><loc>https://docs.salmonmse.com/reference/PNI50.html</loc></url>
+<url><loc>https://docs.salmonmse.com/reference/P_PNI50.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/SMSE-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/SOM-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/brood_func.html</loc></url>
@@ -65,6 +67,7 @@
 <url><loc>https://docs.salmonmse.com/reference/report_CM.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/salmonMSE.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/salmonMSE_env.html</loc></url>
+<url><loc>https://docs.salmonmse.com/reference/simpleSOM-class.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/simple_SOM.html</loc></url>
 <url><loc>https://docs.salmonmse.com/reference/stray_func.html</loc></url>
 </urlset>

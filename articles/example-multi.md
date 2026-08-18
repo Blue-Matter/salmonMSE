@@ -20,7 +20,7 @@ one wants to evaluate:
     nearby systems?
 
 The following code demonstrates the setup for a multi-population model
-and builds off the [simple
+and builds off the [first
 example](https://docs.salmonmse.com/articles/example.md) to evaluate the
 influence of a nearby hatchery (population \#1) on a small unenhanced
 system (population \#2).

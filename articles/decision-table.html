@@ -59,7 +59,7 @@
 
       <h1>Decision table</h1>
             
-            <h4 data-toc-skip class="date">2026-08-15</h4>
+            <h4 data-toc-skip class="date">2026-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/decision-table.Rmd" class="external-link"><code>vignettes/decision-table.Rmd</code></a></small>
       <div class="d-none name"><code>decision-table.Rmd</code></div>
@@ -97,9 +97,9 @@ across the alternative states of nature and management levers.</li>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>The example here extends the <a href="../articles/example.html">simple example</a> of a salmon operating
-model that has a single brood year recruitment where all fish mature at
-age 3.</p>
+<p>The example here extends the <a href="../articles/example.html">first
+example</a> of a salmon operating model that has a single brood year
+recruitment where all fish mature at age 3.</p>
 <div class="section level3">
 <h3 id="simulation-design">Simulation design<a class="anchor" aria-label="anchor" href="#simulation-design"></a>
 </h3>
@@ -260,14 +260,14 @@ the end of the projection.</p>
 <code class="sourceCode R"><span><span class="va">pm_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">SMSE_list</span>, <span class="va">Design</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="va">Design</span><span class="op">[</span><span class="va">x</span>, <span class="op">]</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI_80</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI50.html">PNI80</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">out</span><span class="op">$</span><span class="va">PNI_80</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Deprecated.html">PNI80</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">KNOS</span> <span class="op">&lt;-</span> <span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">KT_NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span> <span class="co"># Catch of natural-origin fish</span></span>
 <span>  <span class="va">KHOS</span> <span class="op">&lt;-</span> <span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">KT_HOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span> <span class="co"># Catch of hatchery-origin fish</span></span>
 <span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">KNOS</span> <span class="op">+</span> <span class="va">KHOS</span><span class="op">)</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">Catch60</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="op">(</span><span class="va">KNOS</span> <span class="op">+</span> <span class="va">KHOS</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">60</span><span class="op">)</span></span>
-<span>  <span class="va">out</span><span class="op">$</span><span class="va">`S/SMSY`</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PNI50.html">SMSY85</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">out</span><span class="op">$</span><span class="va">`S/SMSY`</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Deprecated.html">SMSY85</a></span><span class="op">(</span><span class="va">SMSE_list</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>

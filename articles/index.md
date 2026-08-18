@@ -3,12 +3,14 @@
 ### Getting started
 
 - [Introduction](https://docs.salmonmse.com/articles/introduction.md):
-- [Simple salmonMSE
-  example](https://docs.salmonmse.com/articles/example.md):
+- [Example, with comparison to
+  AHA](https://docs.salmonmse.com/articles/example.md):
 - [Decision
   table](https://docs.salmonmse.com/articles/decision-table.md):
 - [Multi-population
   model](https://docs.salmonmse.com/articles/example-multi.md):
+- [Simple spawner-return operating
+  model](https://docs.salmonmse.com/articles/simpleSOM.md):
 
 ### Documentation
 

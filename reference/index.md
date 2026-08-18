@@ -64,12 +64,13 @@
 
   Class `"Historical"`
 
-- [`PNI50()`](https://docs.salmonmse.com/reference/PNI50.md)
-  [`PNI80()`](https://docs.salmonmse.com/reference/PNI50.md)
-  [`WILD50()`](https://docs.salmonmse.com/reference/PNI50.md)
-  [`SMSY85()`](https://docs.salmonmse.com/reference/PNI50.md)
-  [`Sgen100()`](https://docs.salmonmse.com/reference/PNI50.md) : Example
-  performance metrics
+- [`P_PNI50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_PNI80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_WILD50()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_SMSY85()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_SMSY80()`](https://docs.salmonmse.com/reference/P_PNI50.md)
+  [`P_Sgen100()`](https://docs.salmonmse.com/reference/P_PNI50.md) :
+  Example performance metrics
 
 - [`SMSE-class`](https://docs.salmonmse.com/reference/SMSE-class.md) :
 
@@ -148,12 +149,19 @@
   Conditioning model markdown report
 
 - [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md) :
-  Run salmonMSE
+  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  : Run salmonMSE
 
 - [`salmonMSE_env`](https://docs.salmonmse.com/reference/salmonMSE_env.md)
   : Environment to store salmon specific variables, e.g, fitness, during
   the simulation
+
+- [`simpleSOM-class`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
+  [`simpleSOM`](https://docs.salmonmse.com/reference/simpleSOM-class.md)
+  :
+
+  Class `"simpleSOM"`
 
 - [`simple_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md)
   [`multi_SOM`](https://docs.salmonmse.com/reference/simple_SOM.md) :

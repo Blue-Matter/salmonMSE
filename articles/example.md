@@ -1,9 +1,9 @@
-# Simple salmonMSE example
+# Example, with comparison to AHA
 
-Here, we show a simple example of a salmon operating model where all
-fish mature at age 3 and follows the structure of an analysis done in
-AHA. The model is used to project the proposed management levers to
-determine the equilibrium properties of the system.
+Here, we show a simple example of a salmon operating model that follows
+the structure of an analysis done in AHA (All H-Analyzer). The model is
+used to project the proposed management levers to determine the
+equilibrium properties of the system.
 
 ## Biological parameters
 
@@ -21,13 +21,15 @@ simulations.
 
 We model ocean survival through an equivalent instantaneous mortality
 rate `Mjuv_NOS` where all mortality occurs in the age class prior to
-maturation, i.e., age 2.
+maturation, i.e., age 2. All fish mature and return at age 3:
 
 ``` r
 
 library(salmonMSE)
-
 class?SOM # Definition of inputs
+```
+
+``` r
 
 SAR <- 0.01 # Marine survival
 nsim <- 3 # Number of simulations
@@ -188,26 +190,49 @@ Now let’s stitch together the operating model and run the simulation for
 
 SOM <- new(
   "SOM",
-  Bio, Habitat, Hatchery, Harvest, Historical,
-  nsim = nsim, proyears = 50
+  nsim = nsim, 
+  proyears = 50,
+  Bio = Bio,
+  Habitat = Habitat, 
+  Hatchery = Hatchery,
+  Harvest = Harvest,
+  Historical = Historical,
 )
 SMSE <- salmonMSE(SOM)
 ```
 
-With a simple salmon model, we can run AHA and compare the trajectory of
-the population. As we can see, the number of NOS in both models is
-slowly equilibriating to approximately 70.
+With a simple salmon model, we can run AHA (salmonMSE has an
+implementation of AHA coded in R):
 
 ``` r
 
-SAHA <- AHA(SOM, ngen = 20)
-
-# Compare NOS
-SAHA$NOS[, 1, ]
-apply(SMSE@NOS[, 1, , ], c(1, 3), sum) # sum across ages
+AHA_run <- AHA(SOM, ngen = 20)
+#> Running AHA for population 1
+#> Age of maturity assumed to be: 3
+#> Fecundity of spawners assumed to be: 5040
+#> Fecundity of spawners assumed to be: 0.49
+#> Fecundity of broodtake assumed to be: 5040
+#> SAR calculated from survival from Mjuv to age 3
 ```
 
-![](../reference/figures/example-NOS.png)
+Then, we can compare the trajectory of the population from both tools.
+As we can see, the number of natural-origin spawners (NOS) in both
+models is slowly equilibriating to approximately 70.
+
+``` r
+
+matplot(t(AHA_run$NOS[, 1, ]), type = "o", ylim = c(0, 100), col = 1, pch = 1,
+        xlab = "Generation", ylab = "NOS (AHA)", panel.first = grid())
+```
+
+![](example_files/figure-html/unnamed-chunk-10-1.png)
+
+``` r
+
+plot_statevar_ts(SMSE, "NOS", quant = TRUE, ylim = c(0, 100), ylab = "NOS (salmonMSE)")
+```
+
+![](example_files/figure-html/unnamed-chunk-11-1.png)
 
 *Comparison of the abundance of NOS between AHA (by generation) and
 salmonMSE (by year) given identical biological parameters, hatchery
@@ -216,15 +241,10 @@ releases, and terminal fishery harvest rate in the simple example.*
 ## Stochastic simulations
 
 Let’s repeat the simple example with stochasticity on the productivity
-parameter (“kappa”, units of recruits/spawner). To do this, we sample
+parameter (`kappa`, units of recruits/spawner). To do this, we sample
 productivity from a distribution and we run 100 simulations. This
 incorporates our uncertainty in understanding of natural productivity in
 the evaluation of the management strategy.
-
-![](../reference/figures/example-kappa.png)
-
-*Histogram of the productivity (kappa) values sampled for our stochastic
-operating model.*
 
 ``` r
 
@@ -237,6 +257,18 @@ set.seed(100)
 kappa_mean <- 3
 kappa_sd <- 0.3
 kappa <- rlnorm(nsim_stochastic, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
+
+hist(kappa, xlab = "kappa", main = NULL)
+```
+
+![](example_files/figure-html/unnamed-chunk-12-1.png)
+
+*Histogram of the productivity (kappa) values sampled for our stochastic
+operating model.*
+
+Now we update the `Bio` object and run the projection:
+
+``` r
 
 Bio_stochastic <- new(
   "Bio",
@@ -267,15 +299,15 @@ SMSE_stochastic <- salmonMSE(SOM_stochastic)
 ```
 
 We expect a distribution in the state variables during the projection.
-Let’s take a look at PNI, where we can plot the median and 95 percent
-range in values annually from the projection:
+Let’s take a look at PNI, where we can plot the annual medians and 95
+percent range during the projection:
 
 ``` r
 
 plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
 ```
 
-![](../reference/figures/example-PNI-ts.png)
+![](example_files/figure-html/unnamed-chunk-14-1.png)
 
 Here is the distribution of PNI in the last generation (note that we
 model single brood year returns so PNI is only defined once every 3
@@ -286,7 +318,7 @@ years):
 plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
 ```
 
-![](../reference/figures/example-PNI-hist.png)
+![](example_files/figure-html/unnamed-chunk-15-1.png)
 
 From such models, we can develop performance metrics that make
 probabilistic statements about the system dynamics for each set of
@@ -295,11 +327,18 @@ that PNI is at least 0.80:
 
 ``` r
 
-PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
+PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
 mean(PNI_LT >= 0.8)
+#> [1] 0.13
 ```
 
-    #> [1] 0.13
+An equivalently performance metric function is built in to the package:
+
+``` r
+
+P_PNI80(SMSE_stochastic, Yrs = c(49, 49))
+#> [1] 0.13
+```
 
 The quantiles can also be calculated for our performance metric from the
 stochastic replicates:
@@ -307,17 +346,16 @@ stochastic replicates:
 ``` r
 
 quantile(PNI_LT, c(0.025, 0.5, 0.975))
+#>      2.5%       50%     97.5% 
+#> 0.6358769 0.7670485 0.8155235
 ```
-
-    #>      2.5%       50%     97.5% 
-    #> 0.6338964 0.7651637 0.8139232
 
 Here is the relationship between the performance metrics and
 productivity:
 
-![](../reference/figures/example-PNI-kappa.png)
+![](example_files/figure-html/unnamed-chunk-19-1.png)
 
-A summary Markdown report can be generated with the
+Finally, a summary Markdown report can be generated with the
 [`report()`](https://docs.salmonmse.com/reference/report.md) function:
 
 ``` r

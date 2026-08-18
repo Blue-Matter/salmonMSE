@@ -12,12 +12,19 @@ reference points with
 
 `ProjectSOM()` is the internal projection function.
 
+`simple_salmonMSE()` is helper function that converts a simple operating
+model (modeling only recruit-spawners with Ricker relationship, terminal
+marine fishery, without hatchery production) to a full operating model
+and runs the projection.
+
 ## Usage
 
 ``` r
 salmonMSE(SOM, ncores = 1, silent = FALSE)
 
 ProjectSOM(SOM, sims, check = FALSE)
+
+simple_salmonMSE(simpleSOM, ...)
 ```
 
 ## Arguments
@@ -45,6 +52,15 @@ ProjectSOM(SOM, sims, check = FALSE)
 
   Logical, whether to check the structure of the input object with
   [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md)
+
+- simpleSOM:
+
+  An object of class
+  [simpleSOM](https://docs.salmonmse.com/reference/simpleSOM-class.md)
+
+- ...:
+
+  Other arguments to pass to `salmonMSE()`
 
 ## Value
 

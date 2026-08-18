@@ -10,11 +10,12 @@ articles:
   example: example.html
   introduction: introduction.html
   ref: ref.html
+  simpleSOM: simpleSOM.html
   tutorial-1: tutorial-1.html
   tutorial-2: tutorial-2.html
   tutorial-3: tutorial-3.html
   tutorial-4: tutorial-4.html
-last_built: 2026-08-15T00:24Z
+last_built: 2026-08-18T17:11Z
 urls:
   reference: https://docs.salmonmse.com/reference
   article: https://docs.salmonmse.com/articles

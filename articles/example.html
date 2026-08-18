@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Simple salmonMSE example • salmonMSE</title>
+<title>Example, with comparison to AHA • salmonMSE</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -16,7 +16,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simple salmonMSE example">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Example, with comparison to AHA">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -57,9 +57,9 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Simple salmonMSE example</h1>
+      <h1>Example, with comparison to AHA</h1>
             
-            <h4 data-toc-skip class="date">2026-08-15</h4>
+            <h4 data-toc-skip class="date">2026-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example.Rmd" class="external-link"><code>vignettes/example.Rmd</code></a></small>
       <div class="d-none name"><code>example.Rmd</code></div>
@@ -67,10 +67,10 @@
 
     
     
-<p>Here, we show a simple example of a salmon operating model where all
-fish mature at age 3 and follows the structure of an analysis done in
-AHA. The model is used to project the proposed management levers to
-determine the equilibrium properties of the system.</p>
+<p>Here, we show a simple example of a salmon operating model that
+follows the structure of an analysis done in AHA (All H-Analyzer). The
+model is used to project the proposed management levers to determine the
+equilibrium properties of the system.</p>
 <div class="section level2">
 <h2 id="biological-parameters">Biological parameters<a class="anchor" aria-label="anchor" href="#biological-parameters"></a>
 </h2>
@@ -87,13 +87,13 @@ the biological parameters, as well as the results, are identical among
 simulations.</p>
 <p>We model ocean survival through an equivalent instantaneous mortality
 rate <code>Mjuv_NOS</code> where all mortality occurs in the age class
-prior to maturation, i.e., age 2.</p>
+prior to maturation, i.e., age 2. All fish mature and return at age
+3:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.salmonmse.com/">salmonMSE</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">class</span><span class="op">?</span><span class="va">SOM</span> <span class="co"># Definition of inputs</span></span>
-<span></span>
-<span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span> <span class="co"># Marine survival</span></span>
+<span><span class="va">class</span><span class="op">?</span><span class="va">SOM</span> <span class="co"># Definition of inputs</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span> <span class="co"># Marine survival</span></span>
 <span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co"># Number of simulations</span></span>
 <span><span class="va">Bio</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Bio"</span>,</span>
@@ -124,7 +124,7 @@ density-independent or density-dependent.</p>
 <p>These features are not used in this example. Instead, the capacity
 and productivity parameters in the previous section control the
 egg-juvenile survival.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Habitat</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Habitat"</span>,</span>
 <span>  use_habitat <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -177,7 +177,7 @@ in-rivery fishery for pHOS management.</p>
 <p>Finally, we also need to specify the relative spawning success of HOS
 (<code>gamma</code>), and various parameters that describe the fitness
 of hatchery-origin fish, in the natural environment.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Hatchery</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Hatchery"</span>,</span>
 <span>  n_yearling <span class="op">=</span> <span class="fl">10000</span>,             <span class="co"># Management lever. No hatchery if both this line and next line are zero</span></span>
@@ -211,7 +211,7 @@ of hatchery-origin fish, in the natural environment.</p>
 <p>We specify a harvest rate of 0.203 for the terminal marine fishery.
 Hatchery-origin fish are marked but mark-selective fishing is not
 evaluated here.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Harvest"</span>,</span>
 <span>  u_preterminal <span class="op">=</span> <span class="fl">0</span>,             <span class="co"># No pre-terminal fishery</span></span>
@@ -232,7 +232,7 @@ the beginning of the first projection year. Here, we specify 1000
 natural-origin fish and 1000 hatchery-origin juveniles each in the first
 generation for all simulations (corresponding to an escapement of
 approximately 800 after the 20.3 percent terminal harvest rate):</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Historical"</span>,</span>
 <span>  InitNjuv_NOS <span class="op">=</span> <span class="fl">1000</span>,</span>
@@ -240,23 +240,38 @@ approximately 800 after the 20.3 percent terminal harvest rate):</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s stitch together the operating model and run the simulation
 for 50 projection years (<code>proyears</code>).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"SOM"</span>,</span>
-<span>  <span class="va">Bio</span>, <span class="va">Habitat</span>, <span class="va">Hatchery</span>, <span class="va">Harvest</span>, <span class="va">Historical</span>,</span>
-<span>  nsim <span class="op">=</span> <span class="va">nsim</span>, proyears <span class="op">=</span> <span class="fl">50</span></span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim</span>, </span>
+<span>  proyears <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  Bio <span class="op">=</span> <span class="va">Bio</span>,</span>
+<span>  Habitat <span class="op">=</span> <span class="va">Habitat</span>, </span>
+<span>  Hatchery <span class="op">=</span> <span class="va">Hatchery</span>,</span>
+<span>  Harvest <span class="op">=</span> <span class="va">Harvest</span>,</span>
+<span>  Historical <span class="op">=</span> <span class="va">Historical</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
-<p>With a simple salmon model, we can run AHA and compare the trajectory
-of the population. As we can see, the number of NOS in both models is
-slowly equilibriating to approximately 70.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SAHA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span>, ngen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Compare NOS</span></span>
-<span><span class="va">SAHA</span><span class="op">$</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, , <span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="co"># sum across ages</span></span></code></pre></div>
-<p><img src="../reference/figures/example-NOS.png"><!-- --></p>
+<p>With a simple salmon model, we can run AHA (salmonMSE has an
+implementation of AHA coded in R):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AHA_run</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span>, ngen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Running AHA for population 1</span></span>
+<span><span class="co">#&gt; Age of maturity assumed to be: 3</span></span>
+<span><span class="co">#&gt; Fecundity of spawners assumed to be: 5040</span></span>
+<span><span class="co">#&gt; Fecundity of spawners assumed to be: 0.49</span></span>
+<span><span class="co">#&gt; Fecundity of broodtake assumed to be: 5040</span></span>
+<span><span class="co">#&gt; SAR calculated from survival from Mjuv to age 3</span></span></code></pre></div>
+<p>Then, we can compare the trajectory of the population from both
+tools. As we can see, the number of natural-origin spawners (NOS) in
+both models is slowly equilibriating to approximately 70.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">AHA_run</span><span class="op">$</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"o"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, col <span class="op">=</span> <span class="fl">1</span>, pch <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>        xlab <span class="op">=</span> <span class="st">"Generation"</span>, ylab <span class="op">=</span> <span class="st">"NOS (AHA)"</span>, panel.first <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_statevar_ts</a></span><span class="op">(</span><span class="va">SMSE</span>, <span class="st">"NOS"</span>, quant <span class="op">=</span> <span class="cn">TRUE</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, ylab <span class="op">=</span> <span class="st">"NOS (salmonMSE)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
 <p><em>Comparison of the abundance of NOS between AHA (by generation)
 and salmonMSE (by year) given identical biological parameters, hatchery
 releases, and terminal fishery harvest rate in the simple
@@ -266,14 +281,11 @@ example.</em></p>
 <h2 id="stochastic-simulations">Stochastic simulations<a class="anchor" aria-label="anchor" href="#stochastic-simulations"></a>
 </h2>
 <p>Let’s repeat the simple example with stochasticity on the
-productivity parameter (“kappa”, units of recruits/spawner). To do this,
-we sample productivity from a distribution and we run 100 simulations.
-This incorporates our uncertainty in understanding of natural
-productivity in the evaluation of the management strategy.</p>
-<p><img src="../reference/figures/example-kappa.png"><!-- --></p>
-<p><em>Histogram of the productivity (kappa) values sampled for our
-stochastic operating model.</em></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+productivity parameter (<code>kappa</code>, units of recruits/spawner).
+To do this, we sample productivity from a distribution and we run 100
+simulations. This incorporates our uncertainty in understanding of
+natural productivity in the evaluation of the management strategy.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
 <span></span>
 <span><span class="va">nsim_stochastic</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
@@ -284,7 +296,13 @@ stochastic operating model.</em></p>
 <span><span class="va">kappa_sd</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
 <span><span class="va">kappa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim_stochastic</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">kappa_mean</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">kappa_sd</span><span class="op">^</span><span class="fl">2</span>, <span class="va">kappa_sd</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">Bio_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">kappa</span>, xlab <span class="op">=</span> <span class="st">"kappa"</span>, main <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
+<p><em>Histogram of the productivity (kappa) values sampled for our
+stochastic operating model.</em></p>
+<p>Now we update the <code>Bio</code> object and run the projection:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Bio_stochastic</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="st">"Bio"</span>,</span>
 <span>  maxage <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -311,37 +329,42 @@ stochastic operating model.</em></p>
 <span></span>
 <span><span class="va">SMSE_stochastic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM_stochastic</span><span class="op">)</span></span></code></pre></div>
 <p>We expect a distribution in the state variables during the
-projection. Let’s take a look at PNI, where we can plot the median and
-95 percent range in values annually from the projection:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+projection. Let’s take a look at PNI, where we can plot the annual
+medians and 95 percent range during the projection:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_statevar_ts</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span>, <span class="st">"PNI"</span>, quant <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/example-PNI-ts.png"><!-- --></p>
+<p><img src="example_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
 <p>Here is the distribution of PNI in the last generation (note that we
 model single brood year returns so PNI is only defined once every 3
 years):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_statevar_hist</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span>, <span class="st">"PNI"</span>, y <span class="op">=</span> <span class="fl">49</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/example-PNI-hist.png"><!-- --></p>
+<p><img src="example_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="700"></p>
 <p>From such models, we can develop performance metrics that make
 probabilistic statements about the system dynamics for each set of
 management actions. For example, we calculate the long-term probability
 that PNI is at least 0.80:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">PNI_LT</span> <span class="op">&lt;-</span> <span class="va">SMSE_stochastic</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">48</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">PNI_LT</span> <span class="op">&gt;=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [1] 0.13</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">PNI_LT</span> <span class="op">&lt;-</span> <span class="va">SMSE_stochastic</span><span class="op">@</span><span class="va">PNI</span><span class="op">[</span>, <span class="fl">1</span>, <span class="fl">49</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">PNI_LT</span> <span class="op">&gt;=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.13</span></span></code></pre></div>
+<p>An equivalently performance metric function is built in to the
+package:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/P_PNI50.html">P_PNI80</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span>, Yrs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">49</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.13</span></span></code></pre></div>
 <p>The quantiles can also be calculated for our performance metric from
 the stochastic replicates:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">PNI_LT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;      2.5%       50%     97.5% </span></span>
-<span><span class="co">#&gt; 0.6338964 0.7651637 0.8139232</span></span></code></pre>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">PNI_LT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.5</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      2.5%       50%     97.5% </span></span>
+<span><span class="co">#&gt; 0.6358769 0.7670485 0.8155235</span></span></code></pre></div>
 <p>Here is the relationship between the performance metrics and
 productivity:</p>
-<p><img src="../reference/figures/example-PNI-kappa.png"><!-- --></p>
-<p>A summary Markdown report can be generated with the
+<p><img src="example_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="700"></p>
+<p>Finally, a summary Markdown report can be generated with the
 <code><a href="../reference/report.html">report()</a></code> function:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/report.html">report</a></span><span class="op">(</span><span class="va">SMSE_stochastic</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -380,15 +380,15 @@ describes the frequency that an objective was met in the simulation.
 
 For example, we can calculate the probability that spawner abundance
 exceeded 0.85 SMSY (spawners at MSY). We have a function
-[`SMSY85()`](https://docs.salmonmse.com/reference/PNI50.md) that does
-the calculation for us:
+[`SMSY85()`](https://docs.salmonmse.com/reference/Deprecated.md) that
+does the calculation for us:
 
 Using the vectorization capabilities in R, we use
 [`sapply()`](https://rdrr.io/r/base/lapply.html) to call
-[`SMSY85()`](https://docs.salmonmse.com/reference/PNI50.md) for each of
-the objects in `SMSE_list`. We add an extra argument `Yrs = c(20, 20)`
-that specify the year range (the probability is calculated at the end of
-the projection in year 20):
+[`SMSY85()`](https://docs.salmonmse.com/reference/Deprecated.md) for
+each of the objects in `SMSE_list`. We add an extra argument
+`Yrs = c(20, 20)` that specify the year range (the probability is
+calculated at the end of the projection in year 20):
 
 ``` r
 

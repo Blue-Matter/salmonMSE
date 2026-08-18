@@ -59,7 +59,7 @@
 
       <h1>Tutorial 3 - Running multiple scenarios (harvest projection)</h1>
             
-            <h4 data-toc-skip class="date">2026-08-15</h4>
+            <h4 data-toc-skip class="date">2026-08-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/tutorial-3.Rmd" class="external-link"><code>vignettes/tutorial-3.Rmd</code></a></small>
       <div class="d-none name"><code>tutorial-3.Rmd</code></div>
@@ -413,9 +413,9 @@ either the <code><a href="https://rdrr.io/r/stats/density.html" class="external-
 describes the frequency that an objective was met in the simulation.</p>
 <p>For example, we can calculate the probability that spawner abundance
 exceeded 0.85 SMSY (spawners at MSY). We have a function
-<code><a href="../reference/PNI50.html">SMSY85()</a></code> that does the calculation for us:</p>
+<code><a href="../reference/Deprecated.html">SMSY85()</a></code> that does the calculation for us:</p>
 <p>Using the vectorization capabilities in R, we use
-<code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply()</a></code> to call <code><a href="../reference/PNI50.html">SMSY85()</a></code> for each of the
+<code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply()</a></code> to call <code><a href="../reference/Deprecated.html">SMSY85()</a></code> for each of the
 objects in <code>SMSE_list</code>. We add an extra argument
 <code>Yrs = c(20, 20)</code> that specify the year range (the
 probability is calculated at the end of the projection in year 20):</p>

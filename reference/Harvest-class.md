@@ -11,12 +11,12 @@ The component of the operating model that controls marine harvest.
 - `type_PT`:
 
   Character. Whether to manage preterminal fishery catch from
-  exploitation rate ("u") or catch target ("catch"). Default is "u",
+  exploitation rate ("u") or catch target ("catch"). Default is "u".
 
 - `type_T`:
 
   Character. Whether to manage terminal fishery catch from exploitation
-  rate ("u") or catch target ("catch"). Default is "u",
+  rate ("u") or catch target ("catch"). Default is "u".
 
 - `u_preterminal`:
 
@@ -29,19 +29,21 @@ The component of the operating model that controls marine harvest.
 - `u_terminal`:
 
   Numeric, matrix `[nsim, proyears]`, or function. If `type_T = "u"`,
-  the harvest rate (ratio of kept catch to return) of the terminal
-  marine fishery.
+  the harvest rate (ratio of kept catch to of the terminal marine
+  fishery. Function should be of the form
+  `function(NO, HO, m) return(u)`.
 
 - `K_PT`:
 
   Numeric or function. If `type_PT = "catch"`, the catch target of the
   immature component of the population in the pre-terminal fishery.
-  Function should be of the form `function(NO, HO, m) return(u)`.
+  Function should be of the form `function(NO, HO, m) return(K)`.
 
 - `K_T`:
 
   Numeric or function. If `type_T = "catch"`, the catch target of the
-  return in the terminal fishery.
+  return in the terminal fishery. Function should be of the form
+  `function(NO, HO, m) return(K)`.
 
 - `MSF_PT`:
 

@@ -54,28 +54,34 @@
 
 
 <dt><code>type_PT</code></dt>
-<dd><p>Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",</p></dd>
+<dd><p>Character. Whether to manage preterminal fishery catch from exploitation rate ("u") or catch target ("catch").
+Default is "u".</p></dd>
 
 
 <dt><code>type_T</code></dt>
-<dd><p>Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch"). Default is "u",</p></dd>
+<dd><p>Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch").
+Default is "u".</p></dd>
 
 
 <dt><code>u_preterminal</code></dt>
-<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_PT = "u"</code>, the harvest rate of the immature component of the population in the pre-terminal fishery.
-The harvest rate is the ratio to kept AEQ catch to (kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
+<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_PT = "u"</code>, the harvest rate of the immature
+component of the population in the pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch to
+(kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
 
 
 <dt><code>u_terminal</code></dt>
-<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_T = "u"</code>, the harvest rate (ratio of kept catch to return) of the terminal marine fishery.</p></dd>
+<dd><p>Numeric, matrix <code>[nsim, proyears]</code>, or function. If <code>type_T = "u"</code>, the harvest rate (ratio of kept catch to
+of the terminal marine fishery. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
 
 
 <dt><code>K_PT</code></dt>
-<dd><p>Numeric or function. If <code>type_PT = "catch"</code>, the catch target of the immature component of the population in the pre-terminal fishery. Function should be of the form <code>function(NO, HO, m) return(u)</code>.</p></dd>
+<dd><p>Numeric or function. If <code>type_PT = "catch"</code>, the catch target of the immature component of the population in the
+pre-terminal fishery. Function should be of the form <code>function(NO, HO, m) return(K)</code>.</p></dd>
 
 
 <dt><code>K_T</code></dt>
-<dd><p>Numeric or function. If <code>type_T = "catch"</code>, the catch target of the return in the terminal fishery.</p></dd>
+<dd><p>Numeric or function. If <code>type_T = "catch"</code>, the catch target of the return in the terminal fishery.
+Function should be of the form <code>function(NO, HO, m) return(K)</code>.</p></dd>
 
 
 <dt><code>MSF_PT</code></dt>
