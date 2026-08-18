@@ -33,7 +33,7 @@ The code below demonstrates how a full simulation design can be executed:
 
 # Example 
 
-The example here extends the [simple example](../articles/example.html) of a salmon operating model that has a single brood year recruitment where all fish mature at age 3.
+The example here extends the [first example](../articles/example.html) of a salmon operating model that has a single brood year recruitment where all fish mature at age 3.
 
 ## Simulation design
 

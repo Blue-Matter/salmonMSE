@@ -1,9 +1,9 @@
 ---
-title: "Simple salmonMSE example"
+title: "Example, with comparison to AHA"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Simple salmonMSE example}
+  %\VignetteIndexEntry{Example, with comparison to AHA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,9 +13,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(salmonMSE)
 ```
 
-Here, we show a simple example of a salmon operating model where all fish mature at age 3 and follows the structure of an analysis done in AHA.
+Here, we show a simple example of a salmon operating model that follows the structure of an analysis done in AHA (All H-Analyzer).
 The model is used to project the proposed management levers to determine the equilibrium properties of the system.
 
 # Biological parameters
@@ -24,13 +26,14 @@ We create several S4 objects, the `Bio` object contains parameters controlling n
 
 The first example will be deterministic. With salmonMSE, we must run at minimum 2 simulation replicates, but we will run 3 simulations where the biological parameters, as well as the results, are identical among simulations.
 
-We model ocean survival through an equivalent instantaneous mortality rate `Mjuv_NOS` where all mortality occurs in the age class prior to maturation, i.e., age 2.
+We model ocean survival through an equivalent instantaneous mortality rate `Mjuv_NOS` where all mortality occurs in the age class prior to maturation, i.e., age 2. All fish mature and return at age 3:
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 library(salmonMSE)
-
 class?SOM # Definition of inputs
+```
 
+```{r}
 SAR <- 0.01 # Marine survival
 nsim <- 3 # Number of simulations
 Bio <- new(
@@ -57,7 +60,7 @@ Habitat parameters may represent different scenarios regarding freshwater restor
 
 These features are not used in this example. Instead, the capacity and productivity parameters in the previous section control the egg-juvenile survival.
 
-```{r, eval = FALSE}
+```{r}
 Habitat <- new(
   "Habitat",
   use_habitat = FALSE
@@ -91,7 +94,7 @@ Additional parameters can control removal of hatchery-origin and natural-origin 
 
 Finally, we also need to specify the relative spawning success of HOS (`gamma`), and various parameters that describe the fitness of hatchery-origin fish, in the natural environment.
 
-```{r, eval = FALSE}
+```{r}
 Hatchery <- new(
   "Hatchery",
   n_yearling = 10000,             # Management lever. No hatchery if both this line and next line are zero
@@ -124,7 +127,7 @@ Hatchery <- new(
 
 We specify a harvest rate of 0.203 for the terminal marine fishery. Hatchery-origin fish are marked but mark-selective fishing is not evaluated here.
 
-```{r, eval = FALSE}
+```{r}
 Harvest <- new(
   "Harvest",
   u_preterminal = 0,             # No pre-terminal fishery
@@ -143,7 +146,7 @@ To start the projection, we can specify the abundance of juveniles at the beginn
 Here, we specify 
 1000 natural-origin fish and 1000 hatchery-origin juveniles each in the first generation for all simulations (corresponding to an escapement of approximately 800 after the 20.3 percent terminal harvest rate):
 
-```{r, eval = FALSE}
+```{r}
 Historical <- new(
   "Historical",
   InitNjuv_NOS = 1000,
@@ -153,24 +156,36 @@ Historical <- new(
 
 Now let's stitch together the operating model and run the simulation for 50 projection years (`proyears`).
 
-```{r, eval = FALSE}
+```{r}
 SOM <- new(
   "SOM",
-  Bio, Habitat, Hatchery, Harvest, Historical,
-  nsim = nsim, proyears = 50
+  nsim = nsim, 
+  proyears = 50,
+  Bio = Bio,
+  Habitat = Habitat, 
+  Hatchery = Hatchery,
+  Harvest = Harvest,
+  Historical = Historical,
 )
 SMSE <- salmonMSE(SOM)
 ```
 
-With a simple salmon model, we can run AHA and compare the trajectory of the population. 
-As we can see, the number of NOS in both models is slowly equilibriating to approximately 70.
+With a simple salmon model, we can run AHA (salmonMSE has an implementation of AHA coded in R):
 
-```{r, eval = FALSE}
-SAHA <- AHA(SOM, ngen = 20)
+```{r}
+AHA_run <- AHA(SOM, ngen = 20)
+```
 
-# Compare NOS
-SAHA$NOS[, 1, ]
-apply(SMSE@NOS[, 1, , ], c(1, 3), sum) # sum across ages
+Then, we can compare the trajectory of the population from both tools. 
+As we can see, the number of natural-origin spawners (NOS) in both models is slowly equilibriating to approximately 70.
+
+```{r}
+matplot(t(AHA_run$NOS[, 1, ]), type = "o", ylim = c(0, 100), col = 1, pch = 1,
+        xlab = "Generation", ylab = "AHA: NOS", panel.first = grid())
+```
+
+```{r}
+plot_statevar_ts(SMSE, "NOS", quant = TRUE, ylim = c(0, 100), ylab = "salmonMSE: NOS")
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -181,17 +196,11 @@ knitr::include_graphics("../man/figures/example-NOS.png")
 
 # Stochastic simulations
 
-Let's repeat the simple example with stochasticity on the productivity parameter ("kappa", units of recruits/spawner).
+Let's repeat the simple example with stochasticity on the productivity parameter (`kappa`, units of recruits/spawner).
 To do this, we sample productivity from a distribution and we run 100 simulations.
 This incorporates our uncertainty in understanding of natural productivity in the evaluation of the management strategy.
 
-```{r, eval = TRUE, echo = FALSE}
-knitr::include_graphics("../man/figures/example-kappa.png")
-```
-
-*Histogram of the productivity (kappa) values sampled for our stochastic operating model.*
-
-```{r, eval = FALSE, echo = TRUE}
+```{r}
 SAR <- 0.01
 
 nsim_stochastic <- 100
@@ -202,6 +211,15 @@ kappa_mean <- 3
 kappa_sd <- 0.3
 kappa <- rlnorm(nsim_stochastic, log(kappa_mean) - 0.5 * kappa_sd^2, kappa_sd)
 
+hist(kappa, xlab = "kappa", main = NULL)
+```
+
+
+*Histogram of the productivity (kappa) values sampled for our stochastic operating model.*
+
+Now we update the `Bio` object and run the projection:
+
+```{r}
 Bio_stochastic <- new(
   "Bio",
   maxage = 3,
@@ -231,55 +249,45 @@ SMSE_stochastic <- salmonMSE(SOM_stochastic)
 ```
 
 We expect a distribution in the state variables during the projection. 
-Let's take a look at PNI, where we can plot the median and 95 percent range in values annually from the projection:
+Let's take a look at PNI, where we can plot the annual medians and 95 percent range during the projection:
 
-```{r, eval = FALSE, echo = TRUE}
+```{r}
 plot_statevar_ts(SMSE_stochastic, "PNI", quant = TRUE)
-```
-
-```{r, eval = TRUE, echo = FALSE}
-knitr::include_graphics("../man/figures/example-PNI-ts.png")
 ```
 
 Here is the distribution of PNI in the last generation (note that we model single brood year returns so PNI is only defined once every 3 years):
 
-```{r, eval = FALSE, echo = TRUE}
+```{r}
 plot_statevar_hist(SMSE_stochastic, "PNI", y = 49)
-```
-
-```{r, eval = TRUE, echo = FALSE}
-knitr::include_graphics("../man/figures/example-PNI-hist.png")
 ```
 
 From such models, we can develop performance metrics that make probabilistic statements about the system dynamics for each set of management actions. 
 For example, we calculate the long-term probability that PNI is at least 0.80:
 
-```{r, eval = FALSE, echo = TRUE}
-PNI_LT <- SMSE_stochastic@PNI[, 1, 48]
+```{r}
+PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
 mean(PNI_LT >= 0.8)
 ```
 
-```{r, eval = TRUE, echo = FALSE}
-print(0.13)
+An equivalently performance metric function is built in to the package:
+
+```{r}
+P_PNI80(SMSE_stochastic, Yrs = c(49, 49))
 ```
 
 The quantiles can also be calculated for our performance metric from the stochastic replicates:
 
-```{r, eval = FALSE, echo = TRUE}
+```{r}
 quantile(PNI_LT, c(0.025, 0.5, 0.975))
-```
-
-```{r, eval = TRUE, echo = FALSE}
-print(c("2.5%" = 0.6338964, "50%" = 0.7651637, "97.5%" = 0.8139232))
 ```
 
 Here is the relationship between the performance metrics and productivity:
 
 ```{r, eval = TRUE, echo = FALSE}
-knitr::include_graphics("../man/figures/example-PNI-kappa.png")
+plot(kappa, PNI_LT, xlim = c(1, 7), ylim = c(0.5, 1), panel.first = grid())
 ```
 
-A summary Markdown report can be generated with the `report()` function:
+Finally, a summary Markdown report can be generated with the `report()` function:
 
 ```{r, eval = FALSE, echo = TRUE}
 report(SMSE_stochastic)

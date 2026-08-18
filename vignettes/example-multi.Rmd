@@ -22,7 +22,7 @@ There may be several use-cases for multi-population models. For example, one wan
 
 2. The implications of hatchery production in large systems but there may be straying to unenhanced population units. Despite low stray rates, the hatchery influence can be high in small systems due to large hatchery production in an adjacent population. Will certain hatchery production levels compromise the natural characteristics of nearby systems?
 
-The following code demonstrates the setup for a multi-population model and builds off the [simple example](../articles/example.html) to evaluate the influence of a nearby hatchery (population #1) on a small unenhanced system (population #2).
+The following code demonstrates the setup for a multi-population model and builds off the [first example](../articles/example.html) to evaluate the influence of a nearby hatchery (population #1) on a small unenhanced system (population #2).
 
 Just as in the simple example, we create an object of class `SOM` comprising of sub-components that specify the biological dynamics, as well as hatchery, habitat, and harvest. 
 Here, those sub-components will be lists corresponding to each population.
