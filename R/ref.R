@@ -187,14 +187,16 @@ calc_Sgen <- function(Mjuv, fec, p_female, rel_F, vulPT, vulT, p_mature, s_enrou
     SRRpars, opt = FALSE, aggregate_age = FALSE
   )
 
+  maxage <- length(fec)
+  if (missing(nyears)) nyears <- maxage
+
+  Njuv <- Return <- Spawner <- array(0, c(maxage, nyears, n_g))
+  Egg <- rep(0, nyears)
+
   if (sum(Sgen_ref$Egg) <= 0) {
     Sgen_plusone <- 0
   } else {
-    maxage <- length(fec)
-    if (missing(nyears)) nyears <- maxage
 
-    Njuv <- Return <- Spawner <- array(0, c(maxage, nyears, n_g))
-    Egg <- rep(0, nyears)
     Njuv[, 1, ] <- Sgen_ref$Njuv
 
     for (y in 1:nyears) {

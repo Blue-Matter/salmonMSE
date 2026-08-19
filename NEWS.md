@@ -9,6 +9,8 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - MSY calculations and catch calculations use adult equivalents (AEQs) for preterminal fisheries.
 - Add new slot `Hatchery@p_female_brood` for sex-selective brood.
 - `SMSE` output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.
+- Add custom catch function (for harvest control rules, etc.)
+- Add `simple_SOM` class and `simple_salmonMSE()` function for modeling recruits-spawners
 
 # Version 2.1.0
 
