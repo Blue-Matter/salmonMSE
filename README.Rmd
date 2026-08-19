@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 
 [![CRAN status](https://www.r-pkg.org/badges/version/salmonMSE)](https://cran.r-project.org/package=salmonMSE) [![R-CMD-check](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml) [![License: GPL (\>= 3)](https://img.shields.io/badge/license-GPL%20(%3E=%203)-blue.svg)](https://cran.r-project.org/web/licenses/GPL-3)
-
+[![R-CMD-check](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Blue-Matter/salmonMSE/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 salmonMSE is a decision-support tool for Pacific salmon focusing on strategic trade-offs among harvest, hatchery and habitat management levers.
