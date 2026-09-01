@@ -2,6 +2,8 @@
 
 ## Version 3.0.0
 
+CRAN release: 2026-08-20
+
 - salmonMSE no longer uses openMSE as a dependency.
   [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md) is
   now the primary internal function that organizes the projection.
@@ -19,6 +21,10 @@
 - `SMSE` output object reports brood numbers and catch with age
   dimension. Harvest rates and exploitation rates are aggregated over
   age classes.
+- Add custom catch function (for harvest control rules, etc.)
+- Add `simple_SOM` class and
+  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  function for modeling recruits-spawners
 
 ## Version 2.1.0
 

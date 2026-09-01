@@ -36,11 +36,11 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="3.0.0" id="version-300">Version 3.0.0<a class="anchor" aria-label="anchor" href="#version-300"></a></h2>
+<h2 class="pkg-version" data-toc-text="3.0.0" id="version-300">Version 3.0.0<a class="anchor" aria-label="anchor" href="#version-300"></a></h2><p class="text-muted">CRAN release: 2026-08-20</p>
 <ul><li>salmonMSE no longer uses openMSE as a dependency. <code><a href="../reference/salmonMSE.html">ProjectSOM()</a></code> is now the primary internal function that organizes the projection. Various internal functions have been replaced and updated.</li>
 <li>Parallel processing by individual operating model is now supported with the <code>ncores</code> argument to <code><a href="../reference/salmonMSE.html">salmonMSE()</a></code>.</li>
 <li>Check for NAs in start values for <code>fit_CM</code>.</li>
@@ -49,6 +49,8 @@
 <li>Add new slot <code>Hatchery@p_female_brood</code> for sex-selective brood.</li>
 <li>
 <code>SMSE</code> output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.</li>
+<li>Add custom catch function (for harvest control rules, etc.)</li>
+<li>Add <code>simple_SOM</code> class and <code><a href="../reference/salmonMSE.html">simple_salmonMSE()</a></code> function for modeling recruits-spawners</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.0" id="version-210">Version 2.1.0<a class="anchor" aria-label="anchor" href="#version-210"></a></h2><p class="text-muted">CRAN release: 2026-04-25</p>
