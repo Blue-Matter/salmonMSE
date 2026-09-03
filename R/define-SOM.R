@@ -340,14 +340,14 @@ setMethod("initialize", "SOM",
 #' @slot HOS Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (local + strays).
 #' @slot HOS_stray Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (strays only).
 #' @slot HOS_effective Array `[nsim, nstocks, nage, proyears]`. Hatchery origin spawners (local + strays) discounted by `gamma`.
-#' @slot KPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of natural origin spawners.
-#' @slot KT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of natural origin spawners.
-#' @slot KPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery kept catch of hatchery origin spawners.
-#' @slot KT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery kept catch of hatchery origin spawners.
-#' @slot DPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery released catch (live and dead) of natural origin spawners.
-#' @slot DT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) of natural origin spawners.
-#' @slot DPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery released catch (live and dead) of hatchery origin spawners.
-#' @slot DT_HOS Array `[nsim, nstocks, proyears]`. Terminal fishery released catch (live and dead) hatchery origin spawners.
+#' @slot KPT_NOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of natural origin spawners.
+#' @slot KT_NOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery kept catch of natural origin spawners.
+#' @slot KPT_HOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of hatchery origin spawners.
+#' @slot KT_HOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery kept catch of hatchery origin spawners.
+#' @slot DPT_NOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of natural origin spawners.
+#' @slot DT_NOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery released catch (live and dead) of natural origin spawners.
+#' @slot DPT_HOS Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of hatchery origin spawners.
+#' @slot DT_HOS Array `[nsim, nstocks, nage, proyears]`. Terminal fishery released catch (live and dead) hatchery origin spawners.
 #' @slot UPT_NOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate (from adult equivalent kept catch) of natural origin spawners.
 #' @slot UT_NOS Array `[nsim, nstocks, proyears]`. Terminal fishery harvest rate of natural origin spawners.
 #' @slot UPT_HOS Array `[nsim, nstocks, proyears]`. Pre-terminal fishery harvest rate of hatchery origin spawners.
