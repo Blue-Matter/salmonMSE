@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/Blue-Matter/salmonMSE/blob/dev/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/Blue-Matter/salmonMSE/blob/master/DESCRIPTION)
 
 Huynh Q (2026). *salmonMSE: Management Strategy Evaluation for Salmon
 Species*. R package version 3.0.0, <https://docs.salmonmse.com/>.
