@@ -59,7 +59,7 @@
 
       <h1>Introduction</h1>
             
-            <h4 data-toc-skip class="date">2026-09-01</h4>
+            <h4 data-toc-skip class="date">2026-09-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
@@ -76,31 +76,42 @@ focusing on strategic trade-offs among harvest, hatchery and habitat
 management levers. salmonMSE can be used for risk-based analyses to
 evaluate the performance of and prioritize management actions and
 identify trade-offs towards achieving biological and harvest
-objectives</p>
-<p>Initial development of salmonMSE is based on the <a href="https://www.streamnet.org/wp-content/uploads/2021/01/3.-All-H-Analyzer-Guide-and-Documentation-051120.pdf" class="external-link">All-H
-Analyzer</a> (AHA) spreadsheet which models salmon dynamics of
-individual stocks by life stages over successive generations to obtain
-the long-term equilibrium properties of the state dynamics.</p>
-<p>Currently, salmonMSE is intended to be used similarly, but expands
-upon the population dynamics modeling in several ways. To accommodate
-more complex life histories, salmonMSE is age-structured which is useful
-for species that have multiple cohorts overlapping in the return.
-Multi-stock models can be developed to evaluate outcomes at a stock
-management unit. Finally, stochasticity can be incorporated in the model
-to incorporate uncertainty in our understanding of the stock
-productivity.</p>
-<p><a href="https://openmse.com/" class="external-link">openMSE</a> is the population dynamics
-model underlying salmonMSE. While openMSE is intended for the evaluation
-of management strategies in marine fisheries, the functionality of the
-software can be re-purposed to model salmon life stages. Most state
-variables are therefore directly modeled within openMSE, while
-additional state variables that are needed for salmon life history are
-calculated in salmonMSE. For more information, see the article on the <a href="model.html">population dynamics model</a>.</p>
-<p>Use of openMSE allows for rigorous review of the source code by a
-wider user base. However, typical users of salmonMSE will not need to
-see the internal conversion between salmonMSE and openMSE operating
-models. Inputs and outputs of salmonMSE use salmon-specific
-terminology.</p>
+objectives.</p>
+<p>salmonMSE is a generalizable tool applicable across salmon species
+and populations, and expands upon previous simulation tools such as <a href="https://publications.gc.ca/collections/collection_2020/mpo-dfo/Fs97-6-3402-eng.pdf" class="external-link">samSim</a>,
+<a href="https://www.streamnet.org/wp-content/uploads/2021/01/3.-All-H-Analyzer-Guide-and-Documentation-051120.pdf" class="external-link">AHA</a>,
+and <a href="https://openmse.com" class="external-link">openMSE</a>. Mechanistically, such
+tools project a simulated population over successive generations to
+obtain the long-term equilibrium properties of the state dynamics.</p>
+<p>To accommodate more complex life histories, salmonMSE is
+age-structured which is useful for species that have returns comprising
+multiple brood-years. Age-structured dynamics also explicitly model
+juvenile mortality in the marine life stage. Multi-population models are
+supported to evaluate outcomes across stock complexes, e.g., managing a
+mixed fishery that catches several populations simultaneously.
+Importantly, salmonMSE was developed to comprehensively support
+evaluation of harvest policies, hatchery enhancement programs, and
+changes in early freshwater survival simultaneously. Finally,
+stochasticity can be incorporated in the model to evaluate outcomes
+across uncertain parameters. In general, its flexibility is intended to
+encapsulate a gradient of simple to more complex models as data
+availability to inform parameters allows.</p>
+<p>salmonMSE can be used to address questions such as:</p>
+<ul>
+<li>How do mark-selective fisheries impact harvest and conservation
+objectives?</li>
+<li>How does a change in hatchery release strategy impact harvest and
+conservation objectives?</li>
+<li>How does a candidate broodtake rule impact the ability to achieve
+PNI and conservation objectives?</li>
+<li>How do changes in environmental drivers impact ability to
+rebuild?</li>
+<li>What combination of fishery exploitation rates and hatchery
+production targets allow us to meet spawner objectives?</li>
+</ul>
+<p>This website is intended to be a comprehensive documentation of the
+functionality of salmonMSE. Source code is available on <a href="https://github.com/Blue-Matter/salmonMSE" class="external-link">Github</a> and the
+package is also distributed on <a href="https://doi.org/10.32614/CRAN.package.salmonMSE" class="external-link">CRAN</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
@@ -110,41 +121,33 @@ dynamics and the management levers to be implemented. In salmonMSE, an
 object of class <code>SOM</code> can be created from constituent objects
 of class <code>Bio</code>, <code>Habitat</code>, <code>Hatchery</code>,
 and <code>Harvest</code> as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.salmonmse.com/">salmonMSE</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">Bio</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"Bio"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="va">Habitat</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"Habitat"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="va">Hatchery</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"Hatchery"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"Harvest"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"SOM"</span>, <span class="va">Bio</span>, <span class="va">Hatchery</span>, <span class="va">Habitat</span>, <span class="va">Harvest</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li>The <code>Bio</code> class specifies the natural production, for
+<li>The <code>Bio</code> object specifies the natural production, for
 example, maturity, fecundity, stock-recruit relationship, and marine
 survival.</li>
-<li>The <code>Habitat</code> class (optional) specifies freshwater
+<li>The <code>Habitat</code> object (optional) specifies freshwater
 survival from egg, fry, and smolt life stages as a series of
 density-dependent functions, with options for time-varying survival, for
 example, as a function of environmental or habitat
 mitigation/restoration actions.</li>
-<li>The <code>Hatchery</code> class specifies the parameters surrounding
-hatchery production, such as the number of target releases, removal of
-hatchery spawners to maintain high proportions of natural spawners, and
-the population fitness parameters arising from interbreeding of hatchery
-and natural spawners.</li>
-<li>The <code>Harvest</code> class specifies the exploitation rate and
-harvest control rules for the fishery.</li>
+<li>The <code>Hatchery</code> object specifies the parameters
+surrounding hatchery production, such as the number of target releases,
+in-river removals of hatchery-origin spawners, and the population
+fitness parameters arising from interbreeding of hatchery-origin and
+natural-origin spawners.</li>
+<li>The <code>Harvest</code> object specifies the exploitation rate and
+harvest control rules for marine fisheries, with options for
+mark-selective fishing.</li>
+<li>The <code>Historical</code> object specifies the starting conditions
+for the projections.</li>
 </ul>
-<p>Additional slots in the <code>SOM</code> class control the
-projections, for example, the number of years and simulation
+<p>Additional slots in the <code>SOM</code> class control the settings
+of the projections, for example, the number of years and simulation
 replicates.</p>
 <p>Details on the slots of the various S4 classes can be obtained by
 typing <code><a href="../reference/SOM-class.html">class?SOM</a></code> in the R console.</p>
 <p>The simulation can then run with the <code><a href="../reference/salmonMSE.html">salmonMSE()</a></code>
 function:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">MSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
 <p>The output is a class <code>SMSE</code> object containing the state
 variables and some performance metrics pertaining to hatchery dynamics
 (fitness, PNI, etc.) as arrays typically indexed by simulation, stock,
@@ -152,20 +155,133 @@ age, and year. For example, <code>SMSE@NOS</code> reports the natural
 origin spawners.</p>
 <p>For convenience and comparison purposes, salmonMSE distributes an
 implementation of AHA in R as well:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SAHA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AHA.html">AHA</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span></code></pre></div>
 <p>The resulting output is a named list following the format of the
 <code>SMSE</code> object, but indexed by generation instead of year.</p>
-<p>More details are also provided in the <a href="example.html">example</a> article.</p>
+<p>More details are also provided in the <a href="example.html">example</a> article. Additional <a href="index.html">tutorials</a> are provided on this website to
+demonstrate various settings of the operating model, and provide R code
+to implement analyses to compare management options across different
+states of nature (in separate model runs) with plotting functions to
+facilitate comparison.</p>
 </div>
 <div class="section level2">
-<h2 id="future-development">Future development<a class="anchor" aria-label="anchor" href="#future-development"></a>
+<h2 id="overview-of-life-cycle">Overview of life cycle<a class="anchor" aria-label="anchor" href="#overview-of-life-cycle"></a>
 </h2>
-<p>Development of salmonMSE is currently in progress. Stochasticity is
-incorporated in the stock-recruit relationship, which predicts
-density-dependent smolt production from eggs, and in the SAR parameter
-(survival to adult return). Multi-stock models are not yet
-supported.</p>
+<p>This section is intended to provide a visual overview of the life
+cycle model. The mathematical equations are provided in a separate <a href="equations.html">article</a>.</p>
+<div class="section level3">
+<h3 id="juvenile-marine-life-stage-returns-and-escapement">Juvenile marine life stage, returns, and escapement<a class="anchor" aria-label="anchor" href="#juvenile-marine-life-stage-returns-and-escapement"></a>
+</h3>
+<p>The juvenile life stage during the projection can be envisioned
+through a series of age-structured matrices that keeps accounting of
+abundance <span class="math inline">\(N\)</span> by year <span class="math inline">\(y\)</span> and age <span class="math inline">\(a\)</span>, with separate accounting for
+natural-origin and hatchery-origin fish.</p>
+<p>Diagonals of the below matrix correspond to brood-years (individual
+cohorts by colour). Brood-years advance age classes after accounting for
+pre-terminal fishing, maturity, and natural survival.</p>
+<p><img src="../reference/figures/intro_N.png"><!-- --></p>
+<p>The return <span class="math inline">\(R\)</span> conceptually appear
+at the midpoint of the year, calculated from after pre-terminal
+exploitation and maturity, and are accounted in a separate matrix:</p>
+<p><img src="../reference/figures/intro_R.png"><!-- --></p>
+<p>Similarly, the escapement is calculated from the return after marine
+terminal exploitation.</p>
+<p><img src="../reference/figures/intro_E.png"><!-- --></p>
+</div>
+<div class="section level3">
+<h3 id="in-river-return">In-river return<a class="anchor" aria-label="anchor" href="#in-river-return"></a>
+</h3>
+<p>The columns of the escapement matrix comprise the return to river in
+a calendar year. Below, we show the natural-origin and hatchery-origin
+calendar-year return migration to the spawning ground.</p>
+<p>In summary, the return can experience en-route mortality, e.g., in
+large river systems. Afterwards, the return may be used as brood for
+hatchery production, further in-river removals (not used for brood),
+before arrival to spawning grounds:</p>
+<p><img src="../reference/figures/intro_IRR.png"><!-- --></p>
+<div class="section level4">
+<h4 id="brood">Brood<a class="anchor" aria-label="anchor" href="#brood"></a>
+</h4>
+<p>Brood can be modeled in two ways, with slightly different accounting
+for hatchery-origin brood.</p>
+<p>First, brood is taken en-route to spawning grounds, where the brood
+is taken from the in-river return:</p>
+<p><img src="../reference/figures/intro_brood1.png"><!-- --></p>
+<p>Alternatively, some fraction of the hatchery-origin fish return to
+the hatchery, and hatchery-origin brood is taken from this fraction.
+This scenario may occur when fish return through swim-in facilities:</p>
+<p><img src="../reference/figures/intro_brood2.png"><!-- --></p>
+<p>Hatchery production uses similar levers and assumptions as in the
+All-H Analyzer (AHA). Users specify target releases and the model
+back-calculates target egg production and broodtake from hatchery
+survival and brood fecundity.</p>
+<p>Of course, failure to achieve target releases can occur with
+insufficient return, and other constraints placed by the analyst, e.g.,
+limiting natural-origin brood to ensure sufficient spawning in the
+natural environment.</p>
+<p>Extended flexibility for brood rules is supported through <a href="custom-function.html">custom R functions</a>.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="next-generation">Next generation<a class="anchor" aria-label="anchor" href="#next-generation"></a>
+</h3>
+<p>Once spawners reach the spawning round, egg production is calculated
+from spawner abundance and fecundity.</p>
+<p>There are two methods to map survival from egg production to
+outmigrating juveniles in the next year:</p>
+<ol style="list-style-type: decimal">
+<li>A single density-dependent function can be modeled (egg-juvenile
+survival), or 2: A series of stage-specific density-dependent functions,
+representing habitat processes, is modeled</li>
+</ol>
+<div class="section level4">
+<h4 id="single-stock-recruit-relationship">Single stock-recruit relationship<a class="anchor" aria-label="anchor" href="#single-stock-recruit-relationship"></a>
+</h4>
+<p>A Ricker or Beverton-Holt stock-recruit relationship (SRR) can be
+used to calculate juveniles (of age 1) of the next generation from the
+parental egg production.</p>
+<p>For the Ricker model, salmon populations are typically modeled by a
+spawner to return SRR. salmonMSE provides the capability to create
+equivalent egg-juvenile SRRs from parameters of a spawner-return
+SRR.</p>
+<p><img src="../reference/figures/intro_SRR.png"><!-- --></p>
+</div>
+<div class="section level4">
+<h4 id="stage-specific-survival">Stage-specific survival<a class="anchor" aria-label="anchor" href="#stage-specific-survival"></a>
+</h4>
+<p>Survival at up to four life stages can be modeled:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Pre-spawn mortality</strong>: some proportion of adults that
+return to spawning ground die. The egg production is calculated from
+survivors</li>
+<li>
+<strong>Egg incubation mortality</strong>: the egg production can
+exhibit mortality from scouring and erosion of bottom substrate</li>
+<li>
+<strong>Egg-fry mortality</strong>: after egg emergence, fry
+mortality can occur</li>
+<li>
+<strong>Fry-smolt mortality</strong>: another life stage to model
+mortality from egg to smolt life stage</li>
+</ol>
+<p>At each stage, a Beverton-Holt density-dependent function is used to
+describe the survival function. These functions can be configured to be
+density-independent, as shown below:</p>
+<p><img src="../reference/figures/intro_habitat.png"><!-- --></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="out-migration">Out-migration<a class="anchor" aria-label="anchor" href="#out-migration"></a>
+</h3>
+<p>After the smolt life stage, the cohort is considered as age 1 and may
+be treated as having entered the marine life stage (see <a href="#juvenile-marine-life-stage-returns-and-escapement"><em>Juvenile
+marine life stage</em></a> above).</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+</h2>
+<p>salmonMSE is actively developed, and issues can be posted on <a href="https://github.com/Blue-Matter/salmonMSE/issues" class="external-link">Github</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
