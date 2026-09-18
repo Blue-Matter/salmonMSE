@@ -147,12 +147,16 @@ Data should passed through a named list with the following entries.
 - `bmatt` Vector length `Nages`. Proportion maturing at age, base values
   for converting between spawners and egg production at replacement for
   the stock-recruit relationship. Also the prior means if year-specific
-  maturity rates are estimated.
+  maturity rates are estimated. **If estimating maturity, you likely
+  want to tune these values to be close to historical values for
+  reference points.**
 
 - `mobase`. Vector length `Nages`. Natural mortality at age, base values
   for converting between spawners and egg production at replacement for
   the stock-recruit relationship and the the spawners at age at
-  replacement.
+  replacement. **If estimating natural mortality, you likely want to
+  tune these values to be close to historical values for reference
+  points.**
 
 - `covariate1` *Optional*. Matrix `[Ldyr, ncov1]` of linear covariates
   that predict natural mortality for age 1.
@@ -284,8 +288,8 @@ Starting values for parameters can be provided through a named list:
 - `log_cr` Numeric, log of the compensation ratio (productivity).
   Default is 3.
 
-- `log_so` Numeric, unfished spawners in logspace. Default is
-  `log(3 * max(data$obsescape))`.
+- `log_smax` Numeric, log spawners that maximizes recruitment. Default
+  is `log(mean(data$obsescape))`.
 
 - `moadd` Numeric, additive term to base natural mortality rate for age
   1 juveniles. Default is zero.

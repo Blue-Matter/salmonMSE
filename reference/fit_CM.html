@@ -48,7 +48,7 @@ The model can include either a preterminal juvenile fishery, terminal return fis
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Fit conditioning model to historical data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/CM.R" class="external-link"><code>R/CM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/R/CM.R" class="external-link"><code>R/CM.R</code></a></small>
       <div class="d-none name"><code>fit_CM.Rd</code></div>
     </div>
 
@@ -156,9 +156,9 @@ coefficient and annual deviations from this vector. Default is <code>rep(1, d$Ld
 <li><p><code>RelRegFT</code> Vector <code>Ldyr</code>. Trend in relative regional terminal fishing mortality.
 Default is <code>rep(1, d$Ldyr)</code> (no prior trend) if <code>cwtcatT</code> is provided, otherwise zero.</p></li>
 <li><p><code>bmatt</code> Vector length <code>Nages</code>. Proportion maturing at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship. Also the prior means if year-specific
-maturity rates are estimated.</p></li>
+maturity rates are estimated. <strong>If estimating maturity, you likely want to tune these values to be close to historical values for reference points.</strong></p></li>
 <li><p><code>mobase</code>. Vector length <code>Nages</code>. Natural mortality at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship and the
-the spawners at age at replacement.</p></li>
+the spawners at age at replacement. <strong>If estimating natural mortality, you likely want to tune these values to be close to historical values for reference points.</strong></p></li>
 <li><p><code>covariate1</code> <em>Optional</em>. Matrix <code>[Ldyr, ncov1]</code> of linear covariates that predict natural mortality for age 1.</p></li>
 <li><p><code>covariate</code> <em>Optional</em>. Matrix <code>[Ldyr, ncov]</code> of linear covariates that predict natural mortality for ages 2+.</p></li>
 <li><p><code>hatchsurv</code> Numeric, survival of hatchery-origin juveniles after release but prior to entering the marine environment. Density-independent. Default is 1. If less than 1, then hatchery-origin fish have
@@ -206,7 +206,7 @@ for the natural environment at the start of the model.</p></li>
 
 
 <p>Starting values for parameters can be provided through a named list:</p><ul><li><p><code>log_cr</code> Numeric, log of the compensation ratio (productivity). Default is 3.</p></li>
-<li><p><code>log_so</code> Numeric, unfished spawners in logspace. Default is <code>log(3 * max(data$obsescape))</code>.</p></li>
+<li><p><code>log_smax</code> Numeric, log spawners that maximizes recruitment. Default is <code>log(mean(data$obsescape))</code>.</p></li>
 <li><p><code>moadd</code> Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.</p></li>
 <li><p><code>wt</code> Vector <code>Ldyr</code>. Annual deviates in natural mortality during the freshwater life stage (affects egg to smolt survival).
 Estimated with normal prior with mean zero and standard deviation <code>p$wt_sd</code>. Default is zero.</p></li>
