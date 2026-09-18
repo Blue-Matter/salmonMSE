@@ -239,7 +239,7 @@ CM_int <- function(p, d) {
   }
 
   # Log prior for parameters
-  if (is.null(d$srep_mu) && is.null(d$srep_sd)) {
+  if (is.null(d$smax_mu) && is.null(d$smax_sd)) {
     # prior on so in log space as it is frequently poorly determined from data
     logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE)
     logprior_smax <- AD(0)
@@ -590,8 +590,8 @@ check_CMdata <- function(data, verbose = TRUE) {
     if (verbose) message("En-route survival to spawning grounds is ", data$s_enroute)
   }
 
-  # Check for srep_mu and srep_sd first! If NULL, use so (Srep)
-  if (is.null(data$srep_mu) && is.null(data$srep_sd)) {
+  # Check for smax_mu and smax_sd first! If NULL, use so (Srep)
+  if (is.null(data$smax_mu) && is.null(data$smax_sd)) {
     if (is.null(data$so_mu)) {
       data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
       if (verbose) message("Lognormal prior for Srep (replacement spawners): mean = log(", exp(data$so_mu), ")")
