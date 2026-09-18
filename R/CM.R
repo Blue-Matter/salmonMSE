@@ -58,10 +58,10 @@
 #' Default is `rep(1, d$Ldyr)` (no prior trend) if `cwtcatT` is provided, otherwise zero.
 #'
 #' - `bmatt` Vector length `Nages`. Proportion maturing at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship. Also the prior means if year-specific
-#' maturity rates are estimated.
+#' maturity rates are estimated. **If estimating maturity, you likely want to tune these values to be close to historical values for reference points.**
 #'
 #' - `mobase`. Vector length `Nages`. Natural mortality at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship and the
-#' the spawners at age at replacement.
+#' the spawners at age at replacement. **If estimating natural mortality, you likely want to tune these values to be close to historical values for reference points.**
 #'
 #' - `covariate1` *Optional*. Matrix `[Ldyr, ncov1]` of linear covariates that predict natural mortality for age 1.
 #' - `covariate` *Optional*. Matrix `[Ldyr, ncov]` of linear covariates that predict natural mortality for ages 2+.

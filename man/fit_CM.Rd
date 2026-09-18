@@ -86,9 +86,9 @@ coefficient and annual deviations from this vector. Default is \code{rep(1, d$Ld
 \item \code{RelRegFT} Vector \code{Ldyr}. Trend in relative regional terminal fishing mortality.
 Default is \code{rep(1, d$Ldyr)} (no prior trend) if \code{cwtcatT} is provided, otherwise zero.
 \item \code{bmatt} Vector length \code{Nages}. Proportion maturing at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship. Also the prior means if year-specific
-maturity rates are estimated.
+maturity rates are estimated. \strong{If estimating maturity, you likely want to tune these values to be close to historical values for reference points.}
 \item \code{mobase}. Vector length \code{Nages}. Natural mortality at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship and the
-the spawners at age at replacement.
+the spawners at age at replacement. \strong{If estimating natural mortality, you likely want to tune these values to be close to historical values for reference points.}
 \item \code{covariate1} \emph{Optional}. Matrix \verb{[Ldyr, ncov1]} of linear covariates that predict natural mortality for age 1.
 \item \code{covariate} \emph{Optional}. Matrix \verb{[Ldyr, ncov]} of linear covariates that predict natural mortality for ages 2+.
 \item \code{hatchsurv} Numeric, survival of hatchery-origin juveniles after release but prior to entering the marine environment. Density-independent. Default is 1. If less than 1, then hatchery-origin fish have
