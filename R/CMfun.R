@@ -61,7 +61,7 @@ CM_trace <- function(stanfit, vars, inc_warmup = FALSE) {
 #' @importFrom stats cor
 #' @importFrom graphics pairs rect strwidth text box
 #' @export
-CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) {
+CM_pairs <- function(stanfit, vars = c("log_smax", "log_cr"), inc_warmup = FALSE) {
   panel.hist <- function(x, ...) {
     usr <- par("usr"); on.exit(par(usr = usr))
     par(usr = c(usr[1:2], 0, 1.5) )

@@ -58,13 +58,13 @@ CM_int <- function(p, d) {
   memax <- -log(1.0/epro) # unfished M from egg to smolt
 
   # Transformed parameters ----
-  so <- exp(p$log_so)           # spawners at replacement
+  smax <- exp(p$log_smax)
+  log_so <- p$log_smax - log(p$log_cr)
+  so <- exp(log_so)             # spawners at replacement
   ro <- so/spro                 # juvenile production at replacement
   eo <- ro * epro               # egg production at replacement
   mden <- p$log_cr/eo           # Ricker b parameter for egg-smolt relationship
   memin <- memax - p$log_cr     # minimum egg-smolt M at low population density
-  log_smax <- p$log_so + log(p$log_cr) # spawners that maximizes recruitment
-  smax <- exp(log_smax)
 
   alpha <- exp(-memin)
   beta <- mden
@@ -241,11 +241,11 @@ CM_int <- function(p, d) {
   # Log prior for parameters
   if (is.null(d$smax_mu) && is.null(d$smax_sd)) {
     # prior on so in log space as it is frequently poorly determined from data
-    logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE)
+    logprior_so <- dnorm(log_so, d$so_mu, d$so_sd, log = TRUE)
     logprior_smax <- AD(0)
   } else {
     logprior_so <- AD(0)
-    logprior_smax <- dnorm(log_smax, d$smax_mu, d$smax_sd, log = TRUE)
+    logprior_smax <- dnorm(p$log_smax, d$smax_mu, d$smax_sd, log = TRUE)
   }
 
   if (!is.null(d$cr_mu) && !is.null(d$cr_sd)) {
@@ -414,7 +414,7 @@ CM_int <- function(p, d) {
 # Make list of starting values
 make_CMpars <- function(p, d) {
 
-  par_valid <- c("log_so", "log_cr", "moadd", "wt", "wto", "log_fanomalyPT", "log_fanomalyT",
+  par_valid <- c("log_cr", "log_smax", "moadd", "wt", "wto", "log_fanomalyPT", "log_fanomalyT",
                  "lnE_sd", "log_FbasePT", "log_FbaseT", "logit_vulPT", "logit_vulT",
                  "logit_matt", "sd_matt", "matt_offset", "wt_sd", "wto_sd",
                  "fanomalyPT_sd", "fanomalyT_sd", "b1", "b", "log_finitPT", "log_finitT")
@@ -434,7 +434,7 @@ make_CMpars <- function(p, d) {
   }
 
   if (is.null(p$log_cr)) p$log_cr <- 3
-  if (is.null(p$log_so)) p$log_so <- log(3 * max(d$obsescape, na.rm = TRUE))
+  if (is.null(p$log_smax)) p$log_smax <- log(mean(d$obsescape, na.rm = TRUE))
   if (is.null(p$moadd)) p$moadd <- 0
   if (is.null(p[["wt"]])) p[["wt"]] <- rep(0, d$Ldyr)
   if (is.null(p[["wto"]])) p[["wto"]] <- rep(0, d$Ldyr)

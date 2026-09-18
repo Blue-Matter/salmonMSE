@@ -140,7 +140,7 @@ for the natural environment at the start of the model.
 Starting values for parameters can be provided through a named list:
 \itemize{
 \item \code{log_cr} Numeric, log of the compensation ratio (productivity). Default is 3.
-\item \code{log_so} Numeric, unfished spawners in logspace. Default is \code{log(3 * max(data$obsescape))}.
+\item \code{log_smax} Numeric, log spawners that maximizes recruitment. Default is \code{log(mean(data$obsescape))}.
 \item \code{moadd} Numeric, additive term to base natural mortality rate for age 1 juveniles. Default is zero.
 \item \code{wt} Vector \code{Ldyr}. Annual deviates in natural mortality during the freshwater life stage (affects egg to smolt survival).
 Estimated with normal prior with mean zero and standard deviation \code{p$wt_sd}. Default is zero.
