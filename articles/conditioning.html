@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">salmonMSE</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
 
       <h1>Conditioning model from CWT and escapement</h1>
             
-            <h4 data-toc-skip class="date">2026-09-05</h4>
+            <h4 data-toc-skip class="date">2026-09-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/conditioning.Rmd" class="external-link"><code>vignettes/conditioning.Rmd</code></a></small>
       <div class="d-none name"><code>conditioning.Rmd</code></div>
@@ -552,15 +552,33 @@ the base parameter.</p>
 \textrm{Gamma}(2, 5)\)</span>.</p>
 </div>
 <div class="section level3">
-<h3 id="natural-production">Natural production<a class="anchor" aria-label="anchor" href="#natural-production"></a>
+<h3 id="productivity">Productivity<a class="anchor" aria-label="anchor" href="#productivity"></a>
 </h3>
 <p>A uniform prior is used for base productivity: <span class="math inline">\(\log(\kappa) \sim U(0, \infty)\)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="spawners-at-replacement">Spawners at replacement<a class="anchor" aria-label="anchor" href="#spawners-at-replacement"></a>
+</h3>
 <p>A lognormal prior is used to estimate the base spawners at
 replacement <span class="math inline">\(S_\textrm{rep} \sim
 \textrm{Lognormal}(\log(\mu^\textrm{Srep}),
 \sigma^\textrm{Srep})\)</span>. By default, <span class="math inline">\(\mu^\textrm{Srep}\)</span> is 300% of maximum
 observed escapement and <span class="math inline">\(\sigma^\textrm{Srep}
 = 0.5\)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="spawners-at-maximum-recruitment">Spawners at maximum recruitment<a class="anchor" aria-label="anchor" href="#spawners-at-maximum-recruitment"></a>
+</h3>
+<p>An alternative to a prior to <span class="math inline">\(S_\textrm{rep}\)</span> is a prior on <span class="math inline">\(S_\textrm{max} \sim
+\textrm{Lognormal}(\log(\mu^\textrm{Smax}),
+\sigma^\textrm{Smax})\)</span>, where</p>
+<p><span class="math display">\[
+S_\textrm{max} = S_\textrm{rep}\times\log(\kappa)
+\]</span></p>
+</div>
+<div class="section level3">
+<h3 id="process-error">Process error<a class="anchor" aria-label="anchor" href="#process-error"></a>
+</h3>
 <p>The annual deviations in smolt production are estimated with prior
 <span class="math inline">\(\delta_y \sim N(0, \sigma_\delta^2)\)</span>
 and hyperprior <span class="math inline">\(\sigma_\delta \sim

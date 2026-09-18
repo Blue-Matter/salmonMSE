@@ -394,15 +394,27 @@ Gaussion priors are used for \\\varepsilon_y\\:
 
 with hyperprior \\\sigma^M \sim \textrm{Gamma}(2, 5)\\.
 
-### Natural production
+### Productivity
 
 A uniform prior is used for base productivity: \\\log(\kappa) \sim U(0,
 \infty)\\.
+
+### Spawners at replacement
 
 A lognormal prior is used to estimate the base spawners at replacement
 \\S\_\textrm{rep} \sim \textrm{Lognormal}(\log(\mu^\textrm{Srep}),
 \sigma^\textrm{Srep})\\. By default, \\\mu^\textrm{Srep}\\ is 300% of
 maximum observed escapement and \\\sigma^\textrm{Srep} = 0.5\\.
+
+### Spawners at maximum recruitment
+
+An alternative to a prior to \\S\_\textrm{rep}\\ is a prior on
+\\S\_\textrm{max} \sim \textrm{Lognormal}(\log(\mu^\textrm{Smax}),
+\sigma^\textrm{Smax})\\, where
+
+\\ S\_\textrm{max} = S\_\textrm{rep}\times\log(\kappa) \\
+
+### Process error
 
 The annual deviations in smolt production are estimated with prior
 \\\delta_y \sim N(0, \sigma\_\delta^2)\\ and hyperprior \\\sigma\_\delta

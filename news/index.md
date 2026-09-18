@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 3.1.0
+
+- Conditioning model can place lognormal prior on either Srep or Smax
+
 ## Version 3.0.0
 
 CRAN release: 2026-08-20

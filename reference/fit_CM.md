@@ -111,7 +111,8 @@ Data should passed through a named list with the following entries.
   hatchery-origin brood year that differ in maturity rate. Default is 1.
 
 - `cwtrelease` Matrix `[Ldyr, n_r]`, coded wire tag (CWT) releases by
-  **release year and release strategy**
+  **release year and release strategy** (assumes broodyear is release
+  year minus 1)
 
 - `cwtesc` Array `[Ldyr, Nages, n_r]`. CWT escapement **by release year,
   age, and release strategy** (assumes broodyear is release year minus
@@ -143,24 +144,27 @@ Data should passed through a named list with the following entries.
   mortality. Default is `rep(1, d$Ldyr)` (no prior trend) if `cwtcatT`
   is provided, otherwise zero.
 
-- `bmatt` Vector length `Nages`. Proportion maturity at age, base values
-  for calculating the unfished replacement line. Also the prior means if
-  year-specific maturity rates are estimated.
+- `bmatt` Vector length `Nages`. Proportion maturing at age, base values
+  for converting between spawners and egg production at replacement for
+  the stock-recruit relationship. Also the prior means if year-specific
+  maturity rates are estimated.
 
 - `mobase`. Vector length `Nages`. Natural mortality at age, base values
-  for calculating the unfished replacement line and the the equilibrium
-  spawners at age.
+  for converting between spawners and egg production at replacement for
+  the stock-recruit relationship and the the spawners at age at
+  replacement.
 
-- `covariate1` *Optional*. Matrix `Ldyr, ncov1` of linear covariates
+- `covariate1` *Optional*. Matrix `[Ldyr, ncov1]` of linear covariates
   that predict natural mortality for age 1.
 
-- `covariate` *Optional*. Matrix `Ldyr, ncov` of linear covariates that
-  predict natural mortality for ages 2+.
+- `covariate` *Optional*. Matrix `[Ldyr, ncov]` of linear covariates
+  that predict natural mortality for ages 2+.
 
-- `hatchsurv` Numeric, survival of hatchery releases into the smolt life
-  stage. Density-independent. Default is 1. If less than 1, then
-  hatchery origin fish have lower survival to age 2 (after first year of
-  marine life stage) compared to natural origin fish.
+- `hatchsurv` Numeric, survival of hatchery-origin juveniles after
+  release but prior to entering the marine environment.
+  Density-independent. Default is 1. If less than 1, then
+  hatchery-origin fish have lower survival to age 2 (first year of
+  marine life stage) compared to natural-origin fish.
 
 - `gamma` *Optional*. Numeric, the relative spawning success of hatchery
   origin spawners. Default is 1.
@@ -170,8 +174,8 @@ Data should passed through a named list with the following entries.
 
 - `fec` Vector length `Nages`. Fecundity, egg production at age
 
-- `r_matt` Integer, the release strategy for which to use maturity
-  parameter for the natural system. Default is 1.
+- `r_matt` Indexing integer, the release strategy for which to use
+  maturity parameter for the natural system. Default is 1.
 
 - `obsescape` Vector length `Ldyr` by **return year**, total observed
   escapement from fisheries, i.e., return to river (all ages and both
@@ -192,17 +196,26 @@ Data should passed through a named list with the following entries.
 - `pHOS_sd` Numeric, logistic-normal standard deviation of pHOS
   observations. Default is 1.
 
-- `pHOS_init` Numeric, initial pHOS for equilibrium abundance in the
-  first year of the model. Default is 0.
+- `pHOS_init` Numeric, initial pHOS for equilibrium juvenile abundance
+  in the first year of the model. Default is 0.
 
-- `s_enroute` Numeric, survival of escapement to spawning grounds.
-  Default is 1.
+- `s_enroute` Numeric, survival of escapement (from marine fisheries) to
+  spawning grounds. Default is 1.
 
-- `so_mu` Numeric, the prior mean for spawners at unfished replacement
-  in logspace. Default is `log(3 * max(data$obsescape))`.
+- `so_mu` Numeric, the prior mean for spawners at replacement in
+  logspace, aka `Srep`. **Default is `log(3 * max(data$obsescape))`**.
+  Not used if `smax_mu` is provided.
 
-- `so_sd` Numeric, the prior standard deviation for spawners at unfished
-  replacement in logspace. Default is 0.5.
+- `so_sd` Numeric, the lognormal prior standard deviation for spawners
+  at replacement. **Default is 0.5**. Not used if `smax_sd` is provided.
+
+- `smax_mu` *Optional* Numeric, the prior mean for spawners that
+  maximizes recruitment in logspace. Choose between `so_mu` or
+  `smax_mu`. Leave as `NULL` if using `so_mu`
+
+- `smax_sd` *Optional* Numeric, the lognormal prior standard deviation
+  for spawners that maximizes recruitment. Choose between `so_sd` or
+  `smax_sd`. Leave as `NULL` if using `so_sd`
 
 - `finitPT` Numeric, initial preterminal fishing mortality for
   calculating the equilibrium juvenile proportions at age in the first
@@ -217,12 +230,11 @@ Data should passed through a named list with the following entries.
 - `spawn_init` Numeric, initial spawners to calculate equilibrium
   abundance in the first year of the model. Default is `obsescape[1]`.
 
-- `cwtExp` Numeric, the CWT expansion factor, typically the reciprocal
-  of the catch sampling rate (higher factors for lower sampling rate).
-  The model scales down the CWT predictions to match the observations.
-  In other words, the model assumes that the CWT catch and escapement
-  are not expanded. For example, `cwtExp = 10` divides the CWT
-  predictions by 10 for the likelihood. Default is 1. The Poisson
+- `cwtExp` Numeric, the CWT expansion factor. **Default is 1, which
+  assumes CWT catches have already been expanded.**. Typically greater
+  than 1, i.e., the reciprocal of the catch sampling rate (higher
+  factors for lower sampling rate). For example, `cwtExp = 10` divides
+  the CWT predictions by 10 for the likelihood of the data. The Poisson
   distribution is used for the likelihood of the CWT observations, and
   the expansion parameter can be used to downweight the CWT likelihood
   relative to the escapement time series. However it requires
