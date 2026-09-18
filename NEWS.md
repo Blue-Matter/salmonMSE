@@ -1,5 +1,9 @@
 The current version of `salmonMSE` package is available on [CRAN](https://cran.r-project.org/package=salmonMSE).
 
+# Version 3.1.0
+
+- Conditioning model can place lognormal prior on either Srep or Smax
+
 # Version 3.0.0
 
 - salmonMSE no longer uses openMSE as a dependency. `ProjectSOM()` is now the primary internal function that organizes the projection. Various internal functions have been replaced and updated.

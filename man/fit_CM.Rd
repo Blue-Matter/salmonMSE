@@ -73,7 +73,7 @@ Data should passed through a named list with the following entries.
 \item \code{Ldyr} Integer, number of years in the model
 \item \code{lht} Integer, life history type. Should be 1 for now
 \item \code{n_r} Integer, number of release strategies for CWT, subset of a hatchery-origin brood year that differ in maturity rate. Default is 1.
-\item \code{cwtrelease} Matrix \verb{[Ldyr, n_r]}, coded wire tag (CWT) releases by \strong{release year and release strategy}
+\item \code{cwtrelease} Matrix \verb{[Ldyr, n_r]}, coded wire tag (CWT) releases by \strong{release year and release strategy} (assumes broodyear is release year minus 1)
 \item \code{cwtesc} Array \verb{[Ldyr, Nages, n_r]}. CWT escapement \strong{by release year, age, and release strategy} (assumes broodyear is release year minus 1). Poisson likelihood.
 \item \code{cwtcatPT} Array \verb{[Ldyr, Nages, n_r]}. CWT preterminal catch (juvenile fish), \strong{by release year, age, and release strategy}. Poisson likelihood. Set all values to zero to turn off
 parameters related to the preterminal fishery.
@@ -85,35 +85,37 @@ parameters related to the terminal fishery.
 coefficient and annual deviations from this vector. Default is \code{rep(1, d$Ldyr)} (no prior trend) if \code{cwtcatPT} is provided, otherwise zero.
 \item \code{RelRegFT} Vector \code{Ldyr}. Trend in relative regional terminal fishing mortality.
 Default is \code{rep(1, d$Ldyr)} (no prior trend) if \code{cwtcatT} is provided, otherwise zero.
-\item \code{bmatt} Vector length \code{Nages}. Proportion maturity at age, base values for calculating the unfished replacement line. Also the prior means if year-specific
+\item \code{bmatt} Vector length \code{Nages}. Proportion maturing at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship. Also the prior means if year-specific
 maturity rates are estimated.
-\item \code{mobase}. Vector length \code{Nages}. Natural mortality at age, base values for calculating the unfished replacement line and the
-the equilibrium spawners at age.
-\item \code{covariate1} \emph{Optional}. Matrix \verb{Ldyr, ncov1} of linear covariates that predict natural mortality for age 1.
-\item \code{covariate} \emph{Optional}. Matrix \verb{Ldyr, ncov} of linear covariates that predict natural mortality for ages 2+.
-\item \code{hatchsurv} Numeric, survival of hatchery releases into the smolt life stage. Density-independent. Default is 1. If less than 1, then hatchery origin fish have
-lower survival to age 2 (after first year of marine life stage) compared to natural origin fish.
+\item \code{mobase}. Vector length \code{Nages}. Natural mortality at age, base values for converting between spawners and egg production at replacement for the stock-recruit relationship and the
+the spawners at age at replacement.
+\item \code{covariate1} \emph{Optional}. Matrix \verb{[Ldyr, ncov1]} of linear covariates that predict natural mortality for age 1.
+\item \code{covariate} \emph{Optional}. Matrix \verb{[Ldyr, ncov]} of linear covariates that predict natural mortality for ages 2+.
+\item \code{hatchsurv} Numeric, survival of hatchery-origin juveniles after release but prior to entering the marine environment. Density-independent. Default is 1. If less than 1, then hatchery-origin fish have
+lower survival to age 2 (first year of marine life stage) compared to natural-origin fish.
 \item \code{gamma} \emph{Optional}. Numeric, the relative spawning success of hatchery origin spawners. Default is 1.
 \item \code{ssum} Numeric, proportion of spawners that is female. Can also be a vector \code{Nages}
 \item \code{fec} Vector length \code{Nages}. Fecundity, egg production at age
-\item \code{r_matt} Integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
+\item \code{r_matt} Indexing integer, the release strategy for which to use maturity parameter for the natural system. Default is 1.
 \item \code{obsescape} Vector length \code{Ldyr} by \strong{return year}, total observed escapement from fisheries, i.e., return to river (all ages and both hatchery/natural fish). Lognormal likelhood.
 \item \code{propwildspawn} Vector length \code{Ldyr} by \strong{return year}, proportion of the escapement that spawn (accounts for en-route mortality and broodtake)
 \item \code{hatchrelease} Vector length \code{Ldyr+1} by \strong{release year}, number of hatchery releases for the population. Default is zero.
 \item \code{obs_pHOS} \emph{Optional}. Vector length \code{Ldyr} by \strong{return year}, observations of proportion of hatchery origin spawners (census) (between 0-1) \emph{by brood year}. Fitted to model with logistic-normal likelihood.
 \item \code{pHOS_sd} Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
-\item \code{pHOS_init} Numeric, initial pHOS for equilibrium abundance in the first year of the model. Default is 0.
-\item \code{s_enroute} Numeric, survival of escapement to spawning grounds. Default is 1.
-\item \code{so_mu} Numeric, the prior mean for spawners at unfished replacement in logspace. Default is \code{log(3 * max(data$obsescape))}.
-\item \code{so_sd} Numeric, the prior standard deviation for spawners at unfished replacement in logspace. Default is 0.5.
+\item \code{pHOS_init} Numeric, initial pHOS for equilibrium juvenile abundance in the first year of the model. Default is 0.
+\item \code{s_enroute} Numeric, survival of escapement (from marine fisheries) to spawning grounds. Default is 1.
+\item \code{so_mu} Numeric, the prior mean for spawners at replacement in logspace, aka \code{Srep}. \strong{Default is \code{log(3 * max(data$obsescape))}}. Not used if \code{smax_mu} is provided.
+\item \code{so_sd} Numeric, the lognormal prior standard deviation for spawners at replacement. \strong{Default is 0.5}. Not used if \code{smax_sd} is provided.
+\item \code{smax_mu} \emph{Optional} Numeric, the prior mean for spawners that maximizes recruitment in logspace. Choose between \code{so_mu} or \code{smax_mu}. Leave as \code{NULL} if using \code{so_mu}
+\item \code{smax_sd} \emph{Optional} Numeric, the lognormal prior standard deviation for spawners that maximizes recruitment. Choose between \code{so_sd} or \code{smax_sd}. Leave as \code{NULL} if using \code{so_sd}
 \item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
 the equilibrium condition.
 \item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
 the equilibrium condition.
 \item \code{spawn_init} Numeric, initial spawners to calculate equilibrium abundance in the first year of the model. Default is \code{obsescape[1]}.
-\item \code{cwtExp} Numeric, the CWT expansion factor, typically the reciprocal of the catch sampling rate (higher factors for lower sampling rate).
-The model scales down the CWT predictions to match the observations. In other words,
-the model assumes that the CWT catch and escapement are not expanded. For example, \code{cwtExp = 10} divides the CWT predictions by 10 for the likelihood. Default is 1.
+\item \code{cwtExp} Numeric, the CWT expansion factor. \strong{Default is 1, which assumes CWT catches have already been expanded.}. Typically greater than 1, i.e., the reciprocal of the catch sampling rate
+(higher factors for lower sampling rate).
+For example, \code{cwtExp = 10} divides the CWT predictions by 10 for the likelihood of the data.
 The Poisson distribution is used for the likelihood of the CWT observations, and the expansion parameter can be used to downweight the CWT likelihood relative to the escapement time series.
 However it requires adjustments of the CWT catches prior to fitting to ensure the proper population scale.
 If the expanded catch is 100, then the input CWT catch should be 10 and 50 with \code{cwtExp} of 10 and 2, respectively, to maintain the same population scale.

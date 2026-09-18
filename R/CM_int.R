@@ -23,11 +23,7 @@ CM_int <- function(p, d) {
   logobsesc <- log(d$obsescape)
 
   # Vulnerability (= 0 for age 1, = 1 for oldest age)
-  if (is_ad) {
-    vulPT <- vulT <- advector(rep(0, d$Nages))
-  } else {
-    vulPT <- vulT <- numeric(d$Nages)
-  }
+  vulPT <- vulT <- AD(d$Nages)
   vulPT[seq(2, d$Nages-1)] <- plogis(p$logit_vulPT)
   vulPT[d$Nages] <- 1
   vulT[seq(2, d$Nages-1)] <- plogis(p$logit_vulT)
@@ -47,11 +43,7 @@ CM_int <- function(p, d) {
   }
 
   lo <- numeric(d$Nages)
-  if (is_ad) {
-    lhist <- advector(rep(0, d$Nages))
-  } else {
-    lhist <- numeric(d$Nages)
-  }
+  lhist <- AD(numeric(d$Nages))
 
   lo[1] <- 1
   lhist[1] <- 1
@@ -66,11 +58,13 @@ CM_int <- function(p, d) {
   memax <- -log(1.0/epro) # unfished M from egg to smolt
 
   # Transformed parameters ----
-  so <- exp(p$log_so)
-  ro <- so/spro                 # unfished recruitment ro
-  eo <- ro * epro               # unfished total egg production
+  so <- exp(p$log_so)           # spawners at replacement
+  ro <- so/spro                 # juvenile production at replacement
+  eo <- ro * epro               # egg production at replacement
   mden <- p$log_cr/eo           # Ricker b parameter for egg-smolt relationship
   memin <- memax - p$log_cr     # minimum egg-smolt M at low population density
+  log_smax <- p$log_so + log(p$log_cr) # spawners that maximizes recruitment
+  smax <- exp(log_smax)
 
   alpha <- exp(-memin)
   beta <- mden
@@ -245,25 +239,29 @@ CM_int <- function(p, d) {
   }
 
   # Log prior for parameters
-  logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE) # prior on so in log space as it is poorly determined from data
+  if (is.null(d$srep_mu) && is.null(d$srep_sd)) {
+    # prior on so in log space as it is frequently poorly determined from data
+    logprior_so <- dnorm(p$log_so, d$so_mu, d$so_sd, log = TRUE)
+    logprior_smax <- AD(0)
+  } else {
+    logprior_so <- AD(0)
+    logprior_smax <- dnorm(log_smax, d$smax_mu, d$smax_sd, log = TRUE)
+  }
+
   logprior_wt <- dnorm(p[["wt"]], 0, p$wt_sd, log = TRUE)
   logprior_wto <- dnorm(p[["wto"]], 0, p$wto_sd, log = TRUE)
 
   if (sum(d$cwtcatPT)) {
     logprior_fanomPT <- dnorm(p$log_fanomalyPT, 0, p$fanomalyPT_sd, log = TRUE)
     logprior_fanomPT_sd <- dgamma(p$fanomalyPT_sd, 2, scale = 0.2, log = TRUE)
-  } else if (is_ad) {
-    logprior_fanomPT <- logprior_fanomPT_sd <- advector(0)
   } else {
-    logprior_fanomPT <- logprior_fanomPT_sd <- 0
+    logprior_fanomPT <- logprior_fanomPT_sd <- AD(0)
   }
   if (sum(d$cwtcatT)) {
     logprior_fanomT <- dnorm(p$log_fanomalyT, 0, p$fanomalyT_sd, log = TRUE)
     logprior_fanomT_sd <- dgamma(p$fanomalyT_sd, 2, scale = 0.2, log = TRUE)
-  } else if (is_ad) {
-    logprior_fanomT <- logprior_fanomT_sd <- advector(0)
   } else {
-    logprior_fanomT <- logprior_fanomT_sd <- 0
+    logprior_fanomT <- logprior_fanomT_sd <- AD(0)
   }
 
   # Log prior for vulnerability
@@ -272,18 +270,14 @@ CM_int <- function(p, d) {
 
   if (sum(d$bvulPT)) {
     logprior_vulPT <- dnorm(p$logit_vulPT, logit_bvulPT, 1.75, log = TRUE)
-  } else if (is_ad) {
-    logprior_vulPT <- advector(0)
   } else {
-    logprior_vulPT <- 0
+    logprior_vulPT <- AD(0)
   }
 
   if (sum(d$bvulT)) {
     logprior_vulT <- dnorm(p$logit_vulT, logit_bvulT, 1.75, log = TRUE)
-  } else if (is_ad) {
-    logprior_vulT <- advector(0)
   } else {
-    logprior_vulT <- 0
+    logprior_vulT <- AD(0)
   }
 
   #convert base maturity rates to logit for calculation of time-varying rates
@@ -294,7 +288,7 @@ CM_int <- function(p, d) {
   })
 
   logprior <- sum(
-    logprior_so, logprior_wt, logprior_wto,
+    logprior_so, logprior_smax, logprior_wt, logprior_wto,
     logprior_fanomPT, logprior_fanomT, logprior_matt,
     logprior_vulPT, logprior_vulT
   )
@@ -318,27 +312,21 @@ CM_int <- function(p, d) {
 
   if (sum(d$cwtcatPT)) {
     loglike_cwtcatPT <- dpois(d$cwtcatPT, cbroodPT, log = TRUE)
-  } else if (is_ad) {
-    loglike_cwtcatPT <- advector(0)
   } else {
-    loglike_cwtcatPT <- 0
+    loglike_cwtcatPT <- AD(0)
   }
   if (sum(d$cwtcatT)) {
     loglike_cwtcatT <- dpois(d$cwtcatT, cbroodT, log = TRUE)
-  } else if (is_ad) {
-    loglike_cwtcatT <- advector(0)
   } else {
-    loglike_cwtcatT <- 0
+    loglike_cwtcatT <- AD(0)
   }
 
   if (!is.null(d$obs_pHOS) && sum(d$obs_pHOS, na.rm = TRUE)) {
     loglike_pHOS <- dnorm(qlogis(d$obs_pHOS), qlogis(squeeze(pHOScensus_brood)), d$pHOS_sd, log = TRUE)
     loglike_pHOS[is.na(d$obs_pHOS)] <- 0
     loglike_pHOS[d$Ldyr - seq(1, d$Nages - 1) + 1] <- 0
-  } else if (is_ad) {
-    loglike_pHOS <- advector(0)
   } else {
-    loglike_pHOS <- 0
+    loglike_pHOS <- AD(0)
   }
 
   loglike <- sum(loglike_esc, loglike_cwtcatPT, loglike_cwtcatT, loglike_cwtesc, loglike_pHOS)
@@ -348,6 +336,7 @@ CM_int <- function(p, d) {
 
   # Report variables
   REPORT(so)
+  REPORT(smax)
   REPORT(eo)
   REPORT(ro)
   REPORT(mden)
@@ -472,7 +461,7 @@ make_CMpars <- function(p, d) {
 }
 
 #' @importFrom stats na.omit
-check_data <- function(data, verbose = TRUE) {
+check_CMdata <- function(data, verbose = TRUE) {
 
   if (is.null(data$Nages)) stop("data$Nages not found")
   if (is.null(data$Ldyr)) stop("data$Ldyr not found")
@@ -570,10 +559,15 @@ check_data <- function(data, verbose = TRUE) {
     stop("data$propwildspawn should be a vector length Ldyr")
   }
 
-  if (is.null(data$hatchrelease) || length(data$hatchrelease) != data$Ldyr + 1) {
-    #stop("data$hatchrelease should be a vector length Ldyr+1")
+  if (is.null(data$hatchrelease)) {
     data$hatchrelease <- rep(0, data$Ldyr + 1)
+  } else if (length(data$hatchrelease) == data$Ldyr) {
+    data$hatchrelease <- c(data$hatchrelease, 0)
+    if (verbose) message("Adding zero to data$hatchrelease in first projection year")
+  } else if (length(data$hatchrelease) != data$Ldyr + 1) {
+    stop("data$hatchrelease should be a vector length Ldyr+1")
   }
+
   if (is.null(data$gamma)) {
     data$gamma <- 1
     if (verbose && sum(data$hatchrelease)) message("Relative reproductive success: gamma = ", data$gamma)
@@ -596,13 +590,25 @@ check_data <- function(data, verbose = TRUE) {
     if (verbose) message("En-route survival to spawning grounds is ", data$s_enroute)
   }
 
-  if (is.null(data$so_mu)) {
-    data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
-    if (verbose) message("Lognormal prior for Srep (replacement spawners): mean = log(", exp(data$so_mu), ")")
-  }
-  if (is.null(data$so_sd)) {
-    data$so_sd <- 0.5
-    if (verbose) message("Lognormal prior for Srep (replacement spawners): SD = ", data$so_sd)
+  # Check for srep_mu and srep_sd first! If NULL, use so (Srep)
+  if (is.null(data$srep_mu) && is.null(data$srep_sd)) {
+    if (is.null(data$so_mu)) {
+      data$so_mu <- log(3 * max(data$obsescape, na.rm = TRUE))
+      if (verbose) message("Lognormal prior for Srep (replacement spawners): mean = log(", exp(data$so_mu), ")")
+    }
+    if (is.null(data$so_sd)) {
+      data$so_sd <- 0.5
+      if (verbose) message("Lognormal prior for Srep (replacement spawners): SD = ", data$so_sd)
+    }
+
+  } else {
+    if (is.null(data$smax_mu) || length(data$smax_mu) != 1) stop("Need Lognormal prior mean for Smax")
+    if (is.null(data$smax_sd) || length(data$smax_sd) != 1) stop("Need Lognormal prior SD for Smax")
+
+    if (verbose) {
+      message("Lognormal prior for Smax (spawners at max. recruitment): mean = log(", exp(data$smax_mu), ")")
+      message("Lognormal prior for Smax (spawners at max. recruitment): SD = ", data$smax_sd)
+    }
   }
 
   if (is.null(data$finitPT)) data$finitPT <- 0
@@ -725,7 +731,7 @@ get_report <- function(stanfit, sims, inc_warmup = FALSE) {
 
   # Update data object
   d <- get_CMdata(fit)
-  dnew <- check_data(d)
+  dnew <- check_CMdata(d)
   if (!identical(d, dnew)) {
     env_func <- attr(fit$obj$env$data, "func") %>% environment()
     assign("data", dnew, envir = env_func)
