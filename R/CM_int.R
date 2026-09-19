@@ -23,7 +23,7 @@ CM_int <- function(p, d) {
   logobsesc <- log(d$obsescape)
 
   # Vulnerability (= 0 for age 1, = 1 for oldest age)
-  vulPT <- vulT <- AD(d$Nages)
+  vulPT <- vulT <- AD(numeric(d$Nages))
   vulPT[seq(2, d$Nages-1)] <- plogis(p$logit_vulPT)
   vulPT[d$Nages] <- 1
   vulT[seq(2, d$Nages-1)] <- plogis(p$logit_vulT)
