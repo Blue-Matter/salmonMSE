@@ -408,6 +408,20 @@ CM_int <- function(p, d) {
 # Make list of starting values
 make_CMpars <- function(p, d) {
 
+  par_valid <- c("log_so", "log_cr", "moadd", "wt", "wto", "log_fanomalyPT", "log_fanomalyT",
+                 "lnE_sd", "log_FbasePT", "log_FbaseT", "logit_vulPT", "logit_vulT",
+                 "logit_matt", "sd_matt", "matt_offset", "wt_sd", "wto_sd",
+                 "fanomalyPT_sd", "fanomalyT_sd", "b1", "b", "log_finitPT", "log_finitT")
+
+  if (any(!names(p) %in% par_valid)) {
+    warning(
+      "Parameters not used in the model: ",
+      paste0(names(p)[!names(p) %in% par_valid], collapse = ", ")
+    )
+  }
+
+  p <- p[names(p) %in% par_valid]
+
   na_check <- sapply(p, function(x) any(is.na(x)))
   if (any(na_check)) {
     stop("Some initial parameters are NA: ", paste(names(na_check)[na_check], collapse = ", "))
@@ -461,7 +475,7 @@ make_CMpars <- function(p, d) {
 }
 
 #' @importFrom stats na.omit
-check_CMdata <- function(data, verbose = TRUE) {
+check_CMdata <- function(data, verbose = FALSE) {
 
   if (is.null(data$Nages)) stop("data$Nages not found")
   if (is.null(data$Ldyr)) stop("data$Ldyr not found")
