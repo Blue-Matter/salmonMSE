@@ -62,7 +62,7 @@ CM_trace(stanfit, pars_cov)
 
 ```{r trace-vul, fig.cap="Wormplots of fishery vulnerability at age parameters from MCMC iterations after thinning and warmup."}
 pars_vul <- c("^logit_vul")
-CM_trace(stanfit, pars_cov)
+CM_trace(stanfit, pars_vul)
 ```
 
 ```{r trace-var, fig.cap="Wormplots of variance parameters from MCMC iterations after thinning and warmup."}

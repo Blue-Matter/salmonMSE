@@ -80,10 +80,33 @@ CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) 
     text(0.5, 0.5, txt, cex = 1.3)
   }
 
-  if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package needed for this function.")
-  pars <- rstan::extract(stanfit, pars = vars, inc_warmup = inc_warmup)
+  val <- lapply(1:stanfit@sim$chains, function(i) {
+    x <- stanfit@sim$samples[[i]]
+    vars_regex <- paste0(vars, collapse = "|")
 
-  val <- bind_rows(pars[vars])
+    x_pars <- x[grepl(vars_regex, names(x))] %>%
+      bind_cols()
+
+    if (nrow(x_pars)) {
+
+      if (inc_warmup) {
+        warmup <- 1
+      } else {
+        warmup <- stanfit@stan_args[[i]]$warmup
+      }
+      thin <- stanfit@stan_args[[i]]$thin
+      iter <- stanfit@stan_args[[i]]$iter
+
+      it <- data.frame(iter = seq(1, iter, by = thin))
+      it$n <- 1:nrow(it)
+
+      x_pars[it$n[it$iter > warmup], ]
+    } else {
+      data.frame()
+    }
+
+  }) %>%
+    bind_rows()
 
   if (nrow(val)) {
     if (ncol(val) > 1) {
@@ -437,8 +460,8 @@ CM_SRR <- function(report, year1 = 1) {
 
   g <- ggplot(df, aes(.data$egg, .data$smolt)) +
     geom_point(shape = 1) +
-    geom_line(data = df_med) +
-    #geom_ribbon(data = df_med, aes(ymin = .data$lwr, ymax = .data$upr), fill = "grey", alpha = 0.5) +
+    geom_line(data = df_SRR) +
+    #geom_ribbon(data = df_SRR, aes(ymin = .data$lwr, ymax = .data$upr), fill = "grey", alpha = 0.5) +
     labs(x = "Egg production", y = "Smolt production") +
     expand_limits(x = 0, y = 0)
 
