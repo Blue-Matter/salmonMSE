@@ -71,46 +71,24 @@ CM_pairs <- function(stanfit, vars = c("log_so", "log_cr"), inc_warmup = FALSE) 
     rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
   }
 
-  panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+  panel.cor <- function(x, y, digits = 2, prefix = "", ...) {
     usr <- par("usr"); on.exit(par(usr = usr))
     par(usr = c(0, 1, 0, 1))
     r <- abs(cor(x, y))
     txt <- format(c(r, 0.123456789), digits = digits)[1]
     txt <- paste0(prefix, txt)
-    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = 1.3)
   }
 
-  val <- lapply(1:stanfit@sim$chains, function(i) {
-    x <- stanfit@sim$samples[[i]]
-    vars_str <- paste0(vars, collapse = "|")
-    xout <- x[grepl(vars_str, names(x))] %>%
-      bind_cols()
+  if (!requireNamespace("rstan", quietly = TRUE)) stop("rstan package needed for this function.")
+  pars <- rstan::extract(stanfit, pars = vars, inc_warmup = inc_warmup)
 
-    if (nrow(xout)) {
-
-      if (inc_warmup) {
-        warmup <- 1
-      } else {
-        warmup <- stanfit@stan_args[[i]]$warmup
-      }
-
-      thin <- stanfit@stan_args[[i]]$thin
-      iter <- stanfit@stan_args[[i]]$iter
-
-      it <- data.frame(iter = seq(1, iter, by = thin))
-      it$n <- 1:nrow(it)
-
-      xout <- xout[it$n[it$iter > warmup], ]
-    }
-    return(xout)
-  }) %>%
-    bind_rows()
-
+  val <- bind_rows(pars[vars])
 
   if (nrow(val)) {
     if (ncol(val) > 1) {
-      pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor, gap = 0)
+      pairs(x = val, pch = 19, cex = 0.2, diag.panel = panel.hist, upper.panel = panel.cor,
+            gap = 0)
     } else {
       hist(val[[1]], col = "cyan", main = NULL, xlab = names(val)[1])
       box()
