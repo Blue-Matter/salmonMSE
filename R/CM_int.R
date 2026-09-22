@@ -248,6 +248,12 @@ CM_int <- function(p, d) {
     logprior_smax <- dnorm(log_smax, d$smax_mu, d$smax_sd, log = TRUE)
   }
 
+  if (!is.null(d$cr_mu) && !is.null(d$cr_sd)) {
+    logprior_cr <- dtruncnorm(p$log_cr, d$cr_mu, d$cr_sd, min = 0, max = Inf, log = TRUE)
+  } else {
+    logprior_cr <- AD(0)
+  }
+
   logprior_wt <- dnorm(p[["wt"]], 0, p$wt_sd, log = TRUE)
   logprior_wto <- dnorm(p[["wto"]], 0, p$wto_sd, log = TRUE)
 
@@ -288,7 +294,7 @@ CM_int <- function(p, d) {
   })
 
   logprior <- sum(
-    logprior_so, logprior_smax, logprior_wt, logprior_wto,
+    logprior_so, logprior_smax, logprior_cr, logprior_wt, logprior_wto,
     logprior_fanomPT, logprior_fanomT, logprior_matt,
     logprior_vulPT, logprior_vulT
   )
@@ -475,6 +481,7 @@ make_CMpars <- function(p, d) {
 }
 
 #' @importFrom stats na.omit
+#' @importFrom RTMBdist dtruncnorm
 check_CMdata <- function(data, verbose = FALSE) {
 
   if (is.null(data$Nages)) stop("data$Nages not found")
@@ -620,8 +627,15 @@ check_CMdata <- function(data, verbose = FALSE) {
     if (is.null(data$smax_sd) || length(data$smax_sd) != 1) stop("Need Lognormal prior SD for Smax")
 
     if (verbose) {
-      message("Lognormal prior for Smax (spawners at max. recruitment): mean = log(", exp(data$smax_mu), ")")
-      message("Lognormal prior for Smax (spawners at max. recruitment): SD = ", data$smax_sd)
+      message("Lognormal prior for Smax (spawners at max. recruitment):\nmean = log(", exp(data$smax_mu), "), SD = ", data$smax_sd)
+    }
+  }
+
+  if (verbose) {
+    if (!is.null(data$cr_mu) && !is.null(data$cr_sd)) {
+      message("Truncated normal prior for log(productivity):\nmean = log(", exp(data$cr_mu), "), SD = ", data$cr_sd)
+    } else {
+      message("Uniform prior for log(productivity)")
     }
   }
 
@@ -679,8 +693,8 @@ make_bounds <- function(par_names, data, lower = list(), upper = list()) {
   .upper <- structure(rep(Inf, length(par_names)), names = par_names)
 
   # Add important defaults first
-  if ("log_cr" %in% names(.lower)) .lower["log_cr"] <- 1e-8
-  if ("moadd" %in% names(.lower)) .lower["moadd"] <- 1e-8
+  if ("log_cr" %in% names(.lower)) .lower["log_cr"] <- 0
+  if ("moadd" %in% names(.lower)) .lower["moadd"] <- 0
   #if ("FbasePT" %in% names(.lower)) .lower["FbasePT"] <- 1e-8
   #if ("FbaseT" %in% names(.lower)) .lower["FbaseT"] <- 1e-8
 

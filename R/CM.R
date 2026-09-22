@@ -86,6 +86,8 @@
 #' - `so_sd` Numeric, the lognormal prior standard deviation for spawners at replacement. **Default is 0.5**. Not used if `smax_sd` is provided.
 #' - `smax_mu` *Optional* Numeric, the prior mean for spawners that maximizes recruitment in logspace. Choose between `so_mu` or `smax_mu`. Leave as `NULL` if using `so_mu`
 #' - `smax_sd` *Optional* Numeric, the lognormal prior standard deviation for spawners that maximizes recruitment. Choose between `so_sd` or `smax_sd`. Leave as `NULL` if using `so_sd`
+#' - `cr_mu` *Optional* Numeric, the prior mean for productivity (recruits per spawners) in logspace. If `NULL`, a uniform prior is used.
+#' - `cr_sd` *Optional* Numeric, the lognormal prior standard deviation for productivity. If `NULL`, a uniform prior is used.
 #'
 #' - `finitPT` Numeric, initial preterminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to `"estimate"` to allow the model to estimate
 #' the equilibrium condition.

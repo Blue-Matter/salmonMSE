@@ -108,6 +108,8 @@ lower survival to age 2 (first year of marine life stage) compared to natural-or
 \item \code{so_sd} Numeric, the lognormal prior standard deviation for spawners at replacement. \strong{Default is 0.5}. Not used if \code{smax_sd} is provided.
 \item \code{smax_mu} \emph{Optional} Numeric, the prior mean for spawners that maximizes recruitment in logspace. Choose between \code{so_mu} or \code{smax_mu}. Leave as \code{NULL} if using \code{so_mu}
 \item \code{smax_sd} \emph{Optional} Numeric, the lognormal prior standard deviation for spawners that maximizes recruitment. Choose between \code{so_sd} or \code{smax_sd}. Leave as \code{NULL} if using \code{so_sd}
+\item \code{cr_mu} \emph{Optional} Numeric, the prior mean for productivity (recruits per spawners) in logspace. If \code{NULL}, a uniform prior is used.
+\item \code{cr_sd} \emph{Optional} Numeric, the lognormal prior standard deviation for productivity. If \code{NULL}, a uniform prior is used.
 \item \code{finitPT} Numeric, initial preterminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
 the equilibrium condition.
 \item \code{finitT} Numeric, initial terminal fishing mortality for calculating the equilibrium juvenile proportions at age in the first year of the model. Default is 0. Set to \code{"estimate"} to allow the model to estimate
