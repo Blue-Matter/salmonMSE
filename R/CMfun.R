@@ -437,8 +437,10 @@ CM_SRR <- function(report, year1 = 1) {
   egg <- sapply(report, getElement, "egg") %>% apply(1, median)
   smolt <- sapply(report, function(x) x$N[-1, 1, 1]) %>% apply(1, median)
   epred <- seq(0, 1.1 * max(egg), length.out = 50)
-  spred <- sapply(report, function(x) x$alpha * epred * exp(-x$beta * epred)) %>%
-    apply(1, quantile, probs = c(0.025, 0.5, 0.975), na.rm = TRUE)
+
+  alpha <- sapply(report, getElement, "alpha") %>% quantile(c(0.025, 0.5, 0.975))
+  beta <- sapply(report, getElement, "beta") %>% quantile(c(0.025, 0.5, 0.975))
+  spred <- sapply(1:length(alpha), function(i) alpha[i] * epred * exp(-beta[i] * epred))
 
   year <- year1 + seq(1, length(egg)) - 1
 
@@ -448,25 +450,17 @@ CM_SRR <- function(report, year1 = 1) {
     smolt = smolt
   )
 
-  df_med <- data.frame(
+  df_SRR <- data.frame(
     egg = epred,
-    smolt = spred[2, ]
-  )
-
-  df_poly1 <- data.frame(
-    egg = epred,
-    smolt = spred[1, ]
-  )
-
-  df_poly2 <- data.frame(
-    egg = rev(epred),
-    smolt = rev(spred[3, ])
+    smolt = spred[, 2],
+    lwr = spred[, 1],
+    upr = spred[, 3]
   )
 
   g <- ggplot(df, aes(.data$egg, .data$smolt)) +
     geom_point(shape = 1) +
     geom_line(data = df_med) +
-    geom_polygon(data = rbind(df_poly1, df_poly2), fill = "grey", alpha = 0.5) +
+    #geom_ribbon(data = df_med, aes(ymin = .data$lwr, ymax = .data$upr), fill = "grey", alpha = 0.5) +
     labs(x = "Egg production", y = "Smolt production") +
     expand_limits(x = 0, y = 0)
 

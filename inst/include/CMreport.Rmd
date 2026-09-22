@@ -168,7 +168,7 @@ report <- lapply(report, function(i) {
 
 ### Egg production
 
-```{r SRR, fig.cap="Estimated stock-recruit relationship (medians and 95% prediction interval). Numbers correspond to years of egg production (predicts juvenile production for the following calendar year). Points show annual smolt production (medians)."}
+```{r SRR, fig.cap="Median stock-recruit relationship. Points show annual smolt production from egg production (medians), with numbers correspond to years of egg production."}
 CM_SRR(report, year1)
 ```
 

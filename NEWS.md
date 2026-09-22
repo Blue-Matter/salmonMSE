@@ -3,6 +3,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 # Version 3.1.0
 
 - Conditioning model can place lognormal prior on either Srep or Smax
+- Simplify `CM_SRR()` and only plot medians
 
 # Version 3.0.0
 
