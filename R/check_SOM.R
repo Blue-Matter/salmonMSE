@@ -17,14 +17,14 @@ check_SOM <- function(SOM, silent = FALSE) {
 
   ### Base slots ----
   if (!length(SOM@nsim)) stop("Need SOM@nsim")
-  #if (!length(SOM@nyears)) stop("Need SOM@nyears")
   if (!length(SOM@proyears)) stop("Need SOM@proyears")
-  if (!length(SOM@seed)) stop("Need SOM@seed")
+  #if (!length(SOM@seed)) stop("Need SOM@seed")
   nsim <- SOM@nsim
   if (nsim < 2) stop("Need SOM@nsim > 1")
   proyears <- SOM@proyears
 
   # Convert sub class objects to lists
+  SOM <- update_S4(SOM)
   obj <- c("Bio", "Habitat", "Hatchery", "Harvest", "Historical")
   for (i in obj) {
     if (inherits(slot(SOM, i), i)) slot(SOM, i) <- list(slot(SOM, i))
@@ -35,6 +35,34 @@ check_SOM <- function(SOM, silent = FALSE) {
 
   # Check straying
   if (!length(SOM@stray)) SOM@stray <- diag(ns)
+  if (nrow(SOM@stray) != ns && ncol(SOM@stray) != ns) {
+    stop("SOM@stray needs to be a ", ns, "x", ns, " square matrix")
+  }
+
+  # Check for harvest on stock complex
+  if (length(SOM@UPT_complex)) {
+    if (length(SOM@UPT_complex) == 1) {
+      SOM <- check_numeric(SOM, "UPT_complex", default = 0)
+    } else if (is.matrix(SOM@UPT_complex)) {
+      SOM <- check_array(SOM, "UPT_complex", c(nsim, proyears))
+    }
+    SOM <- check_numeric(SOM, "MSF_PT_complex", default = FALSE)
+    if (!silent) message("Preterminal fishery will operate on full complex (all populations)")
+  } else if (!silent && ns > 1) {
+    message("Preterminal fishery will operate on individual populations")
+  }
+
+  if (length(SOM@UT_complex)) {
+    if (length(SOM@UT_complex) == 1) {
+      SOM <- check_numeric(SOM, "UT_complex", default = 0)
+    } else if (is.matrix(SOM@UT_complex)) {
+      SOM <- check_array(SOM, "UT_complex", c(nsim, proyears))
+    }
+    SOM <- check_numeric(SOM, "MSF_T_complex", default = FALSE)
+    if (!silent) message("Terminal fishery will operate on full complex (all populations)")
+  } else if (!silent && ns > 1) {
+    message("Terminal fishery will operate on individual populations")
+  }
 
   for (s in 1:ns) {
     if (!silent && ns > 1) message("Checking parameters for population ", s)
@@ -247,11 +275,11 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest@type_PT <- match.arg(Harvest@type_PT, choices = c("u", "catch"))
     Harvest@type_T <- match.arg(Harvest@type_T, choices = c("u", "catch"))
 
-    if (Harvest@type_PT == "u") {
-      if (length(Harvest@u_preterminal) == 1) {
-        Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
-      } else if (is.matrix(Harvest@u_preterminal)) {
+    if (!length(SOM@UPT_complex) && Harvest@type_PT == "u") {
+      if (is.matrix(Harvest@u_preterminal)) {
         Harvest <- check_array(Harvest, "u_preterminal", c(nsim, proyears))
+      } else if (is.numeric(Harvest@u_preterminal)) {
+        Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
       }
       Harvest <- check_numeric(Harvest, "K_PT", default = NA_real_)
     } else {
@@ -259,11 +287,11 @@ check_SOM <- function(SOM, silent = FALSE) {
       Harvest <- check_numeric(Harvest, "K_PT", default = 0)
     }
 
-    if (Harvest@type_T == "u") {
-      if (length(Harvest@u_terminal) == 1) {
-        Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
-      } else if (is.matrix(Harvest@u_terminal)) {
+    if (!length(SOM@UT_complex) && Harvest@type_T == "u") {
+      if (is.matrix(Harvest@u_terminal)) {
         Harvest <- check_array(Harvest, "u_terminal", c(nsim, proyears))
+      } else if (is.numeric(Harvest@u_terminal)) {
+        Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
       }
       Harvest <- check_numeric(Harvest, "K_T", default = NA_real_)
     } else {
@@ -277,12 +305,12 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest <- check_numeric(Harvest, "release_mort", size = 2, default = c(0, 0))
 
     if (!length(Harvest@vulPT)) {
-      if (NAor0(Harvest@u_preterminal > 0) || NAor0(Harvest@K_PT)) {
+      if (length(SOM@UPT_complex) || NAor0(Harvest@u_preterminal > 0) || NAor0(Harvest@K_PT)) {
         Harvest@vulPT <- matrix(1, nsim, maxage)
       }
     }
     if (!length(Harvest@vulT)) {
-      if (NAor0(Harvest@u_terminal > 0) || NAor0(Harvest@K_T)) {
+      if (length(SOM@UT_complex) || NAor0(Harvest@u_terminal > 0) || NAor0(Harvest@K_T)) {
         Harvest@vulT <- matrix(1, nsim, maxage)
       }
     }

@@ -193,7 +193,7 @@ get_statevar <- function(SMSE, var, s, agg.fun = sum) {
 #' @importFrom graphics barplot box
 #' @importFrom stats median
 #' @export
-plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim) {
+plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim, ...) {
   Year <- 1:SMSE@proyears
 
   .HOS <- apply(SMSE@HOS[, s, , ], c(1, 3), sum)
@@ -227,7 +227,7 @@ plot_spawners <- function(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE,
     col <- c("#004533", "#76A6D0", "#FFF7FD") #grDevices::hcl.colors(3, palette = "PuBuGn")
     plot(Year, Spawners, xlim = range(Year) + c(-1, 0),
          xlab = "Projection Year", ylab = ifelse(prop, "Proportion", "Spawners"),
-         type = "n", ylim = ylim, xaxs = "i", yaxs = "i")
+         type = "n", ylim = ylim, xaxs = "i", yaxs = "i", ...)
     barplot(x, legend.text = rownames(x), space = 0, xlim = range(Year),
             col = col, border = "grey40", add = TRUE, xpd = FALSE)
     box()

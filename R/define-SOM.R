@@ -253,14 +253,20 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' @slot Name Character. Identifying name
 #' @slot nsim Integer. Number of simulations
 #' @slot proyears Integer. The number of projected years
-#' @slot seed Integer. A random seed to ensure users can reproduce results exactly
+#' @slot seed Integer. A random seed to ensure users can reproduce results exactly. Not currently used.
 #' @slot Bio \linkS4class{Bio} object informing biological parameters and natural production. Provide a list of Bio objects for multi-population models.
 #' @slot Habitat \linkS4class{Habitat} object containing management levers for controlling survival in the freshwater environment. Provide a list of Habitat objects for multi-population models.
 #' @slot Hatchery \linkS4class{Hatchery} object containing management levers for hatchery production and in-river removals. Provide a list of Hatchery objects for multi-population models.
 #' @slot Harvest \linkS4class{Harvest} object containing management levers for marine harvest. Provide a list of Harvest objects for multi-population models.
 #' @slot Historical \linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.
-#' @slot stray Matrix `[np, np]` where `np = length(Bio)` and row `p` indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
+#' @slot stray For multi-population models: matrix `[np, np]` where `np = length(Bio)` and row `p` indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
 #' `SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)` indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations. By default, an identity matrix is used (no straying).
+#' @slot UPT_complex *Optional* For multi-population models: aggregate preterminal harvest rate on stock complex. Can be numeric, matrix `[nsim, proyears]`, or function of the form `function(NO, HO, m) return(u)`.
+#' Leave empty to `numeric(0)` to operate on individual population basis.
+#' @slot UT_complex *Optional* For multi-population models: aggregate terminal harvest rate on stock complex. Can be numeric, matrix `[nsim, proyears]`, or function of the form `function(NO, HO, m) return(u)`
+#' Leave empty to `numeric(0)` to operate on individual population basis.
+#' @slot MSF_PT_complex *Optional* For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is `FALSE`
+#' @slot MSF_T_complex *Optional* For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is `FALSE`
 #' @keywords classes
 #'
 #' @export
@@ -269,7 +275,6 @@ SOM <- setClass(
   slots = c(
     Name = "character",
     nsim = "numeric",
-    #nyears = "numeric",
     proyears = "numeric",
     seed = "numeric",
     Bio = "Bio.list",
@@ -277,7 +282,11 @@ SOM <- setClass(
     Hatchery = "Hatchery.list",
     Harvest = "Harvest.list",
     Historical = "Historical.list",
-    stray = "array"
+    stray = "array",
+    UPT_complex = "num.matrix.function",
+    UT_complex = "num.matrix.function",
+    MSF_PT_complex = "logical",
+    MSF_T_complex = "logical"
   )
 )
 

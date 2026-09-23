@@ -17,7 +17,7 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{proyears}}{Integer. The number of projected years}
 
-\item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly}
+\item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly. Not currently used.}
 
 \item{\code{Bio}}{\linkS4class{Bio} object informing biological parameters and natural production. Provide a list of Bio objects for multi-population models.}
 
@@ -29,8 +29,18 @@ An object containing all the parameters for a salmon operating model (SOM).
 
 \item{\code{Historical}}{\linkS4class{Historical} object to inform historical reconstruction and informing starting abundance for the projection. Provide a list of Historical objects for multi-population models.}
 
-\item{\code{stray}}{Matrix \verb{[np, np]} where \code{np = length(Bio)} and row \code{p} indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
+\item{\code{stray}}{For multi-population models: matrix \verb{[np, np]} where \code{np = length(Bio)} and row \code{p} indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
 \code{SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)} indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations. By default, an identity matrix is used (no straying).}
+
+\item{\code{UPT_complex}}{\emph{Optional} For multi-population models: aggregate preterminal harvest rate on stock complex. Can be numeric, matrix \verb{[nsim, proyears]}, or function of the form \code{function(NO, HO, m) return(u)}.
+Leave empty to \code{numeric(0)} to operate on individual population basis.}
+
+\item{\code{UT_complex}}{\emph{Optional} For multi-population models: aggregate terminal harvest rate on stock complex. Can be numeric, matrix \verb{[nsim, proyears]}, or function of the form \code{function(NO, HO, m) return(u)}
+Leave empty to \code{numeric(0)} to operate on individual population basis.}
+
+\item{\code{MSF_PT_complex}}{\emph{Optional} For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is \code{FALSE}}
+
+\item{\code{MSF_T_complex}}{\emph{Optional} For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is \code{FALSE}}
 }}
 
 \section{Objects from the Class}{

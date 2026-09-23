@@ -20,16 +20,20 @@ Default is "u".}
 
 \item{\code{u_preterminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_PT = "u"}, the harvest rate of the immature
 component of the population in the pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch to
-(kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form \code{function(NO, HO, m) return(u)}.}
+(kept AEQ catch + return), where AEQ are adult equivalents. Function should be of the form \code{function(NO, HO, m) return(u)}.
+\emph{Not used if \code{SOM@UPT_complex} is specified.}}
 
 \item{\code{u_terminal}}{Numeric, matrix \verb{[nsim, proyears]}, or function. If \code{type_T = "u"}, the harvest rate (ratio of kept catch to
-of the terminal marine fishery. Function should be of the form \code{function(NO, HO, m) return(u)}.}
+of the terminal marine fishery. Function should be of the form \code{function(NO, HO, m) return(u)}.
+\emph{Not used if \code{SOM@UT_complex} is specified.}}
 
 \item{\code{K_PT}}{Numeric or function. If \code{type_PT = "catch"}, the catch target of the immature component of the population in the
-pre-terminal fishery. Function should be of the form \code{function(NO, HO, m) return(K)}.}
+pre-terminal fishery. Function should be of the form \code{function(NO, HO, m) return(K)}.
+\emph{Not used if \code{SOM@UPT_complex} is specified.}}
 
 \item{\code{K_T}}{Numeric or function. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.
-Function should be of the form \code{function(NO, HO, m) return(K)}.}
+Function should be of the form \code{function(NO, HO, m) return(K)}.
+\emph{Not used if \code{SOM@UT_complex} is specified.}}
 
 \item{\code{MSF_PT}}{Logical. Whether to implement mark-selective fishing in the preterminal fishery, with no retention on unmarked fish.}
 
@@ -39,10 +43,10 @@ Function should be of the form \code{function(NO, HO, m) return(K)}.}
 Implemented to model mark-selective fishing. Not used if either \code{MSF_PT} or \code{MSF_T} is \code{ FALSE}.}
 
 \item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery. Values indicate
-the proportion of fishing mortality experienced by each age class, where \code{F_preterminal = -log(1 - u_preterminal)}.}
+the proportion of fishing intensity experienced by each age class.}
 
 \item{\code{vulT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the terminal fishery. Values indicate
-the proportion of fishing mortality experienced by each age class, where \code{F_terminal = -log(1 - u_terminal)}.}
+the proportion of fishing intensity experienced by each age class.}
 }}
 
 \section{Creating Object}{

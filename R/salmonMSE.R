@@ -21,23 +21,23 @@
 #' @importFrom abind abind
 salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
 
-  SOM <- check_SOM(SOM, silent = silent)
+  SOM_checked <- check_SOM(SOM, silent = silent)
 
   if (ncores == 1) {
-    SMSE <- ProjectSOM(SOM, check = FALSE)
+    SMSE <- ProjectSOM(SOM_checked, check = FALSE)
   } else {
     nits <- split_sims(SOM@nsim, ncores = min(ncores, parallel::detectCores()))
     cores <- length(nits)
 
     if (cores == 1) {
       if (!silent) message("Running projection on one core (parallel processing not needed)")
-      SMSE <- ProjectSOM(SOM, check = FALSE)
+      SMSE <- ProjectSOM(SOM_checked, check = FALSE)
     } else {
       if (!silent) message("Running ", SOM@nsim, " simulations in parallel on ", cores, " cores")
       cl <- parallel::makeCluster(cores)
       on.exit(parallel::stopCluster(cl))
 
-      SMSE_list <- parallel::parLapplyLB(cl, X = nits, ProjectSOM_parallel, SOM = SOM)
+      SMSE_list <- parallel::parLapplyLB(cl, X = nits, ProjectSOM_parallel, SOM = SOM_checked)
 
       # Stitch objects together
       SMSE <- new("SMSE")
@@ -69,7 +69,7 @@ salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
   }
 
   SMSE@Misc$SOM <- SOM
-  SMSE@Misc$Ref <- calc_ref(SOM, check = FALSE)
+  SMSE@Misc$Ref <- calc_ref(SOM_checked, check = FALSE)
 
   return(SMSE)
 }
@@ -257,7 +257,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   #### Data objects from SOM ----
   # Hatchery arguments
   hatchery_args <- define_hatchery_args(SOM)
-  m <- sapply(SOM@Hatchery, slot, "m") # Mark rate, need to make sure check_SOM default is length 1
+  m <- sapply(SOM@Hatchery, slot, "m")
 
   do_hatchery <- sapply(1:ns, function(s) hatchery_args[[s]]$egg_target > 0)
   has_strays <- sapply(1:ns, function(s) {
@@ -300,18 +300,23 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   }) %>%
     aperm(c(1, 5, 2, 3, 4))
 
-  # Harvest/fishery settings - all from the first harvest object
-  type_PT <- SOM@Harvest[[1]]@type_PT
-  type_T <- SOM@Harvest[[1]]@type_T
+  # Harvest fishery settings (complex?)
+  PT_complex <- length(SOM@UPT_complex) > 0
+  T_complex <- length(SOM@UT_complex) > 0
 
-  u_preterminal <- SOM@Harvest[[1]]@u_preterminal
-  u_terminal <- SOM@Harvest[[1]]@u_terminal
+  if (!PT_complex) {
+    type_PT <- sapply(SOM@Harvest, slot, "type_PT")
+    u_preterminal <- lapply(SOM@Harvest, slot, "u_preterminal")
+    K_PT <- lapply(SOM@Harvest, slot, "K_PT")
+    MSF_PT <- sapply(SOM@Harvest, slot, "MSF_PT")
+  }
 
-  K_PT <- SOM@Harvest[[1]]@K_PT
-  K_T <- SOM@Harvest[[1]]@K_T
-
-  MSF_PT <- SOM@Harvest[[1]]@MSF_PT
-  MSF_T <- SOM@Harvest[[1]]@MSF_T
+  if (!T_complex) {
+    type_T <- sapply(SOM@Harvest, slot, "type_T")
+    u_terminal <- lapply(SOM@Harvest, slot, "u_terminal")
+    K_T <- lapply(SOM@Harvest, slot, "K_T")
+    MSF_T <- sapply(SOM@Harvest, slot, "MSF_T")
+  }
 
   # Fishery vulnerability
   vulPT <- vulT <- array(NA_real_, c(nsim, ns, nage))
@@ -383,34 +388,67 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   for (y in 1:proyears) {
 
     # Calculate AEQ
-    if (sum(u_preterminal, K_PT, na.rm = TRUE)) {
-      for (a in seq(nage-1, 1)) {
-        AEQ_NOS[, , a, y, ] <- p_mature_NOS[, , a, y, ] + (1 - p_mature_NOS[, , a, y, ]) *
-          exp(-Mjuv_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
-        AEQ_HOS[, , a, y, ] <- p_mature_HOS[, , a, y, ] + (1 - p_mature_HOS[, , a, y, ]) *
-          exp(-Mjuv_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
-      }
+    for (a in seq(nage-1, 1)) {
+      AEQ_NOS[, , a, y, ] <- p_mature_NOS[, , a, y, ] + (1 - p_mature_NOS[, , a, y, ]) *
+        exp(-Mjuv_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
+      AEQ_HOS[, , a, y, ] <- p_mature_HOS[, , a, y, ] + (1 - p_mature_HOS[, , a, y, ]) *
+        exp(-Mjuv_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
     }
 
-    # Preterminal catch - harvest management acts upon on all stocks simultaneously
-    PT_Calcs <- lapply(1:nsim, function(x) {
-      xx <- sims[x]
-      catch_func(
-        NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
-        HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
-        type = type_PT,
-        U = if (is.matrix(u_preterminal)) u_preterminal[xx, y] else u_preterminal,
-        K = K_PT,
-        V = matrix(vulPT[x, , ], ns, nage),
-        m = m,
-        MSF = MSF_PT, # Need to make sure check_SOM default is length 1
-        release_mort = release_mort[1, ],
-        p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
-        p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
-        AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
-        AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
-      )
-    })
+    # Preterminal catch
+    if (PT_complex) {
+      PT_Calcs <- lapply(1:nsim, function(x) {
+        xx <- sims[x]
+        catch_func(
+          NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
+          HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
+          type = "u",
+          U = if (is.matrix(SOM@UPT_complex)) SOM@UPT_complex[xx, y] else SOM@UPT_complex,
+          K = NA_real_,
+          V = matrix(vulPT[x, , ], ns, nage),
+          m = m,
+          MSF = SOM@MSF_PT_complex,
+          release_mort = release_mort[1, ],
+          p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
+          p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
+          AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
+          AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
+        )
+      })
+    } else {
+      PT_Calcs <- lapply(1:nsim, function(x) {
+        xx <- sims[x]
+        PT_Calcs_x <- lapply(1:ns, function(s) {
+          catch_func(
+            NO = array(Njuv_NOS[x, s, , y, ], c(1, nage, n_g)),
+            HO = array(Njuv_HOS[x, s, , y, ], c(1, nage, n_r)),
+            type = type_PT[s],
+            U = if (is.matrix(u_preterminal[[s]])) u_preterminal[[s]][xx, y] else u_preterminal[[s]],
+            K = K_PT[[s]],
+            V = matrix(vulPT[x, s, ], 1, nage),
+            m = m[s],
+            MSF = MSF_PT[s],
+            release_mort = release_mort[1, s],
+            p_mature_NO = array(p_mature_NOS[x, s, , y, ], c(1, nage, n_g)),
+            p_mature_HO = array(p_mature_HOS[x, s, , y, ], c(1, nage, n_r)),
+            AEQ_NO = array(AEQ_NOS[x, s, , y, ], c(1, nage, n_g)),
+            AEQ_HO = array(AEQ_HOS[x, s, , y, ], c(1, nage, n_r))
+          )
+        })
+        vars <- names(PT_Calcs_x[[1]])
+        lapply(vars, function(i) {
+          out <- lapply(PT_Calcs_x, getElement, i)
+          if (is.array(out[[1]])) {
+            out$along <- 1
+            do.call(abind::abind, out) %>% structure(dimnames = NULL)
+          } else {
+            do.call(c, out)
+          }
+        }) %>%
+          structure(names = vars)
+      })
+    }
+
     vars <- names(PT_Calcs[[1]])
     PT_Calcs_y <- lapply(vars, function(i) sapply2(PT_Calcs, getElement, i)) %>%
       structure(names = vars)
@@ -433,21 +471,52 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     Return_NOS[, , , y, ] <- (Njuv_NOS[, , , y, ] - KPT_NOS[, , , y, ] - DDPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
     Return_HOS[, , , y, ] <- (Njuv_HOS[, , , y, ] - KPT_HOS[, , , y, ] - DDPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
 
-    # Terminal marine catch - harvest management acts upon on all stocks simultaneously
-    T_Calcs <- lapply(1:nsim, function(x) {
-      xx <- sims[x]
-      catch_func(
-        NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
-        HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
-        type = type_T,
-        U = if (is.matrix(u_terminal)) u_terminal[xx, y] else u_terminal,
-        K = K_T,
-        V = matrix(vulT[x, , ], ns, nage),
-        m = m,
-        MSF = MSF_T,
-        release_mort = release_mort[2, ]
-      )
-    })
+    # Terminal marine catch
+    if (T_complex) {
+      T_Calcs <- lapply(1:nsim, function(x) {
+        xx <- sims[x]
+        catch_func(
+          NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
+          HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
+          type = "u",
+          U = if (is.matrix(SOM@UT_complex)) SOM@UT_complex[xx, y] else SOM@UT_complex,
+          K = NA_real_,
+          V = matrix(vulT[x, , ], ns, nage),
+          m = m,
+          MSF = SOM@MSF_T_complex,
+          release_mort = release_mort[2, ]
+        )
+      })
+    } else {
+      T_Calcs <- lapply(1:nsim, function(x) {
+        T_Calcs_x <- lapply(1:ns, function(s) {
+          xx <- sims[x]
+          catch_func(
+            NO = array(Return_NOS[x, s, , y, ], c(1, nage, n_g)),
+            HO = array(Return_HOS[x, s, , y, ], c(1, nage, n_r)),
+            type = type_T[s],
+            U = if (is.matrix(u_terminal[[s]])) u_terminal[[s]][xx, y] else u_terminal[[s]],
+            K = K_T[[s]],
+            V = matrix(vulT[x, s, ], 1, nage),
+            m = m[s],
+            MSF = MSF_T[s],
+            release_mort = release_mort[2, s]
+          )
+        })
+        vars <- names(T_Calcs_x[[1]])
+        lapply(vars, function(i) {
+          out <- lapply(T_Calcs_x, getElement, i)
+          if (is.array(out[[1]])) {
+            out$along <- 1
+            do.call(abind::abind, out) %>% structure(dimnames = NULL)
+          } else {
+            do.call(c, out)
+          }
+        }) %>%
+          structure(names = vars)
+      })
+    }
+
     vars <- names(T_Calcs[[1]])
     T_Calcs_y <- lapply(vars, function(i) sapply2(T_Calcs, getElement, i)) %>%
       structure(names = vars)
