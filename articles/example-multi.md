@@ -1,29 +1,37 @@
 # Multi-population model
 
-salmonMSE has the capability for multi-population modeling, which may
-represent distinct biological units that spawn and reproduce separately.
+salmonMSE has the capability for multi-population modeling, which
+concurrently project distinct biological units that spawn and reproduce
+separately.
+
 There may be several use-cases for multi-population models. For example,
 one wants to evaluate:
 
-1.  The performance of management strategies for fisheries that catch
-    multiple biological units. Smaller or less productive biological
-    units may be choke points and there are objectives to ensure the
-    sustainability of all population units. Will a specified harvest
-    rate ensure the sustainability of a low productivity population
-    unit?
-
-2.  The implications of hatchery production in large systems but there
+1.  The implications of hatchery production in large systems but there
     may be straying to unenhanced population units. Despite low stray
     rates, the hatchery influence can be high in small systems due to
     large hatchery production in an adjacent population. Will certain
     hatchery production levels compromise the natural characteristics of
     nearby systems?
 
+2.  The performance of management strategies for fisheries that catch
+    multiple biological units. Smaller or less productive biological
+    units may be choke points and there are objectives to ensure the
+    sustainability of all population units. Will a specified harvest
+    rate ensure the sustainability of a low productivity population
+    unit?
+
 The following code demonstrates the setup for a multi-population model
 and builds off the [first
-example](https://docs.salmonmse.com/articles/example.md) to evaluate the
-influence of a nearby hatchery (population \#1) on a small un-enhanced
-system (population \#2).
+example](https://docs.salmonmse.com/articles/example.md).
+
+The first case study evaluates the influence of a nearby hatchery
+(population \#1) on a small un-enhanced system (population \#2).
+
+The second case study demonstrates the two-population model with
+mixed-stock fishery.
+
+## Case study 1: Straying
 
 Just as in the simple example, we create an object of class `SOM`
 comprising of sub-components that specify the biological dynamics, as
@@ -32,7 +40,7 @@ be lists corresponding to each population.
 
 Below is the setup for each of the sub-components.
 
-## Bio object
+### Bio object
 
 We create a list containing Bio objects for each of two populations.
 Both populations have the same fecundity and marine survival, where the
@@ -70,7 +78,7 @@ Bio[[2]]@kappa
 #> [1] 2
 ```
 
-## Hatchery object
+### Hatchery object
 
 The larger first population has a hatchery program of 10,000 releases
 per year (quite small since the individual fecundity is 5,040), with no
@@ -112,7 +120,7 @@ Hatchery <- lapply(1:ns, function(s) {
 })
 ```
 
-## Habitat object
+### Habitat object
 
 No freshwater specific habitat-based survival is modeled here. We
 specified density-dependent egg-smolt survival in the `Bio` objects.
@@ -127,7 +135,7 @@ Habitat <- lapply(1:ns, function(s) {
 })
 ```
 
-## Harvest object
+### Harvest object
 
 Here, a terminal harvest rate of 0.203 is specified for both
 populations.
@@ -159,7 +167,7 @@ Harvest <- lapply(1:ns, function(s) {
 })
 ```
 
-## Historical object
+### Historical object
 
 The operating model is initialized with a return of 1000 natural-origin
 and hatchery-origin fish each in the first population, and a return of
@@ -176,7 +184,7 @@ Historical <- lapply(1:ns, function(s) {
 })
 ```
 
-## Stray matrix
+### Stray matrix
 
 Once these objects are set up, they can be combined to create the
 operating model. The projection will run for 50 years:
@@ -186,7 +194,7 @@ operating model. The projection will run for 50 years:
 SOM <- new(
   "SOM",
   nsim = nsim, proyears = 50,
-  Bio, Habitat, Hatchery, Harvest, Historical,
+  Bio, Habitat, Hatchery, Harvest, Historical
 )
 ```
 
@@ -220,7 +228,7 @@ salmonMSE:::plot_stray(SOM@stray, s_names = paste("Pop.", 1:2))
 
 *Stray rates in the multi-population model.*
 
-## Results
+### Results
 
 Once the operating model is set up, we can run the projection and
 generate the Markdown report:
@@ -249,3 +257,230 @@ hatchery-origin juveniles are present in the second population:
 max(out@Njuv_HOS[, 2, , ])
 #> [1] 0
 ```
+
+## Case study 2: Mixed-stock fishery
+
+Similar to Case study 1, we have Population 1 which is more productive
+(productivity = 3) than Population 2 (productivity = 2). However, they
+have equal capacity. We also turn off hatchery production for
+simplicity.
+
+``` r
+
+ns <- 2
+nsim <- 3
+SAR <- 0.01
+
+Bio <- lapply(1:ns, function(s) {
+  new(
+    "Bio",
+    maxage = 3,
+    p_mature = c(0, 0, 1),
+    SRrel = "BH",
+    capacity = 1e4,
+    kappa = ifelse(s == 1, 3, 2),
+    Mjuv_NOS = c(0, -log(SAR)),
+    fec = c(0, 0, 5040),
+    p_female = 0.49,
+    s_enroute = 1
+  )
+})
+
+Habitat <- lapply(1:ns, function(s) {
+  new(
+    "Habitat",
+    use_habitat = FALSE
+  )
+})
+
+Hatchery <- lapply(1:ns, function(s) {
+  new(
+    "Hatchery",
+    n_yearling = 0,
+    n_subyearling = 0
+  )
+})
+
+Historical <- lapply(1:ns, function(s) {
+  new(
+    "Historical",
+    InitNjuv_NOS = 100,
+    InitNjuv_HOS = 0
+  )
+})
+
+Harvest_equalvul <- lapply(1:ns, function(s) {
+  new(
+    "Harvest",
+    vulPT = c(0, 0, 0),
+    vulT = c(1, 1, 1)
+  )
+})
+
+SOM <- new(
+  "SOM",
+  nsim = nsim, proyears = 50,
+  Bio, Habitat, Hatchery, Harvest_equalvul, Historical
+)
+```
+
+In the above code chunk, the `Harvest` objects specify equal
+vulnerability between the two populations (`vulT` is 1 for both). Note
+that we don’t specify a harvest rate within the `Harvest` objects, as
+they are intended for fisheries which act independently among
+populations.
+
+The harvest rate for a fishery that operates on both populations
+simultaneously is specified in `SOM@UPT_complex` and `SOM@UT_complex`.
+
+For example, set a terminal harvest rate to 30% as follows:
+
+``` r
+
+SOM@UT_complex <- 0.3
+```
+
+This example is trivial as both populations will experience an
+exploitation rate of 30%.
+
+A multi-population model is more relevant when:
+
+- Populations have differing vulnerability to the fishery
+- Harvest rate is dynamic because it is a function of a control rule
+- Mark-selective fishing exerts different exploitation rates by
+  population depending on the mark rate and hatchery production levels
+
+### Example A: Differing vulnerability
+
+Populations can have different vulnerability to the mixed-stock fishery.
+For example, the spatial footprint of the fishery leads to more frequent
+encounters of a particular population.
+
+Here, we adjust the vulnerability so that one unit of fishing effort
+leads to twice the encounters of Population 2 than of 1:
+
+``` r
+
+Harvest_unequalvul <- lapply(1:ns, function(s) {
+  new(
+    "Harvest",
+    vulPT = c(0, 0, 0),
+    vulT = if (s == 1) c(0.5, 0.5, 0.5) else c(1, 1, 1)
+  )
+})
+
+SOM_A <- new(
+  "SOM",
+  nsim = nsim, proyears = 50,
+  Bio, Habitat, Hatchery, Harvest_unequalvul, Historical
+)
+SOM_A@UT_complex <- 0.3
+
+SMSE_A <- salmonMSE(SOM_A)
+#> Preterminal fishery will operate on individual populations
+#> Terminal fishery will operate on full complex (all populations)
+#> Checking parameters for population 1
+#> Checking parameters for population 2
+```
+
+If we look at the ratio of total catch and total returns, we achieve an
+aggregate harvest rate of 30%, as specified above:
+
+``` r
+
+Catch <- apply(SMSE_A@KT_NOS, c(1, 4), sum) # sum over populations and ages
+Return <- apply(SMSE_A@Return_NOS, c(1, 4), sum)
+U <- apply(Catch/Return, 2, median)
+plot(U, type = "o", ylim = c(0, 0.5), xlab = "Year", ylab = "Aggregate harvest rate")
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-17-1.png)
+
+Due to differing vulnerability and return sizes, the exploitation rate
+on Population 2 is higher:
+
+``` r
+
+par(mfcol = c(1, 2))
+plot_fishery(SMSE_A, s = 1, type = "exploit", main = "Population 1", ylim = c(0, 0.5))
+plot_fishery(SMSE_A, s = 2, type = "exploit", main = "Population 2", ylim = c(0, 0.5))
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-18-1.png)
+
+Here is the catch composition:
+
+``` r
+
+Catch_comp <- apply(SMSE_A@KT_NOS, c(1, 2, 4), sum) |> apply(2:3, median)
+barplot(Catch_comp, xlab = "Year", ylab = "Catch", legend.text = c("Population 1", "Population 2"))
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-19-1.png)
+
+### Example B: Aggregate control rule
+
+For mixed-stock fisheries, we can simulate harvest control rules that
+operate on the aggregate and then evaluate outcomes by individual
+population.
+
+In this example, the control rule allows for catch of all fish in excess
+of the escapement goal of 60:
+
+``` r
+
+SOM_B <- new(
+  "SOM",
+  nsim = nsim, proyears = 50,
+  Bio, Habitat, Hatchery, Harvest_equalvul, Historical
+)
+SOM_B@UT_complex <- function(NO, HO, m) {
+  Return <- sum(NO, HO)
+  Catch <- max(0, Return - 60)
+  U <- Catch/Return
+  U[Return == 0] <- 0
+  return(U)
+}
+SMSE_B <- salmonMSE(SOM_B)
+#> Preterminal fishery will operate on individual populations
+#> Terminal fishery will operate on full complex (all populations)
+#> Checking parameters for population 1
+#> Checking parameters for population 2
+```
+
+The control rule equilibriates after several generations:
+
+``` r
+
+par(mfcol = c(1, 2))
+plot_fishery(SMSE_B, s = 1, type = "exploit", main = "Population 1")
+plot_fishery(SMSE_B, s = 2, type = "exploit", main = "Population 2")
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-21-1.png)
+
+While both population experience the same exploitation rate, Population
+2 is lower due to lower productivity:
+
+``` r
+
+par(mfcol = c(1, 2))
+plot_spawners(SMSE_B, s = 1, prop = FALSE, main = "Population 1", ylim = c(0, 60))
+plot_spawners(SMSE_B, s = 2, prop = FALSE, main = "Population 2", ylim = c(0, 60))
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-22-1.png)
+
+In aggregate, the escapement target of 60 is met:
+
+``` r
+
+Spawner_comp <- apply(SMSE_B@NOS, c(1, 2, 4), sum) |> apply(2:3, median)
+barplot(
+  Spawner_comp, xlab = "Year", ylab = "Spawners", 
+  legend.text = c("Population 1", "Population 2"), ylim = c(0, 80),
+  panel.first = grid()
+)
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-23-1.png)

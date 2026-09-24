@@ -39,7 +39,7 @@ plot_statevar_ts(
 
 plot_statevar_hist(SMSE, var = "PNI", s = 1, y, figure = TRUE, xlab = var, ...)
 
-plot_spawners(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim)
+plot_spawners(SMSE, s = 1, prop = TRUE, FUN = median, figure = TRUE, ylim, ...)
 
 plot_fitness(SMSE, s = 1, FUN = median, figure = TRUE, ylim)
 

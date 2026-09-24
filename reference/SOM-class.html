@@ -62,7 +62,7 @@
 
 
 <dt><code>seed</code></dt>
-<dd><p>Integer. A random seed to ensure users can reproduce results exactly</p></dd>
+<dd><p>Integer. A random seed to ensure users can reproduce results exactly. Not currently used.</p></dd>
 
 
 <dt><code>Bio</code></dt>
@@ -86,8 +86,26 @@
 
 
 <dt><code>stray</code></dt>
-<dd><p>Matrix <code>[np, np]</code> where <code>np = length(Bio)</code> and row <code>p</code> indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
+<dd><p>For multi-population models: matrix <code>[np, np]</code> where <code>np = length(Bio)</code> and row <code>p</code> indicates the re-assignment of hatchery fish to each population when they mature (at the recruitment life stage). For example,
 <code>SOM@stray &lt;- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)</code> indicates that 75 percent of mature fish return to their natal river and 25 percent stray in both populations. By default, an identity matrix is used (no straying).</p></dd>
+
+
+<dt><code>UPT_complex</code></dt>
+<dd><p><em>Optional</em> For multi-population models: aggregate preterminal harvest rate on stock complex. Can be numeric, matrix <code>[nsim, proyears]</code>, or function of the form <code>function(NO, HO, m) return(u)</code>.
+Leave empty to <code>numeric(0)</code> to operate on individual population basis.</p></dd>
+
+
+<dt><code>UT_complex</code></dt>
+<dd><p><em>Optional</em> For multi-population models: aggregate terminal harvest rate on stock complex. Can be numeric, matrix <code>[nsim, proyears]</code>, or function of the form <code>function(NO, HO, m) return(u)</code>
+Leave empty to <code>numeric(0)</code> to operate on individual population basis.</p></dd>
+
+
+<dt><code>MSF_PT_complex</code></dt>
+<dd><p><em>Optional</em> For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is <code>FALSE</code></p></dd>
+
+
+<dt><code>MSF_T_complex</code></dt>
+<dd><p><em>Optional</em> For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is <code>FALSE</code></p></dd>
 
 
 </dl></div>

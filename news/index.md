@@ -2,7 +2,16 @@
 
 ## Version 3.1.0
 
-- Conditioning model can place lognormal prior on either Srep or Smax
+- Conditioning model can place lognormal prior on either Srep or Smax,
+  additional option for truncated normal prior on log(productivity) (\>
+  0)
+- Simplify
+  [`CM_SRR()`](https://docs.salmonmse.com/reference/CMfigures.md) and
+  only plot medians
+- New `SOM` slots for fisheries on stock complexes in multi-population
+  models
+- [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
+  returns the original `SOM` object in `SMSE@Misc$SOM`
 
 ## Version 3.0.0
 

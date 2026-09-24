@@ -19,7 +19,8 @@ An object containing all the parameters for a salmon operating model
 
 - `seed`:
 
-  Integer. A random seed to ensure users can reproduce results exactly
+  Integer. A random seed to ensure users can reproduce results exactly.
+  Not currently used.
 
 - `Bio`:
 
@@ -56,13 +57,38 @@ An object containing all the parameters for a salmon operating model
 
 - `stray`:
 
-  Matrix `[np, np]` where `np = length(Bio)` and row `p` indicates the
-  re-assignment of hatchery fish to each population when they mature (at
-  the recruitment life stage). For example,
+  For multi-population models: matrix `[np, np]` where
+  `np = length(Bio)` and row `p` indicates the re-assignment of hatchery
+  fish to each population when they mature (at the recruitment life
+  stage). For example,
   `SOM@stray <- matrix(c(0.75, 0.25, 0.25, 0.75), 2, 2)` indicates that
   75 percent of mature fish return to their natal river and 25 percent
   stray in both populations. By default, an identity matrix is used (no
   straying).
+
+- `UPT_complex`:
+
+  *Optional* For multi-population models: aggregate preterminal harvest
+  rate on stock complex. Can be numeric, matrix `[nsim, proyears]`, or
+  function of the form `function(NO, HO, m) return(u)`. Leave empty to
+  `numeric(0)` to operate on individual population basis.
+
+- `UT_complex`:
+
+  *Optional* For multi-population models: aggregate terminal harvest
+  rate on stock complex. Can be numeric, matrix `[nsim, proyears]`, or
+  function of the form `function(NO, HO, m) return(u)` Leave empty to
+  `numeric(0)` to operate on individual population basis.
+
+- `MSF_PT_complex`:
+
+  *Optional* For multi-population models: whether the preterminal
+  fishery on stock complex is mark-selective. Default is `FALSE`
+
+- `MSF_T_complex`:
+
+  *Optional* For multi-population models: whether the terminal fishery
+  on stock complex is mark-selective. Default is `FALSE`
 
 ## Objects from the Class
 

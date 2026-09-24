@@ -221,6 +221,12 @@ Data should passed through a named list with the following entries.
   for spawners that maximizes recruitment. Choose between `so_sd` or
   `smax_sd`. Leave as `NULL` if using `so_sd`
 
+- `cr_mu` *Optional* Numeric, the prior mean for productivity (recruits
+  per spawners) in logspace. If `NULL`, a uniform prior is used.
+
+- `cr_sd` *Optional* Numeric, the lognormal prior standard deviation for
+  productivity. If `NULL`, a uniform prior is used.
+
 - `finitPT` Numeric, initial preterminal fishing mortality for
   calculating the equilibrium juvenile proportions at age in the first
   year of the model. Default is 0. Set to `"estimate"` to allow the
@@ -288,8 +294,8 @@ Starting values for parameters can be provided through a named list:
 - `log_cr` Numeric, log of the compensation ratio (productivity).
   Default is 3.
 
-- `log_smax` Numeric, log spawners that maximizes recruitment. Default
-  is `log(mean(data$obsescape))`.
+- `log_so` Numeric, unfished spawners in logspace. Default is
+  `log(3 * max(data$obsescape))`.
 
 - `moadd` Numeric, additive term to base natural mortality rate for age
   1 juveniles. Default is zero.

@@ -161,6 +161,8 @@ calc_Sgen(
 ``` r
 ref_simple <- calc_ref(simple_SOM)
 ref_multi <- calc_ref(multi_SOM)
+#> Preterminal fishery will operate on individual populations
+#> Terminal fishery will operate on individual populations
 #> Checking parameters for population 1
 #> Checking parameters for population 2
 ```

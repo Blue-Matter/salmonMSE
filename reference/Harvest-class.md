@@ -24,26 +24,30 @@ The component of the operating model that controls marine harvest.
   the harvest rate of the immature component of the population in the
   pre-terminal fishery. The harvest rate is the ratio to kept AEQ catch
   to (kept AEQ catch + return), where AEQ are adult equivalents.
-  Function should be of the form `function(NO, HO, m) return(u)`.
+  Function should be of the form `function(NO, HO, m) return(u)`. *Not
+  used if `SOM@UPT_complex` is specified.*
 
 - `u_terminal`:
 
   Numeric, matrix `[nsim, proyears]`, or function. If `type_T = "u"`,
   the harvest rate (ratio of kept catch to of the terminal marine
   fishery. Function should be of the form
-  `function(NO, HO, m) return(u)`.
+  `function(NO, HO, m) return(u)`. *Not used if `SOM@UT_complex` is
+  specified.*
 
 - `K_PT`:
 
   Numeric or function. If `type_PT = "catch"`, the catch target of the
   immature component of the population in the pre-terminal fishery.
-  Function should be of the form `function(NO, HO, m) return(K)`.
+  Function should be of the form `function(NO, HO, m) return(K)`. *Not
+  used if `SOM@UPT_complex` is specified.*
 
 - `K_T`:
 
   Numeric or function. If `type_T = "catch"`, the catch target of the
   return in the terminal fishery. Function should be of the form
-  `function(NO, HO, m) return(K)`.
+  `function(NO, HO, m) return(K)`. *Not used if `SOM@UT_complex` is
+  specified.*
 
 - `MSF_PT`:
 
@@ -66,15 +70,13 @@ The component of the operating model that controls marine harvest.
 
   Vector length `maxage` or matrix `[nsim, maxage]`. Vulnerability
   schedule (between 0-1) in the preterminal fishery. Values indicate the
-  proportion of fishing mortality experienced by each age class, where
-  `F_preterminal = -log(1 - u_preterminal)`.
+  proportion of fishing intensity experienced by each age class.
 
 - `vulT`:
 
   Vector length `maxage` or matrix `[nsim, maxage]`. Vulnerability
   schedule (between 0-1) in the terminal fishery. Values indicate the
-  proportion of fishing mortality experienced by each age class, where
-  `F_terminal = -log(1 - u_terminal)`.
+  proportion of fishing intensity experienced by each age class.
 
 ## Creating Object
 
