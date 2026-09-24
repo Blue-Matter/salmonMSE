@@ -224,7 +224,7 @@ check_SOM <- function(SOM, silent = FALSE) {
         Hatchery <- check_numeric(Hatchery, "premove_NOS", default = 0)
       }
 
-      Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2)
+      Hatchery <- check_numeric(Hatchery, "fitness_type", size = 2, default = rep("none", 2))
       if (any(Hatchery@fitness_type == "Ford")) {
         Hatchery <- check_numeric(Hatchery, "theta", size = 2)
         Hatchery <- check_numeric(Hatchery, "rel_loss", size = 3)
@@ -302,6 +302,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
     Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
 
+    if (length(Harvest@release_mort) == 1) Harvest@release_mort <- rep(Harvest@release_mort, 2)
     Harvest <- check_numeric(Harvest, "release_mort", size = 2, default = c(0, 0))
 
     if (!length(Harvest@vulPT)) {
