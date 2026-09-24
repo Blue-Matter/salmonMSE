@@ -320,15 +320,19 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
     as.character()
   var_name <- paste0(var, var_vec)
 
-  x <- sapply(var_name, function(i) {
+  has_PT <- sum(SMSE@ExPT_NOS, SMSE@ExPT_HOS) > 0
+  has_T <- sum(SMSE@ExT_NOS, SMSE@ExT_HOS) > 0
+
+  x <- sapply2(var_name, function(i) {
     plot_statevar_ts(SMSE, var = i, s = s, figure = FALSE, quant = FALSE)
-  }, simplify = "array") %>%
+  }) %>%
     apply(2:3, FUN)
 
-  if (figure && sum(x)) {
+  if (figure && (has_PT || has_T)) {
     Year <- 1:SMSE@proyears
 
     if (missing(ylim)) ylim <- c(0, 1.1) * range(x, na.rm = TRUE)
+    if (all(x < 1e-8, na.rm = TRUE)) ylim <- c(0, 1)
 
     if (missing(ylab)) {
       ylab <- switch(
@@ -343,12 +347,24 @@ plot_fishery <- function(SMSE, s = 1, type = c("catch", "exploit", "harvest"), F
          ylab = ylab, ...)
     col <- 1:length(var_name)
 
+    var_plot <- rep(FALSE, length(var_vec))
+    if (has_PT) var_plot[grepl("^PT", var_vec)] <- TRUE # ^ = start of string
+    if (has_T) var_plot[grepl("^T", var_vec)] <- TRUE
+
     for (i in 1:length(var_name)) {
-      x_i <- x[, i]
-      ind <- x_i > 0
-      lines(Year[ind], x_i[ind], type = 'o', pch = 1, col = col[i], lty = 1)
+      if (var_plot[i]) {
+        if (grepl("^PT", var_vec[i])) {
+          ind <- apply(SMSE@Njuv_NOS + SMSE@Njuv_HOS, 4, sum) > 0
+        } else {
+          ind <- apply(SMSE@Return_NOS + SMSE@Return_HOS, 4, sum) > 0
+        }
+        lines(Year[ind], x[ind, i], type = 'o', pch = 1, col = col[i], lty = 1)
+      }
     }
-    legend("topleft", legend = var_vec, col = 1:4, pch = 1, lty = 1, bty = "n")
+
+    var_label <- outer(c("Preterminal", "Terminal"), c("NOS", "HOS"), FUN = "paste") %>%
+      as.character()
+    legend("topleft", legend = var_label[var_plot], col = c(1:4)[var_plot], pch = 1, lty = 1, bty = "n")
   }
 
   invisible(x)
