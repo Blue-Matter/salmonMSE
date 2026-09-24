@@ -67,21 +67,25 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
   # Solve for fishing effort or encounter rate that achieves the harvest rate (u_solver) or catch target (K_solve)
   ns <- dim(NO)[1]
   do_solver <- (type == "u" && u_solve > 0) || (type == "K" && K_solve > 0)
+
+  if (MSF) {
+    ret_NO <- rep(0, ns)
+    ret_HO <- m
+  } else {
+    ret_NO <- ret_HO <- rep(1, ns)
+  }
+
   if (do_solver && sum(NO, HO)) {
 
-    if (MSF) {
-      N_solve <- HO
-      p_mature_solve <- p_mature_HO
-      ret_solve <- m
-      p_mature_solve <- p_mature_HO
-      AEQ_solve <- AEQ_HO
-    } else {
-      N_solve <- abind::abind(NO, HO, along = 3)
-      p_mature_solve <- abind::abind(p_mature_NO, p_mature_HO, along = 3)
-      ret_solve <- rep(1, ns)
-      AEQ_solve <- abind::abind(AEQ_NO, AEQ_HO, along = 3)
-    }
+    N_solve <- abind::abind(NO, HO, along = 3)
+    p_mature_solve <- abind::abind(p_mature_NO, p_mature_HO, along = 3)
+    AEQ_solve <- abind::abind(AEQ_NO, AEQ_HO, along = 3)
     V_solve <- array(V, dim(N_solve))
+    ret_solve <- abind::abind(
+      array(ret_NO, dim(NO)),
+      array(ret_HO, dim(HO)),
+      along = 3
+    )
 
     if (sum(N_solve)) {
       Emax <- 20
@@ -105,14 +109,6 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
     }
   } else {
     Effort <- 0
-  }
-
-  ns <- dim(NO)[1]
-  if (MSF) {
-    ret_NO <- rep(0, ns)
-    ret_HO <- m
-  } else {
-    ret_NO <- ret_HO <- rep(1, ns)
   }
 
   # K = kept catch, D = discards, DD = dead discards, U = harvest rate, Ex = exploitation rate
