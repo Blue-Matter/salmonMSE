@@ -33,3 +33,4 @@
   fishing)](https://docs.salmonmse.com/articles/tutorial-4.md):
 - [Custom brood and catch
   functions](https://docs.salmonmse.com/articles/custom-function.md):
+- [Tips and tricks](https://docs.salmonmse.com/articles/tips-tricks.md):
