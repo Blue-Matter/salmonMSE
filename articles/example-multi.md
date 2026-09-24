@@ -1,5 +1,7 @@
 # Multi-population model
 
+## Introduction
+
 salmonMSE has the capability for multi-population modeling, which
 concurrently project distinct biological units that spawn and reproduce
 separately.
@@ -422,7 +424,9 @@ barplot(Catch_comp, xlab = "Year", ylab = "Catch", legend.text = c("Population 1
 
 For mixed-stock fisheries, we can simulate harvest control rules that
 operate on the aggregate and then evaluate outcomes by individual
-population.
+population. A [custom
+function](https://docs.salmonmse.com/articles/custom-function.html#catch-functions-and-harvest-control-rules)
+is used such that the harvest rate is responsive to the return size.
 
 In this example, the control rule allows for catch of all fish in excess
 of the escapement goal of 60:
@@ -459,8 +463,8 @@ plot_fishery(SMSE_B, s = 2, type = "exploit", main = "Population 2")
 
 ![](example-multi_files/figure-html/unnamed-chunk-21-1.png)
 
-While both population experience the same exploitation rate, Population
-2 is lower due to lower productivity:
+Both populations experience the same exploitation rate, but Population 2
+is smaller due to lower productivity:
 
 ``` r
 
@@ -484,3 +488,137 @@ barplot(
 ```
 
 ![](example-multi_files/figure-html/unnamed-chunk-23-1.png)
+
+### Example C: Mark-selective fishing
+
+A mark-selective, mixed-stock fishery can have different impacts
+depending on the hatchery management of each underlying population.
+
+The example code demonstrates a fishery for two populations that have
+equal productivity, equal hatchery production (target of 5,000 releases
+per year), but different mark rates (100% for population 1 and 25% for
+population 2).
+
+The harvest rate is 30%, defined as the ratio of kept catch (marked
+fish) to the total return (all fish).  
+With mark-selective fishing, the fishery encounters and releases
+un-marked fish until the harvest rate is met. The release mortality of
+un-marked fish is 30 percent.
+
+``` r
+
+ns <- 2
+nsim <- 3
+SAR <- 0.01
+
+Bio <- lapply(1:ns, function(s) {
+  new(
+    "Bio",
+    maxage = 3,
+    p_mature = c(0, 0, 1),
+    SRrel = "BH",
+    capacity = 1e4,
+    kappa = ifelse(s == 1, 3, 2),
+    Mjuv_NOS = c(0, -log(SAR)),
+    fec = c(0, 0, 5040),
+    p_female = 0.49,
+    s_enroute = 1
+  )
+})
+
+Habitat <- lapply(1:ns, function(s) {
+  new(
+    "Habitat",
+    use_habitat = FALSE
+  )
+})
+
+Hatchery1000 <- lapply(1:ns, function(s) {
+  new(
+    "Hatchery",
+    n_yearling = 0,
+    n_subyearling = 5000,
+    s_prespawn = 1,
+    s_egg_subyearling = 0.8,
+    Mjuv_HOS = Bio[[s]]@Mjuv_NOS,
+    gamma = 0.8,
+    m = ifelse(s == 1, 1, 0.10),  # Mark rate
+    pmax_esc = 1,
+    pmax_NOB = 0.7,
+    ptarget_NOB = 0.51,
+    phatchery = NA_real_
+  )
+})
+
+Historical <- lapply(1:ns, function(s) {
+  new(
+    "Historical",
+    InitNjuv_NOS = 100,
+    InitNjuv_HOS = 100
+  )
+})
+
+Harvest_equalvul <- lapply(1:ns, function(s) {
+  new(
+    "Harvest",
+    vulPT = c(0, 0, 0),
+    vulT = c(1, 1, 1),
+    release_mort = rep(0.3, 2) # Release mortality
+  )
+})
+
+SOM <- new(
+  "SOM",
+  nsim = nsim, proyears = 50,
+  Bio, Habitat, Hatchery1000, Harvest_equalvul, Historical
+)
+
+SOM@UT_complex <- 0.3
+SOM@MSF_T_complex <- TRUE  # Turns on mark-selective fishing of aggregate fishery
+
+SMSE_C <- salmonMSE(SOM)
+#> Preterminal fishery will operate on individual populations
+#> Terminal fishery will operate on full complex (all populations)
+#> Checking parameters for population 1
+#> Checking parameters for population 2
+```
+
+The simulation confirms that the 30% harvest rate can be achieved:
+
+``` r
+
+Catch <- apply(SMSE_C@KT_NOS + SMSE_C@KT_HOS, c(1, 4), sum) # sum over populations and ages
+Return <- apply(SMSE_C@Return_NOS + SMSE_C@Return_HOS, c(1, 4), sum)
+U <- apply(Catch/Return, 2, median)
+plot(U, type = "o", ylim = c(0, 0.5), xlab = "Year", ylab = "Aggregate harvest rate")
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-25-1.png)
+
+Exploitation rates, calculated from kept catch and dead discards, differ
+by population and origin. Population 1 with the higher mark rate has
+higher exploitation rates on hatchery-origin fish than in Population 2.
+Both populations have similar exploitation rates on natural-origin fish
+due to catch and release:
+
+``` r
+
+par(mfcol = c(1, 2))
+plot_fishery(SMSE_C, s = 1, type = "exploit", main = "Population 1", ylim = c(0, 1))
+plot_fishery(SMSE_C, s = 2, type = "exploit", main = "Population 2", ylim = c(0, 1))
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-26-1.png)
+
+With the higher mark rate and exploitation rate on hatchery-origin fish,
+the spawners of Population 1 are more likely to be natural-origin than
+in Population 2:
+
+``` r
+
+par(mfcol = c(1, 2))
+plot_spawners(SMSE_C, s = 1, main = "Population 1", prop = FALSE, ylim = c(0, 60))
+plot_spawners(SMSE_C, s = 2, main = "Population 2", prop = FALSE, ylim = c(0, 60))
+```
+
+![](example-multi_files/figure-html/unnamed-chunk-27-1.png)

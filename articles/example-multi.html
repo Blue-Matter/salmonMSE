@@ -67,6 +67,9 @@
 
     
     
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>salmonMSE has the capability for multi-population modeling, which
 concurrently project distinct biological units that spawn and reproduce
 separately.</p>
@@ -93,6 +96,7 @@ example</a>.</p>
 (population #1) on a small un-enhanced system (population #2).</p>
 <p>The second case study demonstrates the two-population model with
 mixed-stock fishery.</p>
+</div>
 <div class="section level2">
 <h2 id="case-study-1-straying">Case study 1: Straying<a class="anchor" aria-label="anchor" href="#case-study-1-straying"></a>
 </h2>
@@ -429,7 +433,9 @@ rate on Population 2 is higher:</p>
 </h3>
 <p>For mixed-stock fisheries, we can simulate harvest control rules that
 operate on the aggregate and then evaluate outcomes by individual
-population.</p>
+population. A <a href="custom-function.html#catch-functions-and-harvest-control-rules">custom
+function</a> is used such that the harvest rate is responsive to the
+return size.</p>
 <p>In this example, the control rule allows for catch of all fish in
 excess of the escapement goal of 60:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -456,8 +462,8 @@ excess of the escapement goal of 60:</p>
 <span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_fishery</a></span><span class="op">(</span><span class="va">SMSE_B</span>, s <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"exploit"</span>, main <span class="op">=</span> <span class="st">"Population 1"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_fishery</a></span><span class="op">(</span><span class="va">SMSE_B</span>, s <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"exploit"</span>, main <span class="op">=</span> <span class="st">"Population 2"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="example-multi_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="700"></p>
-<p>While both population experience the same exploitation rate,
-Population 2 is lower due to lower productivity:</p>
+<p>Both populations experience the same exploitation rate, but
+Population 2 is smaller due to lower productivity:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">SMSE_B</span>, s <span class="op">=</span> <span class="fl">1</span>, prop <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"Population 1"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span>
@@ -472,6 +478,122 @@ Population 2 is lower due to lower productivity:</p>
 <span>  panel.first <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="example-multi_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="example-c-mark-selective-fishing">Example C: Mark-selective fishing<a class="anchor" aria-label="anchor" href="#example-c-mark-selective-fishing"></a>
+</h3>
+<p>A mark-selective, mixed-stock fishery can have different impacts
+depending on the hatchery management of each underlying population.</p>
+<p>The example code demonstrates a fishery for two populations that have
+equal productivity, equal hatchery production (target of 5,000 releases
+per year), but different mark rates (100% for population 1 and 25% for
+population 2).</p>
+<p>The harvest rate is 30%, defined as the ratio of kept catch (marked
+fish) to the total return (all fish).<br>
+With mark-selective fishing, the fishery encounters and releases
+un-marked fish until the harvest rate is met. The release mortality of
+un-marked fish is 30 percent.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ns</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
+<span><span class="va">SAR</span> <span class="op">&lt;-</span> <span class="fl">0.01</span></span>
+<span></span>
+<span><span class="va">Bio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">new</span><span class="op">(</span></span>
+<span>    <span class="st">"Bio"</span>,</span>
+<span>    maxage <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>    p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>    SRrel <span class="op">=</span> <span class="st">"BH"</span>,</span>
+<span>    capacity <span class="op">=</span> <span class="fl">1e4</span>,</span>
+<span>    kappa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>    Mjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SAR</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">5040</span><span class="op">)</span>,</span>
+<span>    p_female <span class="op">=</span> <span class="fl">0.49</span>,</span>
+<span>    s_enroute <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Habitat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">new</span><span class="op">(</span></span>
+<span>    <span class="st">"Habitat"</span>,</span>
+<span>    use_habitat <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Hatchery1000</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">new</span><span class="op">(</span></span>
+<span>    <span class="st">"Hatchery"</span>,</span>
+<span>    n_yearling <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    n_subyearling <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>    s_prespawn <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    s_egg_subyearling <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>    Mjuv_HOS <span class="op">=</span> <span class="va">Bio</span><span class="op">[[</span><span class="va">s</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">Mjuv_NOS</span>,</span>
+<span>    gamma <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>    m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0.10</span><span class="op">)</span>,  <span class="co"># Mark rate</span></span>
+<span>    pmax_esc <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    pmax_NOB <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>    ptarget_NOB <span class="op">=</span> <span class="fl">0.51</span>,</span>
+<span>    phatchery <span class="op">=</span> <span class="cn">NA_real_</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">new</span><span class="op">(</span></span>
+<span>    <span class="st">"Historical"</span>,</span>
+<span>    InitNjuv_NOS <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    InitNjuv_HOS <span class="op">=</span> <span class="fl">100</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Harvest_equalvul</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">new</span><span class="op">(</span></span>
+<span>    <span class="st">"Harvest"</span>,</span>
+<span>    vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>    vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>    release_mort <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">2</span><span class="op">)</span> <span class="co"># Release mortality</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="st">"SOM"</span>,</span>
+<span>  nsim <span class="op">=</span> <span class="va">nsim</span>, proyears <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  <span class="va">Bio</span>, <span class="va">Habitat</span>, <span class="va">Hatchery1000</span>, <span class="va">Harvest_equalvul</span>, <span class="va">Historical</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SOM</span><span class="op">@</span><span class="va">UT_complex</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
+<span><span class="va">SOM</span><span class="op">@</span><span class="va">MSF_T_complex</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>  <span class="co"># Turns on mark-selective fishing of aggregate fishery</span></span>
+<span></span>
+<span><span class="va">SMSE_C</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Preterminal fishery will operate on individual populations</span></span>
+<span><span class="co">#&gt; Terminal fishery will operate on full complex (all populations)</span></span>
+<span><span class="co">#&gt; Checking parameters for population 1</span></span>
+<span><span class="co">#&gt; Checking parameters for population 2</span></span></code></pre></div>
+<p>The simulation confirms that the 30% harvest rate can be
+achieved:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">KT_NOS</span> <span class="op">+</span> <span class="va">SMSE_C</span><span class="op">@</span><span class="va">KT_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="co"># sum over populations and ages</span></span>
+<span><span class="va">Return</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">Return_NOS</span> <span class="op">+</span> <span class="va">SMSE_C</span><span class="op">@</span><span class="va">Return_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span></span>
+<span><span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">Catch</span><span class="op">/</span><span class="va">Return</span>, <span class="fl">2</span>, <span class="va">median</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">U</span>, type <span class="op">=</span> <span class="st">"o"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"Aggregate harvest rate"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example-multi_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="" width="700"></p>
+<p>Exploitation rates, calculated from kept catch and dead discards,
+differ by population and origin. Population 1 with the higher mark rate
+has higher exploitation rates on hatchery-origin fish than in Population
+2. Both populations have similar exploitation rates on natural-origin
+fish due to catch and release:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_fishery</a></span><span class="op">(</span><span class="va">SMSE_C</span>, s <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"exploit"</span>, main <span class="op">=</span> <span class="st">"Population 1"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_fishery</a></span><span class="op">(</span><span class="va">SMSE_C</span>, s <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"exploit"</span>, main <span class="op">=</span> <span class="st">"Population 2"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example-multi_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="" width="700"></p>
+<p>With the higher mark rate and exploitation rate on hatchery-origin
+fish, the spawners of Population 1 are more likely to be natural-origin
+than in Population 2:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">SMSE_C</span>, s <span class="op">=</span> <span class="fl">1</span>, main <span class="op">=</span> <span class="st">"Population 1"</span>, prop <span class="op">=</span> <span class="cn">FALSE</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_spawners</a></span><span class="op">(</span><span class="va">SMSE_C</span>, s <span class="op">=</span> <span class="fl">2</span>, main <span class="op">=</span> <span class="st">"Population 2"</span>, prop <span class="op">=</span> <span class="cn">FALSE</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="example-multi_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
