@@ -59,7 +59,7 @@ beta <- EnvStats::rnormTrunc(nsim, 0.069, 0.027, min = 1e-8)
 
 sigmaR <- rnorm(nsim, 0.52, 0.11)
 
-InitReturn <- rlnorm(nsim, log(10), 0.09)
+InitEsc <- rlnorm(nsim, log(10), 0.09)
 ```
 
 Next, we can code up a harvest control rule in an R function that
@@ -131,7 +131,7 @@ simpleSOM <- new(
   sigmaR = sigmaR,
   type_T = "u",
   u_terminal = HCR,
-  InitReturn = InitReturn
+  InitEsc = InitEsc
 )
 
 SMSE <- simple_salmonMSE(simpleSOM)
@@ -144,14 +144,14 @@ for calculating performance metrics:
 
 # Probability of exceeding 80 percent SMSY during the entire projection
 P_SMSY80(SMSE)
-#> [1] 0.2991632
+#> [1] 0.3148536
 ```
 
 ``` r
 
 # Probability of exceeding Sgen
 P_Sgen100(SMSE)
-#> [1] 0.4037657
+#> [1] 0.4079498
 ```
 
 ``` r

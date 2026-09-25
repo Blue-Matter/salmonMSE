@@ -90,6 +90,22 @@ An object containing all the parameters for a salmon operating model
   *Optional* For multi-population models: whether the terminal fishery
   on stock complex is mark-selective. Default is `FALSE`
 
+- `ForeErr_PT_complex`:
+
+  *Optional* For multi-population models: numeric or matrix
+  `[nsim, proyears]`. Multiplicative forecast error for preterminal
+  fishery (observation error). Only used if `UPT_complex` is a function
+  where fishing intensity is determined by abundance. Default is 1 (no
+  error).
+
+- `ForeErr_T_complex`:
+
+  *Optional* For multi-population models: numeric or matrix
+  `[nsim, proyears]`. Multiplicative forecast error for terminal fishery
+  (observation error). Only used if `UT_complex` is a function where
+  fishing intensity is determined by return size. Default is 1 (no
+  error).
+
 ## Objects from the Class
 
 Objects can be created by calls of the form

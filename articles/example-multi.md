@@ -6,8 +6,14 @@ salmonMSE has the capability for multi-population modeling, which
 concurrently project distinct biological units that spawn and reproduce
 separately.
 
-There may be several use-cases for multi-population models. For example,
-one wants to evaluate:
+There may be several use-cases for multi-population models to model
+strays from hatcheries ([Weil et
+al. 2025](https://waves-vagues.dfo-mpo.gc.ca/library-bibliotheque/41306247.pdf))
+and mixed-stock fisheries ([Freshwater et
+al. 2019](https://doi.org/10.1002/eap.1966); [Freshwater et
+al. 2020](https://doi.org/10.1016/j.fishres.2020.105509)).
+
+For example, one wants to evaluate:
 
 1.  The implications of hatchery production in large systems but there
     may be straying to unenhanced population units. Despite low stray
@@ -342,10 +348,10 @@ For example, set a terminal harvest rate to 30% as follows:
 SOM@UT_complex <- 0.3
 ```
 
-This example is trivial as both populations will experience an
-exploitation rate of 30%.
+This example is trivial as both populations experience an exploitation
+rate of 30%, i.e., two single-population models would suffice.
 
-A multi-population model is more relevant when:
+A multi-population model is relevant when:
 
 - Populations have differing vulnerability to the fishery
 - Harvest rate is dynamic because it is a function of a control rule
@@ -496,7 +502,7 @@ depending on the hatchery management of each underlying population.
 
 The example code demonstrates a fishery for two populations that have
 equal productivity, equal hatchery production (target of 5,000 releases
-per year), but different mark rates (100% for population 1 and 25% for
+per year), but different mark rates (100% for population 1 and 10% for
 population 2).
 
 The harvest rate is 30%, defined as the ratio of kept catch (marked

@@ -59,9 +59,9 @@
 
       <h1>Simple spawner-return operating model</h1>
             
-            <h4 data-toc-skip class="date">2026-09-24</h4>
+            <h4 data-toc-skip class="date">2026-09-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/simpleSOM.Rmd" class="external-link"><code>vignettes/simpleSOM.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/vignettes/simpleSOM.Rmd" class="external-link"><code>vignettes/simpleSOM.Rmd</code></a></small>
       <div class="d-none name"><code>simpleSOM.Rmd</code></div>
     </div>
 
@@ -125,7 +125,7 @@ Bayesian MCMC (we demonstrate 25 simulations here):</p>
 <span></span>
 <span><span class="va">sigmaR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="fl">0.52</span>, <span class="fl">0.11</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">InitReturn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, <span class="fl">0.09</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">InitEsc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="va">nsim</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, <span class="fl">0.09</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we can code up a harvest control rule in an R function that
 follows the format used in salmonMSE (see <a href="custom-function.html">article</a>).</p>
 <p>This control rule is piece-wise defined (example taken from <a href="https://publications.gc.ca/collections/collection_2025/mpo-dfo/fs70-5/Fs70-5-2024-063-eng.pdf" class="external-link">Glaser
@@ -180,7 +180,7 @@ then do the projection with a call using
 <span>  sigmaR <span class="op">=</span> <span class="va">sigmaR</span>,</span>
 <span>  type_T <span class="op">=</span> <span class="st">"u"</span>,</span>
 <span>  u_terminal <span class="op">=</span> <span class="va">HCR</span>,</span>
-<span>  InitReturn <span class="op">=</span> <span class="va">InitReturn</span></span>
+<span>  InitEsc <span class="op">=</span> <span class="va">InitEsc</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">simple_salmonMSE</a></span><span class="op">(</span><span class="va">simpleSOM</span><span class="op">)</span></span></code></pre></div>
@@ -189,11 +189,11 @@ are relevant for calculating performance metrics:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Probability of exceeding 80 percent SMSY during the entire projection</span></span>
 <span><span class="fu"><a href="../reference/P_PNI50.html">P_SMSY80</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2991632</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.3148536</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Probability of exceeding Sgen</span></span>
 <span><span class="fu"><a href="../reference/P_PNI50.html">P_Sgen100</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.4037657</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.4079498</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_statevar_ts.html">plot_statevar_ts</a></span><span class="op">(</span><span class="va">SMSE</span>, <span class="st">"Return_NOS"</span>, quant <span class="op">=</span> <span class="cn">TRUE</span>, ylab <span class="op">=</span> <span class="st">"Return"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="simpleSOM_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>

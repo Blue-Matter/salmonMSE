@@ -42,7 +42,7 @@ brood-year returns."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"Historical"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
       <div class="d-none name"><code>Historical-class.Rd</code></div>
     </div>
 
@@ -63,13 +63,27 @@ brood-year returns.</p>
 
 
 <dt><code>InitNjuv_NOS</code></dt>
-<dd><p>Array by <code>[nsim, maxage, n_g]</code>. The abundance of immature natural origin fish at the beginning of the projection.
-Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.</p></dd>
+<dd><p>Numeric. The abundance of immature natural-origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.
+Alternatively, provide a full array by <code>[nsim, maxage, n_g]</code> for multiple-brood year returns.</p></dd>
 
 
 <dt><code>InitNjuv_HOS</code></dt>
-<dd><p>Array by <code>[nsim, maxage, n_r]</code>. The abundance of immature hatchery origin fish at the beginning of the projection.
-Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.</p></dd>
+<dd><p>Numeric. The abundance of immature hatchery origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.
+Alternatively, provide a full array by <code>[nsim, maxage, n_r]</code> for multiple-brood year returns.</p></dd>
+
+
+<dt><code>InitEsc_NOS</code></dt>
+<dd><p><em>Optional</em> Numeric length 1 or <code>nsim</code>.
+The natural-origin escapement (oldest age class) in the first year of the projection,
+to be used in lieu of <code>InitNjuv_NOS</code>. Currently only for single brood year returns.</p></dd>
+
+
+<dt><code>InitEsc_HOS</code></dt>
+<dd><p><em>Optional</em> Numeric length 1 or <code>nsim</code>.
+The hatchery-origin escapement (oldest age class) in the first year of the projection,
+to be used in lieu of <code>InitNjuv_HOS</code>. Currently only for single brood year returns.</p></dd>
 
 
 </dl></div>
@@ -86,9 +100,9 @@ Default assumes 1000 in the oldest age class, which creates a population with si
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class "Historical" [package "salmonMSE"]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          Name InitNjuv_NOS InitNjuv_HOS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    character    num.array    num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          Name InitNjuv_NOS InitNjuv_HOS  InitEsc_NOS  InitEsc_HOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:    character    num.array    num.array      numeric      numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Historical.list"</span>
 </code></pre></div>

@@ -78,6 +78,20 @@ The component of the operating model that controls marine harvest.
   schedule (between 0-1) in the terminal fishery. Values indicate the
   proportion of fishing intensity experienced by each age class.
 
+- `ForeErr_PT`:
+
+  Numeric or matrix `[nsim, proyears]`. Multiplicative forecast error of
+  the juvenile abundance in the preterminal fishery, i.e., observation
+  error. Only used if `u_preterminal` or `K_PT` is a function where
+  fishing intensity is determined by abundance. Default is 1 (no error).
+
+- `ForeErr_T`:
+
+  Numeric or matrix `[nsim, proyears]`. Multiplicative forecast error of
+  the return size for the terminal fishery, i.e., observation error.
+  Only used if `u_terminal` or `K_T` is a function where fishing
+  intensity is determined by return size. Default is 1 (no error).
+
 ## Creating Object
 
 Objects can be created by calls of the form `new("Harvest")`
@@ -101,6 +115,9 @@ showClass("Harvest")
 #>                                                                   
 #> Name:         release_mort               vulPT                vulT
 #> Class:             numeric          num.matrix          num.matrix
+#>                                               
+#> Name:           ForeErr_PT           ForeErr_T
+#> Class:          num.matrix          num.matrix
 #> 
 #> Extends: "Harvest.list"
 ```

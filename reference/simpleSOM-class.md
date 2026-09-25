@@ -71,10 +71,17 @@ single numeric (value identical across all simulations).
   return in the terminal fishery. Function should be of the form
   `function(NO, HO, m) return(K)`.
 
-- `InitReturn`:
+- `InitEsc`:
 
-  Single numeric or vector `[nsim]`. The return at the beginning of the
-  projection. Default assumes 1000.
+  Single numeric or vector `[nsim]`. The escapement at the beginning of
+  the projection. Default is 1000.
+
+- `ForeErr`:
+
+  Numeric or matrix `[nsim, ngen]`. Multiplicative forecast error of the
+  return size. Only used if `u_terminal` or `K_T` is a function where
+  fishing intensity is determined by return size. Default is 1 (no
+  error).
 
 ## Creating Object
 
@@ -97,6 +104,9 @@ showClass("simpleSOM")
 #> Name:               sigmaR              Recdev              type_T
 #> Class:             numeric              matrix           character
 #>                                                                   
-#> Name:           u_terminal                 K_T          InitReturn
+#> Name:           u_terminal                 K_T             InitEsc
 #> Class: num.matrix.function        num.function             numeric
+#>                           
+#> Name:              ForeErr
+#> Class:          num.matrix
 ```

@@ -13,6 +13,7 @@ catch_func(
   U,
   K,
   V,
+  ForeErr = 1,
   MSF = FALSE,
   m = 1,
   release_mort = 0,
@@ -49,6 +50,11 @@ catch_func(
 - V:
 
   Matrix `[ns, nage]` Relative vulnerability by age class to fishery
+
+- ForeErr:
+
+  Numeric. Multiplicative forecast error for control rule, only used if
+  either `U` or `K` is a function
 
 - MSF:
 

@@ -59,9 +59,9 @@
 
       <h1>Multi-population model</h1>
             
-            <h4 data-toc-skip class="date">2026-09-24</h4>
+            <h4 data-toc-skip class="date">2026-09-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
       <div class="d-none name"><code>example-multi.Rmd</code></div>
     </div>
 
@@ -73,8 +73,11 @@
 <p>salmonMSE has the capability for multi-population modeling, which
 concurrently project distinct biological units that spawn and reproduce
 separately.</p>
-<p>There may be several use-cases for multi-population models. For
-example, one wants to evaluate:</p>
+<p>There may be several use-cases for multi-population models to model
+strays from hatcheries (<a href="https://waves-vagues.dfo-mpo.gc.ca/library-bibliotheque/41306247.pdf" class="external-link">Weil
+et al. 2025</a>) and mixed-stock fisheries (<a href="https://doi.org/10.1002/eap.1966" class="external-link">Freshwater et al. 2019</a>; <a href="https://doi.org/10.1016/j.fishres.2020.105509" class="external-link">Freshwater et
+al. 2020</a>).</p>
+<p>For example, one wants to evaluate:</p>
 <ol style="list-style-type: decimal">
 <li><p>The implications of hatchery production in large systems but
 there may be straying to unenhanced population units. Despite low stray
@@ -367,9 +370,10 @@ simultaneously is specified in <code>SOM@UPT_complex</code> and
 <p>For example, set a terminal harvest rate to 30% as follows:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SOM</span><span class="op">@</span><span class="va">UT_complex</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span></code></pre></div>
-<p>This example is trivial as both populations will experience an
-exploitation rate of 30%.</p>
-<p>A multi-population model is more relevant when:</p>
+<p>This example is trivial as both populations experience an
+exploitation rate of 30%, i.e., two single-population models would
+suffice.</p>
+<p>A multi-population model is relevant when:</p>
 <ul>
 <li>Populations have differing vulnerability to the fishery</li>
 <li>Harvest rate is dynamic because it is a function of a control
@@ -486,7 +490,7 @@ Population 2 is smaller due to lower productivity:</p>
 depending on the hatchery management of each underlying population.</p>
 <p>The example code demonstrates a fishery for two populations that have
 equal productivity, equal hatchery production (target of 5,000 releases
-per year), but different mark rates (100% for population 1 and 25% for
+per year), but different mark rates (100% for population 1 and 10% for
 population 2).</p>
 <p>The harvest rate is 30%, defined as the ratio of kept catch (marked
 fish) to the total return (all fish).<br>

@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"Harvest"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
       <div class="d-none name"><code>Harvest-class.Rd</code></div>
     </div>
 
@@ -111,6 +111,16 @@ the proportion of fishing intensity experienced by each age class.</p></dd>
 the proportion of fishing intensity experienced by each age class.</p></dd>
 
 
+<dt><code>ForeErr_PT</code></dt>
+<dd><p>Numeric or matrix <code>[nsim, proyears]</code>. Multiplicative forecast error of the juvenile abundance in the preterminal fishery, i.e., observation error.
+Only used if <code>u_preterminal</code> or <code>K_PT</code> is a function where fishing intensity is determined by abundance. Default is 1 (no error).</p></dd>
+
+
+<dt><code>ForeErr_T</code></dt>
+<dd><p>Numeric or matrix <code>[nsim, proyears]</code>. Multiplicative forecast error of the return size for the terminal fishery, i.e., observation error.
+Only used if <code>u_terminal</code> or <code>K_T</code> is a function where fishing intensity is determined by return size. Default is 1 (no error).</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="creating-object">Creating Object<a class="anchor" aria-label="anchor" href="#creating-object"></a></h2>
@@ -137,6 +147,9 @@ the proportion of fishing intensity experienced by each age class.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:         release_mort               vulPT                vulT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:             numeric          num.matrix          num.matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           ForeErr_PT           ForeErr_T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.matrix          num.matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Harvest.list"</span>
 </code></pre></div>
