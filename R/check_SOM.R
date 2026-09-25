@@ -46,7 +46,17 @@ check_SOM <- function(SOM, silent = FALSE) {
     } else if (is.matrix(SOM@UPT_complex)) {
       SOM <- check_array(SOM, "UPT_complex", c(nsim, proyears))
     }
+
     SOM <- check_numeric(SOM, "MSF_PT_complex", default = FALSE)
+
+    if (is.function(SOM@UPT_complex)) {
+      if (length(SOM@ForeErr_PT_complex) <= 1) {
+        SOM <- check_numeric(SOM, "ForeErr_PT_complex", default = 1)
+      } else {
+        SOM <- check_array(SOM, "ForeErr_PT_complex", c(nsim, proyears))
+      }
+    }
+
     if (!silent) message("Preterminal fishery will operate on full complex (all populations)")
   } else if (!silent && ns > 1) {
     message("Preterminal fishery will operate on individual populations")
@@ -58,7 +68,17 @@ check_SOM <- function(SOM, silent = FALSE) {
     } else if (is.matrix(SOM@UT_complex)) {
       SOM <- check_array(SOM, "UT_complex", c(nsim, proyears))
     }
+
     SOM <- check_numeric(SOM, "MSF_T_complex", default = FALSE)
+
+    if (is.function(SOM@UT_complex)) {
+      if (length(SOM@ForeErr_T_complex) <= 1) {
+        SOM <- check_numeric(SOM, "ForeErr_T_complex", default = 1)
+      } else {
+        SOM <- check_array(SOM, "ForeErr_T_complex", c(nsim, proyears))
+      }
+    }
+
     if (!silent) message("Terminal fishery will operate on full complex (all populations)")
   } else if (!silent && ns > 1) {
     message("Terminal fishery will operate on individual populations")
@@ -275,46 +295,73 @@ check_SOM <- function(SOM, silent = FALSE) {
     Harvest@type_PT <- match.arg(Harvest@type_PT, choices = c("u", "catch"))
     Harvest@type_T <- match.arg(Harvest@type_T, choices = c("u", "catch"))
 
-    if (!length(SOM@UPT_complex) && Harvest@type_PT == "u") {
-      if (is.matrix(Harvest@u_preterminal)) {
-        Harvest <- check_array(Harvest, "u_preterminal", c(nsim, proyears))
-      } else if (is.numeric(Harvest@u_preterminal)) {
-        Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+    if (!length(SOM@UPT_complex)) {
+      if (Harvest@type_PT == "u") {
+
+        if (is.matrix(Harvest@u_preterminal)) {
+          Harvest <- check_array(Harvest, "u_preterminal", c(nsim, proyears))
+        } else if (is.numeric(Harvest@u_preterminal)) {
+          Harvest <- check_numeric(Harvest, "u_preterminal", default = 0)
+        } else if (is.function(Harvest@u_preterminal)) {
+          if (length(Harvest@ForeErr_PT) <= 1) {
+            Harvest <- check_numeric(Harvest, "ForeErr_PT", default = 1)
+          } else {
+            Harvest <- check_array(Harvest, "ForeErr_PT", c(nsim, proyears))
+          }
+        }
+
+      } else {
+
+        if (is.numeric(Harvest@K_PT)) {
+          Harvest <- check_numeric(Harvest, "K_PT", default = 0)
+        } else if (is.function(Harvest@K_PT)) {
+          if (length(Harvest@ForeErr_PT) <= 1) {
+            Harvest <- check_numeric(Harvest, "ForeErr_PT", default = 1)
+          } else {
+            Harvest <- check_array(Harvest, "ForeErr_PT", c(nsim, proyears))
+          }
+        }
+
       }
-      Harvest <- check_numeric(Harvest, "K_PT", default = NA_real_)
-    } else {
-      Harvest <- check_numeric(Harvest, "u_preterminal", default = NA_real_)
-      Harvest <- check_numeric(Harvest, "K_PT", default = 0)
+      Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
     }
 
-    if (!length(SOM@UT_complex) && Harvest@type_T == "u") {
-      if (is.matrix(Harvest@u_terminal)) {
-        Harvest <- check_array(Harvest, "u_terminal", c(nsim, proyears))
-      } else if (is.numeric(Harvest@u_terminal)) {
-        Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
-      }
-      Harvest <- check_numeric(Harvest, "K_T", default = NA_real_)
-    } else {
-      Harvest <- check_numeric(Harvest, "u_terminal", default = NA_real_)
-      Harvest <- check_numeric(Harvest, "K_T", default = 0)
-    }
+    if (!length(SOM@UT_complex)) {
+      if (Harvest@type_T == "u") {
 
-    Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
-    Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
+        if (is.matrix(Harvest@u_terminal)) {
+          Harvest <- check_array(Harvest, "u_terminal", c(nsim, proyears))
+        } else if (is.numeric(Harvest@u_terminal)) {
+          Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
+        } else if (is.function(Harvest@u_terminal)) {
+          if (length(Harvest@ForeErr_T) <= 1) {
+            Harvest <- check_numeric(Harvest, "ForeErr_T", default = 1)
+          } else {
+            Harvest <- check_array(Harvest, "ForeErr_T", c(nsim, proyears))
+          }
+        }
+
+      } else {
+
+        if (is.numeric(Harvest@K_T)) {
+          Harvest <- check_numeric(Harvest, "K_T", default = 0)
+        } else if (is.function(Harvest@K_T)) {
+          if (length(Harvest@ForeErr_T) <= 1) {
+            Harvest <- check_numeric(Harvest, "ForeErr_T", default = 1)
+          } else {
+            Harvest <- check_array(Harvest, "ForeErr_T", c(nsim, proyears))
+          }
+        }
+
+      }
+      Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
+    }
 
     if (length(Harvest@release_mort) == 1) Harvest@release_mort <- rep(Harvest@release_mort, 2)
     Harvest <- check_numeric(Harvest, "release_mort", size = 2, default = c(0, 0))
 
-    if (!length(Harvest@vulPT)) {
-      if (length(SOM@UPT_complex) || NAor0(Harvest@u_preterminal > 0) || NAor0(Harvest@K_PT)) {
-        Harvest@vulPT <- matrix(1, nsim, maxage)
-      }
-    }
-    if (!length(Harvest@vulT)) {
-      if (length(SOM@UT_complex) || NAor0(Harvest@u_terminal > 0) || NAor0(Harvest@K_T)) {
-        Harvest@vulT <- matrix(1, nsim, maxage)
-      }
-    }
+    if (!length(Harvest@vulPT)) Harvest@vulPT <- matrix(1, nsim, maxage)
+    if (!length(Harvest@vulT)) Harvest@vulT <- matrix(1, nsim, maxage)
 
     Harvest <- check_maxage2matrix(Harvest, "vulPT", maxage, nsim)
     Harvest <- check_maxage2matrix(Harvest, "vulT", maxage, nsim)

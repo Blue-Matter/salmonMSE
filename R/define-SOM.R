@@ -127,7 +127,9 @@ setClass(
     MSF_T = "logical",
     release_mort = "numeric",
     vulPT = "num.matrix",
-    vulT = "num.matrix"
+    vulT = "num.matrix",
+    ForeErr_PT = "num.matrix",
+    ForeErr_T = "num.matrix"
   )
 )
 
@@ -267,6 +269,10 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' Leave empty to `numeric(0)` to operate on individual population basis.
 #' @slot MSF_PT_complex *Optional* For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is `FALSE`
 #' @slot MSF_T_complex *Optional* For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is `FALSE`
+#' @slot ForeErr_PT_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for preterminal fishery (observation error).
+#' Only used if `UPT_complex` is a function where fishing intensity is determined by abundance. Default is 1 (no error).
+#' @slot ForeErr_T_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for terminal fishery (observation error).
+#' Only used if `UT_complex` is a function where fishing intensity is determined by return size. Default is 1 (no error).
 #' @keywords classes
 #'
 #' @export
@@ -286,7 +292,9 @@ SOM <- setClass(
     UPT_complex = "num.matrix.function",
     UT_complex = "num.matrix.function",
     MSF_PT_complex = "logical",
-    MSF_T_complex = "logical"
+    MSF_T_complex = "logical",
+    ForeErr_PT_complex = "num.matrix",
+    ForeErr_T_complex = "num.matrix"
   )
 )
 

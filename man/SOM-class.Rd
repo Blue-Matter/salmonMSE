@@ -41,6 +41,12 @@ Leave empty to \code{numeric(0)} to operate on individual population basis.}
 \item{\code{MSF_PT_complex}}{\emph{Optional} For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is \code{FALSE}}
 
 \item{\code{MSF_T_complex}}{\emph{Optional} For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is \code{FALSE}}
+
+\item{\code{ForeErr_PT_complex}}{\emph{Optional} For multi-population models: numeric or matrix \verb{[nsim, proyears]}. Multiplicative forecast error for preterminal fishery (observation error).
+Only used if \code{UPT_complex} is a function where fishing intensity is determined by abundance. Default is 1 (no error).}
+
+\item{\code{ForeErr_T_complex}}{\emph{Optional} For multi-population models: numeric or matrix \verb{[nsim, proyears]}. Multiplicative forecast error for terminal fishery (observation error).
+Only used if \code{UT_complex} is a function where fishing intensity is determined by return size. Default is 1 (no error).}
 }}
 
 \section{Objects from the Class}{

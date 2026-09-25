@@ -27,6 +27,8 @@
 #' @slot K_T Numeric or function. If `type_T = "catch"`, the catch target of the return in the terminal fishery.
 #' Function should be of the form `function(NO, HO, m) return(K)`.
 #' @slot InitEsc Single numeric or vector `[nsim]`. The escapement at the beginning of the projection. Default is 1000.
+#' @slot ForeErr Numeric or matrix `[nsim, ngen]`. Multiplicative forecast error of the return size.
+#' Only used if `u_terminal` or `K_T` is a function where fishing intensity is determined by return size. Default is 1 (no error).
 #' @section Creating Object:
 #' Objects can be created by calls of the form \code{new("simpleSOM")}
 #'
@@ -48,7 +50,8 @@ simpleSOM <- setClass(
     type_T = "character",
     u_terminal = "num.matrix.function",
     K_T = "num.function",
-    InitEsc = "numeric"
+    InitEsc = "numeric",
+    ForeErr = "num.matrix"
   )
 )
 
@@ -86,6 +89,12 @@ check_simpleSOM <- function(simpleSOM) {
 
   if (!length(simpleSOM@InitEsc)) simpleSOM@InitEsc <- 1000
   simpleSOM <- check_numeric2nsim(simpleSOM, "InitEsc", nsim)
+
+  if (!length(simpleSOM@ForeErr)) {
+    simpleSOM@ForeErr <- 1
+  } else if (is.matrix(simpleSOM@ForeErr)) {
+    simpleSOM <- check_array(simpleSOM, "ForeErr", c(nsim, simpleSOM@ngen))
+  }
 
   return(simpleSOM)
 }
@@ -154,6 +163,13 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     n_subyearling = 0
   )
 
+  if (is.matrix(simpleSOM@ForeErr)) {
+    ForeErr <- matrix(0, nsim, proyears)
+    ForeErr[, seq(1, proyears, maxage)] <- simpleSOM@ForeErr
+  } else {
+    ForeErr <- simpleSOM@ForeErr
+  }
+
   Harvest <- new(
     "Harvest",
     type_T = simpleSOM@type_T,
@@ -164,7 +180,8 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     MSF_PT = FALSE,
     MSF_T = FALSE,
     vulPT = rep(0, maxage),
-    vulT = rep(1, maxage)
+    vulT = rep(1, maxage),
+    ForeErr_T = ForeErr
   )
 
   Historical <- new("Historical", InitEsc_NOS = simpleSOM@InitEsc, InitEsc_HOS = 0)

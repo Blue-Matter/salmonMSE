@@ -304,18 +304,36 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   PT_complex <- length(SOM@UPT_complex) > 0
   T_complex <- length(SOM@UT_complex) > 0
 
-  if (!PT_complex) {
+  if (PT_complex) {
+    ForeErr_PT_complex <- if (is.function(SOM@UPT_complex)) SOM@ForeErr_PT_complex else 1
+  } else {
     type_PT <- sapply(SOM@Harvest, slot, "type_PT")
     u_preterminal <- lapply(SOM@Harvest, slot, "u_preterminal")
     K_PT <- lapply(SOM@Harvest, slot, "K_PT")
     MSF_PT <- sapply(SOM@Harvest, slot, "MSF_PT")
+    ForeErr_PT <- lapply(1:ns, function(s) {
+      if (is.function(u_preterminal[[s]]) || is.function(K_PT[[s]])) {
+        SOM@Harvest[[s]]@ForeErr_PT
+      } else {
+        1
+      }
+    })
   }
 
-  if (!T_complex) {
+  if (T_complex) {
+    ForeErr_T_complex <- if (is.function(SOM@UT_complex)) SOM@ForeErr_T_complex else 1
+  } else {
     type_T <- sapply(SOM@Harvest, slot, "type_T")
     u_terminal <- lapply(SOM@Harvest, slot, "u_terminal")
     K_T <- lapply(SOM@Harvest, slot, "K_T")
     MSF_T <- sapply(SOM@Harvest, slot, "MSF_T")
+    ForeErr_T <- lapply(1:ns, function(s) {
+      if (is.function(u_terminal[[s]]) || is.function(K_T[[s]])) {
+        SOM@Harvest[[s]]@ForeErr_T
+      } else {
+        1
+      }
+    })
   }
 
   # Fishery vulnerability
@@ -413,6 +431,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             U = if (is.matrix(SOM@UPT_complex)) SOM@UPT_complex[xx, y] else SOM@UPT_complex,
             K = NA_real_,
             V = matrix(vulPT[x, , ], ns, nage),
+            ForeErr = if (is.matrix(ForeErr_PT_complex)) ForeErr_PT_complex[xx, y] else ForeErr_PT_complex,
             m = m,
             MSF = SOM@MSF_PT_complex,
             release_mort = release_mort[1, ],
@@ -433,6 +452,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               U = if (is.matrix(u_preterminal[[s]])) u_preterminal[[s]][xx, y] else u_preterminal[[s]],
               K = K_PT[[s]],
               V = matrix(vulPT[x, s, ], 1, nage),
+              ForeErr = if (is.matrix(ForeErr_T[[s]])) ForeErr_T[[s]][xx, y] else ForeErr_T[[s]],
               m = m[s],
               MSF = MSF_PT[s],
               release_mort = release_mort[1, s],
@@ -489,6 +509,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             U = if (is.matrix(SOM@UT_complex)) SOM@UT_complex[xx, y] else SOM@UT_complex,
             K = NA_real_,
             V = matrix(vulT[x, , ], ns, nage),
+            ForeErr = if (is.matrix(ForeErr_T_complex)) ForeErr_T_complex[xx, y] else ForeErr_T_complex,
             m = m,
             MSF = SOM@MSF_T_complex,
             release_mort = release_mort[2, ]
@@ -505,6 +526,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               U = if (is.matrix(u_terminal[[s]])) u_terminal[[s]][xx, y] else u_terminal[[s]],
               K = K_T[[s]],
               V = matrix(vulT[x, s, ], 1, nage),
+              ForeErr = if (is.matrix(ForeErr_T[[s]])) ForeErr_T[[s]][xx, y] else ForeErr_T[[s]],
               m = m[s],
               MSF = MSF_T[s],
               release_mort = release_mort[2, s]

@@ -9,6 +9,7 @@
 #' @param U Numeric or function. Harvest rate of fishery
 #' @param K Numeric or function. Total catch of the fishery
 #' @param V Matrix `[ns, nage]` Relative vulnerability by age class to fishery
+#' @param ForeErr Numeric. Multiplicative forecast error for control rule, only used if either `U` or `K` is a function
 #' @param MSF Logical, whether fishing is mark-selective
 #' @param m Numeric vector length `[ns]`, mark rate of hatchery-origin fish. Only used if `MSF = TRUE`.
 #' @param release_mort Numeric vector length `[ns]`, proportion of released unmarked fish that die. Only used if `MSF = TRUE`.
@@ -30,7 +31,7 @@
 #' - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
 #' - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
 #' @keywords internal
-catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m = 1, release_mort = 0,
+catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, MSF = FALSE, m = 1, release_mort = 0,
                        p_mature_NO = array(1, dim(NO)), p_mature_HO = array(1, dim(HO)),
                        AEQ_NO = array(1, dim(NO)), AEQ_HO = array(1, dim(HO))) {
   type <- match.arg(type)
@@ -40,8 +41,8 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
     if (is.numeric(U)) {
       u_solve <- U
     } else if (is.function(U)) {
-      NO_obs <- apply(NO, 2, sum)
-      HO_obs <- apply(HO, 2, sum)
+      NO_obs <- apply(NO, 2, sum) * ForeErr
+      HO_obs <- apply(HO, 2, sum) * ForeErr
 
       u_solve <- U(
         NO_obs,
@@ -53,8 +54,8 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
     if (is.numeric(K)) {
       K_solve <- K
     } else if (is.function(K)) {
-      NO_obs <- apply(NO, 2, sum)
-      HO_obs <- apply(HO, 2, sum)
+      NO_obs <- apply(NO, 2, sum) * ForeErr
+      HO_obs <- apply(HO, 2, sum) * ForeErr
 
       K_solve <- K(
         NO_obs,
@@ -66,7 +67,7 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, MSF = FALSE, m =
 
   # Solve for fishing effort or encounter rate that achieves the harvest rate (u_solver) or catch target (K_solve)
   ns <- dim(NO)[1]
-  do_solver <- (type == "u" && u_solve > 0) || (type == "K" && K_solve > 0)
+  do_solver <- (type == "u" && u_solve > 0) || (type == "catch" && K_solve > 0)
 
   if (MSF) {
     ret_NO <- rep(0, ns)

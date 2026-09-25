@@ -24,3 +24,7 @@
 #' the proportion of fishing intensity experienced by each age class.
 #' @slot vulT Vector length `maxage` or matrix `[nsim, maxage]`. Vulnerability schedule (between 0-1) in the terminal fishery. Values indicate
 #' the proportion of fishing intensity experienced by each age class.
+#' @slot ForeErr_PT Numeric or matrix `[nsim, proyears]`. Multiplicative forecast error of the juvenile abundance in the preterminal fishery, i.e., observation error.
+#' Only used if `u_preterminal` or `K_PT` is a function where fishing intensity is determined by abundance. Default is 1 (no error).
+#' @slot ForeErr_T Numeric or matrix `[nsim, proyears]`. Multiplicative forecast error of the return size for the terminal fishery, i.e., observation error.
+#' Only used if `u_terminal` or `K_T` is a function where fishing intensity is determined by return size. Default is 1 (no error).
