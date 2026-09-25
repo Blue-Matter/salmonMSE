@@ -15,11 +15,21 @@ brood-year returns.
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{InitNjuv_NOS}}{Array by \verb{[nsim, maxage, n_g]}. The abundance of immature natural origin fish at the beginning of the projection.
-Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.}
+\item{\code{InitNjuv_NOS}}{Numeric. The abundance of immature natural-origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.
+Alternatively, provide a full array by \verb{[nsim, maxage, n_g]} for multiple-brood year returns.}
 
-\item{\code{InitNjuv_HOS}}{Array by \verb{[nsim, maxage, n_r]}. The abundance of immature hatchery origin fish at the beginning of the projection.
-Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.}
+\item{\code{InitNjuv_HOS}}{Numeric. The abundance of immature hatchery origin fish at the beginning of the projection.
+Default assumes 1000 in the oldest age class, which creates a population with single brood year returns.
+Alternatively, provide a full array by \verb{[nsim, maxage, n_r]} for multiple-brood year returns.}
+
+\item{\code{InitEsc_NOS}}{\emph{Optional} Numeric length 1 or \code{nsim}.
+The natural-origin escapement (oldest age class) in the first year of the projection,
+to be used in lieu of \code{InitNjuv_NOS}. Currently only for single brood year returns.}
+
+\item{\code{InitEsc_HOS}}{\emph{Optional} Numeric length 1 or \code{nsim}.
+The hatchery-origin escapement (oldest age class) in the first year of the projection,
+to be used in lieu of \code{InitNjuv_HOS}. Currently only for single brood year returns.}
 }}
 
 \section{Creating Object}{

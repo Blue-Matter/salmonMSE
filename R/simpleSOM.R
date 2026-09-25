@@ -26,7 +26,7 @@
 #' of the terminal marine fishery. Function should be of the form `function(NO, HO, m) return(u)`.
 #' @slot K_T Numeric or function. If `type_T = "catch"`, the catch target of the return in the terminal fishery.
 #' Function should be of the form `function(NO, HO, m) return(K)`.
-#' @slot InitReturn Single numeric or vector `[nsim]`. The return at the beginning of the projection. Default assumes 1000.
+#' @slot InitEsc Single numeric or vector `[nsim]`. The escapement at the beginning of the projection. Default is 1000.
 #' @section Creating Object:
 #' Objects can be created by calls of the form \code{new("simpleSOM")}
 #'
@@ -48,7 +48,7 @@ simpleSOM <- setClass(
     type_T = "character",
     u_terminal = "num.matrix.function",
     K_T = "num.function",
-    InitReturn = "numeric"
+    InitEsc = "numeric"
   )
 )
 
@@ -84,8 +84,8 @@ check_simpleSOM <- function(simpleSOM) {
     simpleSOM <- check_numeric(simpleSOM, "K_T", default = 0)
   }
 
-  if (!length(simpleSOM@InitReturn)) simpleSOM@InitReturn <- 1000
-  simpleSOM <- check_numeric2nsim(simpleSOM, "InitReturn", nsim)
+  if (!length(simpleSOM@InitEsc)) simpleSOM@InitEsc <- 1000
+  simpleSOM <- check_numeric2nsim(simpleSOM, "InitEsc", nsim)
 
   return(simpleSOM)
 }
@@ -167,9 +167,7 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     vulT = rep(1, maxage)
   )
 
-  InitNjuv_NOS <- array(0, c(nsim, maxage, 1))
-  InitNjuv_NOS[, maxage, ] <- simpleSOM@InitReturn
-  Historical <- new("Historical", InitNjuv_NOS = InitNjuv_NOS)
+  Historical <- new("Historical", InitEsc_NOS = simpleSOM@InitEsc, InitEsc_HOS = 0)
 
   SOM <- new(
     "SOM",

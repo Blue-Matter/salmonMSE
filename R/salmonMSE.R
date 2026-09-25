@@ -373,16 +373,22 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   Mjuv_loss_HOS[, , , 1, ] <- Mjuv_HOS[, , , 1, ]
 
   #### Initialize population ----
-  Njuv_NOS[, , , 1, ] <- sapply2(1:ns, function(s) SOM@Historical[[s]]@InitNjuv_NOS[sims, , , drop = FALSE]) %>%
-    aperm(c(1, 4, 2, 3))
-  Njuv_HOS[, , , 1, ] <- sapply2(1:ns, function(s) {
-    if (do_hatchery[s]) {
-      SOM@Historical[[s]]@InitNjuv_HOS[sims, , , drop = FALSE]
-    } else {
-      array(0, c(nsim, nage, n_r))
-    }
-  }) %>%
-    aperm(c(1, 4, 2, 3))
+  init_spawners <- sapply(1:ns, function(s) length(SOM@Historical[[s]]@InitEsc_NOS) && length(SOM@Historical[[s]]@InitEsc_HOS))
+
+  if (all(!init_spawners)) {
+    Njuv_NOS[, , , 1, ] <- sapply2(1:ns, function(s) SOM@Historical[[s]]@InitNjuv_NOS[sims, , , drop = FALSE]) %>%
+      aperm(c(1, 4, 2, 3))
+    Njuv_HOS[, , , 1, ] <- sapply2(1:ns, function(s) {
+      if (do_hatchery[s]) {
+        SOM@Historical[[s]]@InitNjuv_HOS[sims, , , drop = FALSE]
+      } else {
+        array(0, c(nsim, nage, n_r))
+      }
+    }) %>%
+      aperm(c(1, 4, 2, 3))
+  } else if (any(!init_spawners)) {
+    stop("Cannot initialize projection")
+  }
 
   #### Projection ----
   for (y in 1:proyears) {
@@ -395,149 +401,164 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         exp(-Mjuv_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
     }
 
-    # Preterminal catch
-    if (PT_complex) {
-      PT_Calcs <- lapply(1:nsim, function(x) {
-        xx <- sims[x]
-        catch_func(
-          NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
-          HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
-          type = "u",
-          U = if (is.matrix(SOM@UPT_complex)) SOM@UPT_complex[xx, y] else SOM@UPT_complex,
-          K = NA_real_,
-          V = matrix(vulPT[x, , ], ns, nage),
-          m = m,
-          MSF = SOM@MSF_PT_complex,
-          release_mort = release_mort[1, ],
-          p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
-          p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
-          AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
-          AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
-        )
-      })
-    } else {
-      PT_Calcs <- lapply(1:nsim, function(x) {
-        xx <- sims[x]
-        PT_Calcs_x <- lapply(1:ns, function(s) {
-          catch_func(
-            NO = array(Njuv_NOS[x, s, , y, ], c(1, nage, n_g)),
-            HO = array(Njuv_HOS[x, s, , y, ], c(1, nage, n_r)),
-            type = type_PT[s],
-            U = if (is.matrix(u_preterminal[[s]])) u_preterminal[[s]][xx, y] else u_preterminal[[s]],
-            K = K_PT[[s]],
-            V = matrix(vulPT[x, s, ], 1, nage),
-            m = m[s],
-            MSF = MSF_PT[s],
-            release_mort = release_mort[1, s],
-            p_mature_NO = array(p_mature_NOS[x, s, , y, ], c(1, nage, n_g)),
-            p_mature_HO = array(p_mature_HOS[x, s, , y, ], c(1, nage, n_r)),
-            AEQ_NO = array(AEQ_NOS[x, s, , y, ], c(1, nage, n_g)),
-            AEQ_HO = array(AEQ_HOS[x, s, , y, ], c(1, nage, n_r))
-          )
-        })
-        vars <- names(PT_Calcs_x[[1]])
-        lapply(vars, function(i) {
-          out <- lapply(PT_Calcs_x, getElement, i)
-          if (is.array(out[[1]])) {
-            out$along <- 1
-            do.call(abind::abind, out) %>% structure(dimnames = NULL)
-          } else {
-            do.call(c, out)
-          }
-        }) %>%
-          structure(names = vars)
-      })
-    }
-
-    vars <- names(PT_Calcs[[1]])
-    PT_Calcs_y <- lapply(vars, function(i) sapply2(PT_Calcs, getElement, i)) %>%
-      structure(names = vars)
-
-    KPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_NO, c(4, 1:3))
-    DPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$D_NO, c(4, 1:3))
-    DDPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$DD_NO, c(4, 1:3))
-
-    KPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$K_HO, c(4, 1:3))
-    DPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_HO, c(4, 1:3))
-    DDPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$DD_HO, c(4, 1:3))
-
-    UPT_NOS[, , y] <- t(PT_Calcs_y$U_NO)
-    ExPT_NOS[, , y] <- t(PT_Calcs_y$Ex_NO)
-
-    UPT_HOS[, , y] <- t(PT_Calcs_y$U_HO)
-    ExPT_HOS[, , y] <- t(PT_Calcs_y$Ex_HO)
-
-    # Maturity (begin second half)
-    Return_NOS[, , , y, ] <- (Njuv_NOS[, , , y, ] - KPT_NOS[, , , y, ] - DDPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
-    Return_HOS[, , , y, ] <- (Njuv_HOS[, , , y, ] - KPT_HOS[, , , y, ] - DDPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
-
-    # Terminal marine catch
-    if (T_complex) {
-      T_Calcs <- lapply(1:nsim, function(x) {
-        xx <- sims[x]
-        catch_func(
-          NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
-          HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
-          type = "u",
-          U = if (is.matrix(SOM@UT_complex)) SOM@UT_complex[xx, y] else SOM@UT_complex,
-          K = NA_real_,
-          V = matrix(vulT[x, , ], ns, nage),
-          m = m,
-          MSF = SOM@MSF_T_complex,
-          release_mort = release_mort[2, ]
-        )
-      })
-    } else {
-      T_Calcs <- lapply(1:nsim, function(x) {
-        T_Calcs_x <- lapply(1:ns, function(s) {
+    if (y > 1 || all(!init_spawners)) {
+      # Preterminal catch
+      if (PT_complex) {
+        PT_Calcs <- lapply(1:nsim, function(x) {
           xx <- sims[x]
           catch_func(
-            NO = array(Return_NOS[x, s, , y, ], c(1, nage, n_g)),
-            HO = array(Return_HOS[x, s, , y, ], c(1, nage, n_r)),
-            type = type_T[s],
-            U = if (is.matrix(u_terminal[[s]])) u_terminal[[s]][xx, y] else u_terminal[[s]],
-            K = K_T[[s]],
-            V = matrix(vulT[x, s, ], 1, nage),
-            m = m[s],
-            MSF = MSF_T[s],
-            release_mort = release_mort[2, s]
+            NO = array(Njuv_NOS[x, , , y, ], c(ns, nage, n_g)),
+            HO = array(Njuv_HOS[x, , , y, ], c(ns, nage, n_r)),
+            type = "u",
+            U = if (is.matrix(SOM@UPT_complex)) SOM@UPT_complex[xx, y] else SOM@UPT_complex,
+            K = NA_real_,
+            V = matrix(vulPT[x, , ], ns, nage),
+            m = m,
+            MSF = SOM@MSF_PT_complex,
+            release_mort = release_mort[1, ],
+            p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
+            p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
+            AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
+            AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
           )
         })
-        vars <- names(T_Calcs_x[[1]])
-        lapply(vars, function(i) {
-          out <- lapply(T_Calcs_x, getElement, i)
-          if (is.array(out[[1]])) {
-            out$along <- 1
-            do.call(abind::abind, out) %>% structure(dimnames = NULL)
-          } else {
-            do.call(c, out)
-          }
-        }) %>%
-          structure(names = vars)
-      })
+      } else {
+        PT_Calcs <- lapply(1:nsim, function(x) {
+          xx <- sims[x]
+          PT_Calcs_x <- lapply(1:ns, function(s) {
+            catch_func(
+              NO = array(Njuv_NOS[x, s, , y, ], c(1, nage, n_g)),
+              HO = array(Njuv_HOS[x, s, , y, ], c(1, nage, n_r)),
+              type = type_PT[s],
+              U = if (is.matrix(u_preterminal[[s]])) u_preterminal[[s]][xx, y] else u_preterminal[[s]],
+              K = K_PT[[s]],
+              V = matrix(vulPT[x, s, ], 1, nage),
+              m = m[s],
+              MSF = MSF_PT[s],
+              release_mort = release_mort[1, s],
+              p_mature_NO = array(p_mature_NOS[x, s, , y, ], c(1, nage, n_g)),
+              p_mature_HO = array(p_mature_HOS[x, s, , y, ], c(1, nage, n_r)),
+              AEQ_NO = array(AEQ_NOS[x, s, , y, ], c(1, nage, n_g)),
+              AEQ_HO = array(AEQ_HOS[x, s, , y, ], c(1, nage, n_r))
+            )
+          })
+          vars <- names(PT_Calcs_x[[1]])
+          lapply(vars, function(i) {
+            out <- lapply(PT_Calcs_x, getElement, i)
+            if (is.array(out[[1]])) {
+              out$along <- 1
+              do.call(abind::abind, out) %>% structure(dimnames = NULL)
+            } else {
+              do.call(c, out)
+            }
+          }) %>%
+            structure(names = vars)
+        })
+      }
+
+      vars <- names(PT_Calcs[[1]])
+      PT_Calcs_y <- lapply(vars, function(i) sapply2(PT_Calcs, getElement, i)) %>%
+        structure(names = vars)
+
+      KPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_NO, c(4, 1:3))
+      DPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$D_NO, c(4, 1:3))
+      DDPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$DD_NO, c(4, 1:3))
+
+      KPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$K_HO, c(4, 1:3))
+      DPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_HO, c(4, 1:3))
+      DDPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$DD_HO, c(4, 1:3))
+
+      UPT_NOS[, , y] <- t(PT_Calcs_y$U_NO)
+      ExPT_NOS[, , y] <- t(PT_Calcs_y$Ex_NO)
+
+      UPT_HOS[, , y] <- t(PT_Calcs_y$U_HO)
+      ExPT_HOS[, , y] <- t(PT_Calcs_y$Ex_HO)
+
+      # Maturity (begin second half)
+      Return_NOS[, , , y, ] <- (Njuv_NOS[, , , y, ] - KPT_NOS[, , , y, ] - DDPT_NOS[, , , y, ]) * p_mature_NOS[, , , y, ]
+      Return_HOS[, , , y, ] <- (Njuv_HOS[, , , y, ] - KPT_HOS[, , , y, ] - DDPT_HOS[, , , y, ]) * p_mature_HOS[, , , y, ]
+
+      # Terminal marine catch
+      if (T_complex) {
+        T_Calcs <- lapply(1:nsim, function(x) {
+          xx <- sims[x]
+          catch_func(
+            NO = array(Return_NOS[x, , , y, ], c(ns, nage, n_g)),
+            HO = array(Return_HOS[x, , , y, ], c(ns, nage, n_r)),
+            type = "u",
+            U = if (is.matrix(SOM@UT_complex)) SOM@UT_complex[xx, y] else SOM@UT_complex,
+            K = NA_real_,
+            V = matrix(vulT[x, , ], ns, nage),
+            m = m,
+            MSF = SOM@MSF_T_complex,
+            release_mort = release_mort[2, ]
+          )
+        })
+      } else {
+        T_Calcs <- lapply(1:nsim, function(x) {
+          T_Calcs_x <- lapply(1:ns, function(s) {
+            xx <- sims[x]
+            catch_func(
+              NO = array(Return_NOS[x, s, , y, ], c(1, nage, n_g)),
+              HO = array(Return_HOS[x, s, , y, ], c(1, nage, n_r)),
+              type = type_T[s],
+              U = if (is.matrix(u_terminal[[s]])) u_terminal[[s]][xx, y] else u_terminal[[s]],
+              K = K_T[[s]],
+              V = matrix(vulT[x, s, ], 1, nage),
+              m = m[s],
+              MSF = MSF_T[s],
+              release_mort = release_mort[2, s]
+            )
+          })
+          vars <- names(T_Calcs_x[[1]])
+          lapply(vars, function(i) {
+            out <- lapply(T_Calcs_x, getElement, i)
+            if (is.array(out[[1]])) {
+              out$along <- 1
+              do.call(abind::abind, out) %>% structure(dimnames = NULL)
+            } else {
+              do.call(c, out)
+            }
+          }) %>%
+            structure(names = vars)
+        })
+      }
+
+      vars <- names(T_Calcs[[1]])
+      T_Calcs_y <- lapply(vars, function(i) sapply2(T_Calcs, getElement, i)) %>%
+        structure(names = vars)
+
+      KT_NOS[, , , y, ] <- aperm(T_Calcs_y$K_NO, c(4, 1:3))
+      DT_NOS[, , , y, ] <- aperm(T_Calcs_y$D_NO, c(4, 1:3))
+      DDT_NOS[, , , y, ] <- aperm(T_Calcs_y$DD_NO, c(4, 1:3))
+
+      KT_HOS[, , , y, ] <- aperm(T_Calcs_y$K_HO, c(4, 1:3))
+      DT_HOS[, , , y, ] <- aperm(T_Calcs_y$D_HO, c(4, 1:3))
+      DDT_HOS[, , , y, ] <- aperm(T_Calcs_y$DD_HO, c(4, 1:3))
+
+      UT_NOS[, , y] <- t(T_Calcs_y$U_NO)
+      ExT_NOS[, , y] <- t(T_Calcs_y$Ex_NO)
+
+      UT_HOS[, , y] <- t(T_Calcs_y$U_HO)
+      ExT_HOS[, , y] <- t(T_Calcs_y$Ex_HO)
+
+      # Escapement from marine fisheries are survivors of terminal fishery
+      Escapement_NOS[, , , y, ] <- Return_NOS[, , , y, ] - KT_NOS[, , , y, ] - DDT_NOS[, , , y, ]
+      Escapement_HOS[, , , y, ] <- Return_HOS[, , , y, ] - KT_HOS[, , , y, ] - DDT_HOS[, , , y, ]
+    } else {
+      Escapement_NOS[, , nage, 1, ] <- sapply(1:ns, function(s) SOM@Historical[[s]]@InitEsc_NOS[sims]/n_g) %>% t()
+      Escapement_HOS[, , nage, 1, ] <- sapply(1:ns, function(s) SOM@Historical[[s]]@InitEsc_HOS[sims]/n_r) %>% t()
+
+      Njuv_NOS[, , , 1, ] <- Njuv_HOS[, , , 1, ] <-
+        KPT_NOS[, , , 1, ] <- DPT_NOS[, , , 1, ] <- DDPT_NOS[, , , 1, ] <-
+        KPT_HOS[, , , 1, ] <- DPT_HOS[, , , 1, ] <- DDPT_HOS[, , , 1, ] <-
+        UPT_NOS[, , 1] <- ExPT_NOS[, , 1] <- UPT_HOS[, , 1] <- ExPT_HOS[, , 1] <-
+        Return_NOS[, , , 1, ] <- Return_HOS[, , , 1, ] <-
+        KT_NOS[, , , 1, ] <- DT_NOS[, , , 1, ] <- DDT_NOS[, , , 1, ] <-
+        KT_HOS[, , , 1, ] <- DT_HOS[, , , 1, ] <- DDT_HOS[, , , 1, ] <-
+        UT_NOS[, , 1] <- ExT_NOS[, , 1] <- UT_HOS[, , 1] <- ExT_HOS[, , 1] <-
+        Escapement_NOS[, , -nage, 1, ] <- Escapement_HOS[, , -nage, 1, ] <- 0
     }
-
-    vars <- names(T_Calcs[[1]])
-    T_Calcs_y <- lapply(vars, function(i) sapply2(T_Calcs, getElement, i)) %>%
-      structure(names = vars)
-
-    KT_NOS[, , , y, ] <- aperm(T_Calcs_y$K_NO, c(4, 1:3))
-    DT_NOS[, , , y, ] <- aperm(T_Calcs_y$D_NO, c(4, 1:3))
-    DDT_NOS[, , , y, ] <- aperm(T_Calcs_y$DD_NO, c(4, 1:3))
-
-    KT_HOS[, , , y, ] <- aperm(T_Calcs_y$K_HO, c(4, 1:3))
-    DT_HOS[, , , y, ] <- aperm(T_Calcs_y$D_HO, c(4, 1:3))
-    DDT_HOS[, , , y, ] <- aperm(T_Calcs_y$DD_HO, c(4, 1:3))
-
-    UT_NOS[, , y] <- t(T_Calcs_y$U_NO)
-    ExT_NOS[, , y] <- t(T_Calcs_y$Ex_NO)
-
-    UT_HOS[, , y] <- t(T_Calcs_y$U_HO)
-    ExT_HOS[, , y] <- t(T_Calcs_y$Ex_HO)
-
-    # Escapement from marine fisheries are survivors of terminal fishery
-    Escapement_NOS[, , , y, ] <- Return_NOS[, , , y, ] - KT_NOS[, , , y, ] - DDT_NOS[, , , y, ]
-    Escapement_HOS[, , , y, ] <- Return_HOS[, , , y, ] - KT_HOS[, , , y, ] - DDT_HOS[, , , y, ]
 
     # Move strays (internally)
     Stray_Calcs <- lapply(1:nsim, function(x) {

@@ -43,7 +43,7 @@ of the terminal marine fishery. Function should be of the form \code{function(NO
 \item{\code{K_T}}{Numeric or function. If \code{type_T = "catch"}, the catch target of the return in the terminal fishery.
 Function should be of the form \code{function(NO, HO, m) return(K)}.}
 
-\item{\code{InitReturn}}{Single numeric or vector \verb{[nsim]}. The return at the beginning of the projection. Default assumes 1000.}
+\item{\code{InitEsc}}{Single numeric or vector \verb{[nsim]}. The escapement at the beginning of the projection. Default is 1000.}
 }}
 
 \section{Creating Object}{

@@ -322,30 +322,39 @@ check_SOM <- function(SOM, silent = FALSE) {
     ### Check Historical (initial) ----
     Historical <- update_S4(SOM@Historical[[s]])
 
-    Njuv_NOS <- Njuv_HOS <- NA_real_
+    init_spawners <- length(Historical@InitEsc_NOS) || length(Historical@InitEsc_HOS)
 
-    if (!length(Historical@InitNjuv_NOS)) {
-      Njuv_NOS <- 1000
-    } else if (length(Historical@InitNjuv_NOS) == 1) {
-      Njuv_NOS <- Historical@InitNjuv_NOS
-    }
+    if (init_spawners) {
+      if (!length(Historical@InitEsc_HOS)) Historical@InitEsc_HOS <- 0
 
-    if (!length(Historical@InitNjuv_NOS)) {
-      Njuv_HOS <- 1000
-    } else if (length(Historical@InitNjuv_HOS) == 1) {
-      Njuv_HOS <- Historical@InitNjuv_HOS
-    }
+      Historical <- check_numeric2nsim(Historical, "InitEsc_NOS", nsim)
+      Historical <- check_numeric2nsim(Historical, "InitEsc_HOS", nsim)
+    } else {
+      Njuv_NOS <- Njuv_HOS <- NA_real_
 
-    if (!is.array(Historical@InitNjuv_NOS)) {
-      Historical@InitNjuv_NOS <- array(0, c(nsim, maxage, Bio@n_g))
-      Historical@InitNjuv_NOS[, maxage, ] <- Njuv_NOS/Bio@n_g
+      if (!length(Historical@InitNjuv_NOS)) {
+        Njuv_NOS <- 1000
+      } else if (length(Historical@InitNjuv_NOS) == 1) {
+        Njuv_NOS <- Historical@InitNjuv_NOS
+      }
+
+      if (!length(Historical@InitNjuv_HOS)) {
+        Njuv_HOS <- 1000
+      } else if (length(Historical@InitNjuv_HOS) == 1) {
+        Njuv_HOS <- Historical@InitNjuv_HOS
+      }
+
+      if (!is.array(Historical@InitNjuv_NOS)) {
+        Historical@InitNjuv_NOS <- array(0, c(nsim, maxage, Bio@n_g))
+        Historical@InitNjuv_NOS[, maxage, ] <- Njuv_NOS/Bio@n_g
+      }
+      if (!is.array(Historical@InitNjuv_HOS)) {
+        Historical@InitNjuv_HOS <- array(0, c(nsim, maxage, Hatchery@n_r))
+        Historical@InitNjuv_HOS[, maxage, ] <- Njuv_HOS/Hatchery@n_r
+      }
+      Historical <- check_array(Historical, "InitNjuv_NOS", dims = c(nsim, maxage, Bio@n_g))
+      Historical <- check_array(Historical, "InitNjuv_HOS", dims = c(nsim, maxage, Hatchery@n_r))
     }
-    if (!is.array(Historical@InitNjuv_HOS)) {
-      Historical@InitNjuv_HOS <- array(0, c(nsim, maxage, Hatchery@n_r))
-      Historical@InitNjuv_HOS[, maxage, ] <- Njuv_HOS/Hatchery@n_r
-    }
-    Historical <- check_array(Historical, "InitNjuv_NOS", dims = c(nsim, maxage, Bio@n_g))
-    Historical <- check_array(Historical, "InitNjuv_HOS", dims = c(nsim, maxage, Hatchery@n_r))
 
     SOM@Bio[[s]] <- Bio
     SOM@Habitat[[s]] <- Habitat

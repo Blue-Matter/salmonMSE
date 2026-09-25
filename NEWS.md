@@ -5,6 +5,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Conditioning model can place lognormal prior on either Srep or Smax, additional option for truncated normal prior on log(productivity) (> 0)
 - Simplify `CM_SRR()` and only plot medians
 - New `SOM` slots for fisheries on stock complexes in multi-population models
+- New `Historical` slots to initialize projection from escapement
 - `salmonMSE()` returns the original `SOM` object in `SMSE@Misc$SOM`
 
 # Version 3.0.0
