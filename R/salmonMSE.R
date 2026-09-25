@@ -318,6 +318,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         1
       }
     })
+    ImpErr_PT <- lapply(SOM@Harvest, slot, "ImpErr_PT")
   }
 
   if (T_complex) {
@@ -334,6 +335,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         1
       }
     })
+    ImpErr_T <- lapply(SOM@Harvest, slot, "ImpErr_T")
   }
 
   # Fishery vulnerability
@@ -432,6 +434,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             K = NA_real_,
             V = matrix(vulPT[x, , ], ns, nage),
             ForeErr = if (is.matrix(ForeErr_PT_complex)) ForeErr_PT_complex[xx, y] else ForeErr_PT_complex,
+            ImpErr = if (is.matrix(SOM@ImpErr_PT_complex)) SOM@ImpErr_PT_complex[xx, y] else SOM@ImpErr_PT_complex,
             m = m,
             MSF = SOM@MSF_PT_complex,
             release_mort = release_mort[1, ],
@@ -452,7 +455,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               U = if (is.matrix(u_preterminal[[s]])) u_preterminal[[s]][xx, y] else u_preterminal[[s]],
               K = K_PT[[s]],
               V = matrix(vulPT[x, s, ], 1, nage),
-              ForeErr = if (is.matrix(ForeErr_T[[s]])) ForeErr_T[[s]][xx, y] else ForeErr_T[[s]],
+              ForeErr = if (is.matrix(ForeErr_PT[[s]])) ForeErr_PT[[s]][xx, y] else ForeErr_PT[[s]],
+              ImpErr = if (is.matrix(ImpErr_PT[[s]])) ImpErr_PT[[s]][xx, y] else ImpErr_PT[[s]],
               m = m[s],
               MSF = MSF_PT[s],
               release_mort = release_mort[1, s],
@@ -510,6 +514,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             K = NA_real_,
             V = matrix(vulT[x, , ], ns, nage),
             ForeErr = if (is.matrix(ForeErr_T_complex)) ForeErr_T_complex[xx, y] else ForeErr_T_complex,
+            ImpErr = if (is.matrix(SOM@ImpErr_T_complex)) SOM@ImpErr_T_complex[xx, y] else SOM@ImpErr_T_complex,
             m = m,
             MSF = SOM@MSF_T_complex,
             release_mort = release_mort[2, ]
@@ -527,6 +532,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               K = K_T[[s]],
               V = matrix(vulT[x, s, ], 1, nage),
               ForeErr = if (is.matrix(ForeErr_T[[s]])) ForeErr_T[[s]][xx, y] else ForeErr_T[[s]],
+              ImpErr = if (is.matrix(ImpErr_T[[s]])) ImpErr_T[[s]][xx, y] else ImpErr_T[[s]],
               m = m[s],
               MSF = MSF_T[s],
               release_mort = release_mort[2, s]

@@ -28,3 +28,5 @@
 #' Only used if `u_preterminal` or `K_PT` is a function where fishing intensity is determined by abundance. Default is 1 (no error).
 #' @slot ForeErr_T Numeric or matrix `[nsim, proyears]`. Multiplicative forecast error of the return size for the terminal fishery, i.e., observation error.
 #' Only used if `u_terminal` or `K_T` is a function where fishing intensity is determined by return size. Default is 1 (no error).
+#' @slot ImpErr_PT Numeric or matrix `[nsim, proyears]`. Implementation error of specified preterminal harvest. Default is 0 (no error).
+#' @slot ImpErr_T Numeric or matrix `[nsim, proyears]`. Implementation error of specified terminal harvest. Default is 0 (no error).

@@ -9,7 +9,8 @@
 #' @param U Numeric or function. Harvest rate of fishery
 #' @param K Numeric or function. Total catch of the fishery
 #' @param V Matrix `[ns, nage]` Relative vulnerability by age class to fishery
-#' @param ForeErr Numeric. Multiplicative forecast error for control rule, only used if either `U` or `K` is a function
+#' @param ForeErr Numeric. Multiplicative forecast error for control rule, only used if either `U` or `K` is a function (1 = no error)
+#' @param ImpErr Numeric. Implementation error of harvest control (0 = no error)
 #' @param MSF Logical, whether fishing is mark-selective
 #' @param m Numeric vector length `[ns]`, mark rate of hatchery-origin fish. Only used if `MSF = TRUE`.
 #' @param release_mort Numeric vector length `[ns]`, proportion of released unmarked fish that die. Only used if `MSF = TRUE`.
@@ -31,7 +32,8 @@
 #' - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
 #' - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
 #' @keywords internal
-catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, MSF = FALSE, m = 1, release_mort = 0,
+catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, ImpErr = 1,
+                       MSF = FALSE, m = 1, release_mort = 0,
                        p_mature_NO = array(1, dim(NO)), p_mature_HO = array(1, dim(HO)),
                        AEQ_NO = array(1, dim(NO)), AEQ_HO = array(1, dim(HO))) {
   type <- match.arg(type)
@@ -50,6 +52,7 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, MSF
         m
       )
     }
+    u_solve <- plogis(qlogis(u_solve) + ImpErr)
   } else {
     if (is.numeric(K)) {
       K_solve <- K
@@ -63,6 +66,7 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, MSF
         m
       )
     }
+    K_solve <- K_solve * (1 + ImpErr)
   }
 
   # Solve for fishing effort or encounter rate that achieves the harvest rate (u_solver) or catch target (K_solve)

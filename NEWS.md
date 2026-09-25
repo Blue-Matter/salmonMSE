@@ -6,6 +6,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - Simplify `CM_SRR()` and only plot medians
 - New `SOM` slots for fisheries on stock complexes in multi-population models
 - New `Historical` slots to initialize projection from escapement
+- New `Harvest` slots for forecast error and implementation error
 - `salmonMSE()` returns the original `SOM` object in `SMSE@Misc$SOM`
 
 # Version 3.0.0

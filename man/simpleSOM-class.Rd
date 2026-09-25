@@ -47,6 +47,8 @@ Function should be of the form \code{function(NO, HO, m) return(K)}.}
 
 \item{\code{ForeErr}}{Numeric or matrix \verb{[nsim, ngen]}. Multiplicative forecast error of the return size.
 Only used if \code{u_terminal} or \code{K_T} is a function where fishing intensity is determined by return size. Default is 1 (no error).}
+
+\item{\code{ImpErr}}{Numeric or matrix \verb{[nsim, ngen]}. Implementation error of terminal fishery harvest. Default is 0 (no error).}
 }}
 
 \section{Creating Object}{

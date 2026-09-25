@@ -12,6 +12,7 @@ catch_func(
   K,
   V,
   ForeErr = 1,
+  ImpErr = 1,
   MSF = FALSE,
   m = 1,
   release_mort = 0,
@@ -34,7 +35,9 @@ catch_func(
 
 \item{V}{Matrix \verb{[ns, nage]} Relative vulnerability by age class to fishery}
 
-\item{ForeErr}{Numeric. Multiplicative forecast error for control rule, only used if either \code{U} or \code{K} is a function}
+\item{ForeErr}{Numeric. Multiplicative forecast error for control rule, only used if either \code{U} or \code{K} is a function (1 = no error)}
+
+\item{ImpErr}{Numeric. Implementation error of harvest control (0 = no error)}
 
 \item{MSF}{Logical, whether fishing is mark-selective}
 

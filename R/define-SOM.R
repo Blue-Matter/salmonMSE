@@ -129,7 +129,9 @@ setClass(
     vulPT = "num.matrix",
     vulT = "num.matrix",
     ForeErr_PT = "num.matrix",
-    ForeErr_T = "num.matrix"
+    ForeErr_T = "num.matrix",
+    ImpErr_PT = "num.matrix",
+    ImpErr_T = "num.matrix"
   )
 )
 
@@ -269,10 +271,12 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' Leave empty to `numeric(0)` to operate on individual population basis.
 #' @slot MSF_PT_complex *Optional* For multi-population models: whether the preterminal fishery on stock complex is mark-selective. Default is `FALSE`
 #' @slot MSF_T_complex *Optional* For multi-population models: whether the terminal fishery on stock complex is mark-selective. Default is `FALSE`
-#' @slot ForeErr_PT_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for preterminal fishery (observation error).
+#' @slot ForeErr_PT_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for preterminal fishery complex (observation error).
 #' Only used if `UPT_complex` is a function where fishing intensity is determined by abundance. Default is 1 (no error).
-#' @slot ForeErr_T_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for terminal fishery (observation error).
+#' @slot ForeErr_T_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Multiplicative forecast error for terminal fishery complex (observation error).
 #' Only used if `UT_complex` is a function where fishing intensity is determined by return size. Default is 1 (no error).
+#' @slot ImpErr_PT_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Implementation error of harvest in preterminal fishery complex. Default is 0 (no error).
+#' @slot ImpErr_T_complex *Optional* For multi-population models: numeric or matrix `[nsim, proyears]`. Implementation error of harvest in terminal fishery complex. Default is 0 (no error).
 #' @keywords classes
 #'
 #' @export
@@ -294,7 +298,9 @@ SOM <- setClass(
     MSF_PT_complex = "logical",
     MSF_T_complex = "logical",
     ForeErr_PT_complex = "num.matrix",
-    ForeErr_T_complex = "num.matrix"
+    ForeErr_T_complex = "num.matrix",
+    ImpErr_PT_complex = "num.matrix",
+    ImpErr_T_complex = "num.matrix"
   )
 )
 

@@ -53,6 +53,10 @@ Only used if \code{u_preterminal} or \code{K_PT} is a function where fishing int
 
 \item{\code{ForeErr_T}}{Numeric or matrix \verb{[nsim, proyears]}. Multiplicative forecast error of the return size for the terminal fishery, i.e., observation error.
 Only used if \code{u_terminal} or \code{K_T} is a function where fishing intensity is determined by return size. Default is 1 (no error).}
+
+\item{\code{ImpErr_PT}}{Numeric or matrix \verb{[nsim, proyears]}. Implementation error of specified preterminal harvest. Default is 0 (no error).}
+
+\item{\code{ImpErr_T}}{Numeric or matrix \verb{[nsim, proyears]}. Implementation error of specified terminal harvest. Default is 0 (no error).}
 }}
 
 \section{Creating Object}{

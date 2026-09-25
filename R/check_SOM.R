@@ -57,6 +57,12 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
     }
 
+    if (length(SOM@ImpErr_PT_complex) <= 1) {
+      SOM <- check_numeric(SOM, "ImpErr_PT_complex", default = 0)
+    } else {
+      SOM <- check_array(SOM, "ImpErr_PT_complex", c(nsim, proyears))
+    }
+
     if (!silent) message("Preterminal fishery will operate on full complex (all populations)")
   } else if (!silent && ns > 1) {
     message("Preterminal fishery will operate on individual populations")
@@ -77,6 +83,12 @@ check_SOM <- function(SOM, silent = FALSE) {
       } else {
         SOM <- check_array(SOM, "ForeErr_T_complex", c(nsim, proyears))
       }
+    }
+
+    if (length(SOM@ImpErr_T_complex) <= 1) {
+      SOM <- check_numeric(SOM, "ImpErr_T_complex", default = 0)
+    } else {
+      SOM <- check_array(SOM, "ImpErr_T_complex", c(nsim, proyears))
     }
 
     if (!silent) message("Terminal fishery will operate on full complex (all populations)")
@@ -324,6 +336,12 @@ check_SOM <- function(SOM, silent = FALSE) {
 
       }
       Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
+
+      if (length(Harvest@ImpErr_PT) <= 1) {
+        Harvest <- check_numeric(Harvest, "ImpErr_PT", default = 0)
+      } else {
+        Harvest <- check_array(Harvest, "ImpErr_PT", c(nsim, proyears))
+      }
     }
 
     if (!length(SOM@UT_complex)) {
@@ -335,7 +353,7 @@ check_SOM <- function(SOM, silent = FALSE) {
           Harvest <- check_numeric(Harvest, "u_terminal", default = 0)
         } else if (is.function(Harvest@u_terminal)) {
           if (length(Harvest@ForeErr_T) <= 1) {
-            Harvest <- check_numeric(Harvest, "ForeErr_T", default = 1)
+            Harvest <- check_numeric(Harvest, "ForeErr_T", default = 0)
           } else {
             Harvest <- check_array(Harvest, "ForeErr_T", c(nsim, proyears))
           }
@@ -355,6 +373,12 @@ check_SOM <- function(SOM, silent = FALSE) {
 
       }
       Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
+
+      if (length(Harvest@ImpErr_T) <= 1) {
+        Harvest <- check_numeric(Harvest, "ImpErr_T", default = 1)
+      } else {
+        Harvest <- check_array(Harvest, "ImpErr_T", c(nsim, proyears))
+      }
     }
 
     if (length(Harvest@release_mort) == 1) Harvest@release_mort <- rep(Harvest@release_mort, 2)
