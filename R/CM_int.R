@@ -60,11 +60,11 @@ CM_int <- function(p, d) {
   # Transformed parameters ----
   if (is.null(d$smax_mu) && is.null(d$smax_sd)) {
     so <- exp(p$log_so)                  # spawners at replacement
-    log_smax <- p$log_so + log(p$log_cr) # spawners that maximizes recruitment
+    log_smax <- p$log_so - log(p$log_cr) # spawners that maximizes recruitment
     smax <- exp(log_smax)
   } else {
     smax <- exp(p$log_smax)
-    log_so <- p$log_smax - log(p$log_cr)
+    log_so <- p$log_smax + log(p$log_cr)
     so <- exp(log_so)
   }
 
