@@ -14,6 +14,7 @@ catch_func(
   K,
   V,
   ForeErr = 1,
+  ImpErr = 1,
   MSF = FALSE,
   m = 1,
   release_mort = 0,
@@ -54,7 +55,11 @@ catch_func(
 - ForeErr:
 
   Numeric. Multiplicative forecast error for control rule, only used if
-  either `U` or `K` is a function
+  either `U` or `K` is a function (1 = no error)
+
+- ImpErr:
+
+  Numeric. Implementation error of harvest control (0 = no error)
 
 - MSF:
 

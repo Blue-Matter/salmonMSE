@@ -294,8 +294,13 @@ Starting values for parameters can be provided through a named list:
 - `log_cr` Numeric, log of the compensation ratio (productivity).
   Default is 3.
 
-- `log_so` Numeric, unfished spawners in logspace. Default is
-  `log(3 * max(data$obsescape))`.
+- `log_so` Numeric, log of spawners at replacement. Default is
+  `log(3 * max(data$obsescape))`. **Only used if there is no prior on
+  log_smax**
+
+- `log_smax` Numeric, log of spawners at maximum recruitment. Default is
+  `log(mean(data$obsescape))`. **Only used if there is a prior on
+  log_smax**
 
 - `moadd` Numeric, additive term to base natural mortality rate for age
   1 juveniles. Default is zero.

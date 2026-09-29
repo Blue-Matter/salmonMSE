@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"simpleSOM"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/dev/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
       <div class="d-none name"><code>simpleSOM-class.Rd</code></div>
     </div>
 
@@ -113,6 +113,10 @@ Function should be of the form <code>function(NO, HO, m) return(K)</code>.</p></
 Only used if <code>u_terminal</code> or <code>K_T</code> is a function where fishing intensity is determined by return size. Default is 1 (no error).</p></dd>
 
 
+<dt><code>ImpErr</code></dt>
+<dd><p>Numeric or matrix <code>[nsim, ngen]</code>. Implementation error of terminal fishery harvest. Default is 0 (no error).</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="creating-object">Creating Object<a class="anchor" aria-label="anchor" href="#creating-object"></a></h2>
@@ -139,9 +143,9 @@ Only used if <code>u_terminal</code> or <code>K_T</code> is a function where fis
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:           u_terminal                 K_T             InitEsc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class: num.matrix.function        num.function             numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:              ForeErr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:              ForeErr              ImpErr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          num.matrix          num.matrix</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

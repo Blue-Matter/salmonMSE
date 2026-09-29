@@ -11,6 +11,7 @@
 - New `SOM` slots for fisheries on stock complexes in multi-population
   models
 - New `Historical` slots to initialize projection from escapement
+- New `Harvest` slots for forecast error and implementation error
 - [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
   returns the original `SOM` object in `SMSE@Misc$SOM`
 

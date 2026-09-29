@@ -144,14 +144,14 @@ for calculating performance metrics:
 
 # Probability of exceeding 80 percent SMSY during the entire projection
 P_SMSY80(SMSE)
-#> [1] 0.3148536
+#> [1] 0.1213389
 ```
 
 ``` r
 
 # Probability of exceeding Sgen
 P_Sgen100(SMSE)
-#> [1] 0.4079498
+#> [1] 0.3368201
 ```
 
 ``` r

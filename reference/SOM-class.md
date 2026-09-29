@@ -94,17 +94,29 @@ An object containing all the parameters for a salmon operating model
 
   *Optional* For multi-population models: numeric or matrix
   `[nsim, proyears]`. Multiplicative forecast error for preterminal
-  fishery (observation error). Only used if `UPT_complex` is a function
-  where fishing intensity is determined by abundance. Default is 1 (no
-  error).
+  fishery complex (observation error). Only used if `UPT_complex` is a
+  function where fishing intensity is determined by abundance. Default
+  is 1 (no error).
 
 - `ForeErr_T_complex`:
 
   *Optional* For multi-population models: numeric or matrix
   `[nsim, proyears]`. Multiplicative forecast error for terminal fishery
-  (observation error). Only used if `UT_complex` is a function where
-  fishing intensity is determined by return size. Default is 1 (no
+  complex (observation error). Only used if `UT_complex` is a function
+  where fishing intensity is determined by return size. Default is 1 (no
   error).
+
+- `ImpErr_PT_complex`:
+
+  *Optional* For multi-population models: numeric or matrix
+  `[nsim, proyears]`. Implementation error of harvest in preterminal
+  fishery complex. Default is 0 (no error).
+
+- `ImpErr_T_complex`:
+
+  *Optional* For multi-population models: numeric or matrix
+  `[nsim, proyears]`. Implementation error of harvest in terminal
+  fishery complex. Default is 0 (no error).
 
 ## Objects from the Class
 

@@ -83,6 +83,11 @@ single numeric (value identical across all simulations).
   fishing intensity is determined by return size. Default is 1 (no
   error).
 
+- `ImpErr`:
+
+  Numeric or matrix `[nsim, ngen]`. Implementation error of terminal
+  fishery harvest. Default is 0 (no error).
+
 ## Creating Object
 
 Objects can be created by calls of the form `new("simpleSOM")`
@@ -106,7 +111,7 @@ showClass("simpleSOM")
 #>                                                                   
 #> Name:           u_terminal                 K_T             InitEsc
 #> Class: num.matrix.function        num.function             numeric
-#>                           
-#> Name:              ForeErr
-#> Class:          num.matrix
+#>                                               
+#> Name:              ForeErr              ImpErr
+#> Class:          num.matrix          num.matrix
 ```

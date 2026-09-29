@@ -329,7 +329,7 @@ that PNI is at least 0.80:
 
 PNI_LT <- SMSE_stochastic@PNI[, 1, 49]
 mean(PNI_LT >= 0.8)
-#> [1] 0.13
+#> [1] 0.03
 ```
 
 An equivalently performance metric function is built in to the package:
@@ -337,7 +337,7 @@ An equivalently performance metric function is built in to the package:
 ``` r
 
 P_PNI80(SMSE_stochastic, Yrs = c(49, 49))
-#> [1] 0.13
+#> [1] 0.03
 ```
 
 The quantiles can also be calculated for our performance metric from the
@@ -347,7 +347,7 @@ stochastic replicates:
 
 quantile(PNI_LT, c(0.025, 0.5, 0.975))
 #>      2.5%       50%     97.5% 
-#> 0.6358769 0.7670485 0.8155235
+#> 0.5064195 0.7110349 0.7974004
 ```
 
 Here is the relationship between the performance metrics and
