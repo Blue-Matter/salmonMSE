@@ -51,7 +51,12 @@ knitr::kable(make_CM_table(fit), row.names = FALSE)
 ## MCMC
 
 ```{r trace-cr, fig.cap="Wormplots of productivity parameters, scaling parameters and the log-posterior from MCMC iterations after thinning and warmup."}
-pars_core <- c("cr", "log_so", "moadd", "log_FbasePT", "log_FbaseT", "lp")
+pars_core <- c("log_cr", "moadd", "log_FbasePT", "log_FbaseT", "lp")
+if (is.null(d$smax_mu) && is.null(d$smax_sd)) {
+  pars_core <- c("log_so", pars_core)
+} else {
+  pars_core <- c("log_smax", pars_core)
+}
 CM_trace(stanfit, pars_core)
 ```
 

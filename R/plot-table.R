@@ -96,7 +96,7 @@ make_harvest_table <- function(SMSE, s = 1) {
 
 
 CMpar_key <- data.frame(
-  Parameter = c("log_cr", "log_so", "moadd", "wt", "wto", "wt_sd", "wto_sd",
+  Parameter = c("log_cr", "log_so", "log_smax", "moadd", "wt", "wto", "wt_sd", "wto_sd",
                 "logit_matt", "sd_matt",
                 "log_fanomalyPT", "log_FbasePT", "fanomalyPT_sd",
                 "log_fanomalyT", "log_FbaseT", "fanomalyT_sd",
@@ -104,6 +104,7 @@ CMpar_key <- data.frame(
 
   Description = c("Log productivity at initial maturity and natural mortality",
                   "Log spawners at replacement (at initial maturity and natural mortality)",
+                  "Log spawners at maximum recruitment (at initial maturity and natural mortality)",
                   "Additional age 1 natural mortality (M)",
                   "Annual lognormal deviation in egg-smolt mortality",
                   "Annual lognormal deviation in age 1 natural mortality",
