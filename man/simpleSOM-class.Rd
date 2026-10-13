@@ -29,7 +29,7 @@ Natural per-capita production of recruits as the population approaches zero (den
 \item{\code{Smax}}{Vector length \code{nsim}. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of spawners.}}
 
 \item{\code{sigmaR}}{Vector length \code{nsim}. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-will be simulated with \verb{[stats::rlnorm()]}.}
+will be simulated with \code{\link[stats:Lognormal]{stats::rlnorm()}}.}
 
 \item{\code{Recdev}}{Optional matrix \verb{[nsim, ngen-1]} of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the \code{sigmaR} argument
 and provides more user flexibility, for example, simulating with auto-correlation.}

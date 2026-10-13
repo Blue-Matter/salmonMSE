@@ -171,6 +171,9 @@ check_SOM <- function(SOM, silent = FALSE) {
       }
       Bio <- check_numeric2nsim(Bio, "phi", nsim)
       Bio <- check_numeric2nsim(Bio, "tau", nsim)
+
+      if (!length(Bio@SRdev)) Bio@SRdev <- matrix(1, nsim, proyears)
+      Bio <- check_array(Bio, "SRdev", c(nsim, proyears))
     } else {
       Habitat <- check_numeric(Habitat, "prespawn_rel", default = "BH")
       Habitat <- check_numeric(Habitat, "prespawn_prod", default = 1)

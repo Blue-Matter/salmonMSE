@@ -17,8 +17,8 @@
 #'  Natural per-capita production of recruits as the population approaches zero (density-independent component).
 #' @slot Smax Vector length `nsim`. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. **Units of spawners.**
 #' @slot sigmaR Vector length `nsim`. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-#'  will be simulated with `[stats::rlnorm()]`.
-#' @slot Recdev Optional matrix `[nsim, ngen-1]` of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the `sigmaR` argument
+#'  will be simulated with [stats::rlnorm()].
+#' @slot Recdev Optional matrix `[nsim, ngen]` of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the `sigmaR` argument
 #'  and provides more user flexibility, for example, simulating with auto-correlation.
 #' @slot type_T Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch").
 #' Default is "u".
@@ -69,7 +69,7 @@ check_simpleSOM <- function(simpleSOM) {
   simpleSOM <- check_numeric2nsim(simpleSOM, "Smax", nsim)
 
   if (length(simpleSOM@Recdev)) {
-    simpleSOM <- check_array(simpleSOM, "Recdev", c(nsim, simpleSOM@ngen-1))
+    simpleSOM <- check_array(simpleSOM, "Recdev", c(nsim, simpleSOM@ngen))
   } else {
     simpleSOM <- check_numeric2nsim(simpleSOM, "sigmaR", nsim)
   }
@@ -129,13 +129,13 @@ simple_salmonMSE <- function(simpleSOM, ...) {
   } else {
     sigmaR <- simpleSOM@sigmaR
     Recdev <- sapply(1:nsim, function(x) {
-      rlnorm(ngen-1, -0.5 * sigmaR[x]^2, sigmaR[x])
+      rlnorm(ngen, -0.5 * sigmaR[x]^2, sigmaR[x])
     }) |> t()
   }
 
   # Recruitment anomalies
-  Mjuv <- array(0, c(nsim, maxage-1, proyears))
-  Mjuv[, 1, seq(2, proyears, maxage)] <- -log(Recdev)
+  SRdev <- matrix(0, nsim, proyears)
+  SRdev[, seq(1, proyears, maxage)] <- Recdev
 
   if (is.matrix(simpleSOM@u_terminal)) {
     u_terminal <- matrix(0, nsim, proyears)
@@ -154,7 +154,8 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     Smax = simpleSOM@Smax,
     phi = rep(1, nsim),
     tau = rep(1, nsim),
-    Mjuv_NOS = Mjuv,
+    SRdev = SRdev,
+    Mjuv_NOS = rep(0, maxage - 1),
     fec = p_mature,
     p_female = 1,
     s_enroute = 1

@@ -24,6 +24,7 @@
 #'  Used to convert `Smax` to `Emax`, the corresponding egg production that maximizes smolt production, where `Emax = Smax * phi/tau` and the Ricker parameter `beta = 1/Emax`. In simple models,
 #'  `tau` is the product of marine survival and proportion female. If not provided, `tau` will be calculated from `Mjuv_NOS`, `p_mature`, `s_enroute`, `p_female`, and `p_LHG` corresponding
 #'  to the first year and weighted by life history groups. Not used if habitat component is used.
+#' @slot SRdev Optional, matrix `[nsim, proyears]` of multiplicative deviations from the stock-recruit relationship (default is 1 for no deviations).
 #' @slot Mjuv_NOS Either vector by age (length `maxage-1`) or an array with dimension `[nsim, maxage-1, proyears, n_g]`.
 #'  Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
 #'  To replicate the SAR parameter of a stage-specific model, set `Mjuv_NOS[a] = -log(SAR)` where `a` is the age class prior to maturation (and zero for all other ages).

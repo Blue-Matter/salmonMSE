@@ -637,6 +637,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         } else {
           .habitat_args <- list()
           SRRpars_x <- SRRpars[[s]][xx, ]
+          SRRpars_x$SRdev <- SOM@Bio[[s]]@SRdev[xx, y]
         }
 
         FW_func(

@@ -293,13 +293,13 @@ nextgen_SRR_func <- function(Brood_Calcs, fec, p_female,
     SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
     fitness_loss[1, 2],
     SRRpars[["SRrel"]]
-  )
+  ) * SRRpars[["SRdev"]]
   Smolt_HOS <- calc_smolt(
     Fry_HOS_g, total_fry_DD,
     SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
     fitness_loss[1, 2],
     SRRpars[["SRrel"]]
-  )
+  ) * SRRpars[["SRdev"]]
 
   output <- list(
     NOS = NOS,

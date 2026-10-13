@@ -47,6 +47,7 @@ setClass(
     Smax = "numeric",
     phi = "numeric",
     tau = "numeric",
+    SRdev = "matrix",
     Mjuv_NOS = "num.array",
     fec = "num.array",
     p_female = "numeric",
