@@ -58,7 +58,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     if (length(SOM@ImpErr_PT_complex) <= 1) {
-      SOM <- check_numeric(SOM, "ImpErr_PT_complex", default = 0)
+      SOM <- check_numeric(SOM, "ImpErr_PT_complex", default = 0, min_value = -1)
     } else {
       SOM <- check_array(SOM, "ImpErr_PT_complex", c(nsim, proyears))
     }
@@ -86,7 +86,7 @@ check_SOM <- function(SOM, silent = FALSE) {
     }
 
     if (length(SOM@ImpErr_T_complex) <= 1) {
-      SOM <- check_numeric(SOM, "ImpErr_T_complex", default = 0)
+      SOM <- check_numeric(SOM, "ImpErr_T_complex", default = 0, min_value = - 1)
     } else {
       SOM <- check_array(SOM, "ImpErr_T_complex", c(nsim, proyears))
     }
@@ -102,10 +102,10 @@ check_SOM <- function(SOM, silent = FALSE) {
     ### Check Bio ----
     Bio <- update_S4(SOM@Bio[[s]])
 
-    Bio <- check_numeric(Bio, "maxage")
+    Bio <- check_numeric(Bio, "maxage", min_value = 2)
     maxage <- Bio@maxage
 
-    Bio <- check_numeric(Bio, "n_g", default = 1)
+    Bio <- check_numeric(Bio, "n_g", default = 1, min_value = 1)
     Bio <- check_numeric(Bio, "p_LHG", size = Bio@n_g, default = rep(1/Bio@n_g, Bio@n_g))
 
     Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, proyears)
@@ -176,38 +176,39 @@ check_SOM <- function(SOM, silent = FALSE) {
       Bio <- check_array(Bio, "SRdev", c(nsim, proyears))
     } else {
       Habitat <- check_numeric(Habitat, "prespawn_rel", default = "BH")
+      Habitat@prespawn_rel <- match.arg(Habitat@prespawn_rel, choices = c("BH", "HS"))
       Habitat <- check_numeric(Habitat, "prespawn_prod", default = 1)
       Habitat <- check_numeric(Habitat, "prespawn_capacity", default = Inf)
 
       Habitat <- check_numeric(Habitat, "egg_rel", default = "BH")
+      Habitat@egg_rel <- match.arg(Habitat@egg_rel, choices = c("BH", "HS"))
       Habitat <- check_numeric(Habitat, "egg_prod", default = 1)
       Habitat <- check_numeric(Habitat, "egg_capacity", default = Inf)
 
       Habitat <- check_numeric(Habitat, "fry_rel", default = "BH")
+      Habitat@fry_rel <- match.arg(Habitat@fry_rel, choices = c("BH", "HS"))
       Habitat <- check_numeric(Habitat, "fry_prod", default = 0.4)
       Habitat <- check_numeric(Habitat, "fry_capacity", default = Inf)
-      if (!length(Habitat@fry_sdev)) {
-        Habitat@fry_sdev <- matrix(1, nsim, proyears)
-      }
-      Habitat <- check_maxage2matrix(Habitat, "fry_sdev", proyears, nsim)
+
+      if (!length(Habitat@fry_sdev)) Habitat@fry_sdev <- matrix(1, nsim, proyears)
+      Habitat <- check_array(Habitat, "fry_sdev", c(nsim, proyears))
 
       Habitat <- check_numeric(Habitat, "smolt_rel", default = "BH")
+      Habitat@smolt_rel <- match.arg(Habitat@smolt_rel, choices = c("BH", "HS"))
       Habitat <- check_numeric(Habitat, "smolt_prod", default = 1)
       Habitat <- check_numeric(Habitat, "smolt_capacity", default = Inf)
-      if (!length(Habitat@smolt_sdev)) {
-        Habitat@smolt_sdev <- matrix(1, nsim, proyears)
-      }
-      Habitat <- check_maxage2matrix(Habitat, "smolt_sdev", proyears, nsim)
+      if (!length(Habitat@smolt_sdev)) Habitat@smolt_sdev <- matrix(1, nsim, proyears)
+      Habitat <- check_array(Habitat, "smolt_sdev", c(nsim, proyears))
     }
 
     ### Check Hatchery ----
     Hatchery <- update_S4(SOM@Hatchery[[s]])
 
-    Hatchery <- check_numeric(Hatchery, "n_r", default = 1)
+    Hatchery <- check_numeric(Hatchery, "n_r", default = 1, min_value = 1)
     Hatchery <- check_numeric(Hatchery, "n_yearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
     Hatchery <- check_numeric(Hatchery, "n_subyearling", size = Hatchery@n_r, default = rep(0, Hatchery@n_r))
-    if (!length(Hatchery@yearling_DD)) Hatchery@yearling_DD <- FALSE
-    if (!length(Hatchery@subyearling_DD)) Hatchery@subyearling_DD <- FALSE
+    Hatchery <- check_numeric(Hatchery, "yearling_DD", default = FALSE)
+    Hatchery <- check_numeric(Hatchery, "subyearling_DD", default = FALSE)
 
     do_hatchery <- sum(Hatchery@n_yearling, Hatchery@n_subyearling) > 0
 
@@ -341,9 +342,9 @@ check_SOM <- function(SOM, silent = FALSE) {
       Harvest <- check_numeric(Harvest, "MSF_PT", default = FALSE)
 
       if (length(Harvest@ImpErr_PT) <= 1) {
-        Harvest <- check_numeric(Harvest, "ImpErr_PT", default = 0)
+        Harvest <- check_numeric(Harvest, "ImpErr_PT", default = 0, min_value = -1)
       } else {
-        Harvest <- check_array(Harvest, "ImpErr_PT", c(nsim, proyears))
+        Harvest <- check_array(Harvest, "ImpErr_PT", c(nsim, proyears), min_value = -1)
       }
     }
 
@@ -378,9 +379,9 @@ check_SOM <- function(SOM, silent = FALSE) {
       Harvest <- check_numeric(Harvest, "MSF_T", default = FALSE)
 
       if (length(Harvest@ImpErr_T) <= 1) {
-        Harvest <- check_numeric(Harvest, "ImpErr_T", default = 1)
+        Harvest <- check_numeric(Harvest, "ImpErr_T", default = 0, min_value = -1)
       } else {
-        Harvest <- check_array(Harvest, "ImpErr_T", c(nsim, proyears))
+        Harvest <- check_array(Harvest, "ImpErr_T", c(nsim, proyears), min_value = -1)
       }
     }
 
@@ -462,121 +463,164 @@ update_S4 <- function(x) {
 }
 
 
-check_numeric <- function(object, name, size = 1, default) {
+check_numeric <- function(object, name, size = 1, default, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (!length(slot(object, name))) {
+  i <- slot(object, name)
+
+  if (!length(i)) {
     if (!missing(default)) {
       slot(object, name) <- default
     } else {
       stop(paste0("Need ", object_name, "@", name, " (numeric)"))
     }
-  } else if (length(slot(object, name)) != size) {
+  } else if (length(i) != size) {
     stop(paste0("Length of ", object_name, "@", name, " needs to be ", size))
   }
-
+  if (is.numeric(i) && any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_maxage <- function(object, name, maxage) {
+check_maxage <- function(object, name, maxage, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (length(slot(object, name)) != maxage) {
+  i <- slot(object, name)
+
+  if (length(i) != maxage) {
     stop(paste0("Need ", object_name, "@", name, " (maxage vector)"))
   }
+  if (any(i < min_value)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_maxage2matrix <- function(object, name, maxage, nsim) {
+check_maxage2matrix <- function(object, name, maxage, nsim, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (!is.array(slot(object, name))) {
-    if (length(slot(object, name)) != maxage) {
+  i <- slot(object, name)
+
+  if (!is.array(i)) {
+    if (length(i) != maxage) {
       stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
     }
-    slot(object, name) <- matrix(slot(object, name), nsim, maxage, byrow = TRUE)
+    slot(object, name) <- matrix(i, nsim, maxage, byrow = TRUE)
+    i <- slot(object, name)
   }
 
-  dim_i <- dim(slot(object, name))
-  dim_check <- length(dim_i) == 2 && all(dim(slot(object, name)) == c(nsim, maxage))
+  dim_i <- dim(i)
+  dim_check <- length(dim_i) == 2 && all(dim(i) == c(nsim, maxage))
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be a matrix with dimension ",
              paste(c(nsim, maxage), collapse = ", "))
     )
   }
+  if (any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_maxage2array <- function(object, name, maxage, nsim, years) {
+check_maxage2array <- function(object, name, maxage, nsim, years, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (!is.array(slot(object, name))) {
-    if (length(slot(object, name)) != maxage) {
+  i <- slot(object, name)
+
+  if (!is.array(i)) {
+    if (length(i) != maxage) {
       stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
     }
     slot(object, name) <- array(slot(object, name), c(maxage, nsim, years)) %>%
       aperm(c(2, 1, 3))
+    i <- slot(object, name)
   }
 
-  dim_i <- dim(slot(object, name))
-  dim_check <- length(dim_i) == 3 && all(dim(slot(object, name)) == c(nsim, maxage, years))
+  dim_i <- dim(i)
+  dim_check <- length(dim_i) == 3 && all(dim(i) == c(nsim, maxage, years))
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
              paste(c(nsim, maxage, years), collapse = ", "))
     )
   }
+  if (any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_maxage2garray <- function(object, name, maxage, nsim, years, n_g) {
+check_maxage2garray <- function(object, name, maxage, nsim, years, n_g, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (!is.array(slot(object, name))) {
-    if (length(slot(object, name)) != maxage) {
+  i <- slot(object, name)
+
+  if (!is.array(i)) {
+    if (length(i) != maxage) {
       stop(paste0(object_name, "@", name, " needs to be length maxage (", maxage, ")"))
     }
-    slot(object, name) <- array(slot(object, name), c(maxage, nsim, years, n_g)) %>%
+    slot(object, name) <- array(i, c(maxage, nsim, years, n_g)) %>%
       aperm(c(2, 1, 3, 4))
+
+    i <- slot(object, name)
   }
 
-  dim_i <- dim(slot(object, name))
-  dim_check <- length(dim_i) == 4 && all(dim(slot(object, name)) == c(nsim, maxage, years, n_g))
+  dim_i <- dim(i)
+  dim_check <- length(dim_i) == 4 && all(dim(i) == c(nsim, maxage, years, n_g))
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
              paste(c(nsim, maxage, years, n_g), collapse = ", "))
     )
   }
+
+  if (any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_array <- function(object, name, dims) {
+check_array <- function(object, name, dims, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  dim_i <- dim(slot(object, name))
+  i <- slot(object, name)
 
-  dim_check <- length(dim_i) == length(dims) && all(dim(slot(object, name)) == dims)
+  dim_i <- dim(i)
+
+  dim_check <- length(dim_i) == length(dims) && all(dim(i) == dims)
   if (!dim_check) {
     stop(
       paste0(object_name, "@", name, " must be an array with dimension ",
              paste(dims, collapse = ", "))
     )
   }
+
+  if (any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
+  }
   return(invisible(object))
 }
 
-check_numeric2nsim <- function(object, name, nsim) {
+check_numeric2nsim <- function(object, name, nsim, min_value = 0) {
   object_name <- as.character(substitute(object))
 
-  if (!length(slot(object, name))) {
+  i <- slot(object, name)
+
+  if (!length(i)) {
     stop(paste0("Need ", object_name, "@", name))
   }
 
-  if (length(slot(object, name)) == 1) slot(object, name) <- rep(slot(object, name), nsim)
-  if (length(slot(object, name)) != nsim) {
+  if (length(i) == 1) {
+    slot(object, name) <- rep(i, nsim)
+    i <- slot(object, name)
+  }
+  if (length(i) != nsim) {
     stop(paste0(object_name, "@", name, " needs to length nsim (", nsim, ")"))
+  }
+  if (any(i < min_value, na.rm = TRUE)) {
+    stop(paste0(object_name, "@", name, " must be greater than ", min_value))
   }
   return(invisible(object))
 }

@@ -16,7 +16,7 @@ make_hatchery_table <- function(SMSE, s = 1) {
   )
 
   hatch_table$Value <- sapply(hatch_table$Slot, function(i) {
-    SOM <- SMSE@Misc$SOM
+    SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     v <- slot(SOM@Hatchery[[s]], i)
     if (!length(v)) {
       v <- NA
@@ -46,7 +46,7 @@ make_fitness_table <- function(SMSE, s = 1) {
     glossary[match(fitness_settings, glossary$Slot), c("Definition", "Slot")]
   )
   fitness_table$Value <- sapply(fitness_table$Slot, function(i) {
-    SOM <- SMSE@Misc$SOM
+    SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     v <- slot(SOM@Hatchery[[s]], i)
     if (!length(v)) v <- NA
     if (length(v) > 1) {
@@ -78,7 +78,7 @@ make_harvest_table <- function(SMSE, s = 1) {
     harvest_extra
   )
   harvest_table$Value <- sapply(harvest_table$Slot, function(i) {
-    SOM <- SMSE@Misc$SOM
+    SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     if (i == "m") {
       v <- slot(SOM@Hatchery[[s]], i)
     } else {
