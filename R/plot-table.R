@@ -85,7 +85,17 @@ make_harvest_table <- function(SMSE, s = 1) {
       v <- slot(SOM@Harvest[[s]], i)
     }
     if (!length(v)) v <- NA
-    if (length(v) > 1) {
+
+    if (is.matrix(v)) {
+      val <- unique(v)
+      if (length(val) > 1) {
+        v <- "matrix"
+      } else {
+        v <- val
+      }
+    } else if (is.function(v)) {
+      v <- "function"
+    } else if (length(v) > 1) {
       v <- paste(v, sep = ",")
     }
     return(format(v))
