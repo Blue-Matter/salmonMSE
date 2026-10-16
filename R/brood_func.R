@@ -269,15 +269,18 @@ nextgen_SRR_func <- function(Brood_Calcs, fec, p_female,
     smolt_yearling <- yearling
   }
 
-  if (sum(subyearling) && hatchery_args$subyearling_DD) {
-    smolt_subyearling <- calc_smolt(
-      subyearling, total_fry_DD,
-      SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
-      fitness_loss[2, 1] * fitness_loss[2, 2],
-      SRRpars[["SRrel"]]
-    )
-  } else {
-    smolt_subyearling <- subyearling
+  smolt_subyearling <- subyearling
+  if (sum(subyearling)) {
+    if (hatchery_args$subyearling_DD) {
+      smolt_subyearling <- calc_smolt(
+        subyearling, total_fry_DD,
+        SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
+        fitness_loss[2, 1] * fitness_loss[2, 2],
+        SRRpars[["SRrel"]]
+      )
+    } else {
+      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt
+    }
   }
 
   # Total outmigrating hatchery releases
@@ -428,27 +431,31 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
   # Calculate hatchery-origin density-dependent survival
   smolt_HO_prod <- Habitat@smolt_prod * fitness_loss[2, 2]
   smolt_HO_cap <- Habitat@smolt_capacity * fitness_loss[2, 2]
-  if (hatchery_args$yearling_DD) {
-    yearling_out <- calc_SRR(
+  if (sum(yearling) && hatchery_args$yearling_DD) {
+    smolt_yearling <- calc_SRR(
       yearling, total_fry_DD,
       p = smolt_HO_prod, capacity = smolt_HO_cap,
       type = Habitat@smolt_rel
     )
   } else {
-    yearling_out <- yearling
+    smolt_yearling <- yearling
   }
-  if (hatchery_args$subyearling_DD) {
-    subyearling_out <- calc_SRR(
-      subyearling, total_fry_DD,
-      p = smolt_HO_prod, capacity = smolt_HO_cap,
-      type = Habitat@smolt_rel
-    )
-  } else {
-    subyearling_out <- subyearling
+
+  smolt_subyearling <- subyearling
+  if (sum(subyearling)) {
+    if (hatchery_args$subyearling_DD) {
+      smolt_subyearling <- calc_SRR(
+        subyearling, total_fry_DD,
+        p = smolt_HO_prod, capacity = smolt_HO_cap,
+        type = Habitat@smolt_rel
+      )
+    } else {
+      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt
+    }
   }
 
   # Total outmigrating hatchery releases
-  Smolt_RelOut <- yearling_out + subyearling_out
+  Smolt_RelOut <- smolt_yearling + smolt_subyearling
 
   # Natural-origin fry production: Calculate total number and re-distribute among life history group in next generation
   Fry_NOS_g <- sum(Fry_NOS) * p_LHG

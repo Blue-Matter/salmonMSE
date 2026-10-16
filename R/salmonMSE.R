@@ -118,6 +118,7 @@ define_hatchery_args <- function(SOM) {
 
         s_yearling = Hatchery@s_egg_smolt,
         s_subyearling = Hatchery@s_egg_subyearling,
+        s_sub_smolt = Hatchery@s_sub_smolt,
 
         yearling_DD = Hatchery@yearling_DD,
         subyearling_DD = Hatchery@subyearling_DD,
@@ -792,6 +793,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     Fry_HOS = apply(Fry_HOS, 1:3, sum),
     Smolt_NOS = apply(Smolt_NOS, 1:3, sum),
     Smolt_HOS = apply(Smolt_HOS, 1:3, sum),
+    Rel = apply(Rel, 1:3, sum),
     Smolt_Rel = apply(Smolt_Rel, 1:3, sum),
     Njuv_NOS = apply(Njuv_NOS, 1:4, sum),
     Njuv_HOS = apply(Njuv_HOS, 1:4, sum),
@@ -834,6 +836,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
   if (n_r > 1) {
     SMSE@Misc$RS <- list(
+      Release = Rel,
       Smolt = Smolt_Rel, Esc = Escapement_HOS, HOS = HOS, Egg = apply(Egg_HOS, c(1, 2, 4, 5), sum)
     )
   }

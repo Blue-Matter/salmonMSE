@@ -31,7 +31,7 @@ Natural per-capita production of recruits as the population approaches zero (den
 \item{\code{sigmaR}}{Vector length \code{nsim}. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
 will be simulated with \code{\link[stats:Lognormal]{stats::rlnorm()}}.}
 
-\item{\code{Recdev}}{Optional matrix \verb{[nsim, ngen-1]} of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the \code{sigmaR} argument
+\item{\code{Recdev}}{Optional matrix \verb{[nsim, ngen]} of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the \code{sigmaR} argument
 and provides more user flexibility, for example, simulating with auto-correlation.}
 
 \item{\code{type_T}}{Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch").

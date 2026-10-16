@@ -48,7 +48,9 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{Smolt_HOS}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of hatchery origin spawners.}
 
-\item{\code{Smolt_Rel}}{Array \verb{[nsim, nstocks, proyears]}. Smolts that are offspring of broodtake, i.e., hatchery releases.}
+\item{\code{Rel}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery releases.}
+
+\item{\code{Smolt_Rel}}{Array \verb{[nsim, nstocks, proyears]}. Hatchery-origin smolts, i.e., releases after smolting survival.}
 
 \item{\code{Njuv_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Abundance of juvenile natural origin fish at the beginning of the year.}
 

@@ -221,6 +221,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       Hatchery <- check_numeric(Hatchery, "s_prespawn", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_smolt", default = 1)
       Hatchery <- check_numeric(Hatchery, "s_egg_subyearling", default = 1)
+      Hatchery <- check_numeric(Hatchery, "s_sub_smolt", default = 1)
 
       if (length(dim(Hatchery@Mjuv_HOS)) == 3 && Hatchery@n_r == 1) {
         Hatchery <- check_maxage2array(Hatchery, "Mjuv_HOS", maxage-1, nsim, proyears)
@@ -729,6 +730,7 @@ define_hatchery_args <- function(SOM) {
 
         s_yearling = Hatchery@s_egg_smolt,
         s_subyearling = Hatchery@s_egg_subyearling,
+        s_sub_smolt = Hatchery@s_sub_smolt,
 
         yearling_DD = Hatchery@yearling_DD,
         subyearling_DD = Hatchery@subyearling_DD,

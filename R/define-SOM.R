@@ -201,6 +201,7 @@ setClass(
     s_prespawn = "numeric",           # Survival prior to spawning
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
+    s_sub_smolt = "numeric",
     Mjuv_HOS = "num.array",
     p_mature_HOS = "num.array",
     stray_external = "matrix",
@@ -349,7 +350,8 @@ setMethod("initialize", "SOM",
 #' @slot Fry_HOS Array `[nsim, nstocks, proyears]`. Fry that are offspring of hatchery origin spawners.
 #' @slot Smolt_NOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of natural origin spawners.
 #' @slot Smolt_HOS Array `[nsim, nstocks, proyears]`. Smolts that are offspring of hatchery origin spawners.
-#' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Smolts that are offspring of broodtake, i.e., hatchery releases.
+#' @slot Rel Array `[nsim, nstocks, proyears]`. Hatchery releases.
+#' @slot Smolt_Rel Array `[nsim, nstocks, proyears]`. Hatchery-origin smolts, i.e., releases after smolting survival.
 #' @slot Njuv_NOS Array `[nsim, nstocks, nage, proyears]`. Abundance of juvenile natural origin fish at the beginning of the year.
 #' @slot Njuv_HOS Array `[nsim, nstocks, nage, proyears]`. Abundance of juvenile hatchery origin fish at the beginning of the year.
 #' @slot Return_NOS Array `[nsim, nstocks, nage, proyears]`. Mature fish that will be natural origin spawners.
@@ -435,6 +437,7 @@ setClass(
     Fry_HOS = "array",
     Smolt_NOS = "array",
     Smolt_HOS = "array",
+    Rel = "array",
     Smolt_Rel = "array",
     Njuv_NOS = "array",
     Njuv_HOS = "array",

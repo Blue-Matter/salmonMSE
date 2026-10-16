@@ -40,8 +40,10 @@ Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearl
 \item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
+\item{\code{s_sub_smolt}}{Numeric. The survival of subyearling releases to smolt (after release, before entering marine environment). Default is 1, not used if \code{subyearling_DD = TRUE}.}
+
 \item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage-1}) or an array with dimension \verb{[nsim, maxage-1, proyears, n_r]}.
-Natural mortality of immature hatchery origin fish.
+Natural mortality of immature hatchery origin fish after release and smolting survival of subyearlines.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_r]} for the maturity of hatchery spawners.
