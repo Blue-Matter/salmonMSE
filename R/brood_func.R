@@ -107,7 +107,7 @@ FW_func <- function(Nage_NOS, Nage_HOS, Nage_stray, m, m_stray, s_enroute,
 #' @param hatchery_args List of various hatchery arguments created by [define_hatchery_args()] and adjusted by [ProjectSOM()].
 #' @returns Named list:
 #' - `broodtake` list returned by [calc_broodtake()]
-#' - `hatchery_production` list returned by [calc_yearling()]
+#' - `hatchery_production` list returned by [calc_release()]
 #' - `spawners` list returned by [calc_spawners()]
 #' @keywords internal
 #' @seealso [calc_broodtake()]
@@ -157,7 +157,7 @@ brood_func <- function(Nage_NOS, Nage_HOS, stray_external, m, m_stray, s_enroute
     )
   }
 
-  hatchery_production <- calc_yearling(
+  hatchery_production <- calc_release(
     sum(broodtake$egg_NOB, broodtake$egg_HOB_unmarked, broodtake$egg_HOB_marked, broodtake$egg_HOB_import),
     hatchery_args$s_yearling,
     hatchery_args$s_subyearling,
@@ -425,6 +425,8 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
   # Hatchery releases (after fitness loss) by release strategy (next generation)
   yearling <- Brood_Calcs$hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
   subyearling <- Brood_Calcs$hatchery_production$subyearling * fitness_loss[2, 1]
+
+  stopifnot(length(yearling) == 2)
 
   # Juveniles (ostensibly fry) in freshwater environment that experience density-dependent survival together
   total_fry_DD <- sum(Fry_NOS, Fry_HOS)

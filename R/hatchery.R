@@ -394,21 +394,21 @@ calc_broodtake_custom <- function(f_brood, NO, HO, stray, p_female, fec, s_presp
 #' @param p_yearling Vector `[n_r]`, proportion of releases at yearling stage, where `sum(p_yearling, p_subyearling) = 1`
 #' @param p_yearling Vector `[n_r]`, proportion of releases at subyearling stage, where `sum(p_yearling, p_subyearling) = 1`
 #' @returns
-#' `calc_yearling()` returns a named list returned by `.yearling_func()`
+#' `calc_release()` returns a named list returned by `.release_func()`
 #' @keywords internal
-calc_yearling <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling) {
+calc_release <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling) {
 
   if (egg_target > 0) {
     if (sum(p_yearling) == 1 || sum(p_yearling) == 0) {
-      ans <- .yearling_func(
+      ans <- .release_func(
         p_egg_yearling = sum(p_yearling), egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
       )
     } else {
       opt <- uniroot(
-        .yearling_func, interval = c(1e-8, 0.9999),
+        .release_func, interval = c(1e-8, 0.9999),
         egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, p_yearling = sum(p_yearling)
       )
-      ans <- .yearling_func(
+      ans <- .release_func(
         p_yearling = opt$root, egg_target = egg_target, s_yearling = s_yearling, s_subyearling = s_subyearling, opt = FALSE
       )
     }
@@ -419,23 +419,24 @@ calc_yearling <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_s
     yearling[is.na(yearling)] <- 0
     subyearling[is.na(subyearling)] <- 0
   } else {
-    yearling <- subyearling <- 0
+    yearling <- 0 * p_yearling
+    subyearling <- 0 * p_subyearling
   }
 
   list(yearling = yearling, subyearling = subyearling)
 }
 
-#' @name calc_yearling
-#' @description `.yearling_func()` is the optimization function that determines proportions.
+#' @name calc_release
+#' @description `.release_func()` is the optimization function that determines proportions.
 #' @param p_egg_yearling Numeric, proportion to eggs to become yearlings
 #' @param opt Logical, whether the function is used for optimization (TRUE) or reporting (FALSE)
 #' @keywords internal
 #' @returns
-#' `.yearling_func()` returns a numeric if `opt = TRUE`: `yearling/(yearling + subyearling) - p_yearling`.
+#' `.release_func()` returns a numeric if `opt = TRUE`: `yearling/(yearling + subyearling) - p_yearling`.
 #' Otherwise, log(p_unmarked) - log(ptarget_NOB)`, otherwise a named list:
 #' - `yearling` Vector `[n_r]` of yearling releases
 #' - `subyearling` Vector `[n_r]` of subyearling releases
-.yearling_func <- function(p_egg_yearling, egg_target, s_yearling, s_subyearling, p_yearling, opt = TRUE) {
+.release_func <- function(p_egg_yearling, egg_target, s_yearling, s_subyearling, p_yearling, opt = TRUE) {
   egg_yearling <- p_egg_yearling * egg_target
   egg_subyearling <- egg_target - egg_yearling
   yearling <- egg_yearling * s_yearling

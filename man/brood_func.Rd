@@ -33,7 +33,7 @@ brood_func(
 Named list:
 \itemize{
 \item \code{broodtake} list returned by \code{\link[=calc_broodtake]{calc_broodtake()}}
-\item \code{hatchery_production} list returned by \code{\link[=calc_yearling]{calc_yearling()}}
+\item \code{hatchery_production} list returned by \code{\link[=calc_release]{calc_release()}}
 \item \code{spawners} list returned by \code{\link[=calc_spawners]{calc_spawners()}}
 }
 }
