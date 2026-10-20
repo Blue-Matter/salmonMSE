@@ -7,7 +7,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 - New `SOM` slots for fisheries on stock complexes in multi-population models
 - New `Historical` slots to initialize projection from escapement
 - New `Harvest` slots for forecast error and implementation error
-- New `Hatchery` slot for smolting survival of subyearling releases
+- New `Hatchery` slot for smolting survival of hatchery releases: `Hatchery@s_sub_smolt` for subyearlings and `Hatchery@s_year_smolt` for yearlings
 - New `Bio` slot for stock-recruit survival deviations
 - `salmonMSE()` returns the original `SOM` object in `SMSE@Misc$SOM`
 

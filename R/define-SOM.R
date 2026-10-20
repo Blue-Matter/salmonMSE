@@ -202,6 +202,7 @@ setClass(
     s_egg_smolt = "numeric",          # Survival of eggs in hatchery
     s_egg_subyearling = "numeric",
     s_sub_smolt = "numeric",
+    s_year_smolt = "numeric",
     Mjuv_HOS = "num.array",
     p_mature_HOS = "num.array",
     stray_external = "matrix",

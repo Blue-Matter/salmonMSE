@@ -258,15 +258,18 @@ nextgen_SRR_func <- function(Brood_Calcs, fec, p_female,
   if (sum(subyearling) && hatchery_args$subyearling_DD) total_fry_DD <- sum(total_fry_DD, subyearling)
 
   # Calculate hatchery-origin density-dependent survival
-  if (sum(yearling) && hatchery_args$yearling_DD) {
-    smolt_yearling <- calc_smolt(
-      yearling, total_fry_DD,
-      SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
-      fitness_loss[2, 1] * fitness_loss[2, 2],
-      SRRpars[["SRrel"]]
-    )
-  } else {
-    smolt_yearling <- yearling
+  smolt_yearling <- yearling
+  if (sum(yearling)) {
+    if (hatchery_args$yearling_DD) {
+      smolt_yearling <- calc_smolt(
+        yearling, total_fry_DD,
+        SRRpars[["kappa"]], SRRpars[["capacity"]], SRRpars[["Smax"]], SRRpars[["phi"]], SRRpars[["tau"]],
+        fitness_loss[2, 1] * fitness_loss[2, 2],
+        SRRpars[["SRrel"]]
+      )
+    } else {
+      smolt_yearling <- yearling * hatchery_args$s_year_smolt * fitness_loss[2, 1] * fitness_loss[2, 2]
+    }
   }
 
   smolt_subyearling <- subyearling
@@ -279,7 +282,7 @@ nextgen_SRR_func <- function(Brood_Calcs, fec, p_female,
         SRRpars[["SRrel"]]
       )
     } else {
-      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt
+      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt * fitness_loss[2, 1] * fitness_loss[2, 2]
     }
   }
 
@@ -431,14 +434,17 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
   # Calculate hatchery-origin density-dependent survival
   smolt_HO_prod <- Habitat@smolt_prod * fitness_loss[2, 2]
   smolt_HO_cap <- Habitat@smolt_capacity * fitness_loss[2, 2]
-  if (sum(yearling) && hatchery_args$yearling_DD) {
-    smolt_yearling <- calc_SRR(
-      yearling, total_fry_DD,
-      p = smolt_HO_prod, capacity = smolt_HO_cap,
-      type = Habitat@smolt_rel
-    )
-  } else {
-    smolt_yearling <- yearling
+  smolt_yearling <- yearling
+  if (sum(yearling)) {
+    if (hatchery_args$yearling_DD) {
+      smolt_yearling <- calc_SRR(
+        yearling, total_fry_DD,
+        p = smolt_HO_prod, capacity = smolt_HO_cap,
+        type = Habitat@smolt_rel
+      )
+    } else {
+      smolt_yearling <- yearling * hatchery_args$s_year_smolt * fitness_loss[2, 2]
+    }
   }
 
   smolt_subyearling <- subyearling
@@ -450,7 +456,7 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
         type = Habitat@smolt_rel
       )
     } else {
-      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt
+      smolt_subyearling <- subyearling * hatchery_args$s_sub_smolt * fitness_loss[2, 2]
     }
   }
 

@@ -22,10 +22,10 @@ A description of the fitness parameters and hatchery dynamics is available in th
 \item{\code{n_r}}{Integer. Number of release strategies, sub-groups of fish with different survival schedules. Default is one.}
 
 \item{\code{n_yearling}}{Vector length \code{n_r}. The target number of yearlings released by release strategy. No hatchery is modeled if \code{sum(n_yearling, n_subyearling) = 0}.
-are zero. Default is zero. Yearlings are differentiated from sub-yearlings only in the hatchery survival parameter, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
+are zero. Default is zero. Yearlings are differentiated from sub-yearlings only in survival before and immediately after release, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
 
 \item{\code{n_subyearling}}{Vector length \code{n_r}. The target number of subyearlings released. No hatchery is modeled if \code{sum(n_yearling, n_subyearling) = 0} are zero.
-Default is zero. Yearlings are differentiated from sub-yearlings only in the hatchery survival parameter, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
+Default is zero. Yearlings are differentiated from sub-yearlings only in the survival before and immediately after release, e.g., lower egg-yearling survival than for egg-subyearling, so more brood is needed for yearling releases.}
 
 \item{\code{yearling_DD}}{Logical, whether freshwater yearling survival after release is density-dependent, in competition with natural-origin juveniles. Default is FALSE. Likely relevant only for stream types where there is substantial residence time before outmigration.}
 
@@ -34,16 +34,18 @@ Default is zero. Yearlings are differentiated from sub-yearlings only in the hat
 \item{\code{s_prespawn}}{Numeric. The survival of broodtake prior to egg production. \code{1 - s_prespawn} is the proportion of fish not used for hatchery purposes, e.g., mortality or other resesarch purposes.
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
-\item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the smolt life stage (for yearling release).
+\item{\code{s_egg_smolt}}{Numeric. The survival of eggs to the yearling life stage (prior to release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
-\item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (for subyearling release).
+\item{\code{s_egg_subyearling}}{Numeric. The survival of eggs to subyearling life stage (prior to release).
 Used to back-calculate the broodtake from \code{n_yearling} and \code{n_subyearling}. Default is 1.}
 
 \item{\code{s_sub_smolt}}{Numeric. The survival of subyearling releases to smolt (after release, before entering marine environment). Default is 1, not used if \code{subyearling_DD = TRUE}.}
 
+\item{\code{s_year_smolt}}{Numeric. The survival of yearling releases to smolt (after release, before entering marine environment). Default is 1, not used if \code{yearling_DD = TRUE}.}
+
 \item{\code{Mjuv_HOS}}{Either vector by age (length \code{maxage-1}) or an array with dimension \verb{[nsim, maxage-1, proyears, n_r]}.
-Natural mortality of immature hatchery origin fish after release and smolting survival of subyearlines.
+Natural mortality of immature hatchery origin fish after release and smolting survival of subyearlings.
 To replicate the SAR parameter of a stage-specific model, set \code{Mjuv_HOS[a] = -log(SAR)} for the age class prior to maturation (and zero for all other ages).}
 
 \item{\code{p_mature_HOS}}{Vector by age (length \code{maxage}) or an array with dimension \verb{[nsim, maxage, proyears, n_r]} for the maturity of hatchery spawners.
