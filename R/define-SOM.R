@@ -127,6 +127,7 @@ setClass(
     MSF_PT = "logical",
     MSF_T = "logical",
     release_mort = "numeric",
+    maxE = "numeric",
     vulPT = "num.matrix",
     vulT = "num.matrix",
     ForeErr_PT = "num.matrix",

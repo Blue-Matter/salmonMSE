@@ -42,6 +42,8 @@ Function should be of the form \code{function(NO, HO, m) return(K)}.
 \item{\code{release_mort}}{Vector length 2. The proportion of released fish that die after release, in the pre-terminal and terminal fishery.
 Implemented to model mark-selective fishing. Not used if either \code{MSF_PT} or \code{MSF_T} is \code{ FALSE}.}
 
+\item{\code{maxE}}{Numeric. Maximum encounter rate of the fishery which limits realized exploitation rates. Default is 2 gear encounters per fish per year.}
+
 \item{\code{vulPT}}{Vector length \code{maxage} or matrix \verb{[nsim, maxage]}. Vulnerability schedule (between 0-1) in the preterminal fishery. Values indicate
 the proportion of fishing intensity experienced by each age class.}
 

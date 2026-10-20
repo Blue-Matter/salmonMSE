@@ -19,7 +19,8 @@ catch_func(
   p_mature_NO = array(1, dim(NO)),
   p_mature_HO = array(1, dim(HO)),
   AEQ_NO = array(1, dim(NO)),
-  AEQ_HO = array(1, dim(HO))
+  AEQ_HO = array(1, dim(HO)),
+  maxE = 2
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ catch_func(
 \item{AEQ_NO}{Optional, array \verb{[ns, nage, n_g]} of adult equivalents for natural-origin fish.}
 
 \item{AEQ_HO}{Optional, array \verb{[ns, nage, n_r]} of adult equivalents for hatchery-origin fish.}
+
+\item{maxE}{Numeric. Maximum encounter rate of fishery (limits realized exploitation rates)}
 }
 \value{
 Named list:

@@ -389,6 +389,7 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     if (length(Harvest@release_mort) == 1) Harvest@release_mort <- rep(Harvest@release_mort, 2)
     Harvest <- check_numeric(Harvest, "release_mort", size = 2, default = c(0, 0))
+    Harvest <- check_numeric(Harvest, "maxE", default = 2)
 
     if (!length(Harvest@vulPT)) Harvest@vulPT <- matrix(1, nsim, maxage)
     if (!length(Harvest@vulT)) Harvest@vulT <- matrix(1, nsim, maxage)
