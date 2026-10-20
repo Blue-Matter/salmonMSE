@@ -68,7 +68,7 @@ plot_Mjuv_LHG <- function(x, ylab = "Juvenile natural mortality rate", figure = 
     col <- grDevices::hcl.colors(n_g, palette = palette)
 
     ylim <- c(0, 1.1) * range(xplot)
-    Age <- seq(1, maxage-1)
+    Age <- seq(1, maxage)
 
     plot(Age, NULL, xlab = "Age", ylab = ylab, type = "n", ylim = ylim)
     for (g in 1:n_g) {
