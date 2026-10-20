@@ -222,6 +222,7 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   # Release mortality
   release_mort <- array(NA_real_, c(2, ns))
   release_mort[] <- sapply(SOM@Harvest, slot, "release_mort") # Need to make sure check_SOM default is length 2
+  maxE <- sapply(SOM@Harvest, slot, "maxE")
 
   # En-route survival
   s_enroute <- sapply(SOM@Bio, slot, "s_enroute")
@@ -286,10 +287,10 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
 
     # Calculate AEQ
     for (a in seq(nage-1, 1)) {
-      AEQ_NOS[, , a, y, ] <- p_mature_NOS[, , a, y, ] + (1 - p_mature_NOS[, , a, y, ]) *
-        exp(-Mjuv_NOS[, , a, y, ]) * AEQ_NOS[, , a+1, y, ]
-      AEQ_HOS[, , a, y, ] <- p_mature_HOS[, , a, y, ] + (1 - p_mature_HOS[, , a, y, ]) *
-        exp(-Mjuv_HOS[, , a, y, ]) * AEQ_HOS[, , a+1, y, ]
+      AEQ_NOS[, , a, , ] <- p_mature_NOS[, , a, , ] + (1 - p_mature_NOS[, , a, , ]) *
+        exp(-Mjuv_NOS[, , a, , ]) * AEQ_NOS[, , a+1, , ]
+      AEQ_HOS[, , a, , ] <- p_mature_HOS[, , a, , ] + (1 - p_mature_HOS[, , a, , ]) *
+        exp(-Mjuv_HOS[, , a, , ]) * AEQ_HOS[, , a+1, , ]
     }
 
     if (y > 1 || all(!init_spawners)) {
@@ -312,7 +313,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             p_mature_NO = array(p_mature_NOS[x, , , y, ], c(ns, nage, n_g)),
             p_mature_HO = array(p_mature_HOS[x, , , y, ], c(ns, nage, n_r)),
             AEQ_NO = array(AEQ_NOS[x, , , y, ], c(ns, nage, n_g)),
-            AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r))
+            AEQ_HO = array(AEQ_HOS[x, , , y, ], c(ns, nage, n_r)),
+            maxE = min(maxE)
           )
         })
       } else {
@@ -334,7 +336,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               p_mature_NO = array(p_mature_NOS[x, s, , y, ], c(1, nage, n_g)),
               p_mature_HO = array(p_mature_HOS[x, s, , y, ], c(1, nage, n_r)),
               AEQ_NO = array(AEQ_NOS[x, s, , y, ], c(1, nage, n_g)),
-              AEQ_HO = array(AEQ_HOS[x, s, , y, ], c(1, nage, n_r))
+              AEQ_HO = array(AEQ_HOS[x, s, , y, ], c(1, nage, n_r)),
+              maxE = maxE[s]
             )
           })
           vars <- names(PT_Calcs_x[[1]])
@@ -388,7 +391,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
             ImpErr = if (is.matrix(SOM@ImpErr_T_complex)) SOM@ImpErr_T_complex[xx, y] else SOM@ImpErr_T_complex,
             m = m,
             MSF = SOM@MSF_T_complex,
-            release_mort = release_mort[2, ]
+            release_mort = release_mort[2, ],
+            maxE = min(maxE)
           )
         })
       } else {
@@ -406,7 +410,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
               ImpErr = if (is.matrix(ImpErr_T[[s]])) ImpErr_T[[s]][xx, y] else ImpErr_T[[s]],
               m = m[s],
               MSF = MSF_T[s],
-              release_mort = release_mort[2, s]
+              release_mort = release_mort[2, s],
+              maxE = maxE[s]
             )
           })
           vars <- names(T_Calcs_x[[1]])

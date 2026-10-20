@@ -18,6 +18,7 @@
 #' @param p_mature_HO Optional, array `[ns, nage, n_r]` of maturity for hatchery-origin fish. Only use to calculate adult equivalents escapement.
 #' @param AEQ_NO Optional, array `[ns, nage, n_g]` of adult equivalents for natural-origin fish.
 #' @param AEQ_HO Optional, array `[ns, nage, n_r]` of adult equivalents for hatchery-origin fish.
+#' @param maxE Numeric. Maximum encounter rate of fishery (limits realized exploitation rates)
 #' @returns Named list:
 #' - `K_NO` kept natural-origin catch, same dimension as `NO`
 #' - `K_HO` kept hatchery-origin catch, same dimension as `HO`
@@ -35,7 +36,8 @@
 catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, ImpErr = 1,
                        MSF = FALSE, m = 1, release_mort = 0,
                        p_mature_NO = array(1, dim(NO)), p_mature_HO = array(1, dim(HO)),
-                       AEQ_NO = array(1, dim(NO)), AEQ_HO = array(1, dim(HO))) {
+                       AEQ_NO = array(1, dim(NO)), AEQ_HO = array(1, dim(HO)),
+                       maxE = 3) {
   type <- match.arg(type)
   u_solve <- K_solve <- NA_real_
 
@@ -93,10 +95,9 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
     )
 
     if (sum(N_solve)) {
-      Emax <- 20
       opt <- try(
         uniroot(
-          Effort_solver, interval = c(.Machine$double.eps, Emax),
+          Effort_solver, interval = c(.Machine$double.eps, maxE),
           N = N_solve, vul = V_solve, ret = ret_solve, release_mort = release_mort,
           type = type, u = u_solve, K = K_solve,
           p_mature = p_mature_solve, AEQ = AEQ_solve
@@ -104,8 +105,8 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
         silent = TRUE
       )
       if (is.character(opt)) {
-        stop("Cannot calculate fishery effort")
-        #Effort <- Emax
+        #stop("Cannot calculate fishery effort")
+        Effort <- maxE
       } else {
         Effort <- opt$root
       }
