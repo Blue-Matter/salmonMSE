@@ -59,9 +59,9 @@
 
       <h1>Conditioning model from CWT and escapement</h1>
             
-            <h4 data-toc-skip class="date">2026-09-29</h4>
+            <h4 data-toc-skip class="date">2026-10-22</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/conditioning.Rmd" class="external-link"><code>vignettes/conditioning.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/vignettes/conditioning.Rmd" class="external-link"><code>vignettes/conditioning.Rmd</code></a></small>
       <div class="d-none name"><code>conditioning.Rmd</code></div>
     </div>
 
@@ -228,10 +228,12 @@ of maturing juveniles after preterminal exploitation</p>
 R^\textrm{CWT}_{y,a} =
 N^\textrm{juv,CWT}_{y,a}\exp(-v^\textrm{PT}_aF^\textrm{PT}_y)m_{y,a}
 \]</span></p>
-<p>The escapement is the return that survive terminal exploitation</p>
+<p>The escapement is the return that survive terminal exploitation and
+additional en-route mortality to the hatchery (<span class="math inline">\(s\)</span> is the survival):</p>
 <p><span class="math display">\[
 E^\textrm{CWT}_{y,a} =
-R^\textrm{CWT}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)
+R^\textrm{CWT}_{y,a}\exp(-v^\textrm{T}_aF^\textrm{T}_y)\times
+s^\textrm{enroute,CWT}
 \]</span></p>
 <p>The catch <span class="math inline">\(C\)</span> is</p>
 <p><span class="math display">\[\begin{align}

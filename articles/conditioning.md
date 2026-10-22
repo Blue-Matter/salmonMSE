@@ -105,10 +105,12 @@ preterminal exploitation
 N^\textrm{juv,CWT}\_{y,a}\exp(-v^\textrm{PT}\_aF^\textrm{PT}\_y)m\_{y,a}
 \\
 
-The escapement is the return that survive terminal exploitation
+The escapement is the return that survive terminal exploitation and
+additional en-route mortality to the hatchery (\\s\\ is the survival):
 
 \\ E^\textrm{CWT}\_{y,a} =
-R^\textrm{CWT}\_{y,a}\exp(-v^\textrm{T}\_aF^\textrm{T}\_y) \\
+R^\textrm{CWT}\_{y,a}\exp(-v^\textrm{T}\_aF^\textrm{T}\_y)\times
+s^\textrm{enroute,CWT} \\
 
 The catch \\C\\ is
 

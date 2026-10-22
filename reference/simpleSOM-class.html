@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"simpleSOM"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
       <div class="d-none name"><code>simpleSOM-class.Rd</code></div>
     </div>
 
@@ -81,11 +81,11 @@ Natural per-capita production of recruits as the population approaches zero (den
 
 <dt><code>sigmaR</code></dt>
 <dd><p>Vector length <code>nsim</code>. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-will be simulated with <code>[stats::rlnorm()]</code>.</p></dd>
+will be simulated with <code><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">stats::rlnorm()</a></code>.</p></dd>
 
 
 <dt><code>Recdev</code></dt>
-<dd><p>Optional matrix <code>[nsim, ngen-1]</code> of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the <code>sigmaR</code> argument
+<dd><p>Optional matrix <code>[nsim, ngen]</code> of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the <code>sigmaR</code> argument
 and provides more user flexibility, for example, simulating with auto-correlation.</p></dd>
 
 

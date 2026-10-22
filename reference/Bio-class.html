@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"Bio"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
       <div class="d-none name"><code>Bio-class.Rd</code></div>
     </div>
 
@@ -113,6 +113,10 @@ Used to convert <code>Smax</code> to <code>Emax</code>, the corresponding egg pr
 to the first year and weighted by life history groups. Not used if habitat component is used.</p></dd>
 
 
+<dt><code>SRdev</code></dt>
+<dd><p>Optional, matrix <code>[nsim, proyears]</code> of multiplicative deviations from the stock-recruit relationship (default is 1 for no deviations).</p></dd>
+
+
 <dt><code>Mjuv_NOS</code></dt>
 <dd><p>Either vector by age (length <code>maxage-1</code>) or an array with dimension <code>[nsim, maxage-1, proyears, n_g]</code>.
 Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
@@ -149,11 +153,11 @@ To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] 
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:       Name    maxage       n_g     p_LHG  p_mature     SRrel  capacity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class: character   numeric   numeric   numeric num.array character   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi       tau  Mjuv_NOS       fec  p_female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric   numeric num.array num.array   numeric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  s_enroute</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:      kappa      Smax       phi       tau     SRdev  Mjuv_NOS       fec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric   numeric   numeric    matrix num.array num.array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:   p_female s_enroute</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   numeric   numeric</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "Bio.list"</span>
 </code></pre></div>

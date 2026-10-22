@@ -44,12 +44,12 @@ single numeric (value identical across all simulations).
 
   Vector length `nsim`. The lognormal standard deviation in the Ricker
   stock-recruit relationship. Recruitment anomalies will be simulated
-  with `[stats::rlnorm()]`.
+  with [`stats::rlnorm()`](https://rdrr.io/r/stats/Lognormal.html).
 
 - `Recdev`:
 
-  Optional matrix `[nsim, ngen-1]` of recruitment anomalies in the
-  Ricker stock-recruit relationship. Overrides the `sigmaR` argument and
+  Optional matrix `[nsim, ngen]` of recruitment anomalies in the Ricker
+  stock-recruit relationship. Overrides the `sigmaR` argument and
   provides more user flexibility, for example, simulating with
   auto-correlation.
 

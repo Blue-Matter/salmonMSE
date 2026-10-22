@@ -58,7 +58,7 @@ Named list:
   [`calc_broodtake()`](https://docs.salmonmse.com/reference/calc_broodtake.md)
 
 - `hatchery_production` list returned by
-  [`calc_yearling()`](https://docs.salmonmse.com/reference/calc_yearling.md)
+  [`calc_release()`](https://docs.salmonmse.com/reference/calc_release.md)
 
 - `spawners` list returned by
   [`calc_spawners()`](https://docs.salmonmse.com/reference/calc_spawners.md)

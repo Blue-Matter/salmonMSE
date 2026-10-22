@@ -75,10 +75,14 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
   Array `[nsim, nstocks, proyears]`. Smolts that are offspring of
   hatchery origin spawners.
 
+- `Rel`:
+
+  Array `[nsim, nstocks, proyears]`. Hatchery releases.
+
 - `Smolt_Rel`:
 
-  Array `[nsim, nstocks, proyears]`. Smolts that are offspring of
-  broodtake, i.e., hatchery releases.
+  Array `[nsim, nstocks, proyears]`. Hatchery-origin smolts, i.e.,
+  releases after smolting survival.
 
 - `Njuv_NOS`:
 
@@ -310,36 +314,36 @@ showClass("SMSE")
 #> Name:          Snames        Egg_NOS        Egg_HOS        Fry_NOS
 #> Class:      character          array          array          array
 #>                                                                   
-#> Name:         Fry_HOS      Smolt_NOS      Smolt_HOS      Smolt_Rel
+#> Name:         Fry_HOS      Smolt_NOS      Smolt_HOS            Rel
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:        Njuv_NOS       Njuv_HOS     Return_NOS     Return_HOS
+#> Name:       Smolt_Rel       Njuv_NOS       Njuv_HOS     Return_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:  Escapement_NOS Escapement_HOS            NOB            HOB
+#> Name:      Return_HOS Escapement_NOS Escapement_HOS            NOB
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:       HOB_stray     HOB_import            NOS            HOS
+#> Name:             HOB      HOB_stray     HOB_import            NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:       HOS_stray  HOS_effective        KPT_NOS         KT_NOS
+#> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:         KPT_HOS         KT_HOS        DPT_NOS         DT_NOS
+#> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:         DPT_HOS         DT_HOS        UPT_NOS         UT_NOS
+#> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:         UPT_HOS         UT_HOS       ExPT_NOS        ExT_NOS
+#> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:        ExPT_HOS        ExT_HOS        fitness           pNOB
+#> Name:         ExT_NOS       ExPT_HOS        ExT_HOS        fitness
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:     pHOS_census pHOS_effective      Mjuv_loss            PNI
+#> Name:            pNOB    pHOS_census pHOS_effective      Mjuv_loss
 #> Class:          array          array          array          array
-#>                                     
-#> Name:          p_wild           Misc
-#> Class:          array           list
+#>                                                    
+#> Name:             PNI         p_wild           Misc
+#> Class:          array          array           list
 ```

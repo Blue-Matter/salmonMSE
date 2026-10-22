@@ -146,18 +146,7 @@ Habitat <- lapply(1:ns, function(s) {
 ### Harvest object
 
 Here, a terminal harvest rate of 0.203 is specified for both
-populations.
-
-> It is assumed that the preterminal fishery is a mixed-population
-> fishery. Therefore, the harvest rate of the first population applies
-> for all populations.
-
-> It is assumed that the terminal fishery is a single-population
-> fishery, and thus, it is possible to control of individual
-> populations.
-
-Currently, salmonMSE assumes equal catchability of all populations by
-the fishery:
+populations:
 
 ``` r
 

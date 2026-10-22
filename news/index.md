@@ -5,6 +5,8 @@
 - Conditioning model can place lognormal prior on either Srep or Smax,
   additional option for truncated normal prior on log(productivity) (\>
   0)
+- Conditioning mode has additional en route survival term for CWT
+  `data$s_enroute_CWT`
 - Simplify
   [`CM_SRR()`](https://docs.salmonmse.com/reference/CMfigures.md) and
   only plot medians
@@ -12,6 +14,10 @@
   models
 - New `Historical` slots to initialize projection from escapement
 - New `Harvest` slots for forecast error and implementation error
+- New `Hatchery` slot for smolting survival of hatchery releases:
+  `Hatchery@s_sub_smolt` for subyearlings and `Hatchery@s_year_smolt`
+  for yearlings
+- New `Bio` slot for stock-recruit survival deviations
 - [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
   returns the original `SOM` object in `SMSE@Misc$SOM`
 

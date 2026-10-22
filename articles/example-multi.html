@@ -59,9 +59,9 @@
 
       <h1>Multi-population model</h1>
             
-            <h4 data-toc-skip class="date">2026-09-29</h4>
+            <h4 data-toc-skip class="date">2026-10-22</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
       <div class="d-none name"><code>example-multi.Rmd</code></div>
     </div>
 
@@ -200,19 +200,7 @@ objects.</p>
 <h3 id="harvest-object">Harvest object<a class="anchor" aria-label="anchor" href="#harvest-object"></a>
 </h3>
 <p>Here, a terminal harvest rate of 0.203 is specified for both
-populations.</p>
-<blockquote>
-<p>It is assumed that the preterminal fishery is a mixed-population
-fishery. Therefore, the harvest rate of the first population applies for
-all populations.</p>
-</blockquote>
-<blockquote>
-<p>It is assumed that the terminal fishery is a single-population
-fishery, and thus, it is possible to control of individual
-populations.</p>
-</blockquote>
-<p>Currently, salmonMSE assumes equal catchability of all populations by
-the fishery:</p>
+populations:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">ns</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">new</span><span class="op">(</span></span>

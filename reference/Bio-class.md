@@ -91,6 +91,11 @@ single numeric (value identical across all simulations).
   first year and weighted by life history groups. Not used if habitat
   component is used.
 
+- `SRdev`:
+
+  Optional, matrix `[nsim, proyears]` of multiplicative deviations from
+  the stock-recruit relationship (default is 1 for no deviations).
+
 - `Mjuv_NOS`:
 
   Either vector by age (length `maxage-1`) or an array with dimension
@@ -133,11 +138,11 @@ showClass("Bio")
 #> Name:       Name    maxage       n_g     p_LHG  p_mature     SRrel  capacity
 #> Class: character   numeric   numeric   numeric num.array character   numeric
 #>                                                                             
-#> Name:      kappa      Smax       phi       tau  Mjuv_NOS       fec  p_female
-#> Class:   numeric   numeric   numeric   numeric num.array num.array   numeric
-#>                 
-#> Name:  s_enroute
-#> Class:   numeric
+#> Name:      kappa      Smax       phi       tau     SRdev  Mjuv_NOS       fec
+#> Class:   numeric   numeric   numeric   numeric    matrix num.array num.array
+#>                           
+#> Name:   p_female s_enroute
+#> Class:   numeric   numeric
 #> 
 #> Extends: "Bio.list"
 ```

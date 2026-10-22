@@ -204,7 +204,10 @@ Data should passed through a named list with the following entries.
   in the first year of the model. Default is 0.
 
 - `s_enroute` Numeric, survival of escapement (from marine fisheries) to
-  spawning grounds. Default is 1.
+  spawning grounds for the main population. Default is 1.
+
+- `s_enroute_CWT` Numeric, survival of CWT to hatchery after marine
+  exploitation. Default is `s_enroute`.
 
 - `so_mu` Numeric, the prior mean for spawners at replacement in
   logspace, aka `Srep`. **Default is `log(3 * max(data$obsescape))`**.

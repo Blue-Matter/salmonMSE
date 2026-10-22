@@ -28,18 +28,19 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
   Vector length `n_r`. The target number of yearlings released by
   release strategy. No hatchery is modeled if
   `sum(n_yearling, n_subyearling) = 0`. are zero. Default is zero.
-  Yearlings are differentiated from sub-yearlings only in the hatchery
-  survival parameter, e.g., lower egg-yearling survival than for
-  egg-subyearling, so more brood is needed for yearling releases.
+  Yearlings are differentiated from sub-yearlings only in survival
+  before and immediately after release, e.g., lower egg-yearling
+  survival than for egg-subyearling, so more brood is needed for
+  yearling releases.
 
 - `n_subyearling`:
 
   Vector length `n_r`. The target number of subyearlings released. No
   hatchery is modeled if `sum(n_yearling, n_subyearling) = 0` are zero.
   Default is zero. Yearlings are differentiated from sub-yearlings only
-  in the hatchery survival parameter, e.g., lower egg-yearling survival
-  than for egg-subyearling, so more brood is needed for yearling
-  releases.
+  in the survival before and immediately after release, e.g., lower
+  egg-yearling survival than for egg-subyearling, so more brood is
+  needed for yearling releases.
 
 - `yearling_DD`:
 
@@ -65,23 +66,36 @@ documentation](https://docs.salmonmse.com/articles/equations.html#hatchery-produ
 
 - `s_egg_smolt`:
 
-  Numeric. The survival of eggs to the smolt life stage (for yearling
+  Numeric. The survival of eggs to the yearling life stage (prior to
   release). Used to back-calculate the broodtake from `n_yearling` and
   `n_subyearling`. Default is 1.
 
 - `s_egg_subyearling`:
 
-  Numeric. The survival of eggs to subyearling life stage (for
-  subyearling release). Used to back-calculate the broodtake from
-  `n_yearling` and `n_subyearling`. Default is 1.
+  Numeric. The survival of eggs to subyearling life stage (prior to
+  release). Used to back-calculate the broodtake from `n_yearling` and
+  `n_subyearling`. Default is 1.
+
+- `s_sub_smolt`:
+
+  Numeric. The survival of subyearling releases to smolt (after release,
+  before entering marine environment). Default is 1, not used if
+  `subyearling_DD = TRUE`.
+
+- `s_year_smolt`:
+
+  Numeric. The survival of yearling releases to smolt (after release,
+  before entering marine environment). Default is 1, not used if
+  `yearling_DD = TRUE`.
 
 - `Mjuv_HOS`:
 
   Either vector by age (length `maxage-1`) or an array with dimension
   `[nsim, maxage-1, proyears, n_r]`. Natural mortality of immature
-  hatchery origin fish. To replicate the SAR parameter of a
-  stage-specific model, set `Mjuv_HOS[a] = -log(SAR)` for the age class
-  prior to maturation (and zero for all other ages).
+  hatchery origin fish after release and smolting survival of
+  subyearlings. To replicate the SAR parameter of a stage-specific
+  model, set `Mjuv_HOS[a] = -log(SAR)` for the age class prior to
+  maturation (and zero for all other ages).
 
 - `p_mature_HOS`:
 
@@ -268,29 +282,32 @@ showClass("Hatchery")
 #> Name:          s_prespawn        s_egg_smolt  s_egg_subyearling
 #> Class:            numeric            numeric            numeric
 #>                                                                
-#> Name:            Mjuv_HOS       p_mature_HOS     stray_external
-#> Class:          num.array          num.array             matrix
+#> Name:         s_sub_smolt       s_year_smolt           Mjuv_HOS
+#> Class:            numeric            numeric          num.array
 #>                                                                
-#> Name:               gamma                  m            f_brood
-#> Class:            numeric            numeric           function
+#> Name:        p_mature_HOS     stray_external              gamma
+#> Class:          num.array             matrix            numeric
 #>                                                                
-#> Name:        brood_import           pmax_esc           pmax_NOB
+#> Name:                   m            f_brood       brood_import
+#> Class:            numeric           function            numeric
+#>                                                                
+#> Name:            pmax_esc           pmax_NOB        ptarget_NOB
 #> Class:            numeric            numeric            numeric
 #>                                                                
-#> Name:         ptarget_NOB          phatchery        premove_HOS
-#> Class:            numeric        num.logical       num.function
+#> Name:           phatchery        premove_HOS        premove_NOS
+#> Class:        num.logical       num.function       num.function
 #>                                                                
-#> Name:         premove_NOS          fec_brood     p_female_brood
-#> Class:       num.function          num.array            numeric
+#> Name:           fec_brood     p_female_brood       fitness_type
+#> Class:          num.array            numeric          character
 #>                                                                
-#> Name:        fitness_type              theta           rel_loss
-#> Class:          character            numeric            numeric
+#> Name:               theta           rel_loss         zbar_start
+#> Class:            numeric            numeric          num.array
 #>                                                                
-#> Name:          zbar_start phenotype_variance   fitness_variance
-#> Class:          num.array            numeric            numeric
-#>                                             
-#> Name:        heritability      fitness_floor
-#> Class:            numeric            numeric
+#> Name:  phenotype_variance   fitness_variance       heritability
+#> Class:            numeric            numeric            numeric
+#>                          
+#> Name:       fitness_floor
+#> Class:            numeric
 #> 
 #> Extends: "Hatchery.list"
 ```
