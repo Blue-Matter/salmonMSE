@@ -103,7 +103,8 @@ lower survival to age 2 (first year of marine life stage) compared to natural-or
 \item \code{obs_pHOS} \emph{Optional}. Vector length \code{Ldyr} by \strong{return year}, observations of proportion of hatchery origin spawners (census) (between 0-1) \emph{by brood year}. Fitted to model with logistic-normal likelihood.
 \item \code{pHOS_sd} Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
 \item \code{pHOS_init} Numeric, initial pHOS for equilibrium juvenile abundance in the first year of the model. Default is 0.
-\item \code{s_enroute} Numeric, survival of escapement (from marine fisheries) to spawning grounds. Default is 1.
+\item \code{s_enroute} Numeric, survival of escapement (from marine fisheries) to spawning grounds for the main population. Default is 1.
+\item \code{s_enroute_CWT} Numeric, survival of CWT to hatchery after marine exploitation. Default is \code{s_enroute}.
 \item \code{so_mu} Numeric, the prior mean for spawners at replacement in logspace, aka \code{Srep}. \strong{Default is \code{log(3 * max(data$obsescape))}}. Not used if \code{smax_mu} is provided.
 \item \code{so_sd} Numeric, the lognormal prior standard deviation for spawners at replacement. \strong{Default is 0.5}. Not used if \code{smax_sd} is provided.
 \item \code{smax_mu} \emph{Optional} Numeric, the prior mean for spawners that maximizes recruitment in logspace. Choose between \code{so_mu} or \code{smax_mu}. Leave as \code{NULL} if using \code{so_mu}

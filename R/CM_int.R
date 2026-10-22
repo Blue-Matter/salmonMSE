@@ -159,7 +159,7 @@ CM_int <- function(p, d) {
 
     # predict escapement at age for the year
     escyear[t, , ] <- recr[t, , ] * survT[t, ]
-    ecwt[t, , ] <- Ncwt[t, , ] * survPT[t, ] * matt[t, , ] * survT[t, ]
+    ecwt[t, , ] <- Ncwt[t, , ] * survPT[t, ] * matt[t, , ] * survT[t, ] * d$s_enroute_CWT
 
     # predict spawners at age for the year
     syear[t, , ] <- d$propwildspawn[t] * escyear[t, , ] * d$s_enroute
@@ -625,7 +625,11 @@ check_CMdata <- function(data, verbose = FALSE) {
 
   if (is.null(data$s_enroute)) {
     data$s_enroute <- 1
-    if (verbose) message("En-route survival to spawning grounds is ", data$s_enroute)
+    if (verbose) message("En-route survival to spawning grounds for the main population is ", data$s_enroute)
+  }
+  if (is.null(data$s_enroute_CWT)) {
+    data$s_enroute_CWT <- data$s_enroute
+    if (verbose) message("En-route survival to spawning grounds for the CWT is ", data$s_enroute_CWT)
   }
 
   # Check for smax_mu and smax_sd first! If NULL, use so (Srep)

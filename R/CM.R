@@ -80,7 +80,8 @@
 #' - `obs_pHOS` *Optional*. Vector length `Ldyr` by **return year**, observations of proportion of hatchery origin spawners (census) (between 0-1) *by brood year*. Fitted to model with logistic-normal likelihood.
 #' - `pHOS_sd` Numeric, logistic-normal standard deviation of pHOS observations. Default is 1.
 #' - `pHOS_init` Numeric, initial pHOS for equilibrium juvenile abundance in the first year of the model. Default is 0.
-#' - `s_enroute` Numeric, survival of escapement (from marine fisheries) to spawning grounds. Default is 1.
+#' - `s_enroute` Numeric, survival of escapement (from marine fisheries) to spawning grounds for the main population. Default is 1.
+#' - `s_enroute_CWT` Numeric, survival of CWT to hatchery after marine exploitation. Default is `s_enroute`.
 #'
 #' - `so_mu` Numeric, the prior mean for spawners at replacement in logspace, aka `Srep`. **Default is `log(3 * max(data$obsescape))`**. Not used if `smax_mu` is provided.
 #' - `so_sd` Numeric, the lognormal prior standard deviation for spawners at replacement. **Default is 0.5**. Not used if `smax_sd` is provided.

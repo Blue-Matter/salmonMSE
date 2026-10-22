@@ -3,6 +3,7 @@ The current version of `salmonMSE` package is available on [CRAN](https://cran.r
 # Version 3.1.0
 
 - Conditioning model can place lognormal prior on either Srep or Smax, additional option for truncated normal prior on log(productivity) (> 0)
+- Conditioning mode has additional en route survival term for CWT `data$s_enroute_CWT`
 - Simplify `CM_SRR()` and only plot medians
 - New `SOM` slots for fisheries on stock complexes in multi-population models
 - New `Historical` slots to initialize projection from escapement
