@@ -5,7 +5,14 @@
 \alias{.release_func}
 \title{Calculate hatchery releases}
 \usage{
-calc_release(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling)
+calc_release(
+  egg_target,
+  s_yearling,
+  s_subyearling,
+  p_yearling,
+  p_subyearling,
+  n_r = 1
+)
 
 .release_func(
   p_egg_yearling,
@@ -24,6 +31,8 @@ calc_release(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling)
 \item{s_subyearling}{Numeric, survival from egg to subyearling}
 
 \item{p_yearling}{Vector \verb{[n_r]}, proportion of releases at subyearling stage, where \code{sum(p_yearling, p_subyearling) = 1}}
+
+\item{n_r}{Integer, the number of release strategies. Used to validate the output}
 
 \item{p_egg_yearling}{Numeric, proportion to eggs to become yearlings}
 

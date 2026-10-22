@@ -393,10 +393,11 @@ calc_broodtake_custom <- function(f_brood, NO, HO, stray, p_female, fec, s_presp
 #' @param s_subyearling Numeric, survival from egg to subyearling
 #' @param p_yearling Vector `[n_r]`, proportion of releases at yearling stage, where `sum(p_yearling, p_subyearling) = 1`
 #' @param p_yearling Vector `[n_r]`, proportion of releases at subyearling stage, where `sum(p_yearling, p_subyearling) = 1`
+#' @param n_r Integer, the number of release strategies. Used to validate the output
 #' @returns
 #' `calc_release()` returns a named list returned by `.release_func()`
 #' @keywords internal
-calc_release <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling) {
+calc_release <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_subyearling, n_r = 1) {
 
   if (egg_target > 0) {
     if (sum(p_yearling) == 1 || sum(p_yearling) == 0) {
@@ -418,9 +419,11 @@ calc_release <- function(egg_target, s_yearling, s_subyearling, p_yearling, p_su
 
     yearling[is.na(yearling)] <- 0
     subyearling[is.na(subyearling)] <- 0
+
+    stopifnot(length(yearling) == n_r)
+    stopifnot(length(subyearling) == n_r)
   } else {
-    yearling <- 0 * p_yearling
-    subyearling <- 0 * p_subyearling
+    yearling <- subyearling <- rep(0, n_r)
   }
 
   list(yearling = yearling, subyearling = subyearling)

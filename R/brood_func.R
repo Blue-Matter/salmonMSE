@@ -162,7 +162,8 @@ brood_func <- function(Nage_NOS, Nage_HOS, stray_external, m, m_stray, s_enroute
     hatchery_args$s_yearling,
     hatchery_args$s_subyearling,
     hatchery_args$p_yearling,
-    hatchery_args$p_subyearling
+    hatchery_args$p_subyearling,
+    n_r = ncol(broodtake$egg_HOB_unmarked)
   )
 
   # Spawners arriving at spawning grounds and in-river removals after broodtake
