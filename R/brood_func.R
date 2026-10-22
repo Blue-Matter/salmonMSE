@@ -424,10 +424,8 @@ nextgen_habitat_func <- function(Brood_Calcs, Habitat, fec, p_female,
   #### Fry-smolt survival ----
   # This can be density-dependence in competition with hatchery releases
   # Hatchery releases (after fitness loss) by release strategy (next generation)
-  yearling <- Brood_Calcs$hatchery_production$yearling * fitness_loss[2, 1] * fitness_loss[2, 2]
+  yearling <- Brood_Calcs$hatchery_production$yearling * fitness_loss[2, 1]
   subyearling <- Brood_Calcs$hatchery_production$subyearling * fitness_loss[2, 1]
-
-  stopifnot(length(yearling) == 2)
 
   # Juveniles (ostensibly fry) in freshwater environment that experience density-dependent survival together
   total_fry_DD <- sum(Fry_NOS, Fry_HOS)
