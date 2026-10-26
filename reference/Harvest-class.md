@@ -66,11 +66,6 @@ The component of the operating model that controls marine harvest.
   model mark-selective fishing. Not used if either `MSF_PT` or `MSF_T`
   is ` FALSE`.
 
-- `maxE`:
-
-  Numeric. Maximum encounter rate of the fishery which limits realized
-  exploitation rates. Default is 2 gear encounters per fish per year.
-
 - `vulPT`:
 
   Vector length `maxage` or matrix `[nsim, maxage]`. Vulnerability
@@ -128,14 +123,14 @@ showClass("Harvest")
 #> Name:                  K_T              MSF_PT               MSF_T
 #> Class:        num.function             logical             logical
 #>                                                                   
-#> Name:         release_mort                maxE               vulPT
-#> Class:             numeric             numeric          num.matrix
+#> Name:         release_mort               vulPT                vulT
+#> Class:             numeric          num.matrix          num.matrix
 #>                                                                   
-#> Name:                 vulT          ForeErr_PT           ForeErr_T
+#> Name:           ForeErr_PT           ForeErr_T           ImpErr_PT
 #> Class:          num.matrix          num.matrix          num.matrix
-#>                                               
-#> Name:            ImpErr_PT            ImpErr_T
-#> Class:          num.matrix          num.matrix
+#>                           
+#> Name:             ImpErr_T
+#> Class:          num.matrix
 #> 
 #> Extends: "Harvest.list"
 ```
