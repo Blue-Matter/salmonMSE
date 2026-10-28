@@ -83,16 +83,23 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
   }
 
   if (do_solver && sum(NO, HO)) {
-
-    N_solve <- abind::abind(NO, HO, along = 3)
-    p_mature_solve <- abind::abind(p_mature_NO, p_mature_HO, along = 3)
-    AEQ_solve <- abind::abind(AEQ_NO, AEQ_HO, along = 3)
+    if (MSF) {
+      N_solve <- HO
+      p_mature_solve <- p_mature_HO
+      AEQ_solve <- AEQ_HO
+      ret_solve <- array(ret_HO, dim(HO))
+    } else {
+      N_solve <- abind::abind(NO, HO, along = 3)
+      p_mature_solve <- abind::abind(p_mature_NO, p_mature_HO, along = 3)
+      AEQ_solve <- abind::abind(AEQ_NO, AEQ_HO, along = 3)
+      V_solve <- array(V, dim(N_solve))
+      ret_solve <- abind::abind(
+        array(ret_NO, dim(NO)),
+        array(ret_HO, dim(HO)),
+        along = 3
+      )
+    }
     V_solve <- array(V, dim(N_solve))
-    ret_solve <- abind::abind(
-      array(ret_NO, dim(NO)),
-      array(ret_HO, dim(HO)),
-      along = 3
-    )
 
     if (sum(N_solve)) {
       opt <- try(
