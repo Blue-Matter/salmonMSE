@@ -70,8 +70,9 @@ calc_Sgen(
 
 - check:
 
-  Logical, whether to check the SOM object using
-  [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md)
+  Deprecated. Logical, whether to check the SOM object using
+  [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md).
+  The check is now automated when needed.
 
 - maximize:
 
@@ -161,8 +162,4 @@ calc_Sgen(
 ``` r
 ref_simple <- calc_ref(simple_SOM)
 ref_multi <- calc_ref(multi_SOM)
-#> Preterminal fishery will operate on individual populations
-#> Terminal fishery will operate on individual populations
-#> Checking parameters for population 1
-#> Checking parameters for population 2
 ```

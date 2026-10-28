@@ -59,9 +59,9 @@
 
       <h1>Multi-population model</h1>
             
-            <h4 data-toc-skip class="date">2026-10-26</h4>
+            <h4 data-toc-skip class="date">2026-10-28</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/vignettes/example-multi.Rmd" class="external-link"><code>vignettes/example-multi.Rmd</code></a></small>
       <div class="d-none name"><code>example-multi.Rmd</code></div>
     </div>
 
@@ -475,16 +475,17 @@ Population 2 is smaller due to lower productivity:</p>
 <h3 id="example-c-mark-selective-fishing">Example C: Mark-selective fishing<a class="anchor" aria-label="anchor" href="#example-c-mark-selective-fishing"></a>
 </h3>
 <p>A mark-selective, mixed-stock fishery can have different impacts
-depending on the hatchery management of each underlying population.</p>
-<p>The example code demonstrates a fishery for two populations that have
-equal productivity, equal hatchery production (target of 5,000 releases
-per year), but different mark rates (100% for population 1 and 10% for
+depending on the hatchery management of each underlying population. The
+example code demonstrates a fishery for two populations that have equal
+productivity, equal hatchery production (target of 5,000 releases per
+year), but different mark rates (100% for population 1 and 10% for
 population 2).</p>
-<p>The harvest rate is 30%, defined as the ratio of kept catch (marked
-fish) to the total return (all fish).<br>
-With mark-selective fishing, the fishery encounters and releases
-un-marked fish until the harvest rate is met. The release mortality of
-un-marked fish is 30 percent.</p>
+<p>With mark-selective fishing, the target harvest rate is defined as
+the ratio of the kept hatchery-origin catch to hatchery-origin
+return.<br>
+The fishery encounters and releases un-marked fish until the harvest
+rate is realized. The release mortality of un-marked fish is 30
+percent.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ns</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
@@ -563,10 +564,10 @@ un-marked fish is 30 percent.</p>
 <p>The simulation confirms that the 30% harvest rate can be
 achieved:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">KT_NOS</span> <span class="op">+</span> <span class="va">SMSE_C</span><span class="op">@</span><span class="va">KT_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="co"># sum over populations and ages</span></span>
-<span><span class="va">Return</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">Return_NOS</span> <span class="op">+</span> <span class="va">SMSE_C</span><span class="op">@</span><span class="va">Return_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">KT_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="co"># sum over populations and ages</span></span>
+<span><span class="va">Return</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE_C</span><span class="op">@</span><span class="va">Return_HOS</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span></span>
 <span><span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">Catch</span><span class="op">/</span><span class="va">Return</span>, <span class="fl">2</span>, <span class="va">median</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">U</span>, type <span class="op">=</span> <span class="st">"o"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"Aggregate harvest rate"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">U</span>, type <span class="op">=</span> <span class="st">"o"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"Harvest rate (hatchery-origin)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="example-multi_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="" width="700"></p>
 <p>Exploitation rates, calculated from kept catch and dead discards,
 differ by population and origin. Population 1 with the higher mark rate

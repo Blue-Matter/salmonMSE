@@ -50,8 +50,10 @@ simple_salmonMSE(simpleSOM, ...)
 
 - check:
 
-  Logical, whether to check the structure of the input object with
-  [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md)
+  Deprecated. Logical, whether to check the structure of the input
+  object with
+  [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md).
+  The check is now automated when needed.
 
 - simpleSOM:
 

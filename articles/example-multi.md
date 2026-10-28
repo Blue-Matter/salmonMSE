@@ -487,18 +487,16 @@ barplot(
 ### Example C: Mark-selective fishing
 
 A mark-selective, mixed-stock fishery can have different impacts
-depending on the hatchery management of each underlying population.
-
-The example code demonstrates a fishery for two populations that have
-equal productivity, equal hatchery production (target of 5,000 releases
-per year), but different mark rates (100% for population 1 and 10% for
+depending on the hatchery management of each underlying population. The
+example code demonstrates a fishery for two populations that have equal
+productivity, equal hatchery production (target of 5,000 releases per
+year), but different mark rates (100% for population 1 and 10% for
 population 2).
 
-The harvest rate is 30%, defined as the ratio of kept catch (marked
-fish) to the total return (all fish).  
-With mark-selective fishing, the fishery encounters and releases
-un-marked fish until the harvest rate is met. The release mortality of
-un-marked fish is 30 percent.
+With mark-selective fishing, the target harvest rate is defined as the
+ratio of the kept hatchery-origin catch to hatchery-origin return.  
+The fishery encounters and releases un-marked fish until the harvest
+rate is realized. The release mortality of un-marked fish is 30 percent.
 
 ``` r
 
@@ -582,10 +580,10 @@ The simulation confirms that the 30% harvest rate can be achieved:
 
 ``` r
 
-Catch <- apply(SMSE_C@KT_NOS + SMSE_C@KT_HOS, c(1, 4), sum) # sum over populations and ages
-Return <- apply(SMSE_C@Return_NOS + SMSE_C@Return_HOS, c(1, 4), sum)
+Catch <- apply(SMSE_C@KT_HOS, c(1, 4), sum) # sum over populations and ages
+Return <- apply(SMSE_C@Return_HOS, c(1, 4), sum)
 U <- apply(Catch/Return, 2, median)
-plot(U, type = "o", ylim = c(0, 0.5), xlab = "Year", ylab = "Aggregate harvest rate")
+plot(U, type = "o", ylim = c(0, 0.5), xlab = "Year", ylab = "Harvest rate (hatchery-origin)")
 ```
 
 ![](example-multi_files/figure-html/unnamed-chunk-25-1.png)

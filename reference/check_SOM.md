@@ -24,10 +24,13 @@ check_SOM(SOM, silent = FALSE)
 ## Value
 
 Updated [SOM](https://docs.salmonmse.com/reference/SOM-class.md) object
-with full dimensions in various slots
+with full dimensions in various slots, with an attribute to identify
+whether the check has been performed.
 
 ## Examples
 
 ``` r
 SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
+attr(SOM_checked, "checked")
+#> [1] TRUE
 ```

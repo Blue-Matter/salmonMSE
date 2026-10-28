@@ -13,7 +13,11 @@
 - New `SOM` slots for fisheries on stock complexes in multi-population
   models
 - New `Historical` slots to initialize projection from escapement
-- New `Harvest` slots for forecast error and implementation error
+- New `Harvest` slots for forecast error, implementation error, maximum
+  fishery encounter rate
+- With mark-selective fishing, harvest rate target is now defined as
+  ratio of kept hatchery-origin catch to hatchery-origin return.
+  Previously defined as hatchery-origin catch to total return
 - New `Hatchery` slot for smolting survival of hatchery releases:
   `Hatchery@s_sub_smolt` for subyearlings and `Hatchery@s_year_smolt`
   for yearlings

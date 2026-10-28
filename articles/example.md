@@ -347,7 +347,7 @@ stochastic replicates:
 
 quantile(PNI_LT, c(0.025, 0.5, 0.975))
 #>      2.5%       50%     97.5% 
-#> 0.6358769 0.7670485 0.8155235
+#> 0.6358908 0.7670534 0.8155252
 ```
 
 Here is the relationship between the performance metrics and

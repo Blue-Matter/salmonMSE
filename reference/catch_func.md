@@ -21,7 +21,8 @@ catch_func(
   p_mature_NO = array(1, dim(NO)),
   p_mature_HO = array(1, dim(HO)),
   AEQ_NO = array(1, dim(NO)),
-  AEQ_HO = array(1, dim(HO))
+  AEQ_HO = array(1, dim(HO)),
+  maxE = 3
 )
 ```
 
@@ -94,6 +95,11 @@ catch_func(
 
   Optional, array `[ns, nage, n_r]` of adult equivalents for
   hatchery-origin fish.
+
+- maxE:
+
+  Numeric. Maximum encounter rate of fishery (limits realized
+  exploitation rates)
 
 ## Value
 
