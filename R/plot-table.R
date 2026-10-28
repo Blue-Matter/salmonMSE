@@ -15,8 +15,9 @@ make_hatchery_table <- function(SMSE, s = 1) {
     hatch_extra
   )
 
+  SOM <- SMSE@Misc$SOM
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent = TRUE)
   hatch_table$Value <- sapply(hatch_table$Slot, function(i) {
-    SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     v <- slot(SOM@Hatchery[[s]], i)
     if (!length(v)) {
       v <- NA
@@ -45,8 +46,10 @@ make_fitness_table <- function(SMSE, s = 1) {
     fitness_extra,
     glossary[match(fitness_settings, glossary$Slot), c("Definition", "Slot")]
   )
+
+  SOM <- SMSE@Misc$SOM
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent = TRUE)
   fitness_table$Value <- sapply(fitness_table$Slot, function(i) {
-    SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     v <- slot(SOM@Hatchery[[s]], i)
     if (!length(v)) v <- NA
     if (length(v) > 1) {
@@ -77,6 +80,9 @@ make_harvest_table <- function(SMSE, s = 1) {
     glossary[match(harvest_par, glossary$Slot), c("Definition", "Slot")],
     harvest_extra
   )
+
+  SOM <- SMSE@Misc$SOM
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent = TRUE)
   harvest_table$Value <- sapply(harvest_table$Slot, function(i) {
     SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
     if (i == "m") {

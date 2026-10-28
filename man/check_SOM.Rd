@@ -12,7 +12,8 @@ check_SOM(SOM, silent = FALSE)
 \item{silent}{Logical, whether to report progress in console}
 }
 \value{
-Updated \linkS4class{SOM} object with full dimensions in various slots
+Updated \linkS4class{SOM} object with full dimensions in various slots, with an attribute to identify whether
+the check has been performed.
 }
 \description{
 Ensures that the slots in the \linkS4class{SOM} object have the correct dimensions. Function will
@@ -20,5 +21,5 @@ update some slots to their full dimensions.
 }
 \examples{
 SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
-
+attr(SOM_checked, "checked")
 }

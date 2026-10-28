@@ -48,7 +48,7 @@ calc_Sgen(
 \item{rel_F}{Numeric length 2, indicates the relative effort in the preterminal and terminal fisheries, with a maximum value of 1.
 The default is \code{c(0, 1)} which indicates a yield calculation with only the terminal fishery.}
 
-\item{check}{Logical, whether to check the SOM object using \code{\link[=check_SOM]{check_SOM()}}}
+\item{check}{Deprecated. Logical, whether to check the SOM object using \code{\link[=check_SOM]{check_SOM()}}. The check is now automated when needed.}
 
 \item{maximize}{Character, whether the MSY calculation is the optimum that maximizes catch (\code{"MSY"}) or excess recruitment (\code{"MER"}). The two
 methods should be equivalent when \code{rel_F = c(0, 1)}.}

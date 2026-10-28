@@ -11,7 +11,7 @@
 #' @param SOM An object of class [salmonMSE::SOM-class]
 #' @param rel_F Numeric length 2, indicates the relative effort in the preterminal and terminal fisheries, with a maximum value of 1.
 #' The default is `c(0, 1)` which indicates a yield calculation with only the terminal fishery.
-#' @param check Logical, whether to check the SOM object using [check_SOM()]
+#' @param check Deprecated. Logical, whether to check the SOM object using [check_SOM()]. The check is now automated when needed.
 #' @param maximize Character, whether the MSY calculation is the optimum that maximizes catch (`"MSY"`) or excess recruitment (`"MER"`). The two
 #' methods should be equivalent when `rel_F = c(0, 1)`.
 #' @param AEQ Logical, whether to maximize preterminal catch in terms of adult equivalents
@@ -29,7 +29,7 @@
 calc_ref <- function(SOM, rel_F, check = TRUE, maximize = c("MSY", "MER"), AEQ = TRUE) {
   maximize <- match.arg(maximize)
 
-  if (check) SOM <- check_SOM(SOM)
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent = TRUE)
 
   ns <- length(SOM@Bio)
 

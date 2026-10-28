@@ -113,8 +113,8 @@ plot_stray <- function(stray, xlab = "Destination", ylab = "Origin", s_names) {
   invisible(stray)
 }
 
-plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, check = TRUE, ylim, ...) {
-  if (check) SOM <- check_SOM(SOM)
+plot_SRR <- function(SOM, s = 1, quant = FALSE, surv = FALSE, figure = TRUE, ylim, ...) {
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM)
   Bio <- SOM@Bio[[s]]
   maxage <- Bio@maxage
 

@@ -11,6 +11,7 @@ rmd_natural_production <- function(s, sname) {
     "\n",
     "```{r, fig.cap=\"Histogram of kappa (productivity, recruits/spawner).\"}",
     "SOM <- SMSE@Misc$SOM",
+    "if (is.null(attr(SOM, \"checked\"))) SOM <- check_SOM(SOM, silent = TRUE)",
     paste0("use_habitat <- SOM@Habitat[[", s, "]]@use_habitat"),
     paste0("SRrel <- SOM@Bio[[", s, "]]@SRrel"),
     "",

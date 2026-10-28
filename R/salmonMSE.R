@@ -103,11 +103,11 @@ split_sims <- function(nsim, ncores) {
 
 #' @name salmonMSE
 #' @description `ProjectSOM()` is the internal projection function.
-#' @param check Logical, whether to check the structure of the input object with [check_SOM()]
+#' @param check Deprecated. Logical, whether to check the structure of the input object with [check_SOM()]. The check is now automated when needed.
 #' @param sims Optional integer vector to run projection for a subset of simulations. Intended for parallel processing.
 #' @export
 ProjectSOM <- function(SOM, sims, check = FALSE) {
-  if (check) SOM <- check_SOM(SOM)
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent = TRUE)
   if (missing(sims)) sims <- seq(1, SOM@nsim)
   if (any(sims) > SOM@nsim) stop("There are `sims` > SOM@nsim")
   if (length(sims) < 2) stop("Need at least two simulations in `sims`")

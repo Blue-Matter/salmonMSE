@@ -8,10 +8,11 @@ NAor0 <- function(x) !length(x) || all(is.na(x)) || all(!x)
 #'
 #' @param SOM [salmonMSE::SOM-class] object
 #' @param silent Logical, whether to report progress in console
-#' @returns Updated [salmonMSE::SOM-class] object with full dimensions in various slots
+#' @returns Updated [salmonMSE::SOM-class] object with full dimensions in various slots, with an attribute to identify whether
+#' the check has been performed.
 #' @examples
 #' SOM_checked <- check_SOM(simple_SOM, silent = TRUE)
-#'
+#' attr(SOM_checked, "checked")
 #' @export
 check_SOM <- function(SOM, silent = FALSE) {
 
@@ -444,6 +445,8 @@ check_SOM <- function(SOM, silent = FALSE) {
   # Check all maxage is identical
   maxage_s <- unique(vapply(SOM@Bio, slot, numeric(1), "maxage"))
   if (length(maxage_s) > 1) stop("Max age should be identical for all populations")
+
+  attr(SOM, "checked") <- TRUE
 
   return(SOM)
 }

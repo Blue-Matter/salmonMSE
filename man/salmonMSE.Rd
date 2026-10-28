@@ -21,7 +21,7 @@ simple_salmonMSE(simpleSOM, ...)
 
 \item{sims}{Optional integer vector to run projection for a subset of simulations. Intended for parallel processing.}
 
-\item{check}{Logical, whether to check the structure of the input object with \code{\link[=check_SOM]{check_SOM()}}}
+\item{check}{Deprecated. Logical, whether to check the structure of the input object with \code{\link[=check_SOM]{check_SOM()}}. The check is now automated when needed.}
 
 \item{simpleSOM}{An object of class \linkS4class{simpleSOM}}
 

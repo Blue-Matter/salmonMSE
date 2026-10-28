@@ -13,7 +13,7 @@
 #' @references Hatchery Scientific Review Group. 2020. All-H Analyzer Tool Guide and Documentation. May 2020.
 #' @export
 AHA <- function(SOM, ngen = 100, silent = FALSE) {
-  SOM <- check_SOM(SOM)
+  if (is.null(attr(SOM, "checked"))) SOM <- check_SOM(SOM, silent)
   ns <- length(SOM@Bio)
 
   output_s <- list()

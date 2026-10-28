@@ -536,7 +536,7 @@ setMethod("report", "SMSE",
             name_ind <- grep("NAME", rmd)
             rmd_split[[name_ind]] <- paste("#", name, "{.tabset}")
 
-            SMSE@Misc$SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
+            if (is.null(attr(SMSE@Misc$SOM, "checked"))) SMSE@Misc$SOM <- check_SOM(SMSE@Misc$SOM, silent = TRUE)
 
             stock_ind <- grep("ADD RMD BY STOCK", rmd)
             n_g <- sapply(SMSE@Misc$SOM@Bio, slot, "n_g")
