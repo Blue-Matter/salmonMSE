@@ -23,9 +23,9 @@ plot_SOM <- function(object, var = "kappa", figure = TRUE, xlab, ylab = "Frequen
     if (is.matrix(x) && all(dim(x) == c(nsim, maxage))) { # nsim x age
       xplot <- apply(x, 2, quantile, quant)
     } else if (is.array(x)) {
-      if (length(dim(x)) == 4) x <- x[, , , g]
+      if (length(dim(x)) == 4) x <- array(x[, , , g], dim(x)[1:3])
       if (all(dim(x) == c(nsim, maxage, proyears))) {
-        xplot <- apply(x[, , proyears], 2, quantile, quant)
+        xplot <- apply(x[, , proyears, drop = FALSE], 2, quantile, quant)
       }
     } else if (is.numeric(x) && length(x) == maxage) {
       xplot <- matrix(x, 3, maxage, byrow = TRUE)
