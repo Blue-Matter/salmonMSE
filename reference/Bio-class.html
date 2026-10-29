@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"Bio"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/maxE/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/define-SOM.R" class="external-link"><code>R/define-SOM.R</code></a></small>
       <div class="d-none name"><code>Bio-class.Rd</code></div>
     </div>
 
@@ -59,7 +59,7 @@
 
 
 <dt><code>maxage</code></dt>
-<dd><p>Integer. The maximum age of the population age structure.</p></dd>
+<dd><p>Integer. The maximum age of the population age structure. Default is 2.</p></dd>
 
 
 <dt><code>n_g</code></dt>
@@ -75,28 +75,29 @@ ten percent to the second LHG. Default is <code>rep(1/Bio@n_g, Bio@n_g)</code></
 
 
 <dt><code>p_mature</code></dt>
-<dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. The proportion mature by age.</p></dd>
+<dd><p>Either vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. The proportion mature by age.
+Default is 1 at the maximum age, 0 otherwise.</p></dd>
 
 
 <dt><code>SRrel</code></dt>
-<dd><p>Character, stock-recruit relationship for density-dependent smolt production from fry. Either "BH" (Beverton-Holt) or "Ricker".
+<dd><p>Character, stock-recruit relationship for density-dependent smolt production from fry. Either "Ricker" (default) or "BH".
 Not used if habitat component is used. See <code>Habitat</code> object.</p></dd>
 
 
 <dt><code>capacity</code></dt>
 <dd><p>Vector length <code>nsim</code>. Only used if <code>SRrel = "BH"</code>. The asymptote, i.e., maximum juvenile production, of the Beverton-Holt stock-recruit function for density-dependent natural smolt production from egg production.
-<strong>Units of smolts.</strong> Not used if habitat component is used.</p></dd>
+<strong>Units of smolts.</strong> Default is 1000. Not used if habitat component is used.</p></dd>
 
 
 <dt><code>kappa</code></dt>
 <dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function. <strong>Units of recruits per spawner.</strong>
-Natural per-capita production of recruits as the population approaches zero (density-independent component).
+Natural per-capita production of recruits as the population approaches zero (density-independent component). Default is 3.
 Not used if habitat component is used.</p></dd>
 
 
 <dt><code>Smax</code></dt>
 <dd><p>Vector length <code>nsim</code>. Only used if <code>SRrel = "Ricker"</code>. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of spawners.</strong>
-Not used if habitat component is used.</p></dd>
+Default is 1000. Not used if habitat component is used.</p></dd>
 
 
 <dt><code>phi</code></dt>
@@ -119,16 +120,17 @@ to the first year and weighted by life history groups. Not used if habitat compo
 
 <dt><code>Mjuv_NOS</code></dt>
 <dd><p>Either vector by age (length <code>maxage-1</code>) or an array with dimension <code>[nsim, maxage-1, proyears, n_g]</code>.
-Natural mortality of immature natural origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
-To replicate the SAR parameter of a stage-specific model, set <code>Mjuv_NOS[a] = -log(SAR)</code> where <code>a</code> is the age class prior to maturation (and zero for all other ages).</p></dd>
+Instantaneous natural mortality of immature natural-origin fish, the value for the first age represents natural mortality from age 1 to 2, second age is mortality from age 2 to 3, and so on.
+Age class survival is <code>exp(-Mjuv_NOS[a])</code>, e.g., 1 percent survival should be <code>Mjuv_NOS[1] &lt;- -log(0.01)</code>.
+Default is 0 for all age classes to model spawner-recruit dynamics to bypass juvenile life stages.</p></dd>
 
 
 <dt><code>fec</code></dt>
-<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. Female fecundity of natural origin spawners.</p></dd>
+<dd><p>Vector by age (length <code>maxage</code>) or an array with dimension <code>[nsim, maxage, proyears]</code>. Female fecundity of natural spawners. Default is 1 at the maximum age, 0 otherwise (used to model spawner-recruit dynamics instead of egg production).</p></dd>
 
 
 <dt><code>p_female</code></dt>
-<dd><p>Numeric. The proportion of females in the spawning population. Default is 0.5. Can also be a vector <code>[maxage]</code> (for situations where older spawners are predominantly female)</p></dd>
+<dd><p>Numeric. The proportion of females in the spawning population. Can also be a vector <code>[maxage]</code> (for situations where older spawners are predominantly female). Default is 1 to model spawner-recruit dynamics instead of egg production.</p></dd>
 
 
 <dt><code>s_enroute</code></dt>

@@ -11,11 +11,11 @@ An object containing all the parameters for a salmon operating model
 
 - `nsim`:
 
-  Integer. Number of simulations
+  Integer. Number of simulations. Default is 3.
 
 - `proyears`:
 
-  Integer. The number of projected years
+  Integer. The number of projected years. Default is 20.
 
 - `seed`:
 
