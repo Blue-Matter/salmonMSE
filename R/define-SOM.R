@@ -259,8 +259,8 @@ setClassUnion("Historical.list", c("Historical", "list"))
 #' \code{new("SOM", Bio, Habitat, Hatchery, Harvest, Historical)}.
 #'
 #' @slot Name Character. Identifying name
-#' @slot nsim Integer. Number of simulations
-#' @slot proyears Integer. The number of projected years
+#' @slot nsim Integer. Number of simulations. Default is 3.
+#' @slot proyears Integer. The number of projected years. Default is 20.
 #' @slot seed Integer. A random seed to ensure users can reproduce results exactly. Not currently used.
 #' @slot Bio \linkS4class{Bio} object informing biological parameters and natural production. Provide a list of Bio objects for multi-population models.
 #' @slot Habitat \linkS4class{Habitat} object containing management levers for controlling survival in the freshwater environment. Provide a list of Habitat objects for multi-population models.
@@ -329,6 +329,12 @@ setMethod("initialize", "SOM",
             attr(.Object, "version") <- packageVersion("salmonMSE")
             attr(.Object, "date") <- date()
             attr(.Object, "R.version") <- getRversion()
+
+            if (length(dots)) {
+              for (i in names(dots)) {
+                if (i %in% slotNames("SOM")) slot(.Object, i) <- dots[[i]]
+              }
+            }
 
             return(.Object)
           })

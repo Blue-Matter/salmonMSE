@@ -103,22 +103,26 @@ check_SOM <- function(SOM, silent = FALSE) {
     ### Check Bio ----
     Bio <- update_S4(SOM@Bio[[s]])
 
-    Bio <- check_numeric(Bio, "maxage", min_value = 2)
+    Bio <- check_numeric(Bio, "maxage", default = 2, min_value = 2)
     maxage <- Bio@maxage
 
     Bio <- check_numeric(Bio, "n_g", default = 1, min_value = 1)
     Bio <- check_numeric(Bio, "p_LHG", size = Bio@n_g, default = rep(1/Bio@n_g, Bio@n_g))
 
+    if (!length(Bio@p_mature)) Bio@p_mature <- ifelse(seq_len(maxage) == maxage, 1, 0)
     Bio <- check_maxage2array(Bio, "p_mature", maxage, nsim, proyears)
     if (length(Bio@p_female) == 1) Bio@p_female <- rep(Bio@p_female, maxage)
-    Bio <- check_numeric(Bio, "p_female", size = maxage, default = rep(0.5, maxage))
+    Bio <- check_numeric(Bio, "p_female", size = maxage, default = rep(1, maxage))
     Bio <- check_numeric(Bio, "s_enroute", default = 1)
+
+    if (!length(Bio@fec)) Bio@fec <- ifelse(seq_len(maxage) == maxage, 1, 0)
     Bio <- check_maxage2array(Bio, "fec", maxage, nsim, proyears)
 
     ### Check Habitat (initial) ----
     Habitat <- update_S4(SOM@Habitat[[s]])
     Habitat <- check_numeric(Habitat, "use_habitat", default = FALSE)
 
+    if (!length(Bio@Mjuv_NOS)) Bio@Mjuv_NOS <- rep(0, maxage-1)
     if (length(dim(Bio@Mjuv_NOS)) == 3 && Bio@n_g == 1) {
       Bio <- check_maxage2array(Bio, "Mjuv_NOS", maxage-1, nsim, proyears)
       Bio@Mjuv_NOS <- array(Bio@Mjuv_NOS, c(dim(Bio@Mjuv_NOS), Bio@n_g))
@@ -127,13 +131,14 @@ check_SOM <- function(SOM, silent = FALSE) {
 
     if (!Habitat@use_habitat) {
       # SRR pars
+      if (!length(Bio@SRrel)) Bio@SRrel <- "Ricker"
       slot(Bio, "SRrel") <- match.arg(slot(Bio, "SRrel"), choices = c("BH", "Ricker"))
-      Bio <- check_numeric2nsim(Bio, "kappa", nsim)
+      Bio <- check_numeric2nsim(Bio, "kappa", nsim, default = 3)
 
       if (Bio@SRrel == "BH") {
-        Bio <- check_numeric2nsim(Bio, "capacity", nsim)
+        Bio <- check_numeric2nsim(Bio, "capacity", nsim, default = 1000)
       } else {
-        Bio <- check_numeric2nsim(Bio, "Smax", nsim)
+        Bio <- check_numeric2nsim(Bio, "Smax", nsim, default = 1000)
       }
 
       if (!length(Bio@phi) && length(Bio@tau)) {
@@ -162,7 +167,6 @@ check_SOM <- function(SOM, silent = FALSE) {
             Mjuv = matrix(Bio@Mjuv_NOS[x, , 1, ], Bio@maxage-1, Bio@n_g),
             p_mature = matrix(Bio@p_mature[x, , 1], Bio@maxage, Bio@n_g),
             p_female = Bio@p_female,
-            #fec = matrix(Bio@fec[x, , 1], Bio@maxage, Bio@n_g),
             s_enroute = Bio@s_enroute,
             n_g = Bio@n_g,
             p_LHG = Bio@p_LHG,
@@ -173,8 +177,7 @@ check_SOM <- function(SOM, silent = FALSE) {
       Bio <- check_numeric2nsim(Bio, "phi", nsim)
       Bio <- check_numeric2nsim(Bio, "tau", nsim)
 
-      if (!length(Bio@SRdev)) Bio@SRdev <- matrix(1, nsim, proyears)
-      Bio <- check_array(Bio, "SRdev", c(nsim, proyears))
+      Bio <- check_array(Bio, "SRdev", c(nsim, proyears), default = matrix(1, nsim, proyears))
     } else {
       Habitat <- check_numeric(Habitat, "prespawn_rel", default = "BH")
       Habitat@prespawn_rel <- match.arg(Habitat@prespawn_rel, choices = c("BH", "HS"))
@@ -489,10 +492,15 @@ check_numeric <- function(object, name, size = 1, default, min_value = 0) {
   return(invisible(object))
 }
 
-check_maxage <- function(object, name, maxage, min_value = 0) {
+check_maxage <- function(object, name, maxage, default, min_value = 0) {
   object_name <- as.character(substitute(object))
 
   i <- slot(object, name)
+
+  if (!length(i) && !missing(default)) {
+    slot(object, name) <- default
+    i <- slot(object, name)
+  }
 
   if (length(i) != maxage) {
     stop(paste0("Need ", object_name, "@", name, " (maxage vector)"))
@@ -588,10 +596,15 @@ check_maxage2garray <- function(object, name, maxage, nsim, years, n_g, min_valu
   return(invisible(object))
 }
 
-check_array <- function(object, name, dims, min_value = 0) {
+check_array <- function(object, name, dims, default, min_value = 0) {
   object_name <- as.character(substitute(object))
 
   i <- slot(object, name)
+
+  if (!length(i) && !missing(default)) {
+    slot(object, name) <- default
+    i <- slot(object, name)
+  }
 
   dim_i <- dim(i)
 
@@ -609,13 +622,18 @@ check_array <- function(object, name, dims, min_value = 0) {
   return(invisible(object))
 }
 
-check_numeric2nsim <- function(object, name, nsim, min_value = 0) {
+check_numeric2nsim <- function(object, name, nsim, default, min_value = 0) {
   object_name <- as.character(substitute(object))
 
   i <- slot(object, name)
 
   if (!length(i)) {
-    stop(paste0("Need ", object_name, "@", name))
+    if (missing(default)) {
+      stop(paste0("Need ", object_name, "@", name))
+    } else {
+      slot(object, name) <- default
+      i <- slot(object, name)
+    }
   }
 
   if (length(i) == 1) {

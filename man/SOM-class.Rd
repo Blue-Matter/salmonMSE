@@ -13,9 +13,9 @@ An object containing all the parameters for a salmon operating model (SOM).
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nsim}}{Integer. Number of simulations}
+\item{\code{nsim}}{Integer. Number of simulations. Default is 3.}
 
-\item{\code{proyears}}{Integer. The number of projected years}
+\item{\code{proyears}}{Integer. The number of projected years. Default is 20.}
 
 \item{\code{seed}}{Integer. A random seed to ensure users can reproduce results exactly. Not currently used.}
 
