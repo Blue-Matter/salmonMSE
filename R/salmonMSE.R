@@ -253,8 +253,8 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
   IRR_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
 
   # Marine catch and exploitation rate
-  KPT_NOS <- KT_NOS <- DPT_NOS <- DDPT_NOS <- DT_NOS <- DDT_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
-  KPT_HOS <- KT_HOS <- DPT_HOS <- DDPT_HOS <- DT_HOS <- DDT_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
+  KPT_NOS <- KPT_AEQ_NOS <- KT_NOS <- DPT_NOS <- DPT_AEQ_NOS <- DDPT_NOS <- DT_NOS <- DDT_NOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_g))
+  KPT_HOS <- KPT_AEQ_HOS <- KT_HOS <- DPT_HOS <- DPT_AEQ_HOS <- DDPT_HOS <- DT_HOS <- DDT_HOS <- array(NA_real_, c(nsim, ns, nage, proyears, n_r))
 
   UPT_NOS <- UT_NOS <- ExPT_NOS <- ExT_NOS <-
     UPT_HOS <- UT_HOS <- ExPT_HOS <- ExT_HOS <-
@@ -364,11 +364,15 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
         structure(names = vars)
 
       KPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_NO, c(4, 1:3))
+      KPT_AEQ_NOS[, , , y, ] <- aperm(PT_Calcs_y$K_AEQ_NO, c(4, 1:3))
       DPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$D_NO, c(4, 1:3))
+      DPT_AEQ_NOS[, , , y, ] <- aperm(PT_Calcs_y$D_AEQ_NO, c(4, 1:3))
       DDPT_NOS[, , , y, ] <- aperm(PT_Calcs_y$DD_NO, c(4, 1:3))
 
       KPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$K_HO, c(4, 1:3))
+      KPT_AEQ_HOS[, , , y, ] <- aperm(PT_Calcs_y$K_AEQ_HO, c(4, 1:3))
       DPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_HO, c(4, 1:3))
+      DPT_AEQ_HOS[, , , y, ] <- aperm(PT_Calcs_y$D_AEQ_HO, c(4, 1:3))
       DDPT_HOS[, , , y, ] <- aperm(PT_Calcs_y$DD_HO, c(4, 1:3))
 
       UPT_NOS[, , y] <- t(PT_Calcs_y$U_NO)
@@ -690,12 +694,16 @@ ProjectSOM <- function(SOM, sims, check = FALSE) {
     HOS_stray = apply(HOS_stray, 1:4, sum),
     HOS_effective = apply(HOS_effective, 1:4, sum),
     KPT_NOS = apply(KPT_NOS, 1:4, sum),
+    KPT_AEQ_NOS = apply(KPT_AEQ_NOS, 1:4, sum),
     KT_NOS = apply(KT_NOS, 1:4, sum),
     KPT_HOS = apply(KPT_HOS, 1:4, sum),
+    KPT_AEQ_HOS = apply(KPT_AEQ_HOS, 1:4, sum),
     KT_HOS = apply(KT_HOS, 1:4, sum),
     DPT_NOS = apply(DPT_NOS, 1:4, sum),
+    DPT_AEQ_NOS = apply(DPT_AEQ_NOS, 1:4, sum),
     DT_NOS = apply(DT_NOS, 1:4, sum),
     DPT_HOS = apply(DPT_HOS, 1:4, sum),
+    DPT_AEQ_NOS = apply(DPT_AEQ_HOS, 1:4, sum),
     DT_HOS = apply(DT_HOS, 1:4, sum),
     UPT_NOS = UPT_NOS,
     UT_NOS = UT_NOS,

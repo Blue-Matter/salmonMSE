@@ -80,19 +80,27 @@ where \eqn{q = 1-p} and \eqn{p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} + \t
 
 \item{\code{HOS_effective}}{Array \verb{[nsim, nstocks, nage, proyears]}. Hatchery origin spawners (local + strays) discounted by \code{gamma}.}
 
-\item{\code{KPT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of natural origin spawners.}
+\item{\code{KPT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (nominal values) of natural origin spawners.}
+
+\item{\code{KPT_AEQ_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (adult equivalents) of natural origin spawners.}
 
 \item{\code{KT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Terminal fishery kept catch of natural origin spawners.}
 
-\item{\code{KPT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of hatchery origin spawners.}
+\item{\code{KPT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (nominal values) of hatchery origin spawners.}
+
+\item{\code{KPT_AEQ_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery kept catch (adult equivalents) of hatchery origin spawners.}
 
 \item{\code{KT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Terminal fishery kept catch of hatchery origin spawners.}
 
-\item{\code{DPT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of natural origin spawners.}
+\item{\code{DPT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, nominal values) of natural origin spawners.}
+
+\item{\code{DPT_AEQ_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, adult equivalents) of natural origin spawners.}
 
 \item{\code{DT_NOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Terminal fishery released catch (live and dead) of natural origin spawners.}
 
-\item{\code{DPT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of hatchery origin spawners.}
+\item{\code{DPT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, nominal values) of hatchery origin spawners.}
+
+\item{\code{DPT_AEQ_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Pre-terminal fishery released catch (live and dead, adult equivalents) of natural origin spawners.}
 
 \item{\code{DT_HOS}}{Array \verb{[nsim, nstocks, nage, proyears]}. Terminal fishery released catch (live and dead) hatchery origin spawners.}
 

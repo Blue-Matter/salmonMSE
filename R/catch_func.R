@@ -28,10 +28,14 @@
 #' - `DD_HO` dead discarded hatchery-origin catch, same dimension as `HO`
 #' - `Nsurv_NO` natural-origin survivors, same dimension as `NO`
 #' - `Nsurv_HO` hatchery-origin survivors, same dimension as `HO`
-#' - `U_NO` natural-origin harvest rate (ratio of kept catch and abundance), vector `ns`
-#' - `U_HO` hatchery-origin harvest rate (ratio of dead catch and abundance), vector `ns`
-#' - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
-#' - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and abundance), vector `ns`
+#' - `U_NO` natural-origin harvest rate (ratio of kept catch and abundance, calculated from adult equivalents), vector `ns`
+#' - `U_HO` hatchery-origin harvest rate (ratio of dead catch and abundance, calculated from adult equivalents), vector `ns`
+#' - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and abundance, calculated from adult equivalents), vector `ns`
+#' - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and abundance, calculated from adult equivalents), vector `ns`
+#' - `K_AEQ_NO` kept natural-origin catch (adult equivalents), same dimension as `NO`
+#' - `K_AEQ_HO` kept hatchery-origin catch (adult equivalents), same dimension as `HO`
+#' - `D_AEQ_NO` discarded (live + dead) natural-origin catch (adult equivalents), same dimension as `NO`
+#' - `D_AEQ_HO` discarded (live + dead) hatchery-origin catch (adult equivalents), same dimension as `HO`
 #' @keywords internal
 catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, ImpErr = 1,
                        MSF = FALSE, m = 1, release_mort = 0,
@@ -128,6 +132,9 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
   Enc_NO <- Fret_NO <- Frel_NO <- Z_NO <- K_NO <- D_NO <- DD_NO <- DK_NO <- Nsurv_NO <- array(0, dim(NO))
   Enc_HO <- Fret_HO <- Frel_HO <- Z_HO <- K_HO <- D_HO <- DD_HO <- DK_HO <- Nsurv_HO <- array(0, dim(HO))
 
+  K_AEQ_NO <- D_AEQ_NO <- DD_AEQ_NO <- DK_AEQ_NO <- array(0, dim(NO))
+  K_AEQ_HO <- D_AEQ_HO <- DD_AEQ_HO <- DK_AEQ_HO <- array(0, dim(HO))
+
   # Fishing mortality of retained catch
   Fret_NO[] <- V * ret_NO * Effort
   Fret_HO[] <- V * ret_HO * Effort
@@ -176,6 +183,19 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
   # Divide by zero
   U_NO[is.na(U_NO)] <- U_HO[is.na(U_HO)] <- Ex_NO[is.na(Ex_NO)] <- Ex_HO[is.na(Ex_HO)] <- 0
 
+  # Adult equivalents
+  K_AEQ_NO[] <- K_NO * AEQ_NO
+  K_AEQ_HO[] <- K_HO * AEQ_HO
+
+  D_AEQ_NO[] <- D_NO * AEQ_NO
+  D_AEQ_HO[] <- D_HO * AEQ_HO
+
+  DD_AEQ_NO[] <- DD_NO * AEQ_NO
+  DD_AEQ_HO[] <- DD_HO * AEQ_HO
+
+  DK_AEQ_NO[] <- DK_NO * AEQ_NO
+  DK_AEQ_HO[] <- DK_NO * AEQ_NO
+
   output <- list(
     K_NO = K_NO,
     K_HO = K_HO,
@@ -188,7 +208,11 @@ catch_func <- function(NO, HO, type = c("u", "catch"), U, K, V, ForeErr = 1, Imp
     U_NO = U_NO,
     U_HO = U_HO,
     Ex_NO = Ex_NO,
-    Ex_HO = Ex_HO
+    Ex_HO = Ex_HO,
+    K_AEQ_NO = K_AEQ_NO,
+    K_AEQ_HO = K_AEQ_HO,
+    D_AEQ_NO = D_AEQ_NO,
+    D_AEQ_HO = D_AEQ_HO
   )
 
   return(output)

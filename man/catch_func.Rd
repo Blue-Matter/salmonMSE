@@ -67,10 +67,14 @@ Named list:
 \item \code{DD_HO} dead discarded hatchery-origin catch, same dimension as \code{HO}
 \item \code{Nsurv_NO} natural-origin survivors, same dimension as \code{NO}
 \item \code{Nsurv_HO} hatchery-origin survivors, same dimension as \code{HO}
-\item \code{U_NO} natural-origin harvest rate (ratio of kept catch and abundance), vector \code{ns}
-\item \code{U_HO} hatchery-origin harvest rate (ratio of dead catch and abundance), vector \code{ns}
-\item \code{Ex_NO} natural-origin exploitation rate (ratio of dead catch and abundance), vector \code{ns}
-\item \code{Ex_HO} hatchery-origin exploitation rate (ratio of dead catch and abundance), vector \code{ns}
+\item \code{U_NO} natural-origin harvest rate (ratio of kept catch and abundance, calculated from adult equivalents), vector \code{ns}
+\item \code{U_HO} hatchery-origin harvest rate (ratio of dead catch and abundance, calculated from adult equivalents), vector \code{ns}
+\item \code{Ex_NO} natural-origin exploitation rate (ratio of dead catch and abundance, calculated from adult equivalents), vector \code{ns}
+\item \code{Ex_HO} hatchery-origin exploitation rate (ratio of dead catch and abundance, calculated from adult equivalents), vector \code{ns}
+\item \code{K_AEQ_NO} kept natural-origin catch (adult equivalents), same dimension as \code{NO}
+\item \code{K_AEQ_HO} kept hatchery-origin catch (adult equivalents), same dimension as \code{HO}
+\item \code{D_AEQ_NO} discarded (live + dead) natural-origin catch (adult equivalents), same dimension as \code{NO}
+\item \code{D_AEQ_HO} discarded (live + dead) hatchery-origin catch (adult equivalents), same dimension as \code{HO}
 }
 }
 \description{
