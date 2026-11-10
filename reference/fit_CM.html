@@ -8,13 +8,15 @@
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit conditioning model to historical data — fit_CM"><meta name="description" content="Bayesian stock reconstruction model of natural and hatchery origin fish population.
 Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
 A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
-informed by natural mortality and maturity from CWT (Korman and Walters 2024).
+informed by natural mortality and maturity from CWT (Korman and Walters 2024,
+expanding upon Cunningham et al. 2018).
 The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 for age 1 vs. ages 2+).
 The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).fit_CM() generates the RTMB model from data which can then be passed to sample_CM() to run the MCMC in Stan. Generate a markdown report with report_CM().More information is available on the salmonMSE website"><meta property="og:description" content="Bayesian stock reconstruction model of natural and hatchery origin fish population.
 Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
 A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
-informed by natural mortality and maturity from CWT (Korman and Walters 2024).
+informed by natural mortality and maturity from CWT (Korman and Walters 2024,
+expanding upon Cunningham et al. 2018).
 The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 for age 1 vs. ages 2+).
 The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).fit_CM() generates the RTMB model from data which can then be passed to sample_CM() to run the MCMC in Stan. Generate a markdown report with report_CM().More information is available on the salmonMSE website"></head><body>
@@ -56,7 +58,8 @@ The model can include either a preterminal juvenile fishery, terminal return fis
     <p>Bayesian stock reconstruction model of natural and hatchery origin fish population.
 Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
 A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
-informed by natural mortality and maturity from CWT (<a href="https://publications.gc.ca/site/eng/9.940685/publication.html" class="external-link">Korman and Walters 2024</a>).
+informed by natural mortality and maturity from CWT (<a href="https://publications.gc.ca/site/eng/9.940685/publication.html" class="external-link">Korman and Walters 2024</a>,
+expanding upon <a href="https://doi.org/10.1111/gcb.14315" class="external-link">Cunningham et al. 2018</a>).
 The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 for age 1 vs. ages 2+).
 The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).<code>fit_CM()</code> generates the RTMB model from data which can then be passed to <code>sample_CM()</code> to run the MCMC in Stan. Generate a markdown report with <code><a href="report_CM.html">report_CM()</a></code>.More information is available on the <a href="https://docs.salmonmse.com/articles/conditioning.html">salmonMSE</a> website</p>
@@ -265,7 +268,9 @@ $$</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
+    <p>Cunningham, C.J., Westley, P.A.H., and Adkison, M.D. 2018. Signals of large scale climate drivers, hatchery enhancement, and marine factors in Yukon River Chinook salmon survival revealed with a Bayesian life history model.
+Global Change Biology 24: 4399–4416.</p>
+<p>Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
 Sciences 62: vi + 60 p.</p>
     </div>
     <div class="section level2">

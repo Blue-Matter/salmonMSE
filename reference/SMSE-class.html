@@ -170,7 +170,11 @@
 
 
 <dt><code>KPT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (nominal values) of natural origin spawners.</p></dd>
+
+
+<dt><code>KPT_AEQ_NOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (adult equivalents) of natural origin spawners.</p></dd>
 
 
 <dt><code>KT_NOS</code></dt>
@@ -178,7 +182,11 @@
 
 
 <dt><code>KPT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (not adjusted for adult equivalence) of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (nominal values) of hatchery origin spawners.</p></dd>
+
+
+<dt><code>KPT_AEQ_HOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery kept catch (adult equivalents) of hatchery origin spawners.</p></dd>
 
 
 <dt><code>KT_HOS</code></dt>
@@ -186,7 +194,11 @@
 
 
 <dt><code>DPT_NOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of natural origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, nominal values) of natural origin spawners.</p></dd>
+
+
+<dt><code>DPT_AEQ_NOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, adult equivalents) of natural origin spawners.</p></dd>
 
 
 <dt><code>DT_NOS</code></dt>
@@ -194,7 +206,11 @@
 
 
 <dt><code>DPT_HOS</code></dt>
-<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, not adjusted for adult equivalence) of hatchery origin spawners.</p></dd>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, nominal values) of hatchery origin spawners.</p></dd>
+
+
+<dt><code>DPT_AEQ_HOS</code></dt>
+<dd><p>Array <code>[nsim, nstocks, nage, proyears]</code>. Pre-terminal fishery released catch (live and dead, adult equivalents) of natural origin spawners.</p></dd>
 
 
 <dt><code>DT_HOS</code></dt>
@@ -311,10 +327,13 @@ DFO Can. Sci. Advis. Sec. Res. Doc. 2018/019. xii + 88 p.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:     KPT_AEQ_NOS         KT_NOS        KPT_HOS    KPT_AEQ_HOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          KT_HOS        DPT_NOS    DPT_AEQ_NOS         DT_NOS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name:         DPT_HOS    DPT_AEQ_HOS         DT_HOS        UPT_NOS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Class:          array          array          array          array</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS</span>

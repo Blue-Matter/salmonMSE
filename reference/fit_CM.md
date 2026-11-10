@@ -6,14 +6,16 @@ coded wire tag catch and escapement at age. A separate series of
 observed escapement, and hatchery releases reconstructs the population
 of interest, informed by natural mortality and maturity from CWT
 ([Korman and Walters
-2024](https://publications.gc.ca/site/eng/9.940685/publication.html)).
-The model estimates time-varying maturity rate as well as time-varying
-ocean survival as a linear model of covariates (separate covariates for
-age 1 vs. ages 2+). The model can include either a preterminal juvenile
-fishery, terminal return fishery, or both (see Data and start sections
-of the documentation).`fit_CM()` generates the RTMB model from data
-which can then be passed to `sample_CM()` to run the MCMC in Stan.
-Generate a markdown report with
+2024](https://publications.gc.ca/site/eng/9.940685/publication.html),
+expanding upon [Cunningham et al.
+2018](https://doi.org/10.1111/gcb.14315)). The model estimates
+time-varying maturity rate as well as time-varying ocean survival as a
+linear model of covariates (separate covariates for age 1 vs. ages 2+).
+The model can include either a preterminal juvenile fishery, terminal
+return fishery, or both (see Data and start sections of the
+documentation).`fit_CM()` generates the RTMB model from data which can
+then be passed to `sample_CM()` to run the MCMC in Stan. Generate a
+markdown report with
 [`report_CM()`](https://docs.salmonmse.com/reference/report_CM.md).More
 information is available on the
 [salmonMSE](https://docs.salmonmse.com/articles/conditioning.html)
@@ -395,6 +397,11 @@ Natural mortality is modeled as the sum of a base value
 X\_{y,j} & \quad a = 2, \ldots, A \end{cases} \$\$
 
 ## References
+
+Cunningham, C.J., Westley, P.A.H., and Adkison, M.D. 2018. Signals of
+large scale climate drivers, hatchery enhancement, and marine factors in
+Yukon River Chinook salmon survival revealed with a Bayesian life
+history model. Global Change Biology 24: 4399–4416.
 
 Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon
 population dynamics. Canadian Contractor Report of Hydrography and Ocean

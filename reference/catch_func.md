@@ -123,14 +123,26 @@ Named list:
 
 - `Nsurv_HO` hatchery-origin survivors, same dimension as `HO`
 
-- `U_NO` natural-origin harvest rate (ratio of kept catch and
-  abundance), vector `ns`
+- `U_NO` natural-origin harvest rate (ratio of kept catch and abundance,
+  calculated from adult equivalents), vector `ns`
 
 - `U_HO` hatchery-origin harvest rate (ratio of dead catch and
-  abundance), vector `ns`
+  abundance, calculated from adult equivalents), vector `ns`
 
 - `Ex_NO` natural-origin exploitation rate (ratio of dead catch and
-  abundance), vector `ns`
+  abundance, calculated from adult equivalents), vector `ns`
 
 - `Ex_HO` hatchery-origin exploitation rate (ratio of dead catch and
-  abundance), vector `ns`
+  abundance, calculated from adult equivalents), vector `ns`
+
+- `K_AEQ_NO` kept natural-origin catch (adult equivalents), same
+  dimension as `NO`
+
+- `K_AEQ_HO` kept hatchery-origin catch (adult equivalents), same
+  dimension as `HO`
+
+- `D_AEQ_NO` discarded (live + dead) natural-origin catch (adult
+  equivalents), same dimension as `NO`
+
+- `D_AEQ_HO` discarded (live + dead) hatchery-origin catch (adult
+  equivalents), same dimension as `HO`

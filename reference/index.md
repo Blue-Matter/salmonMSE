@@ -84,6 +84,8 @@ Run simulation of salmon operating model and view/compare results.
   : Tradeoff figure
 - [`report(`*`<SMSE>`*`)`](https://docs.salmonmse.com/reference/report.md)
   : Generate markdown reports
+- [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/simple_salmonMSE.md)
+  : Deprecated function
 
 ## CWT (coded wire tag) conditioning model
 

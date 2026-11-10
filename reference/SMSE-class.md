@@ -155,7 +155,12 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 - `KPT_NOS`:
 
   Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept
-  catch (not adjusted for adult equivalence) of natural origin spawners.
+  catch (nominal values) of natural origin spawners.
+
+- `KPT_AEQ_NOS`:
+
+  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept
+  catch (adult equivalents) of natural origin spawners.
 
 - `KT_NOS`:
 
@@ -165,8 +170,12 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 - `KPT_HOS`:
 
   Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept
-  catch (not adjusted for adult equivalence) of hatchery origin
-  spawners.
+  catch (nominal values) of hatchery origin spawners.
+
+- `KPT_AEQ_HOS`:
+
+  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery kept
+  catch (adult equivalents) of hatchery origin spawners.
 
 - `KT_HOS`:
 
@@ -176,8 +185,12 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 - `DPT_NOS`:
 
   Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released
-  catch (live and dead, not adjusted for adult equivalence) of natural
-  origin spawners.
+  catch (live and dead, nominal values) of natural origin spawners.
+
+- `DPT_AEQ_NOS`:
+
+  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released
+  catch (live and dead, adult equivalents) of natural origin spawners.
 
 - `DT_NOS`:
 
@@ -187,8 +200,12 @@ where \\q = 1-p\\ and \\p^\textrm{HOScen} = \textrm{HOS}/(\textrm{NOS} +
 - `DPT_HOS`:
 
   Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released
-  catch (live and dead, not adjusted for adult equivalence) of hatchery
-  origin spawners.
+  catch (live and dead, nominal values) of hatchery origin spawners.
+
+- `DPT_AEQ_HOS`:
+
+  Array `[nsim, nstocks, nage, proyears]`. Pre-terminal fishery released
+  catch (live and dead, adult equivalents) of natural origin spawners.
 
 - `DT_HOS`:
 
@@ -329,10 +346,13 @@ showClass("SMSE")
 #> Name:             HOS      HOS_stray  HOS_effective        KPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:          KT_NOS        KPT_HOS         KT_HOS        DPT_NOS
+#> Name:     KPT_AEQ_NOS         KT_NOS        KPT_HOS    KPT_AEQ_HOS
 #> Class:          array          array          array          array
 #>                                                                   
-#> Name:          DT_NOS        DPT_HOS         DT_HOS        UPT_NOS
+#> Name:          KT_HOS        DPT_NOS    DPT_AEQ_NOS         DT_NOS
+#> Class:          array          array          array          array
+#>                                                                   
+#> Name:         DPT_HOS    DPT_AEQ_HOS         DT_HOS        UPT_NOS
 #> Class:          array          array          array          array
 #>                                                                   
 #> Name:          UT_NOS        UPT_HOS         UT_HOS       ExPT_NOS

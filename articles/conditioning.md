@@ -12,9 +12,11 @@ individual CUs.
 
 [Walters and Korman
 (2024)](https://publications.gc.ca/site/eng/9.940685/publication.html)
-demonstrated an approach for reconstruction if Coded Wire Tag (CWT) data
-from an indicator hatchery are assumed to be representative to life
-cycle parameters of a natural population.
+expanded upon [Cunningham et
+al. (2018)](https://doi.org/10.1111/gcb.14315) and demonstrated an
+approach for reconstruction if Coded Wire Tag (CWT) data from an
+indicator hatchery are assumed to be representative to life cycle
+parameters of a natural population.
 
 The model consists of two components. First, CWT data informs natural
 mortality, maturation, and exploitation rate in the marine environment.

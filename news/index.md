@@ -22,8 +22,14 @@
   `Hatchery@s_sub_smolt` for subyearlings and `Hatchery@s_year_smolt`
   for yearlings
 - New `Bio` slot for stock-recruit survival deviations
+- New `SMSE` slots for adult equivalent preterminal catch
 - [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
   returns the original `SOM` object in `SMSE@Misc$SOM`
+- Deprecate
+  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/simple_salmonMSE.md)
+  in favor of
+  [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md) for
+  all situations
 
 ## Version 3.0.0
 
@@ -47,8 +53,9 @@ CRAN release: 2026-08-20
   dimension. Harvest rates and exploitation rates are aggregated over
   age classes.
 - Add custom catch function (for harvest control rules, etc.)
-- Add `simple_SOM` class and `simple_salmonMSE()` function for modeling
-  recruits-spawners
+- Add `simple_SOM` class and
+  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/simple_salmonMSE.md)
+  function for modeling recruits-spawners
 
 ## Version 2.1.0
 

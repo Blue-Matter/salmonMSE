@@ -51,9 +51,11 @@
 <li>With mark-selective fishing, harvest rate target is now defined as ratio of kept hatchery-origin catch to hatchery-origin return. Previously defined as hatchery-origin catch to total return</li>
 <li>New <code>Hatchery</code> slot for smolting survival of hatchery releases: <code>Hatchery@s_sub_smolt</code> for subyearlings and <code>Hatchery@s_year_smolt</code> for yearlings</li>
 <li>New <code>Bio</code> slot for stock-recruit survival deviations</li>
+<li>New <code>SMSE</code> slots for adult equivalent preterminal catch</li>
 <li>
 <code><a href="../reference/salmonMSE.html">salmonMSE()</a></code> returns the original <code>SOM</code> object in <code>SMSE@Misc$SOM</code>
 </li>
+<li>Deprecate <code><a href="../reference/simple_salmonMSE.html">simple_salmonMSE()</a></code> in favor of <code><a href="../reference/salmonMSE.html">salmonMSE()</a></code> for all situations</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.0" id="version-300">Version 3.0.0<a class="anchor" aria-label="anchor" href="#version-300"></a></h2><p class="text-muted">CRAN release: 2026-08-20</p>
@@ -66,7 +68,7 @@
 <li>
 <code>SMSE</code> output object reports brood numbers and catch with age dimension. Harvest rates and exploitation rates are aggregated over age classes.</li>
 <li>Add custom catch function (for harvest control rules, etc.)</li>
-<li>Add <code>simple_SOM</code> class and <code>simple_salmonMSE()</code> function for modeling recruits-spawners</li>
+<li>Add <code>simple_SOM</code> class and <code><a href="../reference/simple_salmonMSE.html">simple_salmonMSE()</a></code> function for modeling recruits-spawners</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.0" id="version-210">Version 2.1.0<a class="anchor" aria-label="anchor" href="#version-210"></a></h2><p class="text-muted">CRAN release: 2026-04-25</p>
