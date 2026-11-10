@@ -5,17 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run salmonMSE — salmonMSE"><meta name="description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM), by checking
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Run salmonMSE — salmonMSE"><meta name="description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM or simpleSOM), by checking
 the operating model object with check_SOM(), running the projection in ProjectSOM() (parallel if called upon, then stitches
 together the output in a single object), and calculates reference points with calc_ref().
-ProjectSOM() is the internal projection function.
-simple_salmonMSE() is helper function that converts a simple operating model (modeling only recruit-spawners
-with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection."><meta property="og:description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM), by checking
+ProjectSOM() is the internal projection function."><meta property="og:description" content="salmonMSE() runs a salmon management strategy evaluation from an operating model object (SOM or simpleSOM), by checking
 the operating model object with check_SOM(), running the projection in ProjectSOM() (parallel if called upon, then stitches
 together the output in a single object), and calculates reference points with calc_ref().
-ProjectSOM() is the internal projection function.
-simple_salmonMSE() is helper function that converts a simple operating model (modeling only recruit-spawners
-with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection."></head><body>
+ProjectSOM() is the internal projection function."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -46,26 +42,22 @@ with Ricker relationship, terminal marine fishery, without hatchery production) 
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Run salmonMSE</h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/ref/R/salmonMSE.R" class="external-link"><code>R/salmonMSE.R</code></a>, <a href="https://github.com/Blue-Matter/salmonMSE/blob/ref/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/salmonMSE.R" class="external-link"><code>R/salmonMSE.R</code></a></small>
       <div class="d-none name"><code>salmonMSE.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p><code>salmonMSE()</code> runs a salmon management strategy evaluation from an operating model object (<a href="SOM-class.html">SOM</a>), by checking
+    <p><code>salmonMSE()</code> runs a salmon management strategy evaluation from an operating model object (<a href="SOM-class.html">SOM</a> or <a href="simpleSOM-class.html">simpleSOM</a>), by checking
 the operating model object with <code><a href="check_SOM.html">check_SOM()</a></code>, running the projection in <code>ProjectSOM()</code> (parallel if called upon, then stitches
 together the output in a single object), and calculates reference points with <code><a href="calc_ref.html">calc_ref()</a></code>.</p>
 <p><code>ProjectSOM()</code> is the internal projection function.</p>
-<p><code>simple_salmonMSE()</code> is helper function that converts a simple operating model (modeling only recruit-spawners
-with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">salmonMSE</span><span class="op">(</span><span class="va">SOM</span>, ncores <span class="op">=</span> <span class="fl">1</span>, silent <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ProjectSOM</span><span class="op">(</span><span class="va">SOM</span>, <span class="va">sims</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">simple_salmonMSE</span><span class="op">(</span><span class="va">simpleSOM</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">ProjectSOM</span><span class="op">(</span><span class="va">SOM</span>, <span class="va">sims</span>, check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -73,7 +65,7 @@ with Ricker relationship, terminal marine fishery, without hatchery production) 
 
 
 <dl><dt id="arg-som">SOM<a class="anchor" aria-label="anchor" href="#arg-som"></a></dt>
-<dd><p>An object of class <a href="SOM-class.html">SOM</a></p></dd>
+<dd><p>An object of class <a href="SOM-class.html">SOM</a>. For <code>salmonMSE()</code>, can also be an object of class <a href="simpleSOM-class.html">simpleSOM</a></p></dd>
 
 
 <dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
@@ -91,14 +83,6 @@ with Ricker relationship, terminal marine fishery, without hatchery production) 
 <dt id="arg-check">check<a class="anchor" aria-label="anchor" href="#arg-check"></a></dt>
 <dd><p>Deprecated. Logical, whether to check the structure of the input object with <code><a href="check_SOM.html">check_SOM()</a></code>. The check is now automated when needed.</p></dd>
 
-
-<dt id="arg-simplesom">simpleSOM<a class="anchor" aria-label="anchor" href="#arg-simplesom"></a></dt>
-<dd><p>An object of class <a href="simpleSOM-class.html">simpleSOM</a></p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Other arguments to pass to <code>salmonMSE()</code></p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -110,6 +94,10 @@ with Ricker relationship, terminal marine fishery, without hatchery production) 
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">salmonMSE</span><span class="op">(</span><span class="va">simple_SOM</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">SOM_simp</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"simpleSOM"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">simpleSMSE</span> <span class="op">&lt;-</span> <span class="fu">salmonMSE</span><span class="op">(</span><span class="va">SOM_simp</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -48,9 +48,8 @@ Objects used to create stochastic operating models.
 Run simulation of salmon operating model and view/compare results.
 
 - [`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  : Run salmonMSE
+  [`ProjectSOM()`](https://docs.salmonmse.com/reference/salmonMSE.md) :
+  Run salmonMSE
 - [`compare()`](https://docs.salmonmse.com/reference/compare.md) :
   Compare scenarios in markdown
 - [`compare_spawners()`](https://docs.salmonmse.com/reference/compare_spawners.md)

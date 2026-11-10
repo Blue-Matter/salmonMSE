@@ -58,9 +58,9 @@
 
       <h1>Reference points</h1>
             
-            <h4 data-toc-skip class="date">2026-11-09</h4>
+            <h4 data-toc-skip class="date">2026-11-10</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/ref/vignettes/ref.Rmd" class="external-link"><code>vignettes/ref.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/vignettes/ref.Rmd" class="external-link"><code>vignettes/ref.Rmd</code></a></small>
       <div class="d-none name"><code>ref.Rmd</code></div>
     </div>
 
@@ -109,7 +109,7 @@ S_\textrm{MSY}=a\times S_\textrm{gen}\exp(-b\times S_\textrm{gen})
 <p>There are several implicit assumptions frequently associated with
 these reference points:</p>
 <ol style="list-style-type: decimal">
-<li>The spawner-recruit relationship predicts the number of returns, not
+<li>The stock-recruit relationship predicts the number of returns, not
 juveniles, from the number of spawners. The density-dependent and
 density-independent components of survival are modeled together.</li>
 <li>All exploitation occurs on mature individuals</li>
@@ -123,7 +123,7 @@ density-independent components of survival are modeled together.</li>
 <p>salmonMSE is an age-structured model that can relax the assumptions
 from the typical spawner-return model:</p>
 <ol style="list-style-type: decimal">
-<li>The spawner-recruit relationship predicts the number of outmigrating
+<li>The stock-recruit relationship predicts the number of outmigrating
 juveniles, not the return, from the egg production (not the number of
 spawners). The density-dependent and density-independent components of
 survival are modeled separately.</li>
@@ -257,7 +257,6 @@ vulnerability vary with age.</p>
 <span>                        <span class="va">M</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span><span class="op">)</span>,</span>
 <span>                        <span class="va">fec</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1500</span>, <span class="fl">3000</span>, <span class="fl">3200</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
 <span>                        <span class="va">p_mature</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>                        <span class="va">s_enroute</span> <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                        <span class="va">maximize</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSY"</span>, <span class="st">"MER"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://docs.salmonmse.com/">salmonMSE</a></span><span class="op">)</span></span>
@@ -270,7 +269,7 @@ vulnerability vary with age.</p>
 <span>    p_mature <span class="op">=</span> <span class="va">p_mature</span>,</span>
 <span>    p_female <span class="op">=</span> <span class="va">p_female</span>,</span>
 <span>    fec <span class="op">=</span> <span class="va">fec</span>,</span>
-<span>    s_enroute <span class="op">=</span> <span class="va">s_enroute</span></span>
+<span>    s_enroute <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># To convert Smax from units of spawners to eggs:</span></span>
@@ -284,7 +283,7 @@ vulnerability vary with age.</p>
 <span>    p_mature <span class="op">=</span> <span class="va">p_mature</span>,</span>
 <span>    p_female <span class="op">=</span> <span class="va">p_female</span>,</span>
 <span>    fec <span class="op">=</span> <span class="va">fec</span>,</span>
-<span>    s_enroute <span class="op">=</span> <span class="va">s_enroute</span>,</span>
+<span>    s_enroute <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    output <span class="op">=</span> <span class="st">"spawner"</span></span>
 <span>  <span class="op">)</span></span>
 <span>  </span>
@@ -305,19 +304,18 @@ vulnerability vary with age.</p>
 <span>  <span class="co"># salmonMSE ref</span></span>
 <span>  <span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_ref.html">calc_MSY</a></span><span class="op">(</span></span>
 <span>    <span class="va">M</span>, <span class="va">fec</span>, <span class="va">p_female</span>, <span class="va">rel_F</span>, <span class="va">vulPT</span>, <span class="va">vulT</span>, <span class="va">p_mature</span>,</span>
-<span>    s_enroute <span class="op">=</span> <span class="va">s_enroute</span>, SRRpars <span class="op">=</span> <span class="va">SRRpars</span>, maximize <span class="op">=</span> <span class="va">maximize</span></span>
+<span>    s_enroute <span class="op">=</span> <span class="fl">1</span>, SRRpars <span class="op">=</span> <span class="va">SRRpars</span>, maximize <span class="op">=</span> <span class="va">maximize</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">ref</span><span class="op">[</span><span class="st">"Sgen"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_ref.html">calc_Sgen</a></span><span class="op">(</span></span>
 <span>    <span class="va">M</span>, <span class="va">fec</span>, <span class="va">p_female</span>, <span class="va">rel_F</span>, <span class="va">vulPT</span>, <span class="va">vulT</span>, <span class="va">p_mature</span>,</span>
-<span>    s_enroute <span class="op">=</span> <span class="va">s_enroute</span>, SRRpars <span class="op">=</span> <span class="va">SRRpars</span>, SMSY <span class="op">=</span> <span class="va">ref</span><span class="op">[</span><span class="st">"Spawners_MSY"</span><span class="op">]</span></span>
+<span>    s_enroute <span class="op">=</span> <span class="fl">1</span>, SRRpars <span class="op">=</span> <span class="va">SRRpars</span>, SMSY <span class="op">=</span> <span class="va">ref</span><span class="op">[</span><span class="st">"Spawners_MSY"</span><span class="op">]</span></span>
 <span>  <span class="op">)</span></span>
-<span>  <span class="va">ref</span><span class="op">[</span><span class="st">"MSY"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ref</span><span class="op">[</span><span class="st">"KPT_AEQ_MSY"</span><span class="op">]</span>, <span class="va">ref</span><span class="op">[</span><span class="st">"KT_MSY"</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">ref</span><span class="op">[</span><span class="st">"Catch/Return"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">ref</span><span class="op">[</span><span class="st">"MSY"</span><span class="op">]</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ref</span><span class="op">[</span><span class="st">"KPT_AEQ_MSY"</span><span class="op">]</span>, <span class="va">ref</span><span class="op">[</span><span class="st">"Return_MSY"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">ref</span><span class="op">[</span><span class="st">"Catch/Return"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ref</span><span class="op">[</span><span class="st">"KPT_AEQ_MSY"</span><span class="op">]</span>, <span class="va">ref</span><span class="op">[</span><span class="st">"KT_MSY"</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ref</span><span class="op">[</span><span class="st">"KPT_AEQ_MSY"</span><span class="op">]</span>, <span class="va">ref</span><span class="op">[</span><span class="st">"Return_MSY"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">ref_salmonMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span></span>
-<span>    <span class="va">ref</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UPT_EQ_MSY"</span>, <span class="st">"UT_MSY"</span>, <span class="st">"MSY"</span>, <span class="st">"Catch/Return"</span>, <span class="st">"Spawners_MSY"</span>, <span class="st">"Sgen"</span><span class="op">)</span><span class="op">]</span>, </span>
-<span>    names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UMSY (preterminal)"</span>, <span class="st">"UMSY (terminal)"</span>, <span class="st">"MSY"</span>, <span class="st">"Catch/Return"</span>, <span class="st">"SMSY"</span>, <span class="st">"Sgen"</span><span class="op">)</span></span>
+<span>    <span class="va">ref</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UPT_EQ_MSY"</span>, <span class="st">"UT_MSY"</span>, <span class="st">"Catch/Return"</span>, <span class="st">"Spawners_MSY"</span>, <span class="st">"Sgen"</span><span class="op">)</span><span class="op">]</span>, </span>
+<span>    names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UMSY (preterminal)"</span>, <span class="st">"UMSY (terminal)"</span>, <span class="st">"Catch/Return"</span>, <span class="st">"SMSY"</span>, <span class="st">"Sgen"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span>  </span>
@@ -341,7 +339,7 @@ vulnerability vary with age.</p>
 </h3>
 <p>Situation 1 specifies the salmonMSE (age-structured) model with the
 simple assumptions identified in the introduction. The salmonMSE and
-Ricker (spawner-recruit only) reference points are identical.</p>
+Ricker (stock-recruit only) reference points are identical.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">compare_ref</span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
@@ -357,96 +355,14 @@ Ricker (spawner-recruit only) reference points are identical.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: salmonMSE</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
-<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return </span></span>
-<span><span class="co">#&gt;             0.0000             0.4678           411.2600             0.4678 </span></span>
-<span><span class="co">#&gt;               SMSY               Sgen </span></span>
-<span><span class="co">#&gt;           467.8335           188.2447 </span></span>
+<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY </span></span>
+<span><span class="co">#&gt;             0.0000             0.4678             0.4678           467.8335 </span></span>
+<span><span class="co">#&gt;               Sgen </span></span>
+<span><span class="co">#&gt;           188.2447 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Ricker</span></span>
 <span><span class="co">#&gt;     UMSY     SMSY     Sgen </span></span>
 <span><span class="co">#&gt;   0.4678 467.8265 188.2417</span></span></code></pre></div>
-<p>We can verify that the projection model agrees with the calculated
-reference points. The function below runs a projection under various
-harvest rates for 10 generations. We can then plot the spawners and
-catch at the end of the projection (the system is assumed to be in
-equilibrium) to compare with numerical reference points:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">projection_ref</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">Smax</span>, <span class="va">maxage</span>, <span class="va">rel_F</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="va">p_female</span>, <span class="va">vulPT</span>, <span class="va">vulT</span>, <span class="va">M</span>, <span class="va">fec</span>, <span class="va">p_mature</span>, <span class="va">s_enroute</span> <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                           <span class="va">InitNjuv_age</span> <span class="op">=</span> <span class="fl">1000</span>, <span class="va">ngen</span> <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  </span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://docs.salmonmse.com/">salmonMSE</a></span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">Bio</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
-<span>    <span class="st">"Bio"</span>,</span>
-<span>    maxage <span class="op">=</span> <span class="va">maxage</span>,</span>
-<span>    p_mature <span class="op">=</span> <span class="va">p_mature</span>,</span>
-<span>    SRrel <span class="op">=</span> <span class="st">"Ricker"</span>,</span>
-<span>    kappa <span class="op">=</span> <span class="va">a</span>,</span>
-<span>    Smax <span class="op">=</span> <span class="va">Smax</span>,</span>
-<span>    Mjuv_NOS <span class="op">=</span> <span class="va">M</span>,</span>
-<span>    p_female <span class="op">=</span> <span class="va">p_female</span>,</span>
-<span>    s_enroute <span class="op">=</span> <span class="va">s_enroute</span></span>
-<span>  <span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.85</span>, <span class="fl">0.01</span><span class="op">)</span></span>
-<span>  <span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span></span>
-<span>  <span class="va">proyears</span> <span class="op">&lt;-</span> <span class="va">ngen</span> <span class="op">*</span> <span class="va">maxage</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span>  </span>
-<span>  <span class="va">u_preterminal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">rel_F</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">U</span>, nrow <span class="op">=</span> <span class="va">nsim</span>, ncol <span class="op">=</span> <span class="va">proyears</span><span class="op">)</span></span>
-<span>  <span class="va">u_terminal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">rel_F</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="va">U</span>, nrow <span class="op">=</span> <span class="va">nsim</span>, ncol <span class="op">=</span> <span class="va">proyears</span><span class="op">)</span></span>
-<span>  <span class="va">Harvest</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
-<span>    <span class="st">"Harvest"</span>,</span>
-<span>    u_preterminal <span class="op">=</span> <span class="va">u_preterminal</span>,</span>
-<span>    u_terminal <span class="op">=</span> <span class="va">u_terminal</span>,</span>
-<span>    vulPT <span class="op">=</span> <span class="va">vulPT</span>,</span>
-<span>    vulT <span class="op">=</span> <span class="va">vulT</span>,</span>
-<span>    maxE <span class="op">=</span> <span class="fl">1e8</span></span>
-<span>  <span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">Historical</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span></span>
-<span>    <span class="st">"Historical"</span>, </span>
-<span>    InitNjuv_NOS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="va">InitNjuv_age</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">maxage</span>, <span class="va">nsim</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/aperm.html" class="external-link">aperm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">SOM</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="st">"SOM"</span>, Bio <span class="op">=</span> <span class="va">Bio</span>, Harvest <span class="op">=</span> <span class="va">Harvest</span>, Historical <span class="op">=</span> <span class="va">Historical</span>, nsim <span class="op">=</span> <span class="va">nsim</span>, proyears <span class="op">=</span> <span class="va">proyears</span><span class="op">)</span></span>
-<span>  <span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/salmonMSE.html">salmonMSE</a></span><span class="op">(</span><span class="va">SOM</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">U_T</span> <span class="op">&lt;-</span> <span class="va">SMSE</span><span class="op">@</span><span class="va">UT_NOS</span><span class="op">[</span>, <span class="fl">1</span>, <span class="va">proyears</span><span class="op">]</span></span>
-<span>  <span class="va">Catch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">KT_NOS</span><span class="op">[</span>, <span class="fl">1</span>, , <span class="va">proyears</span><span class="op">]</span> <span class="op">+</span> <span class="va">SMSE</span><span class="op">@</span><span class="va">KPT_NOS</span><span class="op">[</span>, <span class="fl">1</span>, , <span class="va">proyears</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">NOS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span>, <span class="fl">1</span>, , <span class="va">proyears</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">MSY</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">Catch</span><span class="op">)</span></span>
-<span>  <span class="va">UMSY</span> <span class="op">&lt;-</span> <span class="va">U_T</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">Catch</span><span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">SMSY</span> <span class="op">&lt;-</span> <span class="va">NOS</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">Catch</span><span class="op">)</span><span class="op">]</span></span>
-<span>  </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>projection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UMSY"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">UMSY</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"MSY"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">MSY</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"SMSY"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">SMSY</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">U_T</span>, <span class="va">Catch</span>, xlab <span class="op">=</span> <span class="st">"U"</span>, ylab <span class="op">=</span> <span class="st">"Catch"</span>, panel.first <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">UMSY</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">U_T</span>, <span class="va">NOS</span>, xlab <span class="op">=</span> <span class="st">"U"</span>, ylab <span class="op">=</span> <span class="st">"Spawners"</span>, panel.first <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">SMSY</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">projection_ref</span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxage <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  rel_F <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">0.01</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; $projection</span></span>
-<span><span class="co">#&gt;   UMSY    MSY   SMSY </span></span>
-<span><span class="co">#&gt;   0.47 411.33 463.84</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="situation-2---partial-age-maturity-equal-vulnerability">Situation 2 - partial age maturity, equal vulnerability<a class="anchor" aria-label="anchor" href="#situation-2---partial-age-maturity-equal-vulnerability"></a>
@@ -455,7 +371,7 @@ equilibrium) to compare with numerical reference points:</p>
 age-specific juvenile mortality and maturity. All spawners are identical
 with fecundity = 1 and fully vulnerable to the fishery.</p>
 <p>The salmonMSE and Ricker-only reference points are identical.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">compare_ref</span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
@@ -466,35 +382,17 @@ with fecundity = 1 and fully vulnerable to the fishery.</p>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
-<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return </span></span>
-<span><span class="co">#&gt;             0.0000             0.4678           411.2600             0.4678 </span></span>
-<span><span class="co">#&gt;               SMSY               Sgen </span></span>
-<span><span class="co">#&gt;           467.8335           188.2447 </span></span>
+<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY </span></span>
+<span><span class="co">#&gt;             0.0000             0.4678             0.4678           467.8335 </span></span>
+<span><span class="co">#&gt;               Sgen </span></span>
+<span><span class="co">#&gt;           188.2447 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Ricker</span></span>
 <span><span class="co">#&gt;     UMSY     SMSY     Sgen </span></span>
 <span><span class="co">#&gt;   0.4678 467.8265 188.2417</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">projection_ref</span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxage <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  rel_F <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  InitNjuv_age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span> <span class="co"># Ensure there are returns each year</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; $projection</span></span>
-<span><span class="co">#&gt;   UMSY    MSY   SMSY </span></span>
-<span><span class="co">#&gt;   0.47 411.36 463.88</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="situation-3---partial-age-maturity-varying-vulnerability-by-age">Situation 3 - partial age maturity, varying vulnerability by
@@ -503,7 +401,7 @@ age<a class="anchor" aria-label="anchor" href="#situation-3---partial-age-maturi
 <p>Situation 3 is the same as 2 except with age-varying fishery
 vulnerability.</p>
 <p>The salmonMSE and Ricker-only reference points are identical.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">compare_ref</span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
@@ -514,60 +412,18 @@ vulnerability.</p>
 <span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  maximize <span class="op">=</span> <span class="st">"MER"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
-<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return </span></span>
-<span><span class="co">#&gt;             0.0000             0.4678           411.2600             0.4678 </span></span>
-<span><span class="co">#&gt;               SMSY               Sgen </span></span>
-<span><span class="co">#&gt;           467.8251           188.2410 </span></span>
+<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY </span></span>
+<span><span class="co">#&gt;             0.0000             0.4678             0.4678           467.8251 </span></span>
+<span><span class="co">#&gt;               Sgen </span></span>
+<span><span class="co">#&gt;           188.2410 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Ricker</span></span>
 <span><span class="co">#&gt;     UMSY     SMSY     Sgen </span></span>
 <span><span class="co">#&gt;   0.4678 467.8265 188.2417</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">projection_ref</span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxage <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  rel_F <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  InitNjuv_age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; $projection</span></span>
-<span><span class="co">#&gt;   UMSY    MSY   SMSY </span></span>
-<span><span class="co">#&gt;   0.30 259.93 606.50</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
-<p>Note however that there is periodicity in the spawner numbers during
-the projection (Ricker dynamics are notoriously complex and can generate
-multiple steady states, see <a href="https://doi.org/10.1038/261459a0" class="external-link">May 1976</a>.</p>
-<p>Thus, there may be some limits to replicating numerical reference
-points in projections.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plot_spawner_ts</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape" class="external-link">reshape2</a></span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">SMSE</span><span class="op">@</span><span class="va">nsim</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span>  <span class="va">NOS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">NOS</span><span class="op">[</span><span class="va">x</span>, , , , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span>dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>U <span class="op">=</span> <span class="va">SMSE</span><span class="op">@</span><span class="va">UT_NOS</span><span class="op">[</span><span class="va">x</span>, <span class="fl">1</span>, <span class="va">SMSE</span><span class="op">@</span><span class="va">proyears</span><span class="op">]</span>, Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">SMSE</span><span class="op">@</span><span class="va">proyears</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span>value.name <span class="op">=</span> <span class="st">"Spawners"</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">NOS</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Year</span>, <span class="va">Spawners</span>, group <span class="op">=</span> <span class="va">U</span>, colour <span class="op">=</span> <span class="va">U</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_colour_viridis_c</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">plot_spawner_ts</span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
-<span><span class="co">#&gt; Loading required package: reshape2</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="situation-4---partial-age-maturity-varying-fecundity-and-vulnerability-by-age">Situation 4 - partial age maturity, varying fecundity and
@@ -579,7 +435,7 @@ vulnerability by age<a class="anchor" aria-label="anchor" href="#situation-4---p
 <p>Preferential vulnerability by the fishery for return which are not
 identical in fecundity are additional complexities not implemented in
 Ricker-only reference points.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">compare_ref</span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
@@ -593,35 +449,14 @@ Ricker-only reference points.</p>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
-<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return </span></span>
-<span><span class="co">#&gt;             0.0000             0.4001           349.2880             0.4001 </span></span>
-<span><span class="co">#&gt;               SMSY               Sgen </span></span>
-<span><span class="co">#&gt;           523.7658           260.2642 </span></span>
+<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY </span></span>
+<span><span class="co">#&gt;             0.0000             0.4001             0.4001           523.7658 </span></span>
+<span><span class="co">#&gt;               Sgen </span></span>
+<span><span class="co">#&gt;           260.2642 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Ricker</span></span>
 <span><span class="co">#&gt;     UMSY     SMSY     Sgen </span></span>
 <span><span class="co">#&gt;   0.4678 467.8265 188.2417</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">projection_ref</span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxage <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  rel_F <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">2000</span>, <span class="fl">3000</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  InitNjuv_age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; $projection</span></span>
-<span><span class="co">#&gt;   UMSY    MSY   SMSY </span></span>
-<span><span class="co">#&gt;   0.30 259.93 606.50</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_spawner_ts</span><span class="op">(</span><span class="va">SMSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="situation-5---partial-age-maturity-with-immature-exploitation">Situation 5 - partial age maturity, with immature exploitation<a class="anchor" aria-label="anchor" href="#situation-5---partial-age-maturity-with-immature-exploitation"></a>
@@ -631,7 +466,7 @@ exploitation and converting juvenile catch to their adult
 equivalents.</p>
 <p>Nonetheless, salmonMSE and Ricker reference points are
 <strong>not</strong> identical.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">compare_ref</span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
@@ -645,33 +480,14 @@ equivalents.</p>
 <span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; $salmonMSE</span></span>
-<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return </span></span>
-<span><span class="co">#&gt;             0.3806             0.0000           434.3576             0.3806 </span></span>
-<span><span class="co">#&gt;               SMSY               Sgen </span></span>
-<span><span class="co">#&gt;           706.9302           532.8182 </span></span>
+<span><span class="co">#&gt; UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY </span></span>
+<span><span class="co">#&gt;             0.3806             0.0000             0.3806           706.9302 </span></span>
+<span><span class="co">#&gt;               Sgen </span></span>
+<span><span class="co">#&gt;           532.8182 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Ricker</span></span>
 <span><span class="co">#&gt;     UMSY     SMSY     Sgen </span></span>
 <span><span class="co">#&gt;   0.4678 467.8265 188.2417</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">SMSE</span> <span class="op">&lt;-</span> <span class="fu">projection_ref</span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  Smax <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  maxage <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  rel_F <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  p_female <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vulPT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  vulT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  fec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">2000</span>, <span class="fl">3000</span>, <span class="fl">3500</span><span class="op">)</span>,</span>
-<span>  p_mature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  InitNjuv_age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; $projection</span></span>
-<span><span class="co">#&gt;   UMSY    MSY   SMSY </span></span>
-<span><span class="co">#&gt;   0.00 277.86 624.85</span></span></code></pre></div>
-<p><img src="ref_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="700">
-s</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

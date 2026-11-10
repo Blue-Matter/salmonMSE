@@ -115,7 +115,7 @@ created.
 
 We simulate a salmon that returns every 2 years for 20 generations, then
 do the projection with a call using
-[`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md):
+[`salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md):
 
 ``` r
 
@@ -134,7 +134,7 @@ simpleSOM <- new(
   InitEsc = InitEsc
 )
 
-SMSE <- simple_salmonMSE(simpleSOM)
+SMSE <- salmonMSE(simpleSOM)
 ```
 
 The output is a complete object `SMSE`, a subset of slots are relevant
@@ -144,14 +144,14 @@ for calculating performance metrics:
 
 # Probability of exceeding 80 percent SMSY during the entire projection
 P_SMSY80(SMSE)
-#> [1] 0.1276151
+#> [1] 0.3253138
 ```
 
 ``` r
 
 # Probability of exceeding Sgen
 P_Sgen100(SMSE)
-#> [1] 0.3514644
+#> [1] 0.4246862
 ```
 
 ``` r

@@ -47,9 +47,8 @@ CRAN release: 2026-08-20
   dimension. Harvest rates and exploitation rates are aggregated over
   age classes.
 - Add custom catch function (for harvest control rules, etc.)
-- Add `simple_SOM` class and
-  [`simple_salmonMSE()`](https://docs.salmonmse.com/reference/salmonMSE.md)
-  function for modeling recruits-spawners
+- Add `simple_SOM` class and `simple_salmonMSE()` function for modeling
+  recruits-spawners
 
 ## Version 2.1.0
 

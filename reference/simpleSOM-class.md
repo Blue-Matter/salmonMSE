@@ -16,35 +16,37 @@ single numeric (value identical across all simulations).
 
 - `nsim`:
 
-  Integer. Number of simulations.
+  Integer. Number of simulations. Default is 2.
 
 - `maxage`:
 
-  Integer. The maximum age of the population age structure.
+  Integer. The maximum age of the population age structure. Default is
+  2.
 
 - `ngen`:
 
   Integer. The number of generations (life cycles) to run the
-  projection.
+  projection. Default is 10.
 
 - `kappa`:
 
   Vector length `nsim`. The adult productivity ratio for the
   stock-recruit function. **Units of recruits per spawner.** Natural
   per-capita production of recruits as the population approaches zero
-  (density-independent component).
+  (density-independent component). Default is 3.
 
 - `Smax`:
 
   Vector length `nsim`. The spawner abundance that maximizes smolt
   production in the Ricker stock-recruit function. **Units of
-  spawners.**
+  spawners.** Default is 1000.
 
 - `sigmaR`:
 
   Vector length `nsim`. The lognormal standard deviation in the Ricker
   stock-recruit relationship. Recruitment anomalies will be simulated
   with [`stats::rlnorm()`](https://rdrr.io/r/stats/Lognormal.html).
+  Default is 0.2.
 
 - `Recdev`:
 

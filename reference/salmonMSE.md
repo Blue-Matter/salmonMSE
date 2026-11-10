@@ -2,8 +2,9 @@
 
 `salmonMSE()` runs a salmon management strategy evaluation from an
 operating model object
-([SOM](https://docs.salmonmse.com/reference/SOM-class.md)), by checking
-the operating model object with
+([SOM](https://docs.salmonmse.com/reference/SOM-class.md) or
+[simpleSOM](https://docs.salmonmse.com/reference/simpleSOM-class.md)),
+by checking the operating model object with
 [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md),
 running the projection in `ProjectSOM()` (parallel if called upon, then
 stitches together the output in a single object), and calculates
@@ -12,19 +13,12 @@ reference points with
 
 `ProjectSOM()` is the internal projection function.
 
-`simple_salmonMSE()` is helper function that converts a simple operating
-model (modeling only recruit-spawners with Ricker relationship, terminal
-marine fishery, without hatchery production) to a full operating model
-and runs the projection.
-
 ## Usage
 
 ``` r
 salmonMSE(SOM, ncores = 1, silent = FALSE)
 
 ProjectSOM(SOM, sims, check = FALSE)
-
-simple_salmonMSE(simpleSOM, ...)
 ```
 
 ## Arguments
@@ -32,7 +26,9 @@ simple_salmonMSE(simpleSOM, ...)
 - SOM:
 
   An object of class
-  [SOM](https://docs.salmonmse.com/reference/SOM-class.md)
+  [SOM](https://docs.salmonmse.com/reference/SOM-class.md). For
+  `salmonMSE()`, can also be an object of class
+  [simpleSOM](https://docs.salmonmse.com/reference/simpleSOM-class.md)
 
 - ncores:
 
@@ -55,15 +51,6 @@ simple_salmonMSE(simpleSOM, ...)
   [`check_SOM()`](https://docs.salmonmse.com/reference/check_SOM.md).
   The check is now automated when needed.
 
-- simpleSOM:
-
-  An object of class
-  [simpleSOM](https://docs.salmonmse.com/reference/simpleSOM-class.md)
-
-- ...:
-
-  Other arguments to pass to `salmonMSE()`
-
 ## Value
 
 [SMSE](https://docs.salmonmse.com/reference/SMSE-class.md) object
@@ -74,4 +61,8 @@ simple_salmonMSE(simpleSOM, ...)
 if (FALSE) { # \dontrun{
 SMSE <- salmonMSE(simple_SOM)
 } # }
+
+SOM_simp <- new("simpleSOM")
+simpleSMSE <- salmonMSE(SOM_simp)
+
 ```

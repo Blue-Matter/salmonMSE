@@ -80,9 +80,8 @@ sample_CM(fit, ...)
 
 - ...:
 
-  For `fit_CM`, arguments to
-  [`RTMB::MakeADFun()`](https://rdrr.io/pkg/RTMB/man/TMB-interface.html).
-  For `sample_CM`, arguments to
+  For `fit_CM`, arguments to `RTMB::MakeADFun()`. For `sample_CM`,
+  arguments to
   [`rstan::sampling()`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
 
 - fit:

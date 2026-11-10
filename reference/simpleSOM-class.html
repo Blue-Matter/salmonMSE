@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Class <code>"simpleSOM"</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/ref/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Blue-Matter/salmonMSE/blob/master/R/simpleSOM.R" class="external-link"><code>R/simpleSOM.R</code></a></small>
       <div class="d-none name"><code>simpleSOM-class.Rd</code></div>
     </div>
 
@@ -59,29 +59,29 @@
 
 
 <dt><code>nsim</code></dt>
-<dd><p>Integer. Number of simulations.</p></dd>
+<dd><p>Integer. Number of simulations. Default is 2.</p></dd>
 
 
 <dt><code>maxage</code></dt>
-<dd><p>Integer. The maximum age of the population age structure.</p></dd>
+<dd><p>Integer. The maximum age of the population age structure. Default is 2.</p></dd>
 
 
 <dt><code>ngen</code></dt>
-<dd><p>Integer. The number of generations (life cycles) to run the projection.</p></dd>
+<dd><p>Integer. The number of generations (life cycles) to run the projection. Default is 10.</p></dd>
 
 
 <dt><code>kappa</code></dt>
 <dd><p>Vector length <code>nsim</code>. The adult productivity ratio for the stock-recruit function. <strong>Units of recruits per spawner.</strong>
-Natural per-capita production of recruits as the population approaches zero (density-independent component).</p></dd>
+Natural per-capita production of recruits as the population approaches zero (density-independent component). Default is 3.</p></dd>
 
 
 <dt><code>Smax</code></dt>
-<dd><p>Vector length <code>nsim</code>. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of spawners.</strong></p></dd>
+<dd><p>Vector length <code>nsim</code>. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. <strong>Units of spawners.</strong> Default is 1000.</p></dd>
 
 
 <dt><code>sigmaR</code></dt>
 <dd><p>Vector length <code>nsim</code>. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-will be simulated with <code><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">stats::rlnorm()</a></code>.</p></dd>
+will be simulated with <code><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">stats::rlnorm()</a></code>. Default is 0.2.</p></dd>
 
 
 <dt><code>Recdev</code></dt>
