@@ -29,7 +29,7 @@ reference:
   - plot_statevar_ts
   - plot_tradeoff
   - report
-  - salmonMSE
+  - simple_salmonMSE
 
 - title: CWT (coded wire tag) conditioning model
   desc: Functions to estimate historical productivity and exploitation rates from coded wire tags and time series of hatchery releases and spawner abundance.
