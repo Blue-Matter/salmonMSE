@@ -99,24 +99,19 @@ check_simpleSOM <- function(simpleSOM) {
   }
 
   if (!length(simpleSOM@ImpErr)) {
-    simpleSOM@ImpErr <- 1
+    simpleSOM@ImpErr <- 0
   } else if (is.matrix(simpleSOM@ImpErr)) {
     simpleSOM <- check_array(simpleSOM, "ImpErr", c(nsim, simpleSOM@ngen))
   }
 
+  attr(simpleSOM, "checked") <- TRUE
+
   return(simpleSOM)
 }
 
-#' @name salmonMSE
-#' @description `simple_salmonMSE()` is helper function that converts a simple operating model (modeling only recruit-spawners
-#' with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection.
-#' @param simpleSOM An object of class \linkS4class{simpleSOM}
-#' @param ... Other arguments to pass to `salmonMSE()`
-#' @export
-simple_salmonMSE <- function(simpleSOM, ...) {
+convert_simpleSOM <- function(simpleSOM) {
 
-  simpleSOM <- check_simpleSOM(simpleSOM)
-
+  if (is.null(attr(simpleSOM, "checked"))) simpleSOM <- check_simpleSOM(SOM)
   nsim <- simpleSOM@nsim
   maxage <- simpleSOM@maxage
   ngen <- simpleSOM@ngen
@@ -214,6 +209,18 @@ simple_salmonMSE <- function(simpleSOM, ...) {
     Historical = Historical
   )
 
+  return(SOM)
+}
+
+#' @name salmonMSE
+#' @description `simple_salmonMSE()` is a helper function that converts a simple operating model (modeling only recruit-spawners
+#' with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection. **DEPRECATED**
+#' @param simpleSOM An object of class \linkS4class{simpleSOM}
+#' @param ... Other arguments to pass to `salmonMSE()`
+#' @export
+simple_salmonMSE <- function(simpleSOM, ...) {
+  .Deprecated("salmonMSE", msg = "Use salmonMSE() instead.")
+  SOM <- convert_simpleSOM2SOM(simpleSOM)
   SMSE <- salmonMSE(SOM, ...)
   return(SMSE)
 }

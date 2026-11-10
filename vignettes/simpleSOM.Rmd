@@ -95,7 +95,7 @@ plot(Return, Spawners, type = "l", panel.first = grid())
 
 Once these components are defined, the `simpleSOM` object can be created. 
 
-We simulate a salmon that returns every 2 years for 20 generations, then do the projection with a call using `simple_salmonMSE()`:
+We simulate a salmon that returns every 2 years for 20 generations, then do the projection with a call using `salmonMSE()`:
 
 ```{r}
 library(salmonMSE)
@@ -113,7 +113,7 @@ simpleSOM <- new(
   InitEsc = InitEsc
 )
 
-SMSE <- simple_salmonMSE(simpleSOM)
+SMSE <- salmonMSE(simpleSOM)
 ```
 
 The output is a complete object `SMSE`, a subset of slots are relevant for calculating performance metrics:

@@ -6,7 +6,7 @@
 #' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}), by checking
 #' the operating model object with `check_SOM()`, running the projection in `ProjectSOM()` (parallel if called upon, then stitches
 #' together the output in a single object), and calculates reference points with `calc_ref()`.
-#' @param SOM An object of class \linkS4class{SOM}
+#' @param SOM An object of class \linkS4class{SOM}. For `salmonMSE()`, can also be an object of class \linkS4class{simpleSOM}
 #' @param ncores Integer, maximum number of processors to run projection with parallel processing
 #' @param silent Logical, whether to report progress in console
 #' @return
@@ -21,6 +21,7 @@
 #' @importFrom abind abind
 salmonMSE <- function(SOM, ncores = 1, silent = FALSE) {
 
+  if (inherits(SOM, "simpleSOM")) SOM <- convert_simpleSOM(SOM)
   SOM_checked <- check_SOM(SOM, silent = silent)
 
   if (ncores == 1) {
