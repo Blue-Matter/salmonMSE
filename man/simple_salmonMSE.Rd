@@ -12,3 +12,4 @@ simple_salmonMSE(simpleSOM)
 \description{
 Deprecated function
 }
+\keyword{inter}

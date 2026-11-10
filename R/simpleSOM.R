@@ -215,6 +215,7 @@ convert_simpleSOM <- function(simpleSOM) {
 #' Deprecated function
 #'
 #' @param simpleSOM \linkS4class{simpleSOM} object
+#' @keywords inter
 #' @export
 simple_salmonMSE <- function(simpleSOM) {
   .Deprecated("salmonMSE", msg = "Deprecated function. Use salmonMSE() instead.")

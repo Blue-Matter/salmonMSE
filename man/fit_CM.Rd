@@ -55,7 +55,8 @@ and parameter bounds (\code{lower} and \code{upper})
 Bayesian stock reconstruction model of natural and hatchery origin fish population.
 Maturity and age-1 natural mortality are estimated from coded wire tag catch and escapement at age.
 A separate series of observed escapement, and hatchery releases reconstructs the population of interest,
-informed by natural mortality and maturity from CWT (\href{https://publications.gc.ca/site/eng/9.940685/publication.html}{Korman and Walters 2024}).
+informed by natural mortality and maturity from CWT (\href{https://publications.gc.ca/site/eng/9.940685/publication.html}{Korman and Walters 2024},
+expanding upon \href{https://doi.org/10.1111/gcb.14315}{Cunningham et al. 2018}).
 The model estimates time-varying maturity rate as well as time-varying ocean survival as a linear model of covariates (separate covariates
 for age 1 vs. ages 2+).
 The model can include either a preterminal juvenile fishery, terminal return fishery, or both (see Data and start sections of the documentation).
@@ -198,6 +199,9 @@ M^\textrm{base}_a + \sum_j b_j X_{y,j} & \quad a = 2, \ldots, A
 }
 
 \references{
+Cunningham, C.J., Westley, P.A.H., and Adkison, M.D. 2018. Signals of large scale climate drivers, hatchery enhancement, and marine factors in Yukon River Chinook salmon survival revealed with a Bayesian life history model.
+Global Change Biology 24: 4399–4416.
+
 Korman, J. and Walters, C. 2024. A life cycle model for Chinook salmon population dynamics. Canadian Contractor Report of Hydrography and Ocean
 Sciences 62: vi + 60 p.
 }
