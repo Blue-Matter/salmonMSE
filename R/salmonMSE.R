@@ -3,7 +3,7 @@
 #' Run salmonMSE
 #'
 #' @description
-#' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM}), by checking
+#' `salmonMSE()` runs a salmon management strategy evaluation from an operating model object (\linkS4class{SOM} or \linkS4class{simpleSOM}), by checking
 #' the operating model object with `check_SOM()`, running the projection in `ProjectSOM()` (parallel if called upon, then stitches
 #' together the output in a single object), and calculates reference points with `calc_ref()`.
 #' @param SOM An object of class \linkS4class{SOM}. For `salmonMSE()`, can also be an object of class \linkS4class{simpleSOM}
@@ -15,6 +15,10 @@
 #' \dontrun{
 #' SMSE <- salmonMSE(simple_SOM)
 #' }
+#'
+#' SOM_simp <- new("simpleSOM")
+#' simpleSMSE <- salmonMSE(SOM_simp)
+#'
 #'
 #' @export
 #' @importFrom parallel detectCores makeCluster stopCluster parLapplyLB

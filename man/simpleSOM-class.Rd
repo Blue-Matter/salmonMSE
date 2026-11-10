@@ -17,19 +17,19 @@ Various parameters can be stochastic (length \code{nsim}) or input as a single n
 \describe{
 \item{\code{Name}}{Character. Identifying name}
 
-\item{\code{nsim}}{Integer. Number of simulations.}
+\item{\code{nsim}}{Integer. Number of simulations. Default is 2.}
 
-\item{\code{maxage}}{Integer. The maximum age of the population age structure.}
+\item{\code{maxage}}{Integer. The maximum age of the population age structure. Default is 2.}
 
-\item{\code{ngen}}{Integer. The number of generations (life cycles) to run the projection.}
+\item{\code{ngen}}{Integer. The number of generations (life cycles) to run the projection. Default is 10.}
 
 \item{\code{kappa}}{Vector length \code{nsim}. The adult productivity ratio for the stock-recruit function. \strong{Units of recruits per spawner.}
-Natural per-capita production of recruits as the population approaches zero (density-independent component).}
+Natural per-capita production of recruits as the population approaches zero (density-independent component). Default is 3.}
 
-\item{\code{Smax}}{Vector length \code{nsim}. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of spawners.}}
+\item{\code{Smax}}{Vector length \code{nsim}. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. \strong{Units of spawners.} Default is 1000.}
 
 \item{\code{sigmaR}}{Vector length \code{nsim}. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-will be simulated with \code{\link[stats:Lognormal]{stats::rlnorm()}}.}
+will be simulated with \code{\link[stats:rlnorm]{stats::rlnorm()}}. Default is 0.2.}
 
 \item{\code{Recdev}}{Optional matrix \verb{[nsim, ngen]} of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the \code{sigmaR} argument
 and provides more user flexibility, for example, simulating with auto-correlation.}

@@ -8,6 +8,7 @@ if(getRversion() >= "2.15.1") {
 }
 
 #' @importFrom graphics grid matplot abline par
+#' @exportS3Method NULL
 plot.default <- function(..., zero_line = FALSE) {
   if (zero_line) {
     graphics::plot.default(..., panel.first = {graphics::grid(); abline(h = 0, col = "grey60")})
@@ -26,6 +27,7 @@ matplot <- function(..., zero_line = FALSE) {
 
 #' @importFrom graphics hist legend
 #' @importFrom stats sd
+#' @exportS3Method NULL
 hist.numeric <- function(x, ...) {
   n <- length(x)
 

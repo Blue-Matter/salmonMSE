@@ -130,7 +130,7 @@ non-assortative mating, defined under Canada's Wild Salmon Policy.}
 \item{\code{Misc}}{List. Miscellaneous output:
 \itemize{
 \item \code{Ref} for reference points
-\item \code{SOM} for the \linkS4class{SOM} object (updated by \code{check_SOM()}).
+\item \code{SOM} for the \link[=SOM-class]{SOM} object (updated by \code{check_SOM()}).
 \item \code{LHG} list \code{nstocks} long containing state variables by natural-origin life history group
 \item \code{RS} list \code{nstocks} long containing state variables by hatchery-origin release strategy
 }}

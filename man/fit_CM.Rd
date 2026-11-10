@@ -39,7 +39,7 @@ sample_CM(fit, ...)
 
 \item{control}{List, \code{control} argument to pass to \code{\link[stats:nlminb]{stats::nlminb()}}.}
 
-\item{...}{For \code{fit_CM}, arguments to \code{\link[RTMB:TMB-interface]{RTMB::MakeADFun()}}. For \code{sample_CM}, arguments to \code{rstan::sampling()}}
+\item{...}{For \code{fit_CM}, arguments to \code{\link[RTMB:MakeADFun]{RTMB::MakeADFun()}}. For \code{sample_CM}, arguments to \code{rstan::sampling()}}
 
 \item{fit}{List of output from \code{fit_CM()}}
 }

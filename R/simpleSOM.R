@@ -10,14 +10,14 @@
 #' @name simpleSOM-class
 #' @docType class
 #' @slot Name Character. Identifying name
-#' @slot nsim Integer. Number of simulations.
-#' @slot maxage Integer. The maximum age of the population age structure.
-#' @slot ngen Integer. The number of generations (life cycles) to run the projection.
+#' @slot nsim Integer. Number of simulations. Default is 2.
+#' @slot maxage Integer. The maximum age of the population age structure. Default is 2.
+#' @slot ngen Integer. The number of generations (life cycles) to run the projection. Default is 10.
 #' @slot kappa Vector length `nsim`. The adult productivity ratio for the stock-recruit function. **Units of recruits per spawner.**
-#'  Natural per-capita production of recruits as the population approaches zero (density-independent component).
-#' @slot Smax Vector length `nsim`. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. **Units of spawners.**
+#'  Natural per-capita production of recruits as the population approaches zero (density-independent component). Default is 3.
+#' @slot Smax Vector length `nsim`. The spawner abundance that maximizes smolt production in the Ricker stock-recruit function. **Units of spawners.** Default is 1000.
 #' @slot sigmaR Vector length `nsim`. The lognormal standard deviation in the Ricker stock-recruit relationship. Recruitment anomalies
-#'  will be simulated with [stats::rlnorm()].
+#'  will be simulated with [stats::rlnorm()]. Default is 0.2.
 #' @slot Recdev Optional matrix `[nsim, ngen]` of recruitment anomalies in the Ricker stock-recruit relationship. Overrides the `sigmaR` argument
 #'  and provides more user flexibility, for example, simulating with auto-correlation.
 #' @slot type_T Character. Whether to manage terminal fishery catch from exploitation rate ("u") or catch target ("catch").
@@ -59,26 +59,26 @@ simpleSOM <- setClass(
 
 check_simpleSOM <- function(simpleSOM) {
 
-  simpleSOM <- check_numeric(simpleSOM, "nsim")
-  simpleSOM <- check_numeric(simpleSOM, "maxage")
-  simpleSOM <- check_numeric(simpleSOM, "ngen")
+  simpleSOM <- check_numeric(simpleSOM, "nsim", default = 2)
+  simpleSOM <- check_numeric(simpleSOM, "maxage", default = 2)
+  simpleSOM <- check_numeric(simpleSOM, "ngen", default = 10)
 
   nsim <- simpleSOM@nsim
 
-  simpleSOM <- check_numeric2nsim(simpleSOM, "kappa", nsim)
-  simpleSOM <- check_numeric2nsim(simpleSOM, "Smax", nsim)
+  simpleSOM <- check_numeric2nsim(simpleSOM, "kappa", nsim, default = rep(3, nsim))
+  simpleSOM <- check_numeric2nsim(simpleSOM, "Smax", nsim, default = rep(1000, nsim))
 
   if (length(simpleSOM@Recdev)) {
     simpleSOM <- check_array(simpleSOM, "Recdev", c(nsim, simpleSOM@ngen))
   } else {
-    simpleSOM <- check_numeric2nsim(simpleSOM, "sigmaR", nsim)
+    simpleSOM <- check_numeric2nsim(simpleSOM, "sigmaR", nsim, default = rep(0.2, nsim))
   }
 
   simpleSOM <- check_numeric(simpleSOM, "type_T", default = "u")
   simpleSOM@type_T <- match.arg(simpleSOM@type_T, choices = c("u", "catch"))
 
   if (simpleSOM@type_T == "u") {
-    if (length(simpleSOM@u_terminal) == 1) {
+    if (length(simpleSOM@u_terminal) <= 1) {
       simpleSOM <- check_numeric(simpleSOM, "u_terminal", default = 0)
     } else if (is.matrix(simpleSOM@u_terminal)) {
       simpleSOM <- check_array(simpleSOM, "u_terminal", c(nsim, simpleSOM@ngen))
@@ -111,7 +111,7 @@ check_simpleSOM <- function(simpleSOM) {
 
 convert_simpleSOM <- function(simpleSOM) {
 
-  if (is.null(attr(simpleSOM, "checked"))) simpleSOM <- check_simpleSOM(SOM)
+  if (is.null(attr(simpleSOM, "checked"))) simpleSOM <- check_simpleSOM(simpleSOM)
   nsim <- simpleSOM@nsim
   maxage <- simpleSOM@maxage
   ngen <- simpleSOM@ngen
@@ -211,17 +211,3 @@ convert_simpleSOM <- function(simpleSOM) {
 
   return(SOM)
 }
-
-#' @name salmonMSE
-#' @description `simple_salmonMSE()` is a helper function that converts a simple operating model (modeling only recruit-spawners
-#' with Ricker relationship, terminal marine fishery, without hatchery production) to a full operating model and runs the projection. **DEPRECATED**
-#' @param simpleSOM An object of class \linkS4class{simpleSOM}
-#' @param ... Other arguments to pass to `salmonMSE()`
-#' @export
-simple_salmonMSE <- function(simpleSOM, ...) {
-  .Deprecated("salmonMSE", msg = "Use salmonMSE() instead.")
-  SOM <- convert_simpleSOM2SOM(simpleSOM)
-  SMSE <- salmonMSE(SOM, ...)
-  return(SMSE)
-}
-

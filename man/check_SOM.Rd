@@ -7,16 +7,16 @@
 check_SOM(SOM, silent = FALSE)
 }
 \arguments{
-\item{SOM}{\linkS4class{SOM} object}
+\item{SOM}{\link[=SOM-class]{SOM} object}
 
 \item{silent}{Logical, whether to report progress in console}
 }
 \value{
-Updated \linkS4class{SOM} object with full dimensions in various slots, with an attribute to identify whether
+Updated \link[=SOM-class]{SOM} object with full dimensions in various slots, with an attribute to identify whether
 the check has been performed.
 }
 \description{
-Ensures that the slots in the \linkS4class{SOM} object have the correct dimensions. Function will
+Ensures that the slots in the \link[=SOM-class]{SOM} object have the correct dimensions. Function will
 update some slots to their full dimensions.
 }
 \examples{

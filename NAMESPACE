@@ -80,7 +80,6 @@ export(salmonMSE)
 export(salmonMSE_env)
 export(sample_CM)
 export(simpleSOM)
-export(simple_salmonMSE)
 exportClasses(Bio)
 exportClasses(Habitat)
 exportClasses(Harvest)
@@ -94,57 +93,73 @@ import(RTMB)
 import(ggplot2)
 importFrom(RTMBdist,dtruncnorm)
 importFrom(abind,abind)
-importFrom(dplyr,"%>%")
-importFrom(dplyr,bind_cols)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,filter)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,n)
-importFrom(dplyr,pull)
-importFrom(dplyr,rename)
-importFrom(grDevices,hcl.colors)
-importFrom(grDevices,rainbow)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,barplot)
-importFrom(graphics,box)
-importFrom(graphics,grid)
-importFrom(graphics,hist)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,matlines)
-importFrom(graphics,matplot)
-importFrom(graphics,pairs)
-importFrom(graphics,par)
-importFrom(graphics,points)
-importFrom(graphics,polygon)
-importFrom(graphics,rect)
-importFrom(graphics,strwidth)
-importFrom(graphics,text)
+importFrom(dplyr,
+  "%>%",
+  bind_cols,
+  bind_rows,
+  filter,
+  left_join,
+  mutate,
+  n,
+  pull,
+  rename
+)
+importFrom(grDevices,
+  hcl.colors,
+  rainbow
+)
+importFrom(graphics,
+  abline,
+  axis,
+  barplot,
+  box,
+  grid,
+  hist,
+  legend,
+  lines,
+  matlines,
+  matplot,
+  pairs,
+  par,
+  points,
+  polygon,
+  rect,
+  strwidth,
+  text
+)
 importFrom(gsl,lambert_W0)
-importFrom(methods,"slot<-")
-importFrom(methods,.hasSlot)
-importFrom(methods,.slotNames)
-importFrom(methods,new)
-importFrom(methods,slot)
-importFrom(methods,slotNames)
-importFrom(parallel,detectCores)
-importFrom(parallel,makeCluster)
-importFrom(parallel,parLapplyLB)
-importFrom(parallel,parSapplyLB)
-importFrom(parallel,stopCluster)
-importFrom(rlang,.data)
-importFrom(rlang,.env)
+importFrom(methods,
+  "slot<-",
+  .hasSlot,
+  .slotNames,
+  new,
+  slot,
+  slotNames
+)
+importFrom(parallel,
+  detectCores,
+  makeCluster,
+  parLapplyLB,
+  parSapplyLB,
+  stopCluster
+)
+importFrom(rlang,
+  .data,
+  .env
+)
 importFrom(rmarkdown,render)
-importFrom(stats,cor)
-importFrom(stats,density)
-importFrom(stats,median)
-importFrom(stats,na.omit)
-importFrom(stats,nlminb)
-importFrom(stats,optimize)
-importFrom(stats,quantile)
-importFrom(stats,rlnorm)
-importFrom(stats,sd)
-importFrom(utils,browseURL)
-importFrom(utils,packageVersion)
+importFrom(stats,
+  cor,
+  density,
+  median,
+  na.omit,
+  nlminb,
+  optimize,
+  quantile,
+  rlnorm,
+  sd
+)
+importFrom(utils,
+  browseURL,
+  packageVersion
+)

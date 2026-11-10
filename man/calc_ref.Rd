@@ -43,7 +43,7 @@ calc_Sgen(
 )
 }
 \arguments{
-\item{SOM}{An object of class \linkS4class{SOM}}
+\item{SOM}{An object of class \link[=SOM-class]{SOM}}
 
 \item{rel_F}{Numeric length 2, indicates the relative effort in the preterminal and terminal fisheries, with a maximum value of 1.
 The default is \code{c(0, 1)} which indicates a yield calculation with only the terminal fishery.}

@@ -6,7 +6,7 @@
 \alias{multi_SOM}
 \title{Example objects from salmonMSE}
 \format{
-An object of class \linkS4class{SOM}.
+An object of class \link[=SOM-class]{SOM}.
 
 An object of class \code{SOM} of length 1.
 }
