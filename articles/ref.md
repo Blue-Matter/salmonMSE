@@ -46,7 +46,7 @@ and satisfies the equation:
 There are several implicit assumptions frequently associated with these
 reference points:
 
-1.  The stock-recruit relationship predicts the number of returns, not
+1.  The spawner-recruit relationship predicts the number of returns, not
     juveniles, from the number of spawners. The density-dependent and
     density-independent components of survival are modeled together.
 2.  All exploitation occurs on mature individuals
@@ -58,7 +58,7 @@ reference points:
 salmonMSE is an age-structured model that can relax the assumptions from
 the typical spawner-return model:
 
-1.  The stock-recruit relationship predicts the number of outmigrating
+1.  The spawner-recruit relationship predicts the number of outmigrating
     juveniles, not the return, from the egg production (not the number
     of spawners). The density-dependent and density-independent
     components of survival are modeled separately.
@@ -196,6 +196,7 @@ compare_ref <- function(a = 3, # Units of adults/spawner
                         M = c(1, 0.8, 0.6, 0.4),
                         fec = c(0, 1500, 3000, 3200, 3500),
                         p_mature = c(0, 0.1, 0.2, 0.3, 1),
+                        s_enroute = 1,
                         maximize = c("MSY", "MER")) {
   
   require(salmonMSE)
@@ -208,7 +209,7 @@ compare_ref <- function(a = 3, # Units of adults/spawner
     p_mature = p_mature,
     p_female = p_female,
     fec = fec,
-    s_enroute = 1
+    s_enroute = s_enroute
   )
 
   # To convert Smax from units of spawners to eggs:
@@ -222,7 +223,7 @@ compare_ref <- function(a = 3, # Units of adults/spawner
     p_mature = p_mature,
     p_female = p_female,
     fec = fec,
-    s_enroute = 1,
+    s_enroute = s_enroute,
     output = "spawner"
   )
   
@@ -243,18 +244,19 @@ compare_ref <- function(a = 3, # Units of adults/spawner
   # salmonMSE ref
   ref <- calc_MSY(
     M, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute = 1, SRRpars = SRRpars, maximize = maximize
+    s_enroute = s_enroute, SRRpars = SRRpars, maximize = maximize
   )
 
   ref["Sgen"] <- calc_Sgen(
     M, fec, p_female, rel_F, vulPT, vulT, p_mature,
-    s_enroute = 1, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
+    s_enroute = s_enroute, SRRpars = SRRpars, SMSY = ref["Spawners_MSY"]
   )
-  ref["Catch/Return"] <- sum(ref["KPT_AEQ_MSY"], ref["KT_MSY"])/(sum(ref["KPT_AEQ_MSY"], ref["Return_MSY"]))
+  ref["MSY"] <- sum(ref["KPT_AEQ_MSY"], ref["KT_MSY"])
+  ref["Catch/Return"] <- ref["MSY"]/(sum(ref["KPT_AEQ_MSY"], ref["Return_MSY"]))
 
   ref_salmonMSE <- structure(
-    ref[c("UPT_EQ_MSY", "UT_MSY", "Catch/Return", "Spawners_MSY", "Sgen")], 
-    names = c("UMSY (preterminal)", "UMSY (terminal)", "Catch/Return", "SMSY", "Sgen")
+    ref[c("UPT_EQ_MSY", "UT_MSY", "MSY", "Catch/Return", "Spawners_MSY", "Sgen")], 
+    names = c("UMSY (preterminal)", "UMSY (terminal)", "MSY", "Catch/Return", "SMSY", "Sgen")
   ) |>
     round(4)
   
@@ -279,7 +281,7 @@ compare_ref <- function(a = 3, # Units of adults/spawner
 
 Situation 1 specifies the salmonMSE (age-structured) model with the
 simple assumptions identified in the introduction. The salmonMSE and
-Ricker (stock-recruit only) reference points are identical.
+Ricker (spawner-recruit only) reference points are identical.
 
 ``` r
 
@@ -297,15 +299,107 @@ compare_ref(
 )
 #> Loading required package: salmonMSE
 #> $salmonMSE
-#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
-#>             0.0000             0.4678             0.4678           467.8335 
-#>               Sgen 
-#>           188.2447 
+#> UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return 
+#>             0.0000             0.4678           411.2600             0.4678 
+#>               SMSY               Sgen 
+#>           467.8335           188.2447 
 #> 
 #> $Ricker
 #>     UMSY     SMSY     Sgen 
 #>   0.4678 467.8265 188.2417
 ```
+
+We can verify that the projection model agrees with the calculated
+reference points. The function below runs a projection under various
+harvest rates for 10 generations. We can then plot the spawners and
+catch at the end of the projection (the system is assumed to be in
+equilibrium) to compare with numerical reference points:
+
+``` r
+
+projection_ref <- function(a, Smax, maxage, rel_F = c(0, 1), p_female, vulPT, vulT, M, fec, p_mature, s_enroute = 1,
+                           InitNjuv_age = 1000, ngen = 10, figure = TRUE) {
+  
+  require(salmonMSE)
+  
+  Bio <- new(
+    "Bio",
+    maxage = maxage,
+    p_mature = p_mature,
+    SRrel = "Ricker",
+    kappa = a,
+    Smax = Smax,
+    Mjuv_NOS = M,
+    p_female = p_female,
+    s_enroute = s_enroute
+  )
+  
+  U <- seq(0, 0.85, 0.01)
+  nsim <- length(U)
+  proyears <- ngen * maxage + 1
+  
+  u_preterminal <- matrix(rel_F[1] * U, nrow = nsim, ncol = proyears)
+  u_terminal <- matrix(rel_F[2] * U, nrow = nsim, ncol = proyears)
+  Harvest <- new(
+    "Harvest",
+    u_preterminal = u_preterminal,
+    u_terminal = u_terminal,
+    vulPT = vulPT,
+    vulT = vulT,
+    maxE = 1e8
+  )
+  
+  Historical <- new(
+    "Historical", 
+    InitNjuv_NOS = array(InitNjuv_age, c(maxage, nsim, 1)) |> aperm(c(2, 1, 3))
+  )
+  
+  SOM <- new("SOM", Bio = Bio, Harvest = Harvest, Historical = Historical, nsim = nsim, proyears = proyears)
+  SMSE <- salmonMSE(SOM)
+  
+  if (figure) {
+    par(mfrow = c(1, 2))
+  
+    Catch <- rowSums(SMSE@KT_NOS[, 1, , proyears] + SMSE@KPT_AEQ_NOS[, 1, , proyears])
+    U <- Catch/(Catch + rowSums(SMSE@Escapement_NOS[, 1, , proyears]))
+    
+    Spawners <- rowSums(SMSE@NOS[, 1, , proyears])
+    MSY <- max(Catch)
+    UMSY <- U[which.max(Catch)]
+    SMSY <- Spawners[which.max(Catch)]
+    
+    print(list(projection = c("UMSY" = round(UMSY, 4), "MSY" = round(MSY, 2), "SMSY" = round(SMSY, 2))))
+    
+    plot(U, Catch, xlab = "U", panel.first = grid())
+    abline(v = UMSY, lty = 3)
+    
+    plot(U, Spawners, xlab = "U", panel.first = grid())
+    abline(h = SMSY, lty = 3)
+  }
+  invisible(SMSE)
+}
+```
+
+``` r
+
+SMSE <- projection_ref(
+  a = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0, 0, 0, 1),
+  M = c(-log(0.01), 0, 0, 0),
+  fec = c(0, 0, 0, 0, 1),
+  p_mature = c(0, 0, 0, 0, 1)
+)
+#> $projection
+#>   UMSY    MSY   SMSY 
+#>   0.47 411.33 463.84
+```
+
+![](ref_files/figure-html/unnamed-chunk-5-1.png)
 
 ### Situation 2 - partial age maturity, equal vulnerability
 
@@ -327,18 +421,40 @@ compare_ref(
   vulT = rep(1, 5),
   M = c(1, 0.3, 0.2, 0.1),
   fec = rep(1, 5),
-  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
-#>             0.0000             0.4678             0.4678           467.8335 
-#>               Sgen 
-#>           188.2447 
+#> UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return 
+#>             0.0000             0.4678           411.2600             0.4678 
+#>               SMSY               Sgen 
+#>           467.8335           188.2447 
 #> 
 #> $Ricker
 #>     UMSY     SMSY     Sgen 
 #>   0.4678 467.8265 188.2417
 ```
+
+``` r
+
+SMSE <- projection_ref(
+  a = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = rep(1, 5),
+  M = c(1, 0.3, 0.2, 0.1),
+  fec = rep(1, 5),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  InitNjuv_age = rep(1000, 5) # Ensure there are returns each year
+)
+#> $projection
+#>   UMSY    MSY   SMSY 
+#>   0.47 411.36 463.88
+```
+
+![](ref_files/figure-html/unnamed-chunk-7-1.png)
 
 ### Situation 3 - partial age maturity, varying vulnerability by age
 
@@ -359,19 +475,86 @@ compare_ref(
   vulT = c(0, 0.1, 0.2, 0.4, 1),
   M = c(1, 0.3, 0.2, 0.1),
   fec = rep(1, 5),
-  p_mature = c(0, 0.1, 0.2, 0.3, 1),
-  maximize = "MER"
+  p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
-#>             0.0000             0.4678             0.4678           467.8251 
-#>               Sgen 
-#>           188.2410 
+#> UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return 
+#>             0.0000             0.4678           411.2600             0.4678 
+#>               SMSY               Sgen 
+#>           467.8251           188.2410 
 #> 
 #> $Ricker
 #>     UMSY     SMSY     Sgen 
 #>   0.4678 467.8265 188.2417
 ```
+
+``` r
+
+SMSE <- projection_ref(
+  a = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  M = c(1, 0.3, 0.2, 0.1),
+  fec = rep(1, 5),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  InitNjuv_age = rep(1000, 5)
+)
+#> $projection
+#>   UMSY    MSY   SMSY 
+#>   0.30 259.93 606.50
+```
+
+![](ref_files/figure-html/unnamed-chunk-9-1.png)
+
+Note however that there is periodicity in the spawner numbers during the
+projection (Ricker dynamics are notoriously complex and can generate
+oscillations around a steady state point, see [May
+1976](https://doi.org/10.1038/261459a0).
+
+Thus, there may be some limits to replicating numerical reference points
+in projections.
+
+``` r
+
+plot_ts <- function(SMSE) {
+  require(ggplot2)
+  require(reshape2)
+  
+  x <- seq(1, SMSE@nsim, by = 5)
+  proyears <- SMSE@proyears
+  
+  Catch <- apply(SMSE@KT_NOS[x, 1, , ] + SMSE@KPT_AEQ_NOS[x, 1, , ], c(1, 3), sum)
+  U <- round(Catch[, proyears]/(Catch[, proyears] + rowSums(SMSE@Escapement_NOS[x, 1, , proyears])), 2)
+    
+  NOS_df <- apply(SMSE@NOS[x, , , , drop = FALSE], c(1, 4), sum) |> 
+    structure(dimnames = list(U = U, Year = seq_len(proyears))) |>
+    reshape2::melt()
+  NOS_df$variable <- "Spawners"
+  
+  Catch_df <- structure(Catch, dimnames = list(U = U, Year = seq_len(proyears))) |>
+    reshape2::melt()
+  Catch_df$variable <- "Catch"
+  
+  df <- rbind(NOS_df, Catch_df)
+  
+  g <- ggplot(df, aes(Year, value, group = factor(U), colour = factor(U))) + 
+    geom_line() +
+    facet_wrap(vars(variable), scales = "free_y") + 
+    labs(colour = "U") +
+    guides(colour = guide_legend(ncol = 2))
+  return(g)
+}
+
+plot_ts(SMSE)
+#> Loading required package: ggplot2
+#> Loading required package: reshape2
+```
+
+![](ref_files/figure-html/unnamed-chunk-10-1.png)
 
 ### Situation 4 - partial age maturity, varying fecundity and vulnerability by age
 
@@ -398,20 +581,50 @@ compare_ref(
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
-#>             0.0000             0.4001             0.4001           523.7658 
-#>               Sgen 
-#>           260.2642 
+#> UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return 
+#>             0.0000             0.4001           349.2880             0.4001 
+#>               SMSY               Sgen 
+#>           523.7658           260.2642 
 #> 
 #> $Ricker
 #>     UMSY     SMSY     Sgen 
 #>   0.4678 467.8265 188.2417
 ```
 
+``` r
+
+SMSE <- projection_ref(
+  a = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(0, 1),
+  p_female = 1,
+  vulPT = rep(0, 5),
+  vulT = c(0, 0.1, 0.2, 0.4, 1),
+  M = c(1, 0.3, 0.2, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  InitNjuv_age = rep(1000, 5)
+)
+#> $projection
+#>   UMSY    MSY   SMSY 
+#>   0.30 259.93 606.50
+```
+
+![](ref_files/figure-html/unnamed-chunk-12-1.png)
+
+``` r
+
+plot_ts(SMSE)
+```
+
+![](ref_files/figure-html/unnamed-chunk-13-1.png)
+
 ### Situation 5 - partial age maturity, with immature exploitation
 
 Reference points can also be calculated by considering preterminal
-exploitation and converting juvenile catch to their adult equivalents.
+exploitation (fishing on juveniles) and converting juvenile catch to
+their adult equivalents.
 
 Nonetheless, salmonMSE and Ricker reference points are **not**
 identical.
@@ -431,12 +644,41 @@ compare_ref(
   p_mature = c(0, 0.1, 0.2, 0.3, 1)
 )
 #> $salmonMSE
-#> UMSY (preterminal)    UMSY (terminal)       Catch/Return               SMSY 
-#>             0.3806             0.0000             0.3806           706.9302 
-#>               Sgen 
-#>           532.8182 
+#> UMSY (preterminal)    UMSY (terminal)                MSY       Catch/Return 
+#>             0.3806             0.0000           434.3576             0.3806 
+#>               SMSY               Sgen 
+#>           706.9302           532.8182 
 #> 
 #> $Ricker
 #>     UMSY     SMSY     Sgen 
 #>   0.4678 467.8265 188.2417
 ```
+
+``` r
+
+SMSE <- projection_ref(
+  a = 3,
+  Smax = 1000,
+  maxage = 5,
+  rel_F = c(1, 0),
+  p_female = 1,
+  vulPT = c(0, 0.1, 0.2, 0.4, 1),
+  vulT = c(0, 0, 0, 0, 0),
+  M = c(1, 0.3, 0.2, 0.1),
+  fec = c(0, 1000, 2000, 3000, 3500),
+  p_mature = c(0, 0.1, 0.2, 0.3, 1),
+  InitNjuv_age = rep(1000, 5)
+)
+#> $projection
+#>   UMSY    MSY   SMSY 
+#>   0.28 243.00 624.85
+```
+
+![](ref_files/figure-html/unnamed-chunk-15-1.png)
+
+``` r
+
+plot_ts(SMSE)
+```
+
+![](ref_files/figure-html/unnamed-chunk-16-1.png)
